@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 /// Voice Activity Detection section using Calibra public API.
 ///
