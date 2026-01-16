@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Calibra icon: Stylized tuning fork / pitch analysis symbol -->
+    <!-- Two prongs of a tuning fork with a waveform in between -->
+    <group>
+        <!-- Left prong -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M38,28 L38,58 Q38,62 42,62 L42,62 Q46,62 46,58 L46,28 Q46,24 42,24 L42,24 Q38,24 38,28 Z"/>
+        <!-- Right prong -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M62,28 L62,58 Q62,62 66,62 L66,62 Q70,62 70,58 L70,28 Q70,24 66,24 L66,24 Q62,24 62,28 Z"/>
+        <!-- Handle/stem -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M50,58 L50,82 Q50,86 54,86 L54,86 Q58,86 58,82 L58,58 Q58,54 54,54 L54,54 Q50,54 50,58 Z"/>
+        <!-- Waveform/vibration lines between prongs -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="2"
+            android:strokeLineCap="round"
+            android:pathData="M48,36 Q54,32 60,36"
+            android:fillColor="#00000000"/>
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="2"
+            android:strokeLineCap="round"
+            android:pathData="M48,44 Q54,48 60,44"
+            android:fillColor="#00000000"/>
+    </group>
+</vector>
