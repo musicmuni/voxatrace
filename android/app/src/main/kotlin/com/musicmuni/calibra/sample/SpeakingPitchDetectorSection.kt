@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.musicmuni.calibra.PitchDetector
-import com.musicmuni.calibra.metrics.SpeakingPitchDetector
-import com.musicmuni.sonix.SonixRecorder
+import com.musicmuni.vozos.calibra.PitchDetector
+import com.musicmuni.vozos.calibra.metrics.SpeakingPitchDetector
+import com.musicmuni.vozos.sonix.SonixRecorder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.log2

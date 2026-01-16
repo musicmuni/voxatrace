@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 private let SILENCE_GRACE_MS: Int64 = 500
 private let PREFS_KEY_BEST_SCORE = "breath_monitor_best_score"

@@ -8,9 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.musicmuni.calibra.effects.Reverb
-import com.musicmuni.calibra.effects.Compressor
-import com.musicmuni.calibra.effects.NoiseGate
+import com.musicmuni.vozos.calibra.effects.Reverb
+import com.musicmuni.vozos.calibra.effects.Compressor
+import com.musicmuni.vozos.calibra.effects.NoiseGate
 
 @Composable
 fun EffectsSection() {

@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 /// Offline Analysis Section using Calibra public API.
 ///

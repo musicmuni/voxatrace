@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F4282722EFB20A30013368A /* calibra.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* calibra.xcframework */; };
-		9F4282732EFB20A30013368A /* calibra.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* calibra.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F4282762EFB20AC0013368A /* sonix.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282752EFB20AC0013368A /* sonix.xcframework */; };
-		9F4282772EFB20AC0013368A /* sonix.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282752EFB20AC0013368A /* sonix.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F4282722EFB20A30013368A /* vozos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* vozos.xcframework */; };
+		9F4282732EFB20A30013368A /* vozos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* vozos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F7076522EFE6669006A4276 /* calibra.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9F70764F2EFE65C4006A4276 /* calibra.bundle */; };
 /* End PBXBuildFile section */
 
@@ -21,8 +19,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F4282732EFB20A30013368A /* calibra.xcframework in Embed Frameworks */,
-				9F4282772EFB20AC0013368A /* sonix.xcframework in Embed Frameworks */,
+				9F4282732EFB20A30013368A /* vozos.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -30,8 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9F4282712EFB20A30013368A /* calibra.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = calibra.xcframework; path = Frameworks/calibra.xcframework; sourceTree = "<group>"; };
-		9F4282752EFB20AC0013368A /* sonix.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = sonix.xcframework; path = Frameworks/sonix.xcframework; sourceTree = "<group>"; };
+		9F4282712EFB20A30013368A /* vozos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = vozos.xcframework; path = Frameworks/vozos.xcframework; sourceTree = "<group>"; };
 		9F70764F2EFE65C4006A4276 /* calibra.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = calibra.bundle; path = Frameworks/calibra.bundle; sourceTree = "<group>"; };
 		9FC6986A2EF2CEA400FE73BF /* CalibraSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalibraSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -49,8 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F4282722EFB20A30013368A /* calibra.xcframework in Frameworks */,
-				9F4282762EFB20AC0013368A /* sonix.xcframework in Frameworks */,
+				9F4282722EFB20A30013368A /* vozos.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,8 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				9F70764F2EFE65C4006A4276 /* calibra.bundle */,
-				9F4282752EFB20AC0013368A /* sonix.xcframework */,
-				9F4282712EFB20A30013368A /* calibra.xcframework */,
+				9F4282712EFB20A30013368A /* vozos.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

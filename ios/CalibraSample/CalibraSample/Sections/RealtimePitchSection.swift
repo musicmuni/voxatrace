@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 /// Real-time pitch detection section using Calibra public API.
 ///

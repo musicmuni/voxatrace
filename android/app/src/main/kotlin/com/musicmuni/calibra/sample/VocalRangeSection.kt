@@ -11,12 +11,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.musicmuni.calibra.VocalRangePhase
-import com.musicmuni.calibra.VocalRangeSession
-import com.musicmuni.calibra.VocalRangeState
-import com.musicmuni.sonix.Sonix
-import com.musicmuni.sonix.SonixRecorder
-import com.musicmuni.sonix.SonixResampler
+import com.musicmuni.vozos.calibra.VocalRangePhase
+import com.musicmuni.vozos.calibra.VocalRangeSession
+import com.musicmuni.vozos.calibra.VocalRangeState
+import com.musicmuni.vozos.sonix.Sonix
+import com.musicmuni.vozos.sonix.SonixRecorder
+import com.musicmuni.vozos.sonix.SonixResampler
 import kotlinx.coroutines.launch
 
 /**

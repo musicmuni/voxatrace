@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 /// Audio Effects Playground using CalibraEffects unified API.
 ///

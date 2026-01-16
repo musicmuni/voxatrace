@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 private let RMS_THRESHOLD: Float = 0.02
 private let COUNTDOWN_SECONDS = 4

@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 enum SingafterPhase: Int {
     case idle = 0

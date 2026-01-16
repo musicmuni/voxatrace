@@ -1,6 +1,5 @@
 import SwiftUI
-import calibra
-import sonix
+import vozos
 
 /// Vocal Range Detector using VocalRangeSession API.
 ///

@@ -20,10 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.musicmuni.calibra.CalibraOfflineEvaluator
-import com.musicmuni.calibra.metrics.BreathAnalyzer
-import com.musicmuni.calibra.metrics.ShrutiDetector
-import com.musicmuni.sonix.util.Parser
+import com.musicmuni.vozos.calibra.CalibraOfflineEvaluator
+import com.musicmuni.vozos.calibra.metrics.BreathAnalyzer
+import com.musicmuni.vozos.calibra.metrics.ShrutiDetector
+import com.musicmuni.vozos.sonix.util.Parser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
