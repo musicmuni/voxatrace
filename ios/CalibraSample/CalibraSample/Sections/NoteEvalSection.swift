@@ -34,7 +34,7 @@ struct NoteEvalSection: View {
 
     // Resources
     @State private var recorder: SonixRecorder?
-    @State private var collectedAudio: [KotlinFloatArray] = []
+    @State private var collectedAudio: [Float] = []
 
     // Exercise definitions: (name, MIDI notes, key MIDI note)
     // Using C3-B3 range (MIDI 48-59) for easier voice testing
@@ -345,21 +345,17 @@ struct NoteEvalSection: View {
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra
                 let samples16k = SonixResampler.resample(
-                    samples: buffer.floatSamples,
+                    samples: buffer.samples,
                     fromRate: hwRate,
                     toRate: 16000
                 )
 
-                collectedAudio.append(samples16k)
-                sampleCount += Int(samples16k.size)
+                collectedAudio.append(contentsOf: samples16k)
+                sampleCount += samples16k.count
 
                 // Calculate RMS for level meter
-                var sum: Float = 0
-                for i in 0..<samples16k.size {
-                    let sample = samples16k.get(index: i)
-                    sum += sample * sample
-                }
-                let rms = sqrt(sum / Float(samples16k.size))
+                let sum = samples16k.reduce(0) { $0 + $1 * $1 }
+                let rms = sqrt(sum / Float(samples16k.count))
 
                 await MainActor.run {
                     recordingLevel = min(rms * 5, 1.0)
@@ -404,11 +400,13 @@ struct NoteEvalSection: View {
                 noteDurationMs: 500
             )
 
-            // Merge all audio chunks
-            let studentAudio = mergeKotlinFloatArrays(collectedAudio)
+            // Use collected audio directly (already merged as [Float])
+            let studentAudio = collectedAudio
 
-            // Extract pitch contour from student audio
-            let studentContour = PitchContour.fromAudio(audioSamples: studentAudio, sampleRate: 16000)
+            // Extract pitch contour from student audio using ContourExtractor
+            let extractor = CalibraPitch.createContourExtractor()
+            let studentContour = extractor.extract(audio: studentAudio)
+            extractor.release()
 
             // Key frequency from MIDI
             let keyHz = MusicUtils.midiToHz(Int(keyMidi))
@@ -438,18 +436,4 @@ struct NoteEvalSection: View {
         recorder = nil
     }
 
-    // MARK: - Helpers
-
-    private func mergeKotlinFloatArrays(_ arrays: [KotlinFloatArray]) -> KotlinFloatArray {
-        let totalSize = arrays.reduce(0) { $0 + Int($1.size) }
-        let result = KotlinFloatArray(size: Int32(totalSize))
-        var offset: Int32 = 0
-        for arr in arrays {
-            for i in 0..<arr.size {
-                result.set(index: offset + i, value: arr.get(index: i))
-            }
-            offset += arr.size
-        }
-        return result
-    }
 }

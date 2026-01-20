@@ -41,7 +41,7 @@ struct SingalongLiveEvalSection: View {
 
     // Calibra new API - CalibraLiveEval
     @State private var session: CalibraLiveEval?
-    @State private var pitchDetector: CalibraPitch?
+    @State private var pitchDetector: CalibraPitch.Detector?
 
     @State private var currentPitch: Float = 0.0
     @State private var currentNote = "-"
@@ -200,7 +200,7 @@ struct SingalongLiveEvalSection: View {
         guard pitchDetector == nil else { return }
 
         // Create pitch detector using Calibra public API (with processing for smoothing + octave correction)
-        pitchDetector = CalibraPitch.create(enableProcessing: true)
+        pitchDetector = CalibraPitch.createDetector(enableProcessing: true)
 
         // Create recorder using Sonix with echo cancellation enabled
         // This removes the lesson audio from the mic input so pitch detection works correctly
@@ -288,8 +288,8 @@ struct SingalongLiveEvalSection: View {
                let pitchData = Parser.parsePitchString(content: pitchContent) {
                 // Convert PitchData (Sonix) to PitchContour (Calibra)
                 pitchContour = PitchContour.fromArrays(
-                    times: pitchData.__times,
-                    pitches: pitchData.__pitchesHz
+                    times: pitchData.times,
+                    pitches: pitchData.pitchesHz
                 )
                 print("[TIMING] Load .pitchPP (\(pitchData.count) samples): \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - pitchStart))s")
             } else {
@@ -301,12 +301,12 @@ struct SingalongLiveEvalSection: View {
             let decodeStart = CFAbsoluteTimeGetCurrent()
             if let audioData = SonixDecoder.decode(path: audioURL.path) {
                 print("[TIMING] SonixDecoder.decode (decode #2 + resample to 16kHz): \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - decodeStart))s")
-                print("[DEBUG] Decoded audio: \(audioData.floatSamples.size) samples at \(audioData.sampleRate) Hz")
+                print("[DEBUG] Decoded audio: \(audioData.samples.count) samples at \(audioData.sampleRate) Hz")
 
                 // Create SingingReference with decoded audio and optional pitch contour
                 let refStart = CFAbsoluteTimeGetCurrent()
                 let reference = SingingReference.fromAudio(
-                    samples: audioData.floatSamples,
+                    samples: audioData.samples,
                     sampleRate: Int32(audioData.sampleRate),
                     segments: segments,
                     keyHz: 196.0,  // G3, common for Indian classical
@@ -423,7 +423,7 @@ struct SingalongLiveEvalSection: View {
 
                 // Resample to 16kHz for Calibra (expects 16kHz input)
                 let samples16k = SonixResampler.resample(
-                    samples: buffer.floatSamples,
+                    samples: buffer.samples,
                     fromRate: hwRate,
                     toRate: 16000
                 )
@@ -432,13 +432,13 @@ struct SingalongLiveEvalSection: View {
                 session?.addAudio(samples: samples16k)
 
                 // Use pitch detector for real-time pitch display
-                let result = pitchDetector?.detectWithConfidence(samples: samples16k)
-                let detectedPitch = result?.pitchHz ?? -1.0
-                let calculatedRms = pitchDetector?.getAmplitude(samples: samples16k) ?? 0.0
+                let result = pitchDetector?.detect(buffer: samples16k)
+                let detectedPitch = result?.pitch ?? -1.0
+                let calculatedRms = pitchDetector?.getAmplitude(buffer: samples16k) ?? 0.0
 
                 // Log first few frames and every 50th frame
                 if frameCount <= 3 || frameCount % 50 == 0 {
-                    print("[DEBUG] Frame \(frameCount): \(samples16k.size) samples, pitch: \(detectedPitch) Hz")
+                    print("[DEBUG] Frame \(frameCount): \(samples16k.count) samples, pitch: \(detectedPitch) Hz")
                 }
 
                 await MainActor.run {

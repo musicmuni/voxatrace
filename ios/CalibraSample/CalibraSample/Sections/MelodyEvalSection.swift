@@ -37,7 +37,7 @@ struct MelodyEvalSection: View {
     // Resources
     @State private var reference: SingingReference?
     @State private var recorder: SonixRecorder?
-    @State private var collectedAudio: [KotlinFloatArray] = []
+    @State private var collectedAudio: [Float] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -301,7 +301,7 @@ struct MelodyEvalSection: View {
 
         // Create SingingReference
         reference = SingingReference.fromAudio(
-            samples: audioData.floatSamples,
+            samples: audioData.samples,
             sampleRate: Int32(audioData.sampleRate),
             segments: segments,
             keyHz: 196.0  // G3 - common for Indian classical
@@ -336,21 +336,17 @@ struct MelodyEvalSection: View {
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra
                 let samples16k = SonixResampler.resample(
-                    samples: buffer.floatSamples,
+                    samples: buffer.samples,
                     fromRate: hwRate,
                     toRate: 16000
                 )
 
-                collectedAudio.append(samples16k)
-                sampleCount += Int(samples16k.size)
+                collectedAudio.append(contentsOf: samples16k)
+                sampleCount += samples16k.count
 
                 // Calculate RMS for level meter
-                var sum: Float = 0
-                for i in 0..<samples16k.size {
-                    let sample = samples16k.get(index: i)
-                    sum += sample * sample
-                }
-                let rms = sqrt(sum / Float(samples16k.size))
+                let sum = samples16k.reduce(0) { $0 + $1 * $1 }
+                let rms = sqrt(sum / Float(samples16k.count))
 
                 await MainActor.run {
                     recordingLevel = min(rms * 5, 1.0)  // Scale for visibility
@@ -384,11 +380,13 @@ struct MelodyEvalSection: View {
         status = "Evaluating..."
 
         Task {
-            // Merge all audio chunks
-            let studentAudio = mergeKotlinFloatArrays(collectedAudio)
+            // Use collected audio samples directly
+            let studentAudio = collectedAudio
 
-            // Extract pitch contour from student audio
-            let studentContour = PitchContour.fromAudio(audioSamples: studentAudio, sampleRate: 16000)
+            // Extract pitch contour from student audio using ContourExtractor
+            let extractor = CalibraPitch.createContourExtractor()
+            let studentContour = extractor.extract(audio: studentAudio)
+            extractor.release()
 
             // Evaluate using CalibraMelodyEval with selected backend
             let evalResult = CalibraMelodyEval.evaluate(
@@ -412,18 +410,4 @@ struct MelodyEvalSection: View {
         recorder = nil
     }
 
-    // MARK: - Helpers
-
-    private func mergeKotlinFloatArrays(_ arrays: [KotlinFloatArray]) -> KotlinFloatArray {
-        let totalSize = arrays.reduce(0) { $0 + Int($1.size) }
-        let result = KotlinFloatArray(size: Int32(totalSize))
-        var offset: Int32 = 0
-        for arr in arrays {
-            for i in 0..<arr.size {
-                result.set(index: offset + i, value: arr.get(index: i))
-            }
-            offset += arr.size
-        }
-        return result
-    }
 }

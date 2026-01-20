@@ -34,19 +34,16 @@ struct SpeakingPitchDetectorSection: View {
     @State private var status = "Speak naturally to detect your speaking pitch"
 
     @State private var recorder: SonixRecorder?
-    @State private var collectedChunks: [KotlinFloatArray] = []
+    @State private var collectedChunks: [Float] = []
 
     // Calibra public API
-    @State private var pitch: CalibraPitch?
+    @State private var pitch: CalibraPitch.Detector?
 
     // Offline analysis state
     @State private var offlinePitchHz: Float = 0.0
     @State private var offlinePitchNote = ""
     @State private var offlineGender: Gender?
     @State private var isAnalyzingOffline = false
-
-    // Backend selection
-    @State private var selectedBackend: CalibraSpeakingPitch.Backend = .kotlin
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -195,7 +192,7 @@ struct SpeakingPitchDetectorSection: View {
         guard pitch == nil else { return }
 
         // Create pitch detector using Calibra public API
-        pitch = CalibraPitch.create()
+        pitch = CalibraPitch.createDetector()
 
         // Create recorder using Sonix (no output file needed, just for buffer access)
         let tempPath = FileManager.default.temporaryDirectory
@@ -232,13 +229,13 @@ struct SpeakingPitchDetectorSection: View {
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)
                 let samples16k = SonixResampler.resample(
-                    samples: buffer.floatSamples,
+                    samples: buffer.samples,
                     fromRate: hwRate,
                     toRate: 16000
                 )
 
                 // Calculate amplitude using Calibra
-                let calculatedRms = pitch?.getAmplitude(samples: samples16k) ?? 0.0
+                let calculatedRms = pitch?.getAmplitude(buffer: samples16k) ?? 0.0
 
                 await MainActor.run {
                     currentLevel = calculatedRms
@@ -252,8 +249,8 @@ struct SpeakingPitchDetectorSection: View {
                         }
 
                     case .countdown:
-                        // Collect resampled samples as KotlinFloatArray chunks (zero-copy)
-                        collectedChunks.append(samples16k)
+                        // Collect resampled samples
+                        collectedChunks.append(contentsOf: samples16k)
 
                     default:
                         break
@@ -293,8 +290,8 @@ struct SpeakingPitchDetectorSection: View {
             return
         }
 
-        // Merge all collected chunks into a single KotlinFloatArray
-        let allSamples = mergeKotlinFloatArrays(collectedChunks)
+        // Use collected audio directly (already merged as [Float])
+        let allSamples = collectedChunks
 
         // Use CalibraSpeakingPitch public API for speaking pitch detection
         // allSamples is already resampled to 16kHz
@@ -315,20 +312,6 @@ struct SpeakingPitchDetectorSection: View {
         detectionState = .complete
     }
 
-    /// Merge multiple KotlinFloatArray chunks into a single array
-    private func mergeKotlinFloatArrays(_ arrays: [KotlinFloatArray]) -> KotlinFloatArray {
-        let totalSize = arrays.reduce(0) { $0 + Int($1.size) }
-        let result = KotlinFloatArray(size: Int32(totalSize))
-        var offset: Int32 = 0
-        for arr in arrays {
-            for i in 0..<arr.size {
-                result.set(index: offset + i, value: arr.get(index: i))
-            }
-            offset += arr.size
-        }
-        return result
-    }
-
     private func stopDetection() {
         recorder?.stop()
         detectionState = .idle
@@ -345,17 +328,6 @@ struct SpeakingPitchDetectorSection: View {
             Text("Analyze speaking pitch from audio file")
                 .font(.caption)
                 .foregroundColor(.secondary)
-
-            // Backend selection
-            HStack {
-                Text("Backend:")
-                    .font(.caption)
-                Picker("Backend", selection: $selectedBackend) {
-                    Text("Kotlin").tag(CalibraSpeakingPitch.Backend.kotlin)
-                    Text("Native (C++)").tag(CalibraSpeakingPitch.Backend.native)
-                }
-                .pickerStyle(.segmented)
-            }
 
             Button("Analyze Alankaar Voice") {
                 analyzeOffline()
@@ -458,15 +430,15 @@ struct SpeakingPitchDetectorSection: View {
                 return
             }
 
-            // Resample to 16kHz for Calibra APIs (zero-copy KotlinFloatArray)
+            // Resample to 16kHz for Calibra APIs
             let samples16k = SonixResampler.resample(
-                samples: audioData.floatSamples,
+                samples: audioData.samples,
                 fromRate: Int(audioData.sampleRate),
                 toRate: 16000
             )
 
-            // Detect speaking pitch with selected backend
-            let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: samples16k, backend: selectedBackend)
+            // Detect speaking pitch
+            let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: samples16k)
 
             await MainActor.run {
                 if pitchHz > 0 {
