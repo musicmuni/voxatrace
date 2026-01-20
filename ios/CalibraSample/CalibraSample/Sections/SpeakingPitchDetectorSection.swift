@@ -34,10 +34,19 @@ struct SpeakingPitchDetectorSection: View {
     @State private var status = "Speak naturally to detect your speaking pitch"
 
     @State private var recorder: SonixRecorder?
-    @State private var collectedSamples: [Float] = []
+    @State private var collectedChunks: [KotlinFloatArray] = []
 
     // Calibra public API
     @State private var pitch: CalibraPitch?
+
+    // Offline analysis state
+    @State private var offlinePitchHz: Float = 0.0
+    @State private var offlinePitchNote = ""
+    @State private var offlineGender: Gender?
+    @State private var isAnalyzingOffline = false
+
+    // Backend selection
+    @State private var selectedBackend: CalibraSpeakingPitch.Backend = .kotlin
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -68,6 +77,12 @@ struct SpeakingPitchDetectorSection: View {
             Text("Speak naturally for a few seconds. Your natural speaking pitch will be detected.")
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            Divider()
+                .padding(.vertical, 8)
+
+            // Offline Analysis Section
+            offlineAnalysisSection
         }
         .onDisappear {
             stopDetection()
@@ -207,7 +222,7 @@ struct SpeakingPitchDetectorSection: View {
         detectedPitchHz = 0
         detectedPitchNote = ""
         detectedGender = nil
-        collectedSamples = []
+        collectedChunks = []
         status = "Say something..."
 
         // Collect audio buffers from Sonix
@@ -237,8 +252,8 @@ struct SpeakingPitchDetectorSection: View {
                         }
 
                     case .countdown:
-                        // Collect resampled samples (already 16kHz)
-                        collectedSamples.append(contentsOf: samples16k)
+                        // Collect resampled samples as KotlinFloatArray chunks (zero-copy)
+                        collectedChunks.append(samples16k)
 
                     default:
                         break
@@ -272,15 +287,18 @@ struct SpeakingPitchDetectorSection: View {
     }
 
     private func processAudio() {
-        guard !collectedSamples.isEmpty else {
+        guard !collectedChunks.isEmpty else {
             status = "No audio collected. Try again."
             detectionState = .complete
             return
         }
 
+        // Merge all collected chunks into a single KotlinFloatArray
+        let allSamples = mergeKotlinFloatArrays(collectedChunks)
+
         // Use CalibraSpeakingPitch public API for speaking pitch detection
-        // collectedSamples is already resampled to 16kHz
-        let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: collectedSamples)
+        // allSamples is already resampled to 16kHz
+        let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: allSamples)
 
         if pitchHz > 0 {
             detectedPitchHz = pitchHz
@@ -297,9 +315,167 @@ struct SpeakingPitchDetectorSection: View {
         detectionState = .complete
     }
 
+    /// Merge multiple KotlinFloatArray chunks into a single array
+    private func mergeKotlinFloatArrays(_ arrays: [KotlinFloatArray]) -> KotlinFloatArray {
+        let totalSize = arrays.reduce(0) { $0 + Int($1.size) }
+        let result = KotlinFloatArray(size: Int32(totalSize))
+        var offset: Int32 = 0
+        for arr in arrays {
+            for i in 0..<arr.size {
+                result.set(index: offset + i, value: arr.get(index: i))
+            }
+            offset += arr.size
+        }
+        return result
+    }
+
     private func stopDetection() {
         recorder?.stop()
         detectionState = .idle
         status = "Speak naturally to detect your speaking pitch"
+    }
+
+    // MARK: - Offline Analysis
+
+    private var offlineAnalysisSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Offline Analysis")
+                .font(.headline)
+
+            Text("Analyze speaking pitch from audio file")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            // Backend selection
+            HStack {
+                Text("Backend:")
+                    .font(.caption)
+                Picker("Backend", selection: $selectedBackend) {
+                    Text("Kotlin").tag(CalibraSpeakingPitch.Backend.kotlin)
+                    Text("Native (C++)").tag(CalibraSpeakingPitch.Backend.native)
+                }
+                .pickerStyle(.segmented)
+            }
+
+            Button("Analyze Alankaar Voice") {
+                analyzeOffline()
+            }
+            .buttonStyle(.bordered)
+            .disabled(isAnalyzingOffline)
+
+            if isAnalyzingOffline {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            }
+
+            if offlinePitchHz > 0 {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Offline Result")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Detected Note")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(offlinePitchNote)
+                                .font(.title)
+                                .fontWeight(.bold)
+                        }
+
+                        Spacer()
+
+                        VStack(alignment: .trailing) {
+                            Text("Frequency")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(String(format: "%.1f Hz", offlinePitchHz))
+                                .font(.title2)
+                        }
+
+                        Spacer()
+
+                        if let gender = offlineGender {
+                            VStack(alignment: .trailing) {
+                                Text("Voice Type")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(gender == .female ? "FEMALE" : "MALE")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(gender == .female ? Color.pink : Color.blue)
+                                    .cornerRadius(4)
+                            }
+                        }
+                    }
+                }
+                .padding(12)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(8)
+            }
+
+            // API Info
+            VStack(alignment: .leading, spacing: 4) {
+                Text("APIs Demonstrated:")
+                    .font(.caption)
+                    .fontWeight(.medium)
+
+                Text("• SonixDecoder.decode() - Load audio from file")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("• SonixResampler.resample() - Resample to 16kHz")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("• CalibraSpeakingPitch.detectFromAudio() - Detect speaking pitch")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(8)
+            .background(Color(.tertiarySystemBackground))
+            .cornerRadius(6)
+        }
+    }
+
+    private func analyzeOffline() {
+        isAnalyzingOffline = true
+        offlinePitchHz = 0
+        offlinePitchNote = ""
+        offlineGender = nil
+
+        Task {
+            // Load audio from bundle
+            guard let audioURL = Bundle.main.url(forResource: "Alankaar 01_voice", withExtension: "m4a"),
+                  let audioData = SonixDecoder.decode(path: audioURL.path) else {
+                await MainActor.run {
+                    isAnalyzingOffline = false
+                }
+                return
+            }
+
+            // Resample to 16kHz for Calibra APIs (zero-copy KotlinFloatArray)
+            let samples16k = SonixResampler.resample(
+                samples: audioData.floatSamples,
+                fromRate: Int(audioData.sampleRate),
+                toRate: 16000
+            )
+
+            // Detect speaking pitch with selected backend
+            let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: samples16k, backend: selectedBackend)
+
+            await MainActor.run {
+                if pitchHz > 0 {
+                    offlinePitchHz = pitchHz
+                    offlinePitchNote = MusicUtils.getMidiNoteName(pitchHz)
+                    offlineGender = pitchHz >= FEMALE_THRESHOLD_HZ ? .female : .male
+                }
+                isAnalyzingOffline = false
+            }
+        }
     }
 }

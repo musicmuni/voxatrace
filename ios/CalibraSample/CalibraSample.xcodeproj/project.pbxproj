@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		9F4282722EFB20A30013368A /* vozos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* vozos.xcframework */; };
 		9F4282732EFB20A30013368A /* vozos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* vozos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F7076522EFE6669006A4276 /* calibra.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9F70764F2EFE65C4006A4276 /* calibra.bundle */; };
+		9F7076522EFE6669006A4276 /* vozos.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9F70764F2EFE65C4006A4276 /* vozos.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,7 +28,7 @@
 
 /* Begin PBXFileReference section */
 		9F4282712EFB20A30013368A /* vozos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = vozos.xcframework; path = Frameworks/vozos.xcframework; sourceTree = "<group>"; };
-		9F70764F2EFE65C4006A4276 /* calibra.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = calibra.bundle; path = Frameworks/calibra.bundle; sourceTree = "<group>"; };
+		9F70764F2EFE65C4006A4276 /* vozos.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = vozos.bundle; path = Frameworks/vozos.bundle; sourceTree = "<group>"; };
 		9FC6986A2EF2CEA400FE73BF /* CalibraSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalibraSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -55,7 +55,7 @@
 		9F4282702EFB20A30013368A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F70764F2EFE65C4006A4276 /* calibra.bundle */,
+				9F70764F2EFE65C4006A4276 /* vozos.bundle */,
 				9F4282712EFB20A30013368A /* vozos.xcframework */,
 			);
 			name = Frameworks;
@@ -143,7 +143,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F7076522EFE6669006A4276 /* calibra.bundle in Resources */,
+				9F7076522EFE6669006A4276 /* vozos.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +281,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = W37Q295UQ3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
@@ -302,6 +303,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-Wl,-w";
 				PRODUCT_BUNDLE_IDENTIFIER = com.musicmuni.CalibraSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -325,6 +327,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = W37Q295UQ3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
@@ -346,6 +349,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-Wl,-w";
 				PRODUCT_BUNDLE_IDENTIFIER = com.musicmuni.CalibraSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
