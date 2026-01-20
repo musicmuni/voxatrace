@@ -37,10 +37,10 @@ struct PhrasePair {
     let teacherId: Int  // For evaluator reference
 }
 
-/// Singafter Practice Section - for lessons like Chalan where teacher sings first, then student repeats.
+/// Singafter Live Eval Section - for lessons like Chalan where teacher sings first, then student repeats.
 ///
 /// Demonstrates:
-/// - `CalibraRealtimeSession` for call-and-response singing evaluation
+/// - `CalibraLiveEval` for call-and-response singing evaluation
 /// - `SonixRecorder` for audio capture
 ///
 /// Flow:
@@ -50,7 +50,7 @@ struct PhrasePair {
 /// 4. When teacher segment ends, start recording student
 /// 5. Capture user's pitch during student segment
 /// 6. Evaluate and show score when student segment ends
-struct SingafterPracticeSection: View {
+struct SingafterLiveEvalSection: View {
     // Lesson state
     @State private var lessonLoaded = false
     @State private var phrasePairs: [PhrasePair] = []
@@ -70,8 +70,8 @@ struct SingafterPracticeSection: View {
     // Sonix recorder
     @State private var recorder: SonixRecorder?
 
-    // Calibra new API - CalibraRealtimeSession
-    @State private var session: CalibraRealtimeSession?
+    // Calibra new API - CalibraLiveEval
+    @State private var session: CalibraLiveEval?
     @State private var pitchDetector: CalibraPitch?
 
     @State private var currentPitch: Float = 0.0
@@ -82,6 +82,9 @@ struct SingafterPracticeSection: View {
     @State private var practicePhase: SingafterPhase = .idle
     @State private var status = "Ready"
     @State private var feedbackMessage = ""
+
+    // Backend selection
+    @State private var selectedBackend: LiveEvalBackend = .kotlin
 
     // Timer for checking phase transitions
     @State private var timer: Timer?
@@ -98,6 +101,17 @@ struct SingafterPracticeSection: View {
                 .foregroundColor(.secondary)
 
             if !lessonLoaded {
+                // Backend selection before loading
+                HStack {
+                    Text("Backend:")
+                        .font(.caption)
+                    Picker("Backend", selection: $selectedBackend) {
+                        Text("Kotlin").tag(LiveEvalBackend.kotlin)
+                        Text("Native (C++)").tag(LiveEvalBackend.native)
+                    }
+                    .pickerStyle(.segmented)
+                }
+
                 Button("Load Lesson") {
                     loadLesson()
                 }
@@ -340,12 +354,23 @@ struct SingafterPracticeSection: View {
                     keyHz: 196.0  // G3, common for Indian classical
                 )
 
-                // Create session with config (manual phase control)
-                let config = SessionConfig.manual
-                session = CalibraRealtimeSession.create(reference: reference, config: config)
+                // Create session with config (manual phase control + selected backend)
+                let config = SessionConfig(
+                    autoAdvance: false,
+                    resultAggregation: .latest,
+                    processingRate: 16000,
+                    pitchTolerance: 0.15,
+                    frameSize: 1024,
+                    hopSize: 128,
+                    studentKeyHz: 0,
+                    yinMinPitch: -1,
+                    yinMaxPitch: -1,
+                    backend: selectedBackend
+                )
+                session = CalibraLiveEval.create(reference: reference, config: config)
 
-                // Prepare session
-                session?.prepare()
+                // Prepare session (precomputes reference features on background thread)
+                try await session?.prepare()
             } else {
                 await MainActor.run {
                     status = "Failed to decode reference audio"

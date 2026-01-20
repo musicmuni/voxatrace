@@ -7,10 +7,10 @@ enum PracticeState {
     case evaluated
 }
 
-/// Singalong Practice Section - for lessons like Alankaar where user sings along with teacher.
+/// Singalong Live Eval Section - for lessons like Alankaar where user sings along with teacher.
 ///
 /// Demonstrates:
-/// - `CalibraRealtimeSession` for real-time singing evaluation
+/// - `CalibraLiveEval` for real-time singing evaluation
 /// - `SonixRecorder` for audio capture
 /// - `SonixPlayer` for reference audio playback
 ///
@@ -20,7 +20,7 @@ enum PracticeState {
 /// 3. Play reference audio while user sings along
 /// 4. Capture user's pitch in real-time
 /// 5. Evaluate and show score after segment ends
-struct SingalongPracticeSection: View {
+struct SingalongLiveEvalSection: View {
     // Lesson state
     @State private var lessonLoaded = false
     @State private var currentSegmentIndex = 0
@@ -39,8 +39,8 @@ struct SingalongPracticeSection: View {
     // Sonix recorder
     @State private var recorder: SonixRecorder?
 
-    // Calibra new API - CalibraRealtimeSession
-    @State private var session: CalibraRealtimeSession?
+    // Calibra new API - CalibraLiveEval
+    @State private var session: CalibraLiveEval?
     @State private var pitchDetector: CalibraPitch?
 
     @State private var currentPitch: Float = 0.0
@@ -51,6 +51,9 @@ struct SingalongPracticeSection: View {
     @State private var practiceState: PracticeState = .idle
     @State private var status = "Ready"
     @State private var feedbackMessage = ""
+
+    // Backend selection
+    @State private var selectedBackend: LiveEvalBackend = .kotlin
 
     // Timer for checking segment end
     @State private var timer: Timer?
@@ -66,6 +69,17 @@ struct SingalongPracticeSection: View {
                 .foregroundColor(.secondary)
 
             if !lessonLoaded {
+                // Backend selection before loading
+                HStack {
+                    Text("Backend:")
+                        .font(.caption)
+                    Picker("Backend", selection: $selectedBackend) {
+                        Text("Kotlin").tag(LiveEvalBackend.kotlin)
+                        Text("Native (C++)").tag(LiveEvalBackend.native)
+                    }
+                    .pickerStyle(.segmented)
+                }
+
                 Button("Load Lesson") {
                     loadLesson()
                 }
@@ -213,16 +227,23 @@ struct SingalongPracticeSection: View {
     }
 
     private func loadLesson() {
+        let totalStart = CFAbsoluteTimeGetCurrent()
+
+        let setupStart = CFAbsoluteTimeGetCurrent()
         setupAudioIfNeeded()
+        print("[TIMING] setupAudioIfNeeded: \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - setupStart))s")
+
         status = "Loading lesson..."
 
         // Load and parse trans file from bundle
+        let parseStart = CFAbsoluteTimeGetCurrent()
         guard let transURL = Bundle.main.url(forResource: lessonName, withExtension: "trans"),
               let transContent = try? String(contentsOf: transURL),
               let transData = Parser.parseTransString(content: transContent) else {
             status = "Failed to load lesson - trans file not found"
             return
         }
+        print("[TIMING] Parse .trans file: \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - parseStart))s")
 
         // Convert TransData segments to Calibra Segment model
         let segments: [Segment] = transData.segments.enumerated().map { (index, seg) in
@@ -233,6 +254,7 @@ struct SingalongPracticeSection: View {
                 lyrics: seg.lyrics
             )
         }
+        print("[TIMING] Segment count: \(segments.count)")
 
         // Load audio file from bundle (m4a format)
         guard let audioURL = Bundle.main.url(forResource: lessonName, withExtension: "m4a") else {
@@ -242,8 +264,10 @@ struct SingalongPracticeSection: View {
 
         // Load player using Sonix (async)
         Task {
+            let playerStart = CFAbsoluteTimeGetCurrent()
             do {
                 player = try await SonixPlayer.create(source: audioURL.path)
+                print("[TIMING] SonixPlayer.create (includes decode #1): \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - playerStart))s")
 
                 // Observe current time for segment end detection
                 playerObserverTask = player?.observeCurrentTime { timeMs in
@@ -256,31 +280,72 @@ struct SingalongPracticeSection: View {
                 return
             }
 
+            // Load pre-computed pitch contour if available (fast path)
+            let pitchStart = CFAbsoluteTimeGetCurrent()
+            var pitchContour: PitchContour? = nil
+            if let pitchURL = Bundle.main.url(forResource: lessonName, withExtension: "pitchPP"),
+               let pitchContent = try? String(contentsOf: pitchURL),
+               let pitchData = Parser.parsePitchString(content: pitchContent) {
+                // Convert PitchData (Sonix) to PitchContour (Calibra)
+                pitchContour = PitchContour.fromArrays(
+                    times: pitchData.__times,
+                    pitches: pitchData.__pitchesHz
+                )
+                print("[TIMING] Load .pitchPP (\(pitchData.count) samples): \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - pitchStart))s")
+            } else {
+                print("[TIMING] No .pitchPP file found, will use slow path (YIN extraction)")
+            }
+
             // Decode reference audio using Sonix and create session with new API
+            // SonixDecoder.decode() resamples to 16kHz by default
+            let decodeStart = CFAbsoluteTimeGetCurrent()
             if let audioData = SonixDecoder.decode(path: audioURL.path) {
+                print("[TIMING] SonixDecoder.decode (decode #2 + resample to 16kHz): \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - decodeStart))s")
                 print("[DEBUG] Decoded audio: \(audioData.floatSamples.size) samples at \(audioData.sampleRate) Hz")
 
-                // Create SingingReference using new API
-                // Resampling is handled internally by CalibraRealtimeSession
+                // Create SingingReference with decoded audio and optional pitch contour
+                let refStart = CFAbsoluteTimeGetCurrent()
                 let reference = SingingReference.fromAudio(
                     samples: audioData.floatSamples,
-                    sampleRate: audioData.sampleRate,
+                    sampleRate: Int32(audioData.sampleRate),
                     segments: segments,
-                    keyHz: 196.0  // G3, common for Indian classical
+                    keyHz: 196.0,  // G3, common for Indian classical
+                    pitchContour: pitchContour
                 )
+                print("[TIMING] SingingReference.fromAudio: \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - refStart))s")
 
-                // Create session with config (manual segment control)
-                let config = SessionConfig.manual
-                session = CalibraRealtimeSession.create(reference: reference, config: config)
+                // Create session with config (manual segment control + selected backend)
+                let sessionCreateStart = CFAbsoluteTimeGetCurrent()
+                let config = SessionConfig(
+                    autoAdvance: false,
+                    resultAggregation: .latest,
+                    processingRate: 16000,
+                    pitchTolerance: 0.15,
+                    frameSize: 1024,
+                    hopSize: 128,
+                    studentKeyHz: 0,
+                    yinMinPitch: -1,
+                    yinMaxPitch: -1,
+                    backend: selectedBackend
+                )
+                session = CalibraLiveEval.create(reference: reference, config: config)
+                print("[TIMING] CalibraLiveEval.create: \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - sessionCreateStart))s")
 
-                // Prepare session (precomputes reference features)
-                session?.prepare()
+                // Prepare session (precomputes reference features on background thread)
+                let prepareStart = CFAbsoluteTimeGetCurrent()
+                try await session?.prepare()
+                print("[TIMING] session.prepare (precompute ALL \(segments.count) segments): \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - prepareStart))s")
             } else {
                 await MainActor.run {
                     status = "Failed to decode reference audio"
                 }
                 return
             }
+
+            let totalTime = CFAbsoluteTimeGetCurrent() - totalStart
+            print("[TIMING] ========================================")
+            print("[TIMING] TOTAL loadLesson time: \(String(format: "%.3f", totalTime))s")
+            print("[TIMING] ========================================")
 
             await MainActor.run {
                 lessonLoaded = true
@@ -309,7 +374,7 @@ struct SingalongPracticeSection: View {
         player.play()
         isPlaying = true
 
-        // Begin segment using new CalibraRealtimeSession API
+        // Begin segment using new CalibraLiveEval API
         session.beginSegment(index: Int32(currentSegmentIndex))
 
         // Start recording

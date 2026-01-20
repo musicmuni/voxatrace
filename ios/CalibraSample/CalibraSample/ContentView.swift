@@ -27,14 +27,16 @@ struct MenuView: View {
 
     private let sections = [
         ("Realtime Pitch", "waveform", "Real-time pitch detection"),
+        ("Pitch Processor", "gauge", "Kotlin vs Native benchmark"),
         ("VAD", "mic.fill", "Voice activity detection"),
         ("Breath Monitor", "lungs.fill", "Measure breath duration"),
         ("Vocal Range", "arrow.up.and.down", "Detect your vocal range"),
         ("Speaking Pitch", "tuningfork", "Detect your speaking pitch"),
-        ("Singalong", "music.note.list", "Sing along practice"),
-        ("Singafter", "repeat", "Call and response practice"),
-        ("Effects", "slider.horizontal.3", "Audio effects"),
-        ("Offline Analysis", "doc.text.magnifyingglass", "Analyze audio files")
+        ("Singalong Live", "music.note.list", "Sing along evaluation"),
+        ("Singafter Live", "repeat", "Call and response evaluation"),
+        ("Melody Eval", "waveform.path", "Offline melody evaluation"),
+        ("Note Eval", "list.number", "Note/exercise evaluation"),
+        ("Effects", "slider.horizontal.3", "Audio effects")
     ]
 
     init(onSelect: @escaping (String) -> Void) {
@@ -117,6 +119,9 @@ struct DetailView: View {
         case "Realtime Pitch":
             let _ = logTiming("Creating RealtimePitchSection")
             RealtimePitchSection()
+        case "Pitch Processor":
+            let _ = logTiming("Creating PitchProcessorSection")
+            PitchProcessorSection()
         case "VAD":
             let _ = logTiming("Creating VADSection")
             VADSection()
@@ -129,18 +134,21 @@ struct DetailView: View {
         case "Speaking Pitch":
             let _ = logTiming("Creating SpeakingPitchDetectorSection")
             SpeakingPitchDetectorSection()
-        case "Singalong":
-            let _ = logTiming("Creating SingalongPracticeSection")
-            SingalongPracticeSection()
-        case "Singafter":
-            let _ = logTiming("Creating SingafterPracticeSection")
-            SingafterPracticeSection()
+        case "Singalong Live":
+            let _ = logTiming("Creating SingalongLiveEvalSection")
+            SingalongLiveEvalSection()
+        case "Singafter Live":
+            let _ = logTiming("Creating SingafterLiveEvalSection")
+            SingafterLiveEvalSection()
+        case "Melody Eval":
+            let _ = logTiming("Creating MelodyEvalSection")
+            MelodyEvalSection()
+        case "Note Eval":
+            let _ = logTiming("Creating NoteEvalSection")
+            NoteEvalSection()
         case "Effects":
             let _ = logTiming("Creating EffectsSection")
             EffectsSection()
-        case "Offline Analysis":
-            let _ = logTiming("Creating OfflineAnalysisSection")
-            OfflineAnalysisSection()
         default:
             Text("Unknown section")
         }

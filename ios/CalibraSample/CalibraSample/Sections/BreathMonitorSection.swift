@@ -32,6 +32,15 @@ struct BreathMonitorSection: View {
     @State private var startTimeMs: Int64 = 0
     @State private var lastVoiceTimeMs: Int64 = 0
 
+    // Offline analysis state
+    @State private var offlineBreathCapacity: Float = 0.0
+    @State private var offlineVoicedTime: Float = 0.0
+    @State private var offlineHasEnoughData = false
+    @State private var isAnalyzingOffline = false
+
+    // Backend selection
+    @State private var selectedBackend: CalibraBreath.Backend = .kotlin
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Breath Monitor")
@@ -74,6 +83,12 @@ struct BreathMonitorSection: View {
 
             // Control buttons
             controlButtons
+
+            Divider()
+                .padding(.vertical, 8)
+
+            // Offline Analysis Section
+            offlineAnalysisSection
         }
         .onDisappear {
             stopMonitoring()
@@ -274,6 +289,155 @@ struct BreathMonitorSection: View {
             return String(format: "%d:%05.2f", mins, secs)
         } else {
             return String(format: "%.2f", secs)
+        }
+    }
+
+    // MARK: - Offline Analysis
+
+    private var offlineAnalysisSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Offline Breath Analysis")
+                .font(.headline)
+
+            Text("Analyze breath capacity from audio file")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            // Backend selection
+            HStack {
+                Text("Backend:")
+                    .font(.caption)
+                Picker("Backend", selection: $selectedBackend) {
+                    Text("Kotlin").tag(CalibraBreath.Backend.kotlin)
+                    Text("Native (C++)").tag(CalibraBreath.Backend.native)
+                }
+                .pickerStyle(.segmented)
+            }
+
+            Button("Analyze Alankaar Voice") {
+                analyzeOffline()
+            }
+            .buttonStyle(.bordered)
+            .disabled(isAnalyzingOffline)
+
+            if isAnalyzingOffline {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            }
+
+            if offlineVoicedTime > 0 {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Offline Result")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Breath Capacity")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(formatTime(offlineBreathCapacity))
+                                .font(.title2)
+                                .fontWeight(.bold)
+                        }
+
+                        Spacer()
+
+                        VStack(alignment: .center) {
+                            Text("Voiced Time")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(formatTime(offlineVoicedTime))
+                                .font(.title2)
+                        }
+
+                        Spacer()
+
+                        VStack(alignment: .trailing) {
+                            Text("Enough Data")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(offlineHasEnoughData ? "Yes" : "No")
+                                .font(.title2)
+                                .foregroundColor(offlineHasEnoughData ? .green : .red)
+                        }
+                    }
+                }
+                .padding(12)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(8)
+            }
+
+            // API Info
+            VStack(alignment: .leading, spacing: 4) {
+                Text("APIs Demonstrated:")
+                    .font(.caption)
+                    .fontWeight(.medium)
+
+                Text("• SonixDecoder.decode() - Load audio from file")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("• PitchContour.fromAudio() - Extract pitch contour")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("• CalibraBreath.hasEnoughData() - Check data sufficiency")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("• CalibraBreath.computeCapacity() - Compute breath capacity")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("• CalibraBreath.getCumulativeVoicedTime() - Get voiced time")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(8)
+            .background(Color(.tertiarySystemBackground))
+            .cornerRadius(6)
+        }
+    }
+
+    private func analyzeOffline() {
+        isAnalyzingOffline = true
+        offlineBreathCapacity = 0
+        offlineVoicedTime = 0
+        offlineHasEnoughData = false
+
+        Task {
+            // Load audio from bundle
+            guard let audioURL = Bundle.main.url(forResource: "Alankaar 01_voice", withExtension: "m4a"),
+                  let audioData = SonixDecoder.decode(path: audioURL.path) else {
+                await MainActor.run {
+                    isAnalyzingOffline = false
+                }
+                return
+            }
+
+            // Resample to 16kHz for Calibra APIs
+            let samples16k = SonixResampler.resample(
+                samples: audioData.floatSamples,
+                fromRate: Int(audioData.sampleRate),
+                toRate: 16000
+            )
+
+            // Extract pitch contour using PitchContour.fromAudio()
+            // This handles chunking internally - no manual array manipulation needed
+            let contour = PitchContour.fromAudio(samples: samples16k)
+
+            // Analyze breath using CalibraBreath with selected backend
+            let hasEnough = CalibraBreath.hasEnoughData(times: contour.times, pitchesHz: contour.pitchesHz, backend: selectedBackend)
+            let capacity = hasEnough ? CalibraBreath.computeCapacity(times: contour.times, pitchesHz: contour.pitchesHz, backend: selectedBackend) : 0
+            let voicedTime = CalibraBreath.getCumulativeVoicedTime(times: contour.times, pitchesHz: contour.pitchesHz, backend: selectedBackend)
+
+            await MainActor.run {
+                offlineHasEnoughData = hasEnough
+                offlineBreathCapacity = capacity
+                offlineVoicedTime = voicedTime
+                isAnalyzingOffline = false
+            }
         }
     }
 }
