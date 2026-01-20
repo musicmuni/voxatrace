@@ -1,34 +1,28 @@
 import SwiftUI
 import vozos
 
-/// Pitch Processor Benchmark Section using Calibra public API.
+/// Pitch Processor Section using Calibra public API.
 ///
 /// Demonstrates:
-/// - `CalibraPitchProcessor` for backend comparison (Kotlin vs Native)
-/// - Benchmarking both implementations with timing
+/// - `CalibraPitch.PostProcess` for batch pitch processing
 /// - Loading pitch data from .pitchPP files
+/// - Smoothing, octave correction, and median filtering
 struct PitchProcessorSection: View {
-    @State private var pitchData: KotlinFloatArray?
+    @State private var pitchData: [Float]?
     @State private var pitchCount: Int = 0
     @State private var voicedCount: Int = 0
 
-    // Benchmark results
-    @State private var isRunningBenchmark = false
-    @State private var benchmarkResult: CalibraPitchProcessor.BenchmarkResult?
-
-    // Individual processing results
-    @State private var kotlinTimeMs: Int64 = 0
-    @State private var nativeTimeMs: Int64 = 0
-    @State private var kotlinProcessedCount: Int = 0
-    @State private var nativeProcessedCount: Int = 0
-    @State private var matchPercent: Float = 0.0
+    // Processing results
+    @State private var isProcessing = false
+    @State private var processedCount: Int = 0
+    @State private var processingTimeMs: Int64 = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Pitch Processor Benchmark")
+            Text("Pitch Processor")
                 .font(.headline)
 
-            Text("Compare Kotlin vs Native (C++) implementations")
+            Text("Offline pitch processing with smoothing and octave correction")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -39,14 +33,14 @@ struct PitchProcessorSection: View {
                 Divider()
                     .padding(.vertical, 8)
 
-                // Benchmark section
-                benchmarkSection
+                // Processing section
+                processingSection
 
                 Divider()
                     .padding(.vertical, 8)
 
                 // Results section
-                if benchmarkResult != nil {
+                if processedCount > 0 {
                     resultsSection
                 }
             }
@@ -111,33 +105,27 @@ struct PitchProcessorSection: View {
             }
         }
 
-        // Convert to KotlinFloatArray
-        let kotlinArray = KotlinFloatArray(size: Int32(pitches.count))
-        for (i, pitch) in pitches.enumerated() {
-            kotlinArray.set(index: Int32(i), value: pitch)
-        }
-
-        pitchData = kotlinArray
+        pitchData = pitches
         pitchCount = pitches.count
         voicedCount = voiced
     }
 
-    // MARK: - Benchmark
+    // MARK: - Processing
 
-    private var benchmarkSection: some View {
+    private var processingSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Benchmark")
+            Text("Process Pitch Data")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
             HStack {
-                Button("Run Benchmark (100 iterations)") {
-                    runBenchmark()
+                Button("Run Processing") {
+                    runProcessing()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(isRunningBenchmark || pitchData == nil)
+                .disabled(isProcessing || pitchData == nil)
 
-                if isRunningBenchmark {
+                if isProcessing {
                     ProgressView()
                         .padding(.leading, 8)
                 }
@@ -145,22 +133,27 @@ struct PitchProcessorSection: View {
         }
     }
 
-    private func runBenchmark() {
+    private func runProcessing() {
         guard let data = pitchData else { return }
 
-        isRunningBenchmark = true
-        benchmarkResult = nil
+        isProcessing = true
+        processedCount = 0
 
         Task {
-            // Run benchmark on background thread
-            // Note: Kotlin object methods are accessed via .shared in Swift
+            let startTime = CFAbsoluteTimeGetCurrent()
+
+            // Run processing on background thread
             let result = await Task.detached {
-                CalibraPitchProcessor.shared.benchmark(pitchesHz: data, iterations: 100)
+                CalibraPitch.PostProcess.process(pitchesHz: data)
             }.value
 
+            let endTime = CFAbsoluteTimeGetCurrent()
+            let timeMs = Int64((endTime - startTime) * 1000)
+
             await MainActor.run {
-                benchmarkResult = result
-                isRunningBenchmark = false
+                processedCount = result.count
+                processingTimeMs = timeMs
+                isProcessing = false
             }
         }
     }
@@ -168,107 +161,47 @@ struct PitchProcessorSection: View {
     // MARK: - Results
 
     private var resultsSection: some View {
-        guard let result = benchmarkResult else {
-            return AnyView(EmptyView())
-        }
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Processing Results")
+                .font(.subheadline)
+                .fontWeight(.semibold)
 
-        return AnyView(
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Benchmark Results")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-
-                // Timing comparison
-                HStack(spacing: 16) {
-                    // Kotlin results
-                    VStack {
-                        Text("Kotlin")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(String(format: "%.2f ms", result.kotlinAvgMs))
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.orange)
-                        Text("avg per iteration")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(8)
-
-                    // Native results
-                    VStack {
-                        Text("Native (C++)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(String(format: "%.2f ms", result.nativeAvgMs))
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.blue)
-                        Text("avg per iteration")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(8)
-                }
-
-                // Speed ratio
-                HStack {
-                    Text("Speed Ratio:")
-                        .font(.subheadline)
-                    Spacer()
-                    Text(String(format: "%.2fx", result.speedRatio))
-                        .font(.headline)
-                        .foregroundColor(result.speedRatio <= 3.0 ? .green : .orange)
-                    Text(result.speedRatio <= 3.0 ? "(Acceptable)" : "(Needs optimization)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(8)
-
-                // Match percentage
-                HStack {
-                    Text("Output Match:")
-                        .font(.subheadline)
-                    Spacer()
-                    Text(String(format: "%.1f%%", result.matchPercent))
-                        .font(.headline)
-                        .foregroundColor(result.matchPercent >= 99.0 ? .green : .red)
-                    Text(result.matchPercent >= 99.0 ? "(Pass)" : "(FAIL)")
-                        .font(.caption)
-                        .foregroundColor(result.matchPercent >= 99.0 ? .green : .red)
-                }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(8)
-
-                // Summary
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Summary")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                    Text("• Input: \(result.inputSize) samples")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                    Text("• Iterations: \(result.iterations)")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                    Text("• Total Kotlin: \(result.kotlinTimeMs)ms, Native: \(result.nativeTimeMs)ms")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-                .padding(8)
-                .background(Color(.tertiarySystemBackground))
-                .cornerRadius(6)
+            VStack {
+                Text("Processed")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Text("\(processedCount) samples")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue)
+                Text("in \(processingTimeMs) ms")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
-        )
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(8)
+
+            // Summary
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Processing Info")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                Text("• Input: \(pitchCount) samples")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                Text("• Output: \(processedCount) samples")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                Text("• Processing time: \(processingTimeMs)ms")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(8)
+            .background(Color(.tertiarySystemBackground))
+            .cornerRadius(6)
+        }
     }
 
     // MARK: - API Info
@@ -279,19 +212,19 @@ struct PitchProcessorSection: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("• CalibraPitchProcessor.benchmark() - Compare backends")
+            Text("• CalibraPitch.PostProcess.process() - Full processing pipeline")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• CalibraPitchProcessor.process(backend:) - Process with specific backend")
+            Text("• CalibraPitch.PostProcess.smooth() - Smoothing filter only")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• CalibraPitchProcessor.Backend.KOTLIN - Pure Kotlin implementation")
+            Text("• CalibraPitch.PostProcess.correctOctaveErrors() - Octave correction only")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• CalibraPitchProcessor.Backend.NATIVE - C++ via cinterop")
+            Text("• CalibraPitch.PostProcess.medianFilter() - Median filter only")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

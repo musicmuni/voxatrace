@@ -38,9 +38,6 @@ struct BreathMonitorSection: View {
     @State private var offlineHasEnoughData = false
     @State private var isAnalyzingOffline = false
 
-    // Backend selection
-    @State private var selectedBackend: CalibraBreath.Backend = .kotlin
-
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Breath Monitor")
@@ -204,7 +201,7 @@ struct BreathMonitorSection: View {
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)
                 let samples16k = SonixResampler.resample(
-                    samples: buffer.floatSamples,
+                    samples: buffer.samples,
                     fromRate: hwRate,
                     toRate: 16000
                 )
@@ -303,17 +300,6 @@ struct BreathMonitorSection: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            // Backend selection
-            HStack {
-                Text("Backend:")
-                    .font(.caption)
-                Picker("Backend", selection: $selectedBackend) {
-                    Text("Kotlin").tag(CalibraBreath.Backend.kotlin)
-                    Text("Native (C++)").tag(CalibraBreath.Backend.native)
-                }
-                .pickerStyle(.segmented)
-            }
-
             Button("Analyze Alankaar Voice") {
                 analyzeOffline()
             }
@@ -378,7 +364,7 @@ struct BreathMonitorSection: View {
                     .font(.caption2)
                     .foregroundColor(.secondary)
 
-                Text("• PitchContour.fromAudio() - Extract pitch contour")
+                Text("• CalibraPitch.createContourExtractor() - Extract pitch contour")
                     .font(.caption2)
                     .foregroundColor(.secondary)
 
@@ -418,19 +404,21 @@ struct BreathMonitorSection: View {
 
             // Resample to 16kHz for Calibra APIs
             let samples16k = SonixResampler.resample(
-                samples: audioData.floatSamples,
+                samples: audioData.samples,
                 fromRate: Int(audioData.sampleRate),
                 toRate: 16000
             )
 
-            // Extract pitch contour using PitchContour.fromAudio()
+            // Extract pitch contour using ContourExtractor
             // This handles chunking internally - no manual array manipulation needed
-            let contour = PitchContour.fromAudio(samples: samples16k)
+            let extractor = CalibraPitch.createContourExtractor()
+            let contour = extractor.extract(audio: samples16k)
+            extractor.release()
 
-            // Analyze breath using CalibraBreath with selected backend
-            let hasEnough = CalibraBreath.hasEnoughData(times: contour.times, pitchesHz: contour.pitchesHz, backend: selectedBackend)
-            let capacity = hasEnough ? CalibraBreath.computeCapacity(times: contour.times, pitchesHz: contour.pitchesHz, backend: selectedBackend) : 0
-            let voicedTime = CalibraBreath.getCumulativeVoicedTime(times: contour.times, pitchesHz: contour.pitchesHz, backend: selectedBackend)
+            // Analyze breath using CalibraBreath
+            let hasEnough = CalibraBreath.hasEnoughData(times: contour.times, pitchesHz: contour.pitchesHz)
+            let capacity = hasEnough ? CalibraBreath.computeCapacity(times: contour.times, pitchesHz: contour.pitchesHz) : 0
+            let voicedTime = CalibraBreath.getCumulativeVoicedTime(times: contour.times, pitchesHz: contour.pitchesHz)
 
             await MainActor.run {
                 offlineHasEnoughData = hasEnough

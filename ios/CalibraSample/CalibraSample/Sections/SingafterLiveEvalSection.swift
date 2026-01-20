@@ -72,7 +72,7 @@ struct SingafterLiveEvalSection: View {
 
     // Calibra new API - CalibraLiveEval
     @State private var session: CalibraLiveEval?
-    @State private var pitchDetector: CalibraPitch?
+    @State private var pitchDetector: CalibraPitch.Detector?
 
     @State private var currentPitch: Float = 0.0
     @State private var currentNote = "-"
@@ -258,7 +258,7 @@ struct SingafterLiveEvalSection: View {
         guard pitchDetector == nil else { return }
 
         // Create pitch detector using Calibra public API (with processing for smoothing + octave correction)
-        pitchDetector = CalibraPitch.create(enableProcessing: true)
+        pitchDetector = CalibraPitch.createDetector(enableProcessing: true)
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
@@ -348,7 +348,7 @@ struct SingafterLiveEvalSection: View {
 
                 // Create SingingReference - resampling handled internally
                 let reference = SingingReference.fromAudio(
-                    samples: audioData.floatSamples,
+                    samples: audioData.samples,
                     sampleRate: audioData.sampleRate,
                     segments: calibraSegments,
                     keyHz: 196.0  // G3, common for Indian classical
@@ -475,7 +475,7 @@ struct SingafterLiveEvalSection: View {
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)
                 let samples16k = SonixResampler.resample(
-                    samples: buffer.floatSamples,
+                    samples: buffer.samples,
                     fromRate: hwRate,
                     toRate: 16000
                 )
@@ -484,9 +484,9 @@ struct SingafterLiveEvalSection: View {
                 session?.addAudio(samples: samples16k)
 
                 // Use pitch detector for real-time display
-                let result = pitchDetector?.detectWithConfidence(samples: samples16k)
-                let detectedPitch = result?.pitchHz ?? -1.0
-                let calculatedRms = pitchDetector?.getAmplitude(samples: samples16k) ?? 0.0
+                let result = pitchDetector?.detect(buffer: samples16k)
+                let detectedPitch = result?.pitch ?? -1.0
+                let calculatedRms = pitchDetector?.getAmplitude(buffer: samples16k) ?? 0.0
 
                 await MainActor.run {
                     currentPitch = detectedPitch

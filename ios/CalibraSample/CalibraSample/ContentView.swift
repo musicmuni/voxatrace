@@ -26,7 +26,7 @@ struct MenuView: View {
     let onSelect: (String) -> Void
 
     private let sections = [
-        ("Realtime Pitch", "waveform", "Real-time pitch detection"),
+        ("Pitch", "waveform", "Pitch detection & processing demos"),
         ("Pitch Processor", "gauge", "Kotlin vs Native benchmark"),
         ("VAD", "mic.fill", "Voice activity detection"),
         ("Breath Monitor", "lungs.fill", "Measure breath duration"),
@@ -116,9 +116,9 @@ struct DetailView: View {
     @ViewBuilder
     private var sectionContent: some View {
         switch sectionName {
-        case "Realtime Pitch":
-            let _ = logTiming("Creating RealtimePitchSection")
-            RealtimePitchSection()
+        case "Pitch":
+            let _ = logTiming("Creating PitchSection")
+            PitchSection()
         case "Pitch Processor":
             let _ = logTiming("Creating PitchProcessorSection")
             PitchProcessorSection()

@@ -256,7 +256,7 @@ struct EffectsSection: View {
                 for await buffer in recorder.audioBuffers {
                     // Must access floatSamples to properly consume the buffer
                     // Effects are applied during playback, not recording
-                    _ = buffer.floatSamples
+                    _ = buffer.samples
                 }
             }
 
