@@ -1,5 +1,6 @@
 import SwiftUI
 import vozos
+import vozosAI
 
 private let SILENCE_GRACE_MS: Int64 = 500
 private let PREFS_KEY_BEST_SCORE = "breath_monitor_best_score"
@@ -159,8 +160,10 @@ struct BreathMonitorSection: View {
     private func setupAudioIfNeeded() {
         guard vad == nil else { return }
 
-        // Create VAD using Calibra public API with SINGING preset
-        vad = CalibraVAD.create(preset: .singing)
+        // Create VAD using Calibra public API with SINGING preset + Silero model
+        vad = CalibraVAD.create(preset: .singing) {
+            ModelLoader.loadSileroVAD()
+        }
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
