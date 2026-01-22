@@ -27,7 +27,6 @@ struct MenuView: View {
 
     private let sections = [
         ("Pitch", "waveform", "Pitch detection & processing demos"),
-        ("Pitch Processor", "gauge", "Kotlin vs Native benchmark"),
         ("VAD", "mic.fill", "Voice activity detection"),
         ("Breath Monitor", "lungs.fill", "Measure breath duration"),
         ("Vocal Range", "arrow.up.and.down", "Detect your vocal range"),
@@ -119,9 +118,6 @@ struct DetailView: View {
         case "Pitch":
             let _ = logTiming("Creating PitchSection")
             PitchSection()
-        case "Pitch Processor":
-            let _ = logTiming("Creating PitchProcessorSection")
-            PitchProcessorSection()
         case "VAD":
             let _ = logTiming("Creating VADSection")
             VADSection()

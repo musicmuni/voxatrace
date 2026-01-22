@@ -1,22 +1,66 @@
 import SwiftUI
 import Charts
+import vozos
 
 /// A pitch point for charting purposes.
 struct PitchDataPoint: Identifiable {
     let id = UUID()
     let time: Float
-    let pitch: Float
-    let series: String
+    let pitch: Float  // In MIDI note numbers (e.g., 60 = C4)
+    let series: String      // User-facing series name (for legend)
+    let segmentId: String   // Internal segment ID (series + segment number)
+}
+
+/// Segments a pitch contour into consecutive voiced regions.
+/// Returns array of PitchDataPoint with MIDI note numbers.
+private func segmentPitchContour(
+    times: [Float],
+    pitchesHz: [Float],
+    seriesName: String,
+    gapThreshold: Float = 0.025  // 25ms gap threshold (2.5x the 10ms hop)
+) -> [PitchDataPoint] {
+    var points: [PitchDataPoint] = []
+    var segmentIndex = 0
+    var lastValidTime: Float? = nil
+
+    for (time, pitch) in zip(times, pitchesHz) {
+        let midiNote = CalibraMusic.hzToMidi(pitch)
+
+        // Skip invalid pitches
+        if midiNote.isNaN || pitch <= 0 {
+            // Gap detected - next valid point starts a new segment
+            lastValidTime = nil
+            continue
+        }
+
+        // Check for time gap (unvoiced region passed)
+        if let last = lastValidTime, (time - last) > gapThreshold {
+            segmentIndex += 1
+        }
+
+        let segmentId = "\(seriesName)_\(segmentIndex)"
+        points.append(PitchDataPoint(
+            time: time,
+            pitch: midiNote,
+            series: seriesName,
+            segmentId: segmentId
+        ))
+        lastValidTime = time
+    }
+
+    return points
 }
 
 /// A reusable pitch contour graph using Swift Charts.
 ///
-/// Displays pitch values over time with automatic Y-axis scaling.
+/// Displays pitch values over time with musical note labels on Y-axis.
 /// Supports both single contour and multi-contour overlay modes.
 struct PitchGraphView: View {
     let dataPoints: [PitchDataPoint]
     let title: String?
     let height: CGFloat
+    let seriesColors: [String: Color]
+    let seriesOrder: [String]
 
     init(
         pitchesHz: [Float],
@@ -29,11 +73,16 @@ struct PitchGraphView: View {
         // Generate time values if not provided (assuming 10ms hop)
         let timeValues = times ?? pitchesHz.indices.map { Float($0) * 0.01 }
 
-        self.dataPoints = zip(timeValues, pitchesHz).map { time, pitch in
-            PitchDataPoint(time: time, pitch: pitch, series: series)
-        }
+        // Segment the contour to avoid connecting across gaps
+        self.dataPoints = segmentPitchContour(
+            times: timeValues,
+            pitchesHz: pitchesHz,
+            seriesName: series
+        )
         self.title = title
         self.height = height
+        self.seriesColors = [series: color]
+        self.seriesOrder = [series]
     }
 
     /// Initialize with multiple pitch contours for overlay comparison.
@@ -44,18 +93,27 @@ struct PitchGraphView: View {
         height: CGFloat = 200
     ) {
         var allPoints: [PitchDataPoint] = []
+        var colors: [String: Color] = [:]
+        var order: [String] = []
 
         for contour in contours {
             let timeValues = times ?? contour.pitches.indices.map { Float($0) * 0.01 }
-            let points = zip(timeValues, contour.pitches).map { time, pitch in
-                PitchDataPoint(time: time, pitch: pitch, series: contour.label)
-            }
+            // Segment each contour to avoid connecting across gaps
+            let points = segmentPitchContour(
+                times: timeValues,
+                pitchesHz: contour.pitches,
+                seriesName: contour.label
+            )
             allPoints.append(contentsOf: points)
+            colors[contour.label] = contour.color
+            order.append(contour.label)
         }
 
         self.dataPoints = allPoints
         self.title = title
         self.height = height
+        self.seriesColors = colors
+        self.seriesOrder = order
     }
 
     var body: some View {
@@ -66,16 +124,33 @@ struct PitchGraphView: View {
                     .foregroundColor(.secondary)
             }
 
-            Chart(voicedDataPoints) { point in
+            Chart(dataPoints) { point in
                 LineMark(
                     x: .value("Time (s)", point.time),
-                    y: .value("Pitch (Hz)", point.pitch)
+                    y: .value("MIDI", point.pitch),
+                    series: .value("Segment", point.segmentId)
                 )
+                // Color by series name (not segment) so all segments of same series have same color
                 .foregroundStyle(by: .value("Series", point.series))
+                .lineStyle(StrokeStyle(lineWidth: 2))
             }
+            // Map series names to colors
+            .chartForegroundStyleScale(domain: seriesOrder, range: seriesOrder.map { seriesColors[$0] ?? .gray })
             .chartYScale(domain: yAxisDomain)
             .chartXAxisLabel("Time (s)")
-            .chartYAxisLabel("Pitch (Hz)")
+            .chartYAxisLabel("Note")
+            .chartYAxis {
+                AxisMarks(values: yAxisTickValues) { value in
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel {
+                        if let midi = value.as(Float.self) {
+                            Text(CalibraMusic.midiToNoteLabel(midi))
+                                .font(.caption2)
+                        }
+                    }
+                }
+            }
             .chartLegend(seriesNames.count > 1 ? .visible : .hidden)
             .frame(height: height)
         }
@@ -84,25 +159,47 @@ struct PitchGraphView: View {
         .cornerRadius(8)
     }
 
-    /// Filter out unvoiced frames (pitch <= 0).
-    private var voicedDataPoints: [PitchDataPoint] {
-        dataPoints.filter { $0.pitch > 0 }
-    }
-
-    /// Calculate Y-axis domain based on voiced pitch range.
+    /// Calculate Y-axis domain based on MIDI note range.
     private var yAxisDomain: ClosedRange<Float> {
-        let voicedPitches = voicedDataPoints.map { $0.pitch }
-        guard !voicedPitches.isEmpty else { return 50...500 }
+        let pitches = dataPoints.map { $0.pitch }
+        guard !pitches.isEmpty else {
+            // Default to C3-C5 range (MIDI 48-72)
+            return 48...72
+        }
 
-        let minPitch = voicedPitches.min() ?? 50
-        let maxPitch = voicedPitches.max() ?? 500
+        let minMidi = pitches.min() ?? 48
+        let maxMidi = pitches.max() ?? 72
 
-        // Add 10% padding
-        let padding = (maxPitch - minPitch) * 0.1
-        let lowerBound = max(minPitch - padding, 30)
-        let upperBound = min(maxPitch + padding, 2000)
+        // Round to nearest semitone and add padding (at least 2 semitones each side)
+        let lowerBound = floor(minMidi) - 2
+        let upperBound = ceil(maxMidi) + 2
 
         return lowerBound...upperBound
+    }
+
+    /// Generate tick values at whole semitone boundaries within the domain.
+    private var yAxisTickValues: [Float] {
+        let domain = yAxisDomain
+        let range = domain.upperBound - domain.lowerBound
+
+        // Determine stride: every semitone if range <= 12, otherwise thin out
+        let stride: Float
+        if range <= 12 {
+            stride = 1.0  // Every semitone
+        } else if range <= 24 {
+            stride = 2.0  // Every whole tone
+        } else {
+            stride = 3.0  // Every minor third
+        }
+
+        var ticks: [Float] = []
+        var current = ceil(domain.lowerBound)
+        while current <= domain.upperBound {
+            ticks.append(current)
+            current += stride
+        }
+
+        return ticks
     }
 
     /// Get unique series names for legend.
@@ -190,16 +287,16 @@ struct MultiContourGraphView: View {
 
 #Preview {
     VStack(spacing: 16) {
-        // Single contour
+        // Single contour - G3 to E4 range
         PitchGraphView(
-            pitchesHz: [220, 225, 230, -1, -1, 235, 240, 245, 250, 255],
-            title: "Single Contour"
+            pitchesHz: [196, 220, 247, -1, -1, 262, 277, 294, 311, 330],
+            title: "Single Contour (G3-E4)"
         )
 
-        // Comparison
+        // Comparison - showing raw (noisy) vs processed (smooth)
         PitchComparisonGraphView(
-            rawPitches: [220, 440, 230, 225, 450, 235, 240, 245],
-            processedPitches: [220, 220, 225, 225, 230, 235, 240, 245]
+            rawPitches: [196, 392, 220, 208, 440, 247, 262, 277],
+            processedPitches: [196, 196, 208, 208, 220, 247, 262, 277]
         )
     }
     .padding()

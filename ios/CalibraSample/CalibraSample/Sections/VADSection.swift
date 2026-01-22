@@ -1,5 +1,6 @@
 import SwiftUI
 import vozos
+import vozosAI
 
 /// Voice Activity Detection section using Calibra public API.
 ///
@@ -170,8 +171,15 @@ struct VADSection: View {
     private func setupAudioIfNeeded() {
         guard vad == nil else { return }
 
-        // Create VAD directly
-        vad = CalibraVAD.create(preset: getPreset(for: selectedPresetIndex))
+        // Create VAD with modelProvider for Silero presets (all except fastHeuristic)
+        let preset = getPreset(for: selectedPresetIndex)
+        if preset == .fastHeuristic {
+            vad = CalibraVAD.create(preset: preset, modelProvider: nil)
+        } else {
+            vad = CalibraVAD.create(preset: preset) {
+                ModelLoader.loadSileroVAD()
+            }
+        }
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
@@ -181,7 +189,14 @@ struct VADSection: View {
 
     private func recreateVAD() {
         vad?.release()
-        vad = CalibraVAD.create(preset: getPreset(for: selectedPresetIndex))
+        let preset = getPreset(for: selectedPresetIndex)
+        if preset == .fastHeuristic {
+            vad = CalibraVAD.create(preset: preset, modelProvider: nil)
+        } else {
+            vad = CalibraVAD.create(preset: preset) {
+                ModelLoader.loadSileroVAD()
+            }
+        }
         // Reset display state
         vadRatio = 0.0
         activityLevel = .none
@@ -224,9 +239,9 @@ struct VADSection: View {
 
                 // Classify activity level
                 let level: VoiceActivityLevel
-                if ratio < CalibraVAD.noSingingThreshold {
+                if ratio < VADConstants.noSingingThreshold {
                     level = .none
-                } else if ratio < CalibraVAD.partialSingingThreshold {
+                } else if ratio < VADConstants.partialSingingThreshold {
                     level = .partial
                 } else {
                     level = .full
