@@ -1,6 +1,5 @@
 import SwiftUI
 import vozos
-import vozosAI
 
 /// Voice Activity Detection section using Calibra public API.
 ///
