@@ -1,7 +1,6 @@
 import SwiftUI
 import Charts
 import vozos
-import vozosAI
 
 /// Pitch detection and processing demos using Calibra public API.
 ///
@@ -60,6 +59,7 @@ struct PitchSection: View {
 /// - DetectorBuilder API
 private struct RealtimePitchDemo: View {
     // Configuration
+    @State private var selectedAlgorithm: Int = 0 // YIN (default, no model needed)
     @State private var selectedPreset: Int = 1 // BALANCED
     @State private var selectedVoiceType: Int = 0 // Auto
     @State private var selectedQuietHandling: Int = 1 // NORMAL
@@ -71,10 +71,16 @@ private struct RealtimePitchDemo: View {
     @State private var isRecording = false
     @State private var currentPitch: PitchPoint?
     @State private var amplitude: Float = 0.0
+    @State private var modelLoaderConfigured = false
 
     // Session history for graph
     @State private var recordedPitches: [Float] = []
     @State private var showGraph = false
+
+    private let algorithms: [(algorithm: PitchAlgorithm, name: String, description: String)] = [
+        (.yin, "YIN", "Traditional algorithm, no model needed"),
+        (.swiftF0, "SwiftF0", "Neural network, higher accuracy")
+    ]
 
     private let presets: [(preset: PitchPreset, name: String)] = [
         (.responsive, "Responsive"),
@@ -141,6 +147,25 @@ private struct RealtimePitchDemo: View {
             Text("Configuration")
                 .font(.subheadline)
                 .fontWeight(.semibold)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("Algorithm:")
+                        .font(.caption)
+                    Picker("Algorithm", selection: $selectedAlgorithm) {
+                        ForEach(0..<algorithms.count, id: \.self) { index in
+                            Text(algorithms[index].name).tag(index)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: selectedAlgorithm) { _ in
+                        recreateDetectorIfRecording()
+                    }
+                }
+                Text(algorithms[selectedAlgorithm].description)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
 
             HStack {
                 Text("Preset:")
@@ -363,12 +388,25 @@ private struct RealtimePitchDemo: View {
 
     private func recreateDetector() {
         detector?.release()
-        detector = CalibraPitch.DetectorBuilder()
+
+        let algorithm = algorithms[selectedAlgorithm].algorithm
+        var builder = CalibraPitch.DetectorBuilder()
+            .algorithm(algorithm)
             .preset(presets[selectedPreset].preset)
             .voiceType(voiceTypes[selectedVoiceType].type)
             .quietHandling(quietHandlings[selectedQuietHandling].handling)
             .strictness(strictnesses[selectedStrictness].strictness)
-            .build()
+
+        // SwiftF0 requires model provider
+        if algorithm == .swiftF0 {
+            if !modelLoaderConfigured {
+                ModelLoader.configure()
+                modelLoaderConfigured = true
+            }
+            builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+        }
+
+        detector = builder.build()
     }
 
     private func recreateDetectorIfRecording() {
@@ -379,12 +417,15 @@ private struct RealtimePitchDemo: View {
     }
 
     private func setupAudioIfNeeded() {
-        guard detector == nil else { return }
-        recreateDetector()
+        if detector == nil {
+            recreateDetector()
+        }
 
-        let tempPath = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pitch_realtime_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        if recorder == nil {
+            let tempPath = FileManager.default.temporaryDirectory
+                .appendingPathComponent("pitch_realtime_temp.m4a").path
+            recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        }
     }
 
     private func cleanup() {
@@ -508,7 +549,7 @@ private struct SwiftF0Demo: View {
                 } else if isInitializing {
                     ProgressView()
                         .scaleEffect(0.7)
-                } else if let error = initError {
+                } else if initError != nil {
                     Label("Error", systemImage: "exclamationmark.circle.fill")
                         .font(.caption)
                         .foregroundColor(.red)
@@ -652,11 +693,11 @@ private struct SwiftF0Demo: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("• ModelLoader.initialize()")
+            Text("• ModelLoader.configure()")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• SwiftF0.Companion.shared.create(sampleRate: 16000) { ModelLoader.loadSwiftF0() }")
+            Text("• SwiftF0.create(sampleRate: 16000) { ModelLoader.loadSwiftF0() }")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
@@ -683,18 +724,18 @@ private struct SwiftF0Demo: View {
 
         Task {
             do {
-                // Initialize model loader (finds vozosAI.bundle)
-                ModelLoader.initialize()
+                // Initialize model loader (finds vozos.bundle)
+                ModelLoader.configure()
 
                 // Check if model is available
-                guard ModelLoader.hasSwiftF0Model() else {
+                guard ModelLoader.hasSwiftF0() else {
                     throw NSError(domain: "SwiftF0", code: 1, userInfo: [
-                        NSLocalizedDescriptionKey: "SwiftF0 model not found in ai-models.bundle"
+                        NSLocalizedDescriptionKey: "SwiftF0 model not found in vozos.bundle"
                     ])
                 }
 
                 // Create SwiftF0 instance with model provider
-                let detector = SwiftF0.Companion.shared.create(
+                let detector = SwiftF0.create(
                     sampleRate: 16000,
                     modelProvider: { ModelLoader.loadSwiftF0() }
                 )
@@ -780,10 +821,12 @@ private struct SwiftF0Demo: View {
 /// Batch pitch extraction with ContourCleanup presets.
 private struct PitchExtractionDemo: View {
     // Configuration
+    @State private var selectedAlgorithm: Int = 0 // YIN default
     @State private var selectedPreset: Int = 1 // BALANCED
     @State private var selectedVoiceType: Int = 0 // Auto
     @State private var selectedCleanup: Int = 1 // SCORING
     @State private var hopMs: Int = 10
+    @State private var modelLoaderConfigured = false
 
     // Results
     @State private var isExtracting = false
@@ -797,6 +840,11 @@ private struct PitchExtractionDemo: View {
     @State private var minPitchHz: Float = 0
     @State private var maxPitchHz: Float = 0
     @State private var rangeSemitones: Float = 0
+
+    private let algorithms: [(algorithm: PitchAlgorithm, name: String)] = [
+        (.yin, "YIN"),
+        (.swiftF0, "SwiftF0")
+    ]
 
     private let presets: [(preset: PitchPreset, name: String)] = [
         (.responsive, "Responsive"),
@@ -855,6 +903,17 @@ private struct PitchExtractionDemo: View {
             Text("Configuration")
                 .font(.subheadline)
                 .fontWeight(.semibold)
+
+            HStack {
+                Text("Algorithm:")
+                    .font(.caption)
+                Picker("Algorithm", selection: $selectedAlgorithm) {
+                    ForEach(0..<algorithms.count, id: \.self) { index in
+                        Text(algorithms[index].name).tag(index)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
 
             HStack {
                 Text("Preset:")
@@ -997,12 +1056,24 @@ private struct PitchExtractionDemo: View {
                 toRate: 16000
             )
 
-            let extractor = CalibraPitch.ContourExtractorBuilder()
+            let algorithm = algorithms[selectedAlgorithm].algorithm
+            var builder = CalibraPitch.ContourExtractorBuilder()
+                .algorithm(algorithm)
                 .preset(presets[selectedPreset].preset)
                 .voiceType(voiceTypes[selectedVoiceType].type)
                 .cleanup(cleanupPresets[selectedCleanup].cleanup)
                 .hopMs(Int32(hopMs))
-                .build()
+
+            // SwiftF0 requires model provider
+            if algorithm == .swiftF0 {
+                if !modelLoaderConfigured {
+                    ModelLoader.configure()
+                    await MainActor.run { modelLoaderConfigured = true }
+                }
+                builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+            }
+
+            let extractor = builder.build()
 
             let contour = extractor.extract(audio: samples16k)
             extractor.release()
@@ -1037,6 +1108,15 @@ private struct PitchExtractionDemo: View {
 
 /// Compares RAW vs SCORING vs DISPLAY ContourCleanup presets.
 private struct ContourCleanupDemo: View {
+    // Algorithm selection
+    @State private var selectedAlgorithm: Int = 0 // YIN default
+    @State private var modelLoaderConfigured = false
+
+    private let algorithms: [(algorithm: PitchAlgorithm, name: String)] = [
+        (.yin, "YIN"),
+        (.swiftF0, "SwiftF0")
+    ]
+
     // Recording state
     @State private var recorder: SonixRecorder?
     @State private var isRecording = false
@@ -1055,6 +1135,7 @@ private struct ContourCleanupDemo: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            algorithmPickerSection
             recordingSection
 
             if rawContour != nil {
@@ -1070,6 +1151,19 @@ private struct ContourCleanupDemo: View {
         .onDisappear {
             stopRecording()
             cleanup()
+        }
+    }
+
+    private var algorithmPickerSection: some View {
+        HStack {
+            Text("Algorithm:")
+                .font(.caption)
+            Picker("Algorithm", selection: $selectedAlgorithm) {
+                ForEach(0..<algorithms.count, id: \.self) { index in
+                    Text(algorithms[index].name).tag(index)
+                }
+            }
+            .pickerStyle(.segmented)
         }
     }
 
@@ -1347,11 +1441,23 @@ private struct ContourCleanupDemo: View {
 
         Task {
             // Extract raw contour
-            let extractor = CalibraPitch.ContourExtractorBuilder()
+            let algorithm = algorithms[selectedAlgorithm].algorithm
+            var builder = CalibraPitch.ContourExtractorBuilder()
+                .algorithm(algorithm)
                 .preset(.balanced)
                 .cleanup(.raw)
                 .hopMs(10)
-                .build()
+
+            // SwiftF0 requires model provider
+            if algorithm == .swiftF0 {
+                if !modelLoaderConfigured {
+                    ModelLoader.configure()
+                    await MainActor.run { modelLoaderConfigured = true }
+                }
+                builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+            }
+
+            let extractor = builder.build()
             let raw = extractor.extract(audio: collectedSamples)
             extractor.release()
 
@@ -1373,11 +1479,18 @@ private struct ContourCleanupDemo: View {
 
 /// Showcases all PitchPoint computed properties in real-time.
 private struct PitchPointExplorerDemo: View {
+    @State private var selectedAlgorithm: Int = 0 // YIN default
     @State private var detector: CalibraPitch.Detector?
     @State private var recorder: SonixRecorder?
     @State private var isRecording = false
     @State private var currentPitch: PitchPoint?
     @State private var amplitude: Float = 0.0
+    @State private var modelLoaderConfigured = false
+
+    private let algorithms: [(algorithm: PitchAlgorithm, name: String)] = [
+        (.yin, "YIN"),
+        (.swiftF0, "SwiftF0")
+    ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -1388,6 +1501,25 @@ private struct PitchPointExplorerDemo: View {
             Text("See all computed properties of PitchPoint in real-time.")
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            // Algorithm picker
+            HStack {
+                Text("Algorithm:")
+                    .font(.caption)
+                Picker("Algorithm", selection: $selectedAlgorithm) {
+                    ForEach(0..<algorithms.count, id: \.self) { index in
+                        Text(algorithms[index].name).tag(index)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: selectedAlgorithm) { _ in
+                    if isRecording {
+                        stopRecording()
+                    }
+                    detector?.release()
+                    detector = nil
+                }
+            }
 
             // Main display
             pitchDisplaySection
@@ -1533,7 +1665,20 @@ private struct PitchPointExplorerDemo: View {
 
     private func setupAudioIfNeeded() {
         guard detector == nil else { return }
-        detector = CalibraPitch.createDetector()
+
+        let algorithm = algorithms[selectedAlgorithm].algorithm
+        var builder = CalibraPitch.DetectorBuilder().algorithm(algorithm)
+
+        // SwiftF0 requires model provider
+        if algorithm == .swiftF0 {
+            if !modelLoaderConfigured {
+                ModelLoader.configure()
+                modelLoaderConfigured = true
+            }
+            builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+        }
+
+        detector = builder.build()
 
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("pitch_explorer_temp.m4a").path

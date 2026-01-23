@@ -7,11 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F023C142F223D8700EFE420 /* vozosAI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9F023C132F223D8700EFE420 /* vozosAI.bundle */; };
-		9F023C162F223D9D00EFE420 /* vozosAI.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F023C152F223D9D00EFE420 /* vozosAI.xcframework */; };
-		9F023C172F223D9D00EFE420 /* vozosAI.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F023C152F223D9D00EFE420 /* vozosAI.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F4282722EFB20A30013368A /* vozos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* vozos.xcframework */; };
 		9F4282732EFB20A30013368A /* vozos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4282712EFB20A30013368A /* vozos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9FEB55A32F238B7C00BB78A6 /* vozos.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9FEB55A22F238B7C00BB78A6 /* vozos.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -22,7 +20,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				9F4282732EFB20A30013368A /* vozos.xcframework in Embed Frameworks */,
-				9F023C172F223D9D00EFE420 /* vozosAI.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -30,10 +27,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9F023C132F223D8700EFE420 /* vozosAI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = vozosAI.bundle; path = Frameworks/vozosAI.bundle; sourceTree = "<group>"; };
-		9F023C152F223D9D00EFE420 /* vozosAI.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = vozosAI.xcframework; path = Frameworks/vozosAI.xcframework; sourceTree = "<group>"; };
 		9F4282712EFB20A30013368A /* vozos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = vozos.xcframework; path = Frameworks/vozos.xcframework; sourceTree = "<group>"; };
 		9FC6986A2EF2CEA400FE73BF /* CalibraSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalibraSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FEB55A22F238B7C00BB78A6 /* vozos.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = vozos.bundle; path = Frameworks/vozos.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -50,7 +46,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F4282722EFB20A30013368A /* vozos.xcframework in Frameworks */,
-				9F023C162F223D9D00EFE420 /* vozosAI.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,7 +55,6 @@
 		9F4282702EFB20A30013368A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F023C152F223D9D00EFE420 /* vozosAI.xcframework */,
 				9F4282712EFB20A30013368A /* vozos.xcframework */,
 			);
 			name = Frameworks;
@@ -69,7 +63,7 @@
 		9FC698612EF2CEA400FE73BF = {
 			isa = PBXGroup;
 			children = (
-				9F023C132F223D8700EFE420 /* vozosAI.bundle */,
+				9FEB55A22F238B7C00BB78A6 /* vozos.bundle */,
 				9FC6986C2EF2CEA400FE73BF /* CalibraSample */,
 				9F4282702EFB20A30013368A /* Frameworks */,
 				9FC6986B2EF2CEA400FE73BF /* Products */,
@@ -149,7 +143,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F023C142F223D8700EFE420 /* vozosAI.bundle in Resources */,
+				9FEB55A32F238B7C00BB78A6 /* vozos.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
