@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.musicmuni.calibra.sample"
+    namespace = "com.musicmuni.vozos.demo"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.musicmuni.calibra.sample"
+        applicationId = "com.musicmuni.vozos.demo"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
