@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Getting Started
 
-VozOS is a cross-platform audio SDK for mobile apps, built with Kotlin Multiplatform. It provides two main modules:
+VoxaTrace is a cross-platform audio SDK for mobile apps, built with Kotlin Multiplatform. It provides two main modules:
 
 - **Sonix** - Audio playback, recording, and synthesis
 - **Calibra** - Pitch detection and singing evaluation
@@ -17,7 +17,7 @@ Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.musicmuni:vozos:<version>")
+    implementation("com.musicmuni:voxatrace:<version>")
 }
 ```
 
@@ -25,7 +25,7 @@ dependencies {
 
 Add the XCFramework to your Xcode project:
 
-1. Download `VozOS.xcframework` from the releases page
+1. Download `VoxaTrace.xcframework` from the releases page
 2. Drag it into your Xcode project
 3. Ensure it's added to "Frameworks, Libraries, and Embedded Content"
 

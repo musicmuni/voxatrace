@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Sonix Overview
 
-Sonix is the audio engine module of VozOS, providing:
+Sonix is the audio engine module of VoxaTrace, providing:
 
 - **Audio Playback** - Play audio files with pitch shifting and tempo control
 - **Recording** - Record audio to M4A or MP3 formats
