@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CalibraSample"
+rootProject.name = "VoxaTraceDemo"
 include(":app")
