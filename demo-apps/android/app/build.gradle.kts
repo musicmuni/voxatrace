@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.musicmuni.vozos.demo"
+    namespace = "com.musicmuni.voxatrace.demo"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.musicmuni.vozos.demo"
+        applicationId = "com.musicmuni.voxatrace.demo"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -58,8 +58,8 @@ android {
 }
 
 dependencies {
-    // VozOS library (unified sonix + calibra)
-    implementation(files("libs/vozos.aar"))
+    // VoxaTrace library (unified sonix + calibra)
+    implementation(files("libs/voxatrace.aar"))
 
     // Required by Sonix
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
