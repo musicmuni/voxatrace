@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'VozOS',
+  title: 'VoxaTrace',
   tagline: 'Audio SDK for Mobile Apps',
   favicon: 'img/favicon.ico',
 
@@ -48,9 +48,9 @@ const config: Config = {
       respectPrefersColorScheme: false,
     },
     navbar: {
-      title: 'VozOS',
+      title: 'VoxaTrace',
       logo: {
-        alt: 'VozOS Logo',
+        alt: 'VoxaTrace Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -75,7 +75,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/musicmuni/vozOS',
+          href: 'https://github.com/musicmuni/voxatrace',
           label: 'GitHub',
           position: 'right',
         },
@@ -102,7 +102,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/musicmuni/vozOS',
+              href: 'https://github.com/musicmuni/voxatrace',
             },
           ],
         },

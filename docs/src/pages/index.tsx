@@ -44,7 +44,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Home"
-      description="VozOS - Audio SDK for Mobile Apps">
+      description="VoxaTrace - Audio SDK for Mobile Apps">
       <HomepageHeader />
       <main className="container margin-vert--xl">
         <div className="row">

@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Calibra Overview
 
-Calibra is the audio analysis module of VozOS, providing:
+Calibra is the audio analysis module of VoxaTrace, providing:
 
 - **Pitch Detection** - Real-time fundamental frequency detection
 - **Voice Activity Detection** - Detect when someone is speaking/singing

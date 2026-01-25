@@ -4,7 +4,7 @@ title: Changelog
 
 # Changelog
 
-All notable changes to VozOS will be documented here.
+All notable changes to VoxaTrace will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
@@ -16,4 +16,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-*For older versions, see [CHANGELOG.md](https://github.com/musicmuni/vozOS/blob/main/CHANGELOG.md)*
+*For older versions, see [CHANGELOG.md](https://github.com/musicmuni/voxatrace/blob/main/CHANGELOG.md)*
