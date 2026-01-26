@@ -170,7 +170,7 @@ struct MetronomeSection: View {
             }
             errorTask = newMetronome.observeError { error in
                 if let err = error {
-                    self.status = "Error: \(err.message ?? "Unknown")"
+                    self.status = "Error: \(err.message)"
                 }
             }
         }
@@ -225,7 +225,7 @@ struct MetronomeSection: View {
                 }
                 errorTask = newMetronome.observeError { error in
                     if let err = error {
-                        self.status = "Error: \(err.message ?? "Unknown")"
+                        self.status = "Error: \(err.message)"
                     }
                 }
             }

@@ -17,18 +17,19 @@ struct VoxaTraceDemoApp: App {
     init() {
         logTiming("VoxaTraceDemoApp.init() START")
 
-        // Initialize VoxaTrace logging first to see debug output in Xcode console
-        VoxaTrace.initializeLogging()
-
         // Initialize VoxaTrace SDK with API key
-        // This validates the API key synchronously and throws if invalid
+        // debugLogging: true enables console output in Xcode
         do {
-            try VoxaTrace.initialize(apiKey: Config.apiKey)
+            try VT.initialize(apiKey: Config.apiKey, debugLogging: true)
         } catch let error as VoxaTraceKilledException {
-            _licenseError = State(initialValue: error.message ?? "Invalid or revoked API key")
+            _licenseError = State(initialValue: error.message)
         } catch {
             _licenseError = State(initialValue: "License validation failed: \(error.localizedDescription)")
         }
+
+        // Configure ModelLoader for AI features (VAD, Pitch extraction)
+        // Must be called before using ModelLoader.loadSileroVAD() or ModelLoader.loadSwiftF0()
+        ModelLoader.configure()
 
         logTiming("VoxaTraceDemoApp.init() END")
     }

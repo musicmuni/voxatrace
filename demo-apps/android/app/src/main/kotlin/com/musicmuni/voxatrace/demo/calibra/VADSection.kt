@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.musicmuni.voxatrace.calibra.CalibraVAD
-import com.musicmuni.voxatrace.calibra.model.VADPreset
+import com.musicmuni.voxatrace.calibra.model.VADBackend
 import com.musicmuni.voxatrace.calibra.model.VoiceActivityLevel
 import com.musicmuni.voxatrace.sonix.Sonix
 import com.musicmuni.voxatrace.sonix.SonixRecorder
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
  * Voice Activity Detection section using Calibra public API.
  *
  * Demonstrates:
- * - CalibraVAD with multiple presets (DEFAULT, LOW_LATENCY, HIGH_ACCURACY, SINGING, FAST_HEURISTIC)
+ * - CalibraVAD with multiple backends (SPEECH, GENERAL, SINGING, SINGING_REALTIME)
  * - Real-time voice activity detection
  * - SonixRecorder for audio capture
  */
@@ -35,26 +35,26 @@ fun VADSection() {
     var vadRatio by remember { mutableFloatStateOf(0f) }
     var activityLevel by remember { mutableStateOf(VoiceActivityLevel.NONE) }
     var isRecording by remember { mutableStateOf(false) }
-    var selectedPresetIndex by remember { mutableIntStateOf(0) }
+    var selectedBackendIndex by remember { mutableIntStateOf(0) }
 
     var recorder by remember { mutableStateOf<SonixRecorder?>(null) }
 
-    val presets = listOf(
-        VADPreset.DEFAULT to PresetInfo("Default", "Balanced - good accuracy/responsiveness trade-off"),
-        VADPreset.LOW_LATENCY to PresetInfo("Low Latency", "Faster response, smaller window"),
-        VADPreset.HIGH_ACCURACY to PresetInfo("High Accuracy", "Conservative thresholds, fewer false positives"),
-        VADPreset.SINGING to PresetInfo("Singing", "Tuned for musical content"),
-        VADPreset.FAST_HEURISTIC to PresetInfo("Fast Heuristic", "RMS-based, no neural network")
+    val backends = listOf(
+        VADBackend.SPEECH to BackendInfo("Speech", "Silero neural network - high accuracy for speech"),
+        VADBackend.GENERAL to BackendInfo("General", "RMS-based - fast, no neural network"),
+        VADBackend.SINGING_REALTIME to BackendInfo("Singing Realtime", "Pitch-based - low latency singing detection"),
+        VADBackend.SINGING to BackendInfo("Singing", "Essentia YAMNet - high accuracy singing detection")
     )
 
     fun createVAD(): CalibraVAD {
-        val preset = presets[selectedPresetIndex].first
-        return if (preset == VADPreset.FAST_HEURISTIC) {
-            CalibraVAD.create(preset = preset, modelProvider = null)
-        } else {
-            // For neural network presets, model provider would be needed
-            // For demo, fall back to fast heuristic
-            CalibraVAD.create(preset = VADPreset.FAST_HEURISTIC, modelProvider = null)
+        val backend = backends[selectedBackendIndex].first
+        return when (backend) {
+            VADBackend.GENERAL -> CalibraVAD.create(backend = backend)
+            else -> {
+                // For neural backends, model provider would be needed
+                // For demo without models, fall back to GENERAL
+                CalibraVAD.create(backend = VADBackend.GENERAL)
+            }
         }
     }
 
@@ -129,33 +129,33 @@ fun VADSection() {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        // Preset picker
-        Text("VAD Preset:", style = MaterialTheme.typography.labelMedium)
-        var presetExpanded by remember { mutableStateOf(false) }
+        // Backend picker
+        Text("VAD Backend:", style = MaterialTheme.typography.labelMedium)
+        var backendExpanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
-            expanded = presetExpanded,
-            onExpandedChange = { presetExpanded = it }
+            expanded = backendExpanded,
+            onExpandedChange = { backendExpanded = it }
         ) {
             OutlinedTextField(
-                value = presets[selectedPresetIndex].second.name,
+                value = backends[selectedBackendIndex].second.name,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Preset") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = presetExpanded) },
+                label = { Text("Backend") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = backendExpanded) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor()
             )
             ExposedDropdownMenu(
-                expanded = presetExpanded,
-                onDismissRequest = { presetExpanded = false }
+                expanded = backendExpanded,
+                onDismissRequest = { backendExpanded = false }
             ) {
-                presets.forEachIndexed { index, (_, info) ->
+                backends.forEachIndexed { index, (_, info) ->
                     DropdownMenuItem(
                         text = { Text(info.name) },
                         onClick = {
-                            selectedPresetIndex = index
-                            presetExpanded = false
+                            selectedBackendIndex = index
+                            backendExpanded = false
                             vad?.release()
                             vad = createVAD()
                         }
@@ -165,7 +165,7 @@ fun VADSection() {
         }
 
         Text(
-            text = presets[selectedPresetIndex].second.description,
+            text = backends[selectedBackendIndex].second.description,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -221,8 +221,8 @@ fun VADSection() {
                 Text(
                     text = """
                         val vad = CalibraVAD.create(
-                            preset = VADPreset.DEFAULT,
-                            modelProvider = { ModelLoader.loadSileroVAD() }
+                            backend = VADBackend.SPEECH,
+                            modelProvider = { ModelLoader.loadSpeechVAD() }
                         )
                         val ratio = vad.getVADRatio(samples16k)
                         // ratio: 0.0 = silence, 1.0 = full voice
@@ -235,7 +235,7 @@ fun VADSection() {
     }
 }
 
-private data class PresetInfo(
+private data class BackendInfo(
     val name: String,
     val description: String
 )

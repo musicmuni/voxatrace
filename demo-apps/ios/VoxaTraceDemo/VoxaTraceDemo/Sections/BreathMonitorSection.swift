@@ -159,10 +159,8 @@ struct BreathMonitorSection: View {
     private func setupAudioIfNeeded() {
         guard vad == nil else { return }
 
-        // Create VAD using Calibra public API with SINGING preset + Silero model
-        vad = CalibraVAD.create(preset: .singing) {
-            ModelLoader.loadSileroVAD()
-        }
+        // Create VAD using Calibra public API with SINGING_REALTIME backend (low latency)
+        vad = CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory

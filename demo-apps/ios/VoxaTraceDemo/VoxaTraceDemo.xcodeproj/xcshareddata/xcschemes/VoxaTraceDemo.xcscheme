@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9FC698692EF2CEA400FE73BF"
-               BuildableName = "CalibraSample.app"
-               BlueprintName = "CalibraSample"
-               ReferencedContainer = "container:CalibraSample.xcodeproj">
+               BuildableName = "VoxaTraceDemo.app"
+               BlueprintName = "VoxaTraceDemo"
+               ReferencedContainer = "container:VoxaTraceDemo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9FC698692EF2CEA400FE73BF"
-            BuildableName = "CalibraSample.app"
-            BlueprintName = "CalibraSample"
-            ReferencedContainer = "container:CalibraSample.xcodeproj">
+            BuildableName = "VoxaTraceDemo.app"
+            BlueprintName = "VoxaTraceDemo"
+            ReferencedContainer = "container:VoxaTraceDemo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -74,9 +74,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9FC698692EF2CEA400FE73BF"
-            BuildableName = "CalibraSample.app"
-            BlueprintName = "CalibraSample"
-            ReferencedContainer = "container:CalibraSample.xcodeproj">
+            BuildableName = "VoxaTraceDemo.app"
+            BlueprintName = "VoxaTraceDemo"
+            ReferencedContainer = "container:VoxaTraceDemo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
