@@ -13,9 +13,9 @@ const config: Config = {
 
   // GitHub Pages URL
   url: 'https://musicmuni.github.io',
-  baseUrl: '/vozOS/',
+  baseUrl: '/voxatrace/',
   organizationName: 'musicmuni',
-  projectName: 'vozOS',
+  projectName: 'voxatrace',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
@@ -41,7 +41,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/vozos-social-card.jpg',
+    image: 'img/voxatrace-social-card.jpg',
     colorMode: {
       defaultMode: 'dark',
       disableSwitch: true,
