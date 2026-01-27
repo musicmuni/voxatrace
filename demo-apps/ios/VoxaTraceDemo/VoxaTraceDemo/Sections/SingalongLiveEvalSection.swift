@@ -200,7 +200,8 @@ struct SingalongLiveEvalSection: View {
         guard pitchDetector == nil else { return }
 
         // Create pitch detector using Calibra public API (with processing for smoothing + octave correction)
-        pitchDetector = CalibraPitch.createDetector(enableProcessing: true)
+        // Use YIN algorithm since it doesn't require a model provider (SWIFT_F0 requires model)
+        pitchDetector = CalibraPitch.createDetector(algorithm: .yin, enableProcessing: true)
 
         // Create recorder using Sonix with echo cancellation enabled
         // This removes the lesson audio from the mic input so pitch detection works correctly
@@ -399,7 +400,9 @@ struct SingalongLiveEvalSection: View {
         stopRecording()
 
         // End segment early and get result using new API
-        if let result = session?.endSegmentEarly() {
+        let result = session?.endSegmentEarly()
+        print("[SingLive-Swift] endSegmentEarly: result=\(String(describing: result)), score=\(result?.score ?? -1)")
+        if let result = result {
             segmentScore = result.score
             feedbackMessage = result.feedbackMessage
         }
