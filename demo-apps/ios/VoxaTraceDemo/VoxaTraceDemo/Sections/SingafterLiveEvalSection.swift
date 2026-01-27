@@ -258,7 +258,8 @@ struct SingafterLiveEvalSection: View {
         guard pitchDetector == nil else { return }
 
         // Create pitch detector using Calibra public API (with processing for smoothing + octave correction)
-        pitchDetector = CalibraPitch.createDetector(enableProcessing: true)
+        // Use YIN algorithm since it doesn't require a model provider (SWIFT_F0 requires model)
+        pitchDetector = CalibraPitch.createDetector(algorithm: .yin, enableProcessing: true)
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
