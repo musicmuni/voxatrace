@@ -52,9 +52,6 @@ struct SingalongLiveEvalSection: View {
     @State private var status = "Ready"
     @State private var feedbackMessage = ""
 
-    // Backend selection
-    @State private var selectedBackend: LiveEvalBackend = .kotlin
-
     // Timer for checking segment end
     @State private var timer: Timer?
     @State private var segmentEndTime: Double = 0
@@ -69,17 +66,6 @@ struct SingalongLiveEvalSection: View {
                 .foregroundColor(.secondary)
 
             if !lessonLoaded {
-                // Backend selection before loading
-                HStack {
-                    Text("Backend:")
-                        .font(.caption)
-                    Picker("Backend", selection: $selectedBackend) {
-                        Text("Kotlin").tag(LiveEvalBackend.kotlin)
-                        Text("Native (C++)").tag(LiveEvalBackend.native)
-                    }
-                    .pickerStyle(.segmented)
-                }
-
                 Button("Load Lesson") {
                     loadLesson()
                 }
@@ -315,7 +301,7 @@ struct SingalongLiveEvalSection: View {
                 )
                 print("[TIMING] SingingReference.fromAudio: \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - refStart))s")
 
-                // Create session with config (manual segment control + selected backend)
+                // Create session with config (manual segment control)
                 let sessionCreateStart = CFAbsoluteTimeGetCurrent()
                 let config = SessionConfig(
                     autoAdvance: false,
@@ -326,8 +312,7 @@ struct SingalongLiveEvalSection: View {
                     hopSize: 128,
                     studentKeyHz: 0,
                     yinMinPitch: -1,
-                    yinMaxPitch: -1,
-                    backend: selectedBackend
+                    yinMaxPitch: -1
                 )
                 session = CalibraLiveEval.create(reference: reference, config: config)
                 print("[TIMING] CalibraLiveEval.create: \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - sessionCreateStart))s")

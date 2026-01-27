@@ -83,9 +83,6 @@ struct SingafterLiveEvalSection: View {
     @State private var status = "Ready"
     @State private var feedbackMessage = ""
 
-    // Backend selection
-    @State private var selectedBackend: LiveEvalBackend = .kotlin
-
     // Timer for checking phase transitions
     @State private var timer: Timer?
     @State private var teacherEndTime: Double = 0
@@ -101,17 +98,6 @@ struct SingafterLiveEvalSection: View {
                 .foregroundColor(.secondary)
 
             if !lessonLoaded {
-                // Backend selection before loading
-                HStack {
-                    Text("Backend:")
-                        .font(.caption)
-                    Picker("Backend", selection: $selectedBackend) {
-                        Text("Kotlin").tag(LiveEvalBackend.kotlin)
-                        Text("Native (C++)").tag(LiveEvalBackend.native)
-                    }
-                    .pickerStyle(.segmented)
-                }
-
                 Button("Load Lesson") {
                     loadLesson()
                 }
@@ -264,7 +250,7 @@ struct SingafterLiveEvalSection: View {
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("singafter_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice", echoCancellation: true)
     }
 
     private func cleanup() {
@@ -347,15 +333,30 @@ struct SingafterLiveEvalSection: View {
                     )
                 }
 
+                // Load pre-computed pitch contour if available (fast path)
+                var pitchContour: PitchContour? = nil
+                if let pitchURL = Bundle.main.url(forResource: lessonName, withExtension: "pitchPP"),
+                   let pitchContent = try? String(contentsOf: pitchURL),
+                   let pitchData = Parser.parsePitchString(content: pitchContent) {
+                    pitchContour = PitchContour.fromArrays(
+                        times: pitchData.times,
+                        pitches: pitchData.pitchesHz
+                    )
+                    print("[DEBUG] Loaded .pitchPP with \(pitchData.count) samples")
+                } else {
+                    print("[DEBUG] No .pitchPP file found, will use slow path (audio extraction)")
+                }
+
                 // Create SingingReference - resampling handled internally
                 let reference = SingingReference.fromAudio(
                     samples: audioData.samples,
                     sampleRate: audioData.sampleRate,
                     segments: calibraSegments,
-                    keyHz: 196.0  // G3, common for Indian classical
+                    keyHz: 196.0,  // G3, common for Indian classical
+                    pitchContour: pitchContour
                 )
 
-                // Create session with config (manual phase control + selected backend)
+                // Create session with config (manual phase control)
                 let config = SessionConfig(
                     autoAdvance: false,
                     resultAggregation: .latest,
@@ -365,8 +366,7 @@ struct SingafterLiveEvalSection: View {
                     hopSize: 128,
                     studentKeyHz: 0,
                     yinMinPitch: -1,
-                    yinMaxPitch: -1,
-                    backend: selectedBackend
+                    yinMaxPitch: -1
                 )
                 session = CalibraLiveEval.create(reference: reference, config: config)
 

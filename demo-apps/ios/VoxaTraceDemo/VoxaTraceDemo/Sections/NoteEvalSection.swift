@@ -29,9 +29,6 @@ struct NoteEvalSection: View {
     @State private var result: ExerciseResult?
     @State private var status = "Select an exercise and record"
 
-    // Backend selection
-    @State private var selectedBackend: CalibraNoteEval.Backend = .kotlin
-
     // Resources
     @State private var recorder: SonixRecorder?
     @State private var collectedAudio: [Float] = []
@@ -223,17 +220,6 @@ struct NoteEvalSection: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
 
-            // Backend selection
-            HStack {
-                Text("Backend:")
-                    .font(.caption)
-                Picker("Backend", selection: $selectedBackend) {
-                    Text("Kotlin").tag(CalibraNoteEval.Backend.kotlin)
-                    Text("Native (C++)").tag(CalibraNoteEval.Backend.native)
-                }
-                .pickerStyle(.segmented)
-            }
-
             Button(isEvaluating ? "Evaluating..." : "Evaluate Performance") {
                 evaluate()
             }
@@ -411,15 +397,14 @@ struct NoteEvalSection: View {
             // Key frequency from MIDI
             let keyHz = MusicUtils.midiToHz(Int(keyMidi))
 
-            // Evaluate using CalibraNoteEval with selected backend
+            // Evaluate using CalibraNoteEval
             let evalResult = CalibraNoteEval.evaluate(
                 pattern: pattern,
                 student: studentContour,
                 referenceKeyHz: keyHz,
                 studentKeyHz: 0,
                 scoreType: 0,
-                leewaySamples: 0,
-                backend: selectedBackend
+                leewaySamples: 0
             )
 
             await MainActor.run {
