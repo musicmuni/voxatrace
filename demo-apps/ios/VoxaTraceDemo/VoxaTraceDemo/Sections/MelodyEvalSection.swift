@@ -31,9 +31,6 @@ struct MelodyEvalSection: View {
     @State private var result: SingingResult?
     @State private var status = "Ready"
 
-    // Backend selection
-    @State private var selectedBackend: CalibraMelodyEval.Backend = .kotlin
-
     // Resources
     @State private var reference: SingingReference?
     @State private var recorder: SonixRecorder?
@@ -163,17 +160,6 @@ struct MelodyEvalSection: View {
             Text("Step 3: Evaluate")
                 .font(.subheadline)
                 .fontWeight(.medium)
-
-            // Backend selection
-            HStack {
-                Text("Backend:")
-                    .font(.caption)
-                Picker("Backend", selection: $selectedBackend) {
-                    Text("Kotlin").tag(CalibraMelodyEval.Backend.kotlin)
-                    Text("Native (C++)").tag(CalibraMelodyEval.Backend.native)
-                }
-                .pickerStyle(.segmented)
-            }
 
             Button(isEvaluating ? "Evaluating..." : "Evaluate Performance") {
                 evaluate()
@@ -388,12 +374,11 @@ struct MelodyEvalSection: View {
             let studentContour = extractor.extract(audio: studentAudio)
             extractor.release()
 
-            // Evaluate using CalibraMelodyEval with selected backend
+            // Evaluate using CalibraMelodyEval
             let evalResult = CalibraMelodyEval.evaluate(
                 reference: reference,
                 student: studentContour,
-                studentSegments: nil,
-                backend: selectedBackend
+                studentSegments: nil
             )
 
             await MainActor.run {
