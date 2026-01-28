@@ -291,15 +291,25 @@ struct VocalRangeSection: View {
     }
 
     private func start() {
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
+        // Create detector with YIN algorithm for vocal range detection
+        let detectorConfig = PitchDetectorConfig.Builder()
+            .algorithm(.yin)
+            .enableProcessing()
+            .build()
+        let detector = CalibraPitch.createDetector(config: detectorConfig, modelProvider: nil)
+
         // Create session with custom config (3-second countdown)
         let config = VocalRangeSessionConfig.custom(countdownSeconds: 3)
-        let newSession = VocalRangeSession.create(config: config)
+        let newSession = VocalRangeSession.create(config: config, detector: detector)
         session = newSession
 
         // Create recorder
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("range_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
 
         guard let recorder = recorder else { return }
 
@@ -331,7 +341,7 @@ struct VocalRangeSection: View {
 
         // Feed audio to session - resample to 16kHz first
         audioTask = Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)
                 let samples16k = SonixResampler.resample(

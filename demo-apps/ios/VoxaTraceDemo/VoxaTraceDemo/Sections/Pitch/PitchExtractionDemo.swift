@@ -203,7 +203,7 @@ struct PitchExtractionDemo: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("• CalibraPitch.ContourExtractorBuilder().preset(.precise).cleanup(.scoring).build()")
+            Text("• CalibraPitch.createContourExtractor(config: .scoring) { ModelLoader.loadSwiftF0() }")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
@@ -243,23 +243,25 @@ struct PitchExtractionDemo: View {
             )
 
             let algorithm = algorithms[selectedAlgorithm].algorithm
-            var builder = CalibraPitch.ContourExtractorBuilder()
+            let extractorConfig = ContourExtractorConfig.Builder()
                 .algorithm(algorithm)
-                .preset(presets[selectedPreset].preset)
+                .pitchPreset(presets[selectedPreset].preset)
                 .voiceType(voiceTypes[selectedVoiceType].type)
                 .cleanup(cleanupPresets[selectedCleanup].cleanup)
                 .hopMs(Int32(hopMs))
+                .build()
 
             // SwiftF0 requires model provider
+            var modelProvider: (() -> KotlinByteArray)? = nil
             if algorithm == .swiftF0 {
                 if !modelLoaderConfigured {
                     ModelLoader.configure()
                     await MainActor.run { modelLoaderConfigured = true }
                 }
-                builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+                modelProvider = { ModelLoader.loadSwiftF0() }
             }
 
-            let extractor = builder.build()
+            let extractor = CalibraPitch.createContourExtractor(config: extractorConfig, modelProvider: modelProvider)
 
             let contour = extractor.extract(audio: samples16k)
             extractor.release()

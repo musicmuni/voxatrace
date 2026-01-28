@@ -243,10 +243,13 @@ struct SingafterLiveEvalSection: View {
     private func setupAudioIfNeeded() {
         guard pitchDetector == nil else { return }
 
+        // Configure audio session for simultaneous playback + recording
+        AudioSessionManager.configure(.playAndRecord, echoCancellation: true)
+
         // Create pitch detector using Calibra public API (with processing for smoothing + octave correction)
         // Use YIN algorithm since it doesn't require a model provider (SWIFT_F0 requires model)
         let config = PitchDetectorConfig.Builder()
-            .algorithm(algo: .yin)
+            .algorithm(.yin)
             .enableProcessing()
             .build()
         pitchDetector = CalibraPitch.createDetector(config: config, modelProvider: nil)
@@ -254,7 +257,8 @@ struct SingafterLiveEvalSection: View {
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("singafter_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice", echoCancellation: true)
+        let recorderConfig = SonixRecorderConfig.Builder().preset(.voice).echoCancellation(true).build()
+        recorder = SonixRecorder.create(outputPath: tempPath, config: recorderConfig)
     }
 
     private func cleanup() {
@@ -351,8 +355,8 @@ struct SingafterLiveEvalSection: View {
                     print("[DEBUG] No .pitchPP file found, will use slow path (audio extraction)")
                 }
 
-                // Create SingingReference - resampling handled internally
-                let reference = SingingReference.fromAudio(
+                // Create LessonMaterial - resampling handled internally
+                let reference = LessonMaterial.fromAudio(
                     samples: audioData.samples,
                     sampleRate: audioData.sampleRate,
                     segments: calibraSegments,
@@ -475,7 +479,7 @@ struct SingafterLiveEvalSection: View {
 
         // Collect audio buffers from Sonix
         Task {
-            let hwRate = Sonix.hardwareSampleRateInt
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)

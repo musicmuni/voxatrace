@@ -27,7 +27,7 @@ import com.musicmuni.voxatrace.demo.calibra.pitch.PitchSection
 import com.musicmuni.voxatrace.demo.components.OptionChip
 import com.musicmuni.voxatrace.demo.sonix.*
 import com.musicmuni.voxatrace.demo.sonix.simplified.*
-import com.musicmuni.voxatrace.sonix.Sonix
+import com.musicmuni.voxatrace.VT
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -45,9 +45,9 @@ class MainActivity : ComponentActivity() {
         // Initialize SDKs
         Calibra.init()
         try {
-            Sonix.initialize(BuildConfig.SONIX_API_KEY, this)
+            VT.initialize(BuildConfig.SONIX_API_KEY, this)
         } catch (e: Exception) {
-            Napier.e("Sonix initialization failed", e)
+            Napier.e("VT initialization failed", e)
             setContent {
                 MaterialTheme {
                     LicenseErrorScreen(e.message ?: "License validation failed")

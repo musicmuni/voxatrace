@@ -5,7 +5,7 @@ import VoxaTrace
 ///
 /// Demonstrates the zero-config factory pattern for multi-track playback.
 /// Uses type-safe observers (no force casts like `as! Bool`).
-/// Compare this to MultiTrackSection.swift which uses SonixMixer.Builder().
+/// Compare this to MultiTrackSection.swift which uses SonixMixerConfig.Builder() + SonixMixer.create().
 struct MultiTrackSectionSimplified: View {
     @State private var mixer: SonixMixer?
     @State private var isPlaying = false

@@ -47,7 +47,7 @@ struct PlaybackSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Playback (SonixPlayer.Builder)")
+            Text("Playback (Config + Factory)")
                 .font(.headline)
 
             Text("Status: \(status)")
@@ -194,18 +194,20 @@ struct PlaybackSection: View {
         do {
             status = "Loading..."
 
+            // Configure audio session for playback
+            AudioSessionManager.configure(.playback)
+
             // Copy asset to file for loading
             guard let assetPath = copyAssetToFile(name: "sample", ext: "m4a") else {
                 status = "Asset not found"
                 return
             }
 
-            // Create player using Builder pattern with callbacks
-            let newPlayer = try await SonixPlayer.Builder()
-                .source(path: assetPath)
-                .volume(volume: volume)
-                .pitch(semitones: pitch)
-                .loopCount(count: Int32(loopCount))
+            // Create player using Config + Factory pattern
+            let config = SonixPlayerConfig.Builder()
+                .volume(volume)
+                .pitch(pitch)
+                .loopCount(Int32(loopCount))
                 .onComplete {
                     print("Playback completed!")
                 }
@@ -216,6 +218,7 @@ struct PlaybackSection: View {
                     print("Playback error: \(error)")
                 }
                 .build()
+            let newPlayer = try await SonixPlayer.create(source: assetPath, config: config)
 
             player = newPlayer
             durationMs = newPlayer.duration

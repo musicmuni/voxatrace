@@ -258,6 +258,9 @@ struct BackendComparisonDemo: View {
     }
 
     private func startRecording() {
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Create VADs if needed
         if vadLeft == nil {
             vadLeft = createVAD(for: backends[leftBackendIndex].backend)
@@ -269,7 +272,7 @@ struct BackendComparisonDemo: View {
         // Create recorder
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("vad_compare_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
 
         guard let recorder = recorder,
               let vadLeft = vadLeft,
@@ -280,7 +283,7 @@ struct BackendComparisonDemo: View {
 
         // Process audio buffers through both VADs
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz

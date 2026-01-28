@@ -44,6 +44,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            AudioSessionManager.configure(.playback)
             AVAudioSession.sharedInstance().requestRecordPermission { _ in }
         }
     }

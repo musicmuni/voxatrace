@@ -16,7 +16,7 @@ import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
 import com.musicmuni.voxatrace.calibra.model.PitchPoint
 import com.musicmuni.voxatrace.calibra.model.PitchPreset
-import com.musicmuni.voxatrace.sonix.Sonix
+import com.musicmuni.voxatrace.sonix.AudioSessionManager
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixResampler
 import kotlinx.coroutines.launch
@@ -63,7 +63,7 @@ fun PitchPointExplorerDemo() {
                 recorder?.audioBuffers?.collect { buffer ->
                     val det = detector ?: return@collect
 
-                    val hwRate = Sonix.hardwareSampleRate.toInt()
+                    val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
                     val samples16k = SonixResampler.resample(
                         samples = buffer.data,
                         fromRate = hwRate,

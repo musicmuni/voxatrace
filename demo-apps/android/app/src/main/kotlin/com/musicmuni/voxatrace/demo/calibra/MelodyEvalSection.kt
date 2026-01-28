@@ -72,11 +72,13 @@ fun MelodyEvalSection() {
                 )
                 Text(
                     text = """
-                        val eval = CalibraMelodyEval.Builder()
-                            .referenceContour(refContour)
-                            .build()
-                        val result = eval.evaluate(studentContour)
-                        // result.score: 0-100
+                        val reference = LessonMaterial.fromAudio(...)
+                        val student = LessonMaterial.fromAudio(...)
+                        val extractor = CalibraPitch.createContourExtractor()
+                        val result = CalibraMelodyEval.evaluate(
+                            reference, student, extractor
+                        )
+                        // result.overallScore: 0.0-1.0
                     """.trimIndent(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

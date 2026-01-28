@@ -1,9 +1,9 @@
 import SwiftUI
 import VoxaTrace
 
-/// Advanced Multi-Track Section using SonixMixer.Builder().
+/// Advanced Multi-Track Section using SonixMixerConfig + SonixMixer.create().
 ///
-/// Demonstrates the Builder pattern for advanced configuration:
+/// Demonstrates the Config + Factory pattern for advanced configuration:
 /// - Loop count configuration
 /// - Playback event callbacks (onPlaybackComplete, onLoopComplete, onError)
 /// - Auto-decoding from file paths (no manual AudioDecoder usage needed)
@@ -27,7 +27,7 @@ struct MultiTrackSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Multi-Track (Builder API)")
+            Text("Multi-Track (Config + Factory)")
                 .font(.headline)
 
             Text("Status: \(status)")
@@ -134,6 +134,9 @@ struct MultiTrackSection: View {
     private func initializeMixer() async {
         status = "Loading tracks..."
 
+        // Configure audio session for playback
+        AudioSessionManager.configure(.playback)
+
         // Copy assets to files
         guard let backingPath = copyAssetToFile(name: "sample", ext: "m4a"),
               let vocalPath = copyAssetToFile(name: "vocal", ext: "m4a") else {
@@ -143,9 +146,9 @@ struct MultiTrackSection: View {
             return
         }
 
-        // CREATE MIXER WITH BUILDER - ADVANCED CONFIGURATION
-        let newMixer = SonixMixer.Builder()
-            .loopCount(count: 1)  // Play once (default); use loopForever() for infinite
+        // CREATE MIXER WITH CONFIG + FACTORY PATTERN
+        let mixerConfig = SonixMixerConfig.Builder()
+            .loopCount(1)
             .onPlaybackComplete {
                 print("Playback complete!")
                 Task { @MainActor in
@@ -162,6 +165,7 @@ struct MultiTrackSection: View {
                 }
             }
             .build()
+        let newMixer = SonixMixer.create(config: mixerConfig)
 
         // Auto-decode tracks (no manual AudioDecoder calls needed!)
         let backingSuccess = try? await newMixer.addTrack(name: "backing", filePath: backingPath)
