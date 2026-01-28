@@ -389,6 +389,9 @@ struct SingalongSection: View {
             )
         }
 
+        // Configure audio session for simultaneous playback + recording
+        AudioSessionManager.configure(.playAndRecord, echoCancellation: true)
+
         guard let audioURL = Bundle.main.url(forResource: lessonName, withExtension: "m4a") else {
             await MainActor.run {
                 isLoading = false
@@ -413,7 +416,8 @@ struct SingalongSection: View {
         // Setup recorder
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("singalong_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice", echoCancellation: true)
+        let recorderConfig = SonixRecorderConfig.Builder().preset(.voice).echoCancellation(true).build()
+        recorder = SonixRecorder.create(outputPath: tempPath, config: recorderConfig)
 
         // Load pitch contour if available
         var pitchContour: PitchContour? = nil
@@ -425,7 +429,7 @@ struct SingalongSection: View {
 
         // Create session
         if let audioData = SonixDecoder.decode(path: audioURL.path) {
-            let reference = SingingReference.fromAudio(
+            let reference = LessonMaterial.fromAudio(
                 samples: audioData.samples,
                 sampleRate: audioData.sampleRate,
                 segments: segments,
@@ -531,7 +535,7 @@ struct SingalongSection: View {
         guard let recorder = recorder else { return }
 
         Task {
-            let hwRate = Sonix.hardwareSampleRateInt
+            let hwRate = AudioSessionManager.hardwareSampleRate
             for await buffer in recorder.audioBuffers {
                 let samples16k = SonixResampler.resample(
                     samples: buffer.samples,

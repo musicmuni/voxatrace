@@ -307,6 +307,9 @@ struct NoteEvalSection: View {
     // MARK: - Actions
 
     private func startRecording() {
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Reset state
         collectedAudio = []
         hasRecording = false
@@ -317,13 +320,13 @@ struct NoteEvalSection: View {
         // Create recorder
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("note_eval_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
 
         isRecording = true
 
         // Collect audio buffers
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
             var sampleCount = 0
 
             guard let recorder = recorder else { return }

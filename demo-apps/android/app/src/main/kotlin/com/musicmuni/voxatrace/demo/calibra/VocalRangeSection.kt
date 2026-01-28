@@ -11,10 +11,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.VocalRangePhase
 import com.musicmuni.voxatrace.calibra.VocalRangeSession
 import com.musicmuni.voxatrace.calibra.VocalRangeState
-import com.musicmuni.voxatrace.sonix.Sonix
+import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
+import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.sonix.AudioSessionManager
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixResampler
 import kotlinx.coroutines.launch
@@ -34,8 +37,15 @@ fun VocalRangeSection() {
     val state by session?.state?.collectAsState() ?: remember { mutableStateOf(VocalRangeState()) }
 
     fun start() {
-        // Create session and recorder
-        session = VocalRangeSession.create()
+        // Create detector with YIN algorithm for vocal range detection
+        val detectorConfig = PitchDetectorConfig.Builder()
+            .algorithm(PitchAlgorithm.YIN)
+            .enableProcessing()
+            .build()
+        val detector = CalibraPitch.createDetector(detectorConfig)
+
+        // Create session with detector and recorder
+        session = VocalRangeSession.create(detector = detector)
         recorder = SonixRecorder.create("${context.cacheDir}/range_temp.m4a", "m4a", "voice")
 
         // Start session (runs auto-flow)
@@ -44,7 +54,7 @@ fun VocalRangeSection() {
         // Start recording and feed audio to session
         recorder?.start()
         scope.launch {
-            val hwRate = Sonix.hardwareSampleRate
+            val hwRate = AudioSessionManager.hardwareSampleRate
             recorder?.audioBuffers?.collect { buffer ->
                 // Resample to 16kHz and convert to ShortArray
                 val resampled = SonixResampler.resample(buffer.floatSamples, hwRate, 16000)

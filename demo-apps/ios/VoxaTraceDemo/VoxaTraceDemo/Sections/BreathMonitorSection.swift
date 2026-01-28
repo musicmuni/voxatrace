@@ -159,13 +159,16 @@ struct BreathMonitorSection: View {
     private func setupAudioIfNeeded() {
         guard vad == nil else { return }
 
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Create VAD using Calibra public API with SINGING_REALTIME backend (low latency)
         vad = CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("breath_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
     }
 
     private func cleanupAudio() {
@@ -196,7 +199,7 @@ struct BreathMonitorSection: View {
 
         // Collect audio buffers from Sonix for VAD
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)

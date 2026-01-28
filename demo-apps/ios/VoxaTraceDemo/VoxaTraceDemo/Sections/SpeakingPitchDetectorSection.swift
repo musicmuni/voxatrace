@@ -191,16 +191,19 @@ struct SpeakingPitchDetectorSection: View {
     private func setupAudioIfNeeded() {
         guard pitch == nil else { return }
 
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Create pitch detector using Calibra public API (YIN doesn't require a model)
         let config = PitchDetectorConfig.Builder()
-            .algorithm(algo: .yin)
+            .algorithm(.yin)
             .build()
         pitch = CalibraPitch.createDetector(config: config, modelProvider: nil)
 
         // Create recorder using Sonix (no output file needed, just for buffer access)
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("speaking_pitch_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
     }
 
     private func cleanupAudio() {
@@ -227,7 +230,7 @@ struct SpeakingPitchDetectorSection: View {
 
         // Collect audio buffers from Sonix
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)

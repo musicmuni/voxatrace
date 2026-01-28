@@ -156,14 +156,16 @@ struct RecordingSectionSimplified: View {
 
             await MainActor.run { status = "Starting..." }
 
+            // Configure audio session for recording
+            AudioSessionManager.configure(.recording)
+
             let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let outputPath = documentsPath.appendingPathComponent("recording_\(Int(Date().timeIntervalSince1970)).\(selectedFormat)").path
 
             // THIS IS ALL IT TAKES TO RECORD!
             let newRecorder = SonixRecorder.create(
                 outputPath: outputPath,
-                format: selectedFormat,
-                quality: "voice"
+                config: .voice
             )
 
             await MainActor.run {

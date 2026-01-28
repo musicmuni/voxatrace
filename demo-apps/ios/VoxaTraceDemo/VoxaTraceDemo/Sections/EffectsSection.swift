@@ -201,6 +201,9 @@ struct EffectsSection: View {
     private func setupAudioIfNeeded() {
         guard effects == nil else { return }
 
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Build effects chain
         let builder = CalibraEffects.Builder()
         _ = builder.addNoiseGate(thresholdDb: noiseGateThreshold, holdTimeMs: 100, timeConstMs: 10)
@@ -210,7 +213,8 @@ struct EffectsSection: View {
 
         // Create Sonix recorder
         let recordingPath = getAudioFileURL().path
-        recorder = SonixRecorder.create(outputPath: recordingPath, format: "wav", quality: "voice")
+        let recorderConfig = SonixRecorderConfig.Builder().preset(.voice).format(.wav).build()
+        recorder = SonixRecorder.create(outputPath: recordingPath, config: recorderConfig)
     }
 
     private func cleanupAudio() {

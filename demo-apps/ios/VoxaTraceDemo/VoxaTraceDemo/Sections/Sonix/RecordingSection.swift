@@ -2,9 +2,9 @@ import SwiftUI
 import VoxaTrace
 import AVFoundation
 
-/// Recording Section using the unified SonixRecorder Builder API.
+/// Recording Section using the SonixRecorderConfig + Factory API.
 ///
-/// This demonstrates advanced usage with SonixRecorder.Builder() including:
+/// This demonstrates advanced usage with SonixRecorderConfig.Builder() including:
 /// - Custom sample rate, channels, and bitrate
 /// - Buffer Pool status monitoring (for Calibra integration)
 /// - SonixPlayer for playback after recording
@@ -178,16 +178,18 @@ struct RecordingSection: View {
 
             await MainActor.run { status = "Starting..." }
 
+            // Configure audio session for recording
+            AudioSessionManager.configure(.recording)
+
             let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let outputPath = documentsPath.appendingPathComponent("recording_\(Int(Date().timeIntervalSince1970)).\(selectedFormat)").path
 
-            // Create recorder using Builder for advanced config with callbacks
-            let newRecorder = SonixRecorder.Builder()
-                .outputPath(path: outputPath)
-                .format(name: selectedFormat)
-                .sampleRate(rate: 16000)
-                .channels(count: 1)
-                .bitrate(bps: 128000)
+            // Create recorder using Config + Factory pattern
+            let recorderConfig = SonixRecorderConfig.Builder()
+                .preset(.voice)
+                .sampleRate(16000)
+                .channels(1)
+                .bitrate(128000)
                 .onRecordingStarted {
                     print("Recording started!")
                 }
@@ -198,6 +200,7 @@ struct RecordingSection: View {
                     print("Recording error: \(error)")
                 }
                 .build()
+            let newRecorder = SonixRecorder.create(outputPath: outputPath, config: recorderConfig)
 
             await MainActor.run {
                 recorder = newRecorder

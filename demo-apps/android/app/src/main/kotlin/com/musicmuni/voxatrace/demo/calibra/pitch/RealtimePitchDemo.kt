@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.*
-import com.musicmuni.voxatrace.sonix.Sonix
+import com.musicmuni.voxatrace.sonix.AudioSessionManager
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixResampler
 import kotlinx.coroutines.launch
@@ -99,7 +99,7 @@ fun RealtimePitchDemo() {
                     val det = detector ?: return@collect
 
                     // Resample to 16kHz for pitch detection
-                    val hwRate = Sonix.hardwareSampleRate.toInt()
+                    val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
                     val samples16k = SonixResampler.resample(
                         samples = buffer.data,
                         fromRate = hwRate,

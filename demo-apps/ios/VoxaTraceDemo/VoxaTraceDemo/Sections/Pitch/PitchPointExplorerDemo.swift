@@ -192,23 +192,29 @@ struct PitchPointExplorerDemo: View {
     private func setupAudioIfNeeded() {
         guard detector == nil else { return }
 
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         let algorithm = algorithms[selectedAlgorithm].algorithm
-        var builder = CalibraPitch.DetectorBuilder().algorithm(algorithm)
+        let detectorConfig = PitchDetectorConfig.Builder()
+            .algorithm(algorithm)
+            .build()
 
         // SwiftF0 requires model provider
+        var modelProvider: (() -> KotlinByteArray)? = nil
         if algorithm == .swiftF0 {
             if !modelLoaderConfigured {
                 ModelLoader.configure()
                 modelLoaderConfigured = true
             }
-            builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+            modelProvider = { ModelLoader.loadSwiftF0() }
         }
 
-        detector = builder.build()
+        detector = CalibraPitch.createDetector(config: detectorConfig, modelProvider: modelProvider)
 
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("pitch_explorer_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
     }
 
     private func cleanup() {
@@ -228,7 +234,7 @@ struct PitchPointExplorerDemo: View {
         isRecording = true
 
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 let samples16k = SonixResampler.resample(

@@ -32,7 +32,7 @@ struct MelodyEvalSection: View {
     @State private var status = "Ready"
 
     // Resources
-    @State private var reference: SingingReference?
+    @State private var reference: LessonMaterial?
     @State private var recorder: SonixRecorder?
     @State private var collectedAudio: [Float] = []
 
@@ -285,8 +285,8 @@ struct MelodyEvalSection: View {
             return
         }
 
-        // Create SingingReference
-        reference = SingingReference.fromAudio(
+        // Create LessonMaterial
+        reference = LessonMaterial.fromAudio(
             samples: audioData.samples,
             sampleRate: Int32(audioData.sampleRate),
             segments: segments,
@@ -298,6 +298,9 @@ struct MelodyEvalSection: View {
     }
 
     private func startRecording() {
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Reset state
         collectedAudio = []
         hasRecording = false
@@ -308,13 +311,13 @@ struct MelodyEvalSection: View {
         // Create recorder
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("melody_eval_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
 
         isRecording = true
 
         // Collect audio buffers
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
             var sampleCount = 0
 
             guard let recorder = recorder else { return }
@@ -369,17 +372,25 @@ struct MelodyEvalSection: View {
             // Use collected audio samples directly
             let studentAudio = collectedAudio
 
-            // Extract pitch contour from student audio using ContourExtractor
+            // Create student LessonMaterial from recorded audio
+            let studentMaterial = LessonMaterial.fromAudio(
+                samples: studentAudio,
+                sampleRate: 16000,
+                segments: [],  // Uses reference segments when empty
+                keyHz: reference.keyHz
+            )
+
+            // Create contour extractor (caller owns lifecycle)
             let extractor = CalibraPitch.createContourExtractor()
-            let studentContour = extractor.extract(audio: studentAudio)
-            extractor.release()
 
             // Evaluate using CalibraMelodyEval
             let evalResult = CalibraMelodyEval.evaluate(
                 reference: reference,
-                student: studentContour,
-                studentSegments: nil
+                student: studentMaterial,
+                contourExtractor: extractor
             )
+
+            extractor.release()
 
             await MainActor.run {
                 result = evalResult

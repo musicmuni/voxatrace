@@ -284,9 +284,11 @@ struct ContourCleanupDemo: View {
 
     private func setupRecorderIfNeeded() {
         guard recorder == nil else { return }
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("pitch_cleanup_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
     }
 
     private func cleanup() {
@@ -303,7 +305,7 @@ struct ContourCleanupDemo: View {
         isRecording = true
 
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 let samples16k = SonixResampler.resample(
@@ -340,22 +342,24 @@ struct ContourCleanupDemo: View {
         Task {
             // Extract raw contour
             let algorithm = algorithms[selectedAlgorithm].algorithm
-            var builder = CalibraPitch.ContourExtractorBuilder()
+            let extractorConfig = ContourExtractorConfig.Builder()
                 .algorithm(algorithm)
-                .preset(.balanced)
+                .pitchPreset(.balanced)
                 .cleanup(.raw)
                 .hopMs(10)
+                .build()
 
             // SwiftF0 requires model provider
+            var modelProvider: (() -> KotlinByteArray)? = nil
             if algorithm == .swiftF0 {
                 if !modelLoaderConfigured {
                     ModelLoader.configure()
                     await MainActor.run { modelLoaderConfigured = true }
                 }
-                builder = builder.modelProvider { ModelLoader.loadSwiftF0() }
+                modelProvider = { ModelLoader.loadSwiftF0() }
             }
 
-            let extractor = builder.build()
+            let extractor = CalibraPitch.createContourExtractor(config: extractorConfig, modelProvider: modelProvider)
             let raw = extractor.extract(audio: collectedSamples)
             extractor.release()
 

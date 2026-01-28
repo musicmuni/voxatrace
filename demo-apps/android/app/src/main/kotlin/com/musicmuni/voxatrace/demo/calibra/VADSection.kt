@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.musicmuni.voxatrace.calibra.CalibraVAD
 import com.musicmuni.voxatrace.calibra.model.VADBackend
 import com.musicmuni.voxatrace.calibra.model.VoiceActivityLevel
-import com.musicmuni.voxatrace.sonix.Sonix
+import com.musicmuni.voxatrace.sonix.AudioSessionManager
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixResampler
 import kotlinx.coroutines.launch
@@ -74,7 +74,7 @@ fun VADSection() {
                 recorder?.audioBuffers?.collect { buffer ->
                     val v = vad ?: return@collect
 
-                    val hwRate = Sonix.hardwareSampleRate.toInt()
+                    val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
                     val samples16k = SonixResampler.resample(
                         samples = buffer.data,
                         fromRate = hwRate,

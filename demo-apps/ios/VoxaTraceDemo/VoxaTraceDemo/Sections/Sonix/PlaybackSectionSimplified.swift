@@ -168,6 +168,9 @@ struct PlaybackSectionSimplified: View {
     }
 
     private func initializePlayer() async {
+        // Configure audio session for playback
+        AudioSessionManager.configure(.playback)
+
         // Copy asset to file
         guard let assetPath = copyAssetToFile(name: "sample", ext: "m4a") else {
             await MainActor.run {

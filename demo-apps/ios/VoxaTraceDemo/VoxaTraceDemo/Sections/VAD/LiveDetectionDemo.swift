@@ -202,6 +202,9 @@ struct LiveDetectionDemo: View {
     }
 
     private func startRecording() {
+        // Configure audio session for recording
+        AudioSessionManager.configure(.recording)
+
         // Create VAD if needed
         if vad == nil {
             let backend = backends[selectedBackendIndex].backend
@@ -211,7 +214,7 @@ struct LiveDetectionDemo: View {
         // Create recorder
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("vad_live_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, format: "m4a", quality: "voice")
+        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice)
 
         guard let recorder = recorder, let vad = vad else { return }
 
@@ -220,7 +223,7 @@ struct LiveDetectionDemo: View {
 
         // Process audio buffers
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 let startTime = CFAbsoluteTimeGetCurrent()
