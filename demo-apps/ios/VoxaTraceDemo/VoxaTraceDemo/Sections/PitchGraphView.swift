@@ -13,21 +13,30 @@ struct PitchDataPoint: Identifiable {
 
 /// Segments a pitch contour into consecutive voiced regions.
 /// Returns array of PitchDataPoint with MIDI note numbers.
+/// - Parameter inputIsMidi: If true, pitches are already in MIDI format (skip Hz→MIDI conversion)
 private func segmentPitchContour(
     times: [Float],
-    pitchesHz: [Float],
+    pitches: [Float],
     seriesName: String,
+    inputIsMidi: Bool = false,
     gapThreshold: Float = 0.025  // 25ms gap threshold (2.5x the 10ms hop)
 ) -> [PitchDataPoint] {
     var points: [PitchDataPoint] = []
     var segmentIndex = 0
     var lastValidTime: Float? = nil
 
-    for (time, pitch) in zip(times, pitchesHz) {
-        let midiNote = CalibraMusic.hzToMidi(pitch)
+    for (time, pitch) in zip(times, pitches) {
+        let midiNote: Float
+        if inputIsMidi {
+            // Input is already MIDI - use directly
+            midiNote = pitch
+        } else {
+            // Input is Hz - convert to MIDI
+            midiNote = CalibraMusic.hzToMidi(pitch)
+        }
 
-        // Skip invalid pitches
-        if midiNote.isNaN || pitch <= 0 {
+        // Skip invalid pitches (unvoiced sentinel is -1 for MIDI, <= 0 for Hz)
+        if midiNote.isNaN || midiNote <= 0 {
             // Gap detected - next valid point starts a new segment
             lastValidTime = nil
             continue
@@ -68,7 +77,8 @@ struct PitchGraphView: View {
         color: Color = .blue,
         title: String? = nil,
         series: String = "Pitch",
-        height: CGFloat = 200
+        height: CGFloat = 200,
+        inputIsMidi: Bool = false
     ) {
         // Generate time values if not provided (assuming 10ms hop)
         let timeValues = times ?? pitchesHz.indices.map { Float($0) * 0.01 }
@@ -76,8 +86,9 @@ struct PitchGraphView: View {
         // Segment the contour to avoid connecting across gaps
         self.dataPoints = segmentPitchContour(
             times: timeValues,
-            pitchesHz: pitchesHz,
-            seriesName: series
+            pitches: pitchesHz,
+            seriesName: series,
+            inputIsMidi: inputIsMidi
         )
         self.title = title
         self.height = height
@@ -86,11 +97,13 @@ struct PitchGraphView: View {
     }
 
     /// Initialize with multiple pitch contours for overlay comparison.
+    /// This version uses a shared times array for all contours (legacy mode).
     init(
         contours: [(pitches: [Float], color: Color, label: String)],
         times: [Float]? = nil,
         title: String? = nil,
-        height: CGFloat = 200
+        height: CGFloat = 200,
+        inputIsMidi: Bool = false
     ) {
         var allPoints: [PitchDataPoint] = []
         var colors: [String: Color] = [:]
@@ -101,8 +114,41 @@ struct PitchGraphView: View {
             // Segment each contour to avoid connecting across gaps
             let points = segmentPitchContour(
                 times: timeValues,
-                pitchesHz: contour.pitches,
-                seriesName: contour.label
+                pitches: contour.pitches,
+                seriesName: contour.label,
+                inputIsMidi: inputIsMidi
+            )
+            allPoints.append(contentsOf: points)
+            colors[contour.label] = contour.color
+            order.append(contour.label)
+        }
+
+        self.dataPoints = allPoints
+        self.title = title
+        self.height = height
+        self.seriesColors = colors
+        self.seriesOrder = order
+    }
+
+    /// Initialize with multiple pitch contours, each with its own times array.
+    /// This ensures proper time alignment when contours have different frame counts.
+    init(
+        contoursWithTimes: [(times: [Float], pitches: [Float], color: Color, label: String)],
+        title: String? = nil,
+        height: CGFloat = 200,
+        inputIsMidi: Bool = false
+    ) {
+        var allPoints: [PitchDataPoint] = []
+        var colors: [String: Color] = [:]
+        var order: [String] = []
+
+        for contour in contoursWithTimes {
+            // Each contour uses its own times array
+            let points = segmentPitchContour(
+                times: contour.times,
+                pitches: contour.pitches,
+                seriesName: contour.label,
+                inputIsMidi: inputIsMidi
             )
             allPoints.append(contentsOf: points)
             colors[contour.label] = contour.color

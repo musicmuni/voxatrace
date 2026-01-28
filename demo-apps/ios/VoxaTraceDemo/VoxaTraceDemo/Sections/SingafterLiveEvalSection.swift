@@ -245,7 +245,11 @@ struct SingafterLiveEvalSection: View {
 
         // Create pitch detector using Calibra public API (with processing for smoothing + octave correction)
         // Use YIN algorithm since it doesn't require a model provider (SWIFT_F0 requires model)
-        pitchDetector = CalibraPitch.createDetector(algorithm: .yin, enableProcessing: true)
+        let config = PitchDetectorConfig.Builder()
+            .algorithm(algo: .yin)
+            .enableProcessing()
+            .build()
+        pitchDetector = CalibraPitch.createDetector(config: config, modelProvider: nil)
 
         // Create recorder using Sonix
         let tempPath = FileManager.default.temporaryDirectory
@@ -325,10 +329,10 @@ struct SingafterLiveEvalSection: View {
             if let audioData = SonixDecoder.decode(path: audioURL.path) {
                 // Create segments from phrase pairs (using teacher timing for reference)
                 let calibraSegments: [Segment] = phrasePairs.enumerated().map { (index, pair) in
-                    Segment(
-                        index: Int32(index),
-                        startSeconds: Float(pair.teacherStartTime),
-                        endSeconds: Float(pair.teacherEndTime),
+                    .create(
+                        index: index,
+                        startSeconds: pair.teacherStartTime,
+                        endSeconds: pair.teacherEndTime,
                         lyrics: pair.lyrics
                     )
                 }
@@ -356,19 +360,19 @@ struct SingafterLiveEvalSection: View {
                     pitchContour: pitchContour
                 )
 
-                // Create session with config (manual phase control)
-                let config = SessionConfig(
-                    autoAdvance: false,
-                    resultAggregation: .latest,
-                    processingRate: 16000,
-                    pitchTolerance: 0.15,
-                    frameSize: 1024,
-                    hopSize: 128,
-                    studentKeyHz: 0,
-                    yinMinPitch: -1,
-                    yinMaxPitch: -1
+                // Create detector with YIN algorithm (no model required)
+                let detector = CalibraPitch.createDetector(
+                    config: PitchDetectorConfig.balanced,
+                    modelProvider: nil
                 )
-                session = CalibraLiveEval.create(reference: reference, config: config)
+
+                // Create session with config (manual phase control for singafter flow)
+                // Use practice preset for listen-then-sing flow
+                // - Repeats segment until score >= 70% or 3 attempts
+                // - Best score aggregation
+                // For custom tuning: SessionConfig.Builder().scoreThreshold(0.8).build()
+                let config = SessionConfig.practice
+                session = CalibraLiveEval.create(reference: reference, session: config, detector: detector)
 
                 // Prepare session (precomputes reference features on background thread)
                 try await session?.prepare()
@@ -423,7 +427,7 @@ struct SingafterLiveEvalSection: View {
         status = "Your turn! Sing now..."
 
         // Begin segment using new API (use currentPairIndex as segment index)
-        session?.beginSegment(index: Int32(currentPairIndex))
+        session?.beginSegment(index: currentPairIndex)
 
         // Start recording
         startRecording()
@@ -471,7 +475,7 @@ struct SingafterLiveEvalSection: View {
 
         // Collect audio buffers from Sonix
         Task {
-            let hwRate = Int(Sonix.hardwareSampleRate)
+            let hwRate = Sonix.hardwareSampleRateInt
 
             for await buffer in recorder.audioBuffers {
                 // Resample to 16kHz for Calibra (expects 16kHz input)

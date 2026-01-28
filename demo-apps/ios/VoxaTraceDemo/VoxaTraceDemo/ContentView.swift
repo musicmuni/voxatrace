@@ -357,7 +357,7 @@ struct CalibraDetailView: View {
         case "Speaking Pitch":
             SpeakingPitchDetectorSection()
         case "Singalong Live":
-            SingalongLiveEvalSection()
+            SingalongSection()
         case "Singafter Live":
             SingafterLiveEvalSection()
         case "Melody Eval":

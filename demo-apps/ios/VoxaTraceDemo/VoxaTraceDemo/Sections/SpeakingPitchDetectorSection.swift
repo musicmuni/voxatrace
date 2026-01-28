@@ -192,7 +192,10 @@ struct SpeakingPitchDetectorSection: View {
         guard pitch == nil else { return }
 
         // Create pitch detector using Calibra public API (YIN doesn't require a model)
-        pitch = CalibraPitch.createDetector(algorithm: .yin)
+        let config = PitchDetectorConfig.Builder()
+            .algorithm(algo: .yin)
+            .build()
+        pitch = CalibraPitch.createDetector(config: config, modelProvider: nil)
 
         // Create recorder using Sonix (no output file needed, just for buffer access)
         let tempPath = FileManager.default.temporaryDirectory
