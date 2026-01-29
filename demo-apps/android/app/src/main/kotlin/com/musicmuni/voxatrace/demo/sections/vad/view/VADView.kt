@@ -1,0 +1,201 @@
+package com.musicmuni.voxatrace.demo.sections.vad.view
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.musicmuni.voxatrace.calibra.model.VoiceActivityLevel
+import com.musicmuni.voxatrace.demo.sections.vad.viewmodel.LiveVADViewModel
+
+/**
+ * Voice Activity Detection View.
+ */
+@Composable
+fun VADView(viewModel: LiveVADViewModel = viewModel()) {
+    val context = LocalContext.current
+
+    val vadRatio by viewModel.vadRatio.collectAsStateWithLifecycle()
+    val activityLevel by viewModel.activityLevel.collectAsStateWithLifecycle()
+    val isRecording by viewModel.isRecording.collectAsStateWithLifecycle()
+    val selectedBackendIndex by viewModel.selectedBackendIndex.collectAsStateWithLifecycle()
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "Voice Activity Detection",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = "Detects speech/singing in audio using VAD",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        // Backend picker
+        Text("VAD Backend:", style = MaterialTheme.typography.labelMedium)
+        var backendExpanded by remember { mutableStateOf(false) }
+        ExposedDropdownMenuBox(
+            expanded = backendExpanded,
+            onExpandedChange = { backendExpanded = it }
+        ) {
+            OutlinedTextField(
+                value = viewModel.backends[selectedBackendIndex].name,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Backend") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = backendExpanded) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
+            )
+            ExposedDropdownMenu(
+                expanded = backendExpanded,
+                onDismissRequest = { backendExpanded = false }
+            ) {
+                viewModel.backends.forEachIndexed { index, info ->
+                    DropdownMenuItem(
+                        text = { Text(info.name) },
+                        onClick = {
+                            viewModel.setSelectedBackend(index)
+                            backendExpanded = false
+                        }
+                    )
+                }
+            }
+        }
+
+        Text(
+            text = viewModel.backends[selectedBackendIndex].description,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        HorizontalDivider()
+
+        // VAD display
+        VADDisplayCard(vadRatio = vadRatio, activityLevel = activityLevel)
+
+        // Real-time indicator
+        if (isRecording) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val indicatorColor = if (vadRatio > 0.5f) Color.Green else Color.Gray
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = indicatorColor,
+                    modifier = Modifier.size(12.dp)
+                ) {}
+                Text(
+                    text = if (vadRatio > 0.5f) "Voice Detected" else "Silence",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        // Control button
+        Button(
+            onClick = {
+                if (isRecording) viewModel.stopRecording()
+                else viewModel.startRecording(context)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(if (isRecording) "Stop" else "Start Detection")
+        }
+
+        // API info
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "API Usage:",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = """
+                        val vad = CalibraVAD.create(
+                            backend = VADBackend.GENERAL
+                        )
+                        val ratio = vad.getVADRatio(samples16k)
+                        // ratio: 0.0 = silence, 1.0 = full voice
+                    """.trimIndent(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun VADDisplayCard(vadRatio: Float, activityLevel: VoiceActivityLevel) {
+    val color = when (activityLevel) {
+        VoiceActivityLevel.NONE -> Color.Gray
+        VoiceActivityLevel.PARTIAL -> Color(0xFFFF9800)
+        VoiceActivityLevel.FULL -> Color.Green
+    }
+
+    val levelText = when (activityLevel) {
+        VoiceActivityLevel.NONE -> "None"
+        VoiceActivityLevel.PARTIAL -> "Partial"
+        VoiceActivityLevel.FULL -> "Full"
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "%.0f%%".format(vadRatio * 100),
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+
+            Text(
+                text = levelText,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LinearProgressIndicator(
+                progress = { vadRatio.coerceIn(0f, 1f) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = color
+            )
+        }
+    }
+}
