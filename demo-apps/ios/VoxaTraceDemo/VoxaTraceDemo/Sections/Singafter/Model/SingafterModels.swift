@@ -34,6 +34,27 @@ struct PhrasePair {
     let teacherId: Int
 }
 
+// MARK: - Lesson Data
+
+/// Parsed singafter lesson data ready for CalibraLiveEval.
+struct SingafterLessonData {
+    let reference: LessonMaterial
+    let audioPath: String
+    let phrasePairs: [PhrasePair]
+}
+
+// MARK: - UI State
+
+/// Represents the current state of the Singafter practice UI.
+enum SingafterUIState: Equatable {
+    case idle
+    case loading
+    case ready
+    case practicing
+    case summary
+    case error(String)
+}
+
 // MARK: - Practice Phase UI State
 
 /// Extended practice phase for UI display.
