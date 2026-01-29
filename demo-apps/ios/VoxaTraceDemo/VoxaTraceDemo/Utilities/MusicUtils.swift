@@ -39,3 +39,30 @@ enum MusicUtils {
         return 440.0 * pow(2.0, Float(midiNote - 69) / 12.0)
     }
 }
+
+// MARK: - File Utilities
+
+/// Copy a bundle asset to a writable file location.
+/// - Parameters:
+///   - name: Name of the resource (without extension)
+///   - ext: File extension
+/// - Returns: Path to the copied file, or nil if copy failed
+func copyAssetToFile(name: String, ext: String) -> String? {
+    guard let bundleURL = Bundle.main.url(forResource: name, withExtension: ext) else {
+        return nil
+    }
+
+    let tempDir = FileManager.default.temporaryDirectory
+    let destURL = tempDir.appendingPathComponent("\(name).\(ext)")
+
+    // Remove existing file if present
+    try? FileManager.default.removeItem(at: destURL)
+
+    do {
+        try FileManager.default.copyItem(at: bundleURL, to: destURL)
+        return destURL.path
+    } catch {
+        Log.e(.general, "Failed to copy asset '\(name).\(ext)'", error: error)
+        return nil
+    }
+}

@@ -7,13 +7,8 @@ import VoxaTrace
 enum NavigationDestination: Hashable {
     case sonix
     case calibra
-    case sonixFeature(String, ApiMode)
+    case sonixFeature(String)
     case calibraFeature(String)
-}
-
-enum ApiMode: Hashable {
-    case simple
-    case advanced
 }
 
 // MARK: - Content View (Navigation Router)
@@ -29,22 +24,22 @@ struct ContentView: View {
             .navigationDestination(for: NavigationDestination.self) { dest in
                 switch dest {
                 case .sonix:
-                    SonixMenuView(onSelect: { feature, mode in
-                        path.append(.sonixFeature(feature, mode))
+                    SonixMenuView(onSelect: { feature in
+                        path.append(.sonixFeature(feature))
                     })
                 case .calibra:
                     CalibraMenuView(onSelect: { feature in
                         path.append(.calibraFeature(feature))
                     })
-                case .sonixFeature(let name, let mode):
-                    SonixDetailView(featureName: name, apiMode: mode)
+                case .sonixFeature(let name):
+                    SonixDetailView(featureName: name)
                 case .calibraFeature(let name):
                     CalibraDetailView(featureName: name)
                 }
             }
         }
         .onAppear {
-            AudioSessionManager.configure(.playback)
+            // Audio session is now auto-configured when creating Sonix factories
             AVAudioSession.sharedInstance().requestRecordPermission { _ in }
         }
     }
@@ -129,50 +124,24 @@ struct CategoryCard: View {
 // MARK: - Sonix Menu View
 
 struct SonixMenuView: View {
-    @State private var apiMode: ApiMode = .simple
-    let onSelect: (String, ApiMode) -> Void
+    let onSelect: (String) -> Void
 
-    private var visibleFeatures: [(String, String, String)] {
-        var features = [
-            ("Playback", "play.circle.fill", "Audio playback with pitch shifting"),
-            ("Recording", "mic.circle.fill", "Audio recording to M4A/MP3"),
-            ("Multi-Track", "square.stack.3d.up.fill", "Multi-track mixing"),
-            ("Metronome", "metronome.fill", "Click track with visual feedback"),
-            ("MIDI Synthesis", "pianokeys", "SoundFont-based synthesis"),
-        ]
-        if apiMode == .advanced {
-            features.append(("Decoding", "doc.text", "Audio decode/encode"))
-            features.append(("Parser", "doc.plaintext", "Parse notation files"))
-        }
-        return features
-    }
+    private let features = [
+        ("Playback", "play.circle.fill", "Audio playback with pitch shifting"),
+        ("Recording", "mic.circle.fill", "Audio recording to M4A/MP3"),
+        ("Multi-Track", "square.stack.3d.up.fill", "Multi-track mixing"),
+        ("Metronome", "metronome.fill", "Click track with visual feedback"),
+        ("MIDI Synthesis", "pianokeys", "SoundFont-based synthesis"),
+        ("Decoding", "doc.text", "Audio decode/encode"),
+        ("Parser", "doc.plaintext", "Parse notation files"),
+    ]
 
     var body: some View {
         List {
             Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("API Mode")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    Picker("API Mode", selection: $apiMode) {
-                        Text("Simple").tag(ApiMode.simple)
-                        Text("Advanced").tag(ApiMode.advanced)
-                    }
-                    .pickerStyle(.segmented)
-
-                    Text(apiMode == .simple
-                         ? "Recommended for most apps"
-                         : "Full control with callbacks")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.vertical, 4)
-            }
-
-            Section {
-                ForEach(visibleFeatures, id: \.0) { feature in
+                ForEach(features, id: \.0) { feature in
                     Button {
-                        onSelect(feature.0, apiMode)
+                        onSelect(feature.0)
                     } label: {
                         FeatureRow(icon: feature.1, title: feature.0, description: feature.2)
                     }
@@ -276,7 +245,6 @@ struct FeatureRow: View {
 
 struct SonixDetailView: View {
     let featureName: String
-    let apiMode: ApiMode
 
     var body: some View {
         ScrollView {
@@ -291,39 +259,19 @@ struct SonixDetailView: View {
     private var sectionContent: some View {
         switch featureName {
         case "Playback":
-            if apiMode == .simple {
-                PlaybackSectionSimplified()
-            } else {
-                PlaybackSection()
-            }
+            PlaybackView()
         case "Recording":
-            if apiMode == .simple {
-                RecordingSectionSimplified()
-            } else {
-                RecordingSection()
-            }
+            RecordingView()
         case "Multi-Track":
-            if apiMode == .simple {
-                MultiTrackSectionSimplified()
-            } else {
-                MultiTrackSection()
-            }
+            MultiTrackView()
         case "Metronome":
-            if apiMode == .simple {
-                MetronomeSectionSimplified()
-            } else {
-                MetronomeSection()
-            }
+            MetronomeView()
         case "MIDI Synthesis":
-            if apiMode == .simple {
-                MidiSectionSimplified()
-            } else {
-                MidiSection()
-            }
+            MIDIView()
         case "Decoding":
-            DecodingSection()
+            DecodingView()
         case "Parser":
-            ParserSection()
+            ParserView()
         default:
             Text("Unknown Sonix section: \(featureName)")
         }
@@ -352,19 +300,19 @@ struct CalibraDetailView: View {
         case "VAD":
             VADSection()
         case "Breath Monitor":
-            BreathMonitorSection()
+            BreathMonitorView()
         case "Vocal Range":
-            VocalRangeSection()
+            VocalRangeView()
         case "Speaking Pitch":
-            SpeakingPitchDetectorSection()
+            SpeakingPitchView()
         case "Singalong Live":
             SingalongSection()
         case "Singafter Live":
-            SingafterLiveEvalSection()
+            SingafterView()
         case "Melody Eval":
-            MelodyEvalSection()
+            MelodyEvalView()
         case "Note Eval":
-            NoteEvalSection()
+            NoteEvalView()
         default:
             Text("Unknown Calibra section: \(featureName)")
         }
