@@ -1,29 +1,21 @@
 import SwiftUI
 import VoxaTrace
 
-// Timing: capture when this file is first loaded
-let appLoadTime = Date()
-
-// Helper to print timestamps with high precision
-func logTiming(_ message: String) {
-    let elapsed = Date().timeIntervalSince(appLoadTime)
-    print("[\(String(format: "%.3f", elapsed))s] \(message)")
-}
-
 @main
 struct VoxaTraceDemoApp: App {
     @State private var licenseError: String? = nil
 
     init() {
-        logTiming("VoxaTraceDemoApp.init() START")
-
         // Initialize VoxaTrace SDK with API key
         // debugLogging: true enables console output in Xcode
         do {
             try VT.initialize(apiKey: Config.apiKey, debugLogging: true)
+            Log.i(.general, "VoxaTrace SDK initialized")
         } catch let error as VoxaTraceKilledException {
+            Log.e(.general, "License validation failed: \(error.message)")
             _licenseError = State(initialValue: error.message)
         } catch {
+            Log.e(.general, "License validation failed", error: error)
             _licenseError = State(initialValue: "License validation failed: \(error.localizedDescription)")
         }
 
@@ -31,19 +23,17 @@ struct VoxaTraceDemoApp: App {
         // Must be called before using ModelLoader.loadSileroVAD() or ModelLoader.loadSwiftF0()
         ModelLoader.configure()
 
-        logTiming("VoxaTraceDemoApp.init() END")
+        // Register AI models for auto-loading by CalibraPitch factories
+        // After this, SwiftF0-based detectors/extractors work without explicit modelProvider
+        AIModelRegistry.shared.registerSwiftF0 { ModelLoader.loadSwiftF0() }
     }
 
     var body: some Scene {
-        logTiming("VoxaTraceDemoApp.body START")
-        return WindowGroup {
+        WindowGroup {
             if let error = licenseError {
                 LicenseErrorView(message: error)
             } else {
                 ContentView()
-                    .onAppear {
-                        logTiming("ContentView.onAppear (UI is now visible)")
-                    }
             }
         }
     }
