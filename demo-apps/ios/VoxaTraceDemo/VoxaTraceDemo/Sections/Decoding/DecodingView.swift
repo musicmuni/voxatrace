@@ -173,7 +173,7 @@ struct DecodingView: View {
                 decodedInfo = DecodedAudioInfo(
                     sampleRate: result.sampleRate,
                     channels: result.numChannels,
-                    durationMs: Int64(result.durationMilliSecs),
+                    durationMs: result.durationMilliSecs,
                     dataSize: Int(result.audioData.size)
                 )
                 status = "Decoded successfully"
@@ -222,9 +222,9 @@ struct DecodingView: View {
 }
 
 struct DecodedAudioInfo {
-    let sampleRate: Int32
-    let channels: Int32
-    let durationMs: Int64
+    let sampleRate: Int
+    let channels: Int
+    let durationMs: Int
     let dataSize: Int
 }
 

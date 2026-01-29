@@ -208,8 +208,8 @@ final class SingafterViewModel: ObservableObject {
             self.practicePhase = phase
         }
 
-        session?.onReferenceEnd { segment in
-            Log.d(.session, "Reference ended for segment \(segment.index)")
+        session?.onReferenceEnd { _ in
+            // Reference ended - no action needed for singafter
         }
 
         session?.onSegmentComplete { [weak self] result in

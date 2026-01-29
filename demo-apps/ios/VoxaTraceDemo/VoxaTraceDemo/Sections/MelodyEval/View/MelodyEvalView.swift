@@ -1,13 +1,14 @@
 import SwiftUI
 import VoxaTrace
 
-/// Melody evaluation view demonstrating CalibraMelodyEval for offline evaluation.
+/// Melody evaluation view with singalong mode.
+/// Students hear the reference melody (first 4 segments of Alankaar 01) while recording.
 struct MelodyEvalView: View {
     @StateObject private var viewModel = MelodyEvalViewModel()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Offline Melody Evaluation")
+            Text("Melody Singalong")
                 .font(.headline)
 
             Text(viewModel.status)
@@ -18,18 +19,13 @@ struct MelodyEvalView: View {
             if !viewModel.referenceLoaded {
                 loadReferenceSection
             } else {
-                // Reference info
-                referenceInfoSection
+                // Pattern display showing what to sing
+                patternDisplaySection
 
-                // Step 2: Record performance
-                recordingSection
+                // Step 2: Singalong (play + record)
+                singalongSection
 
-                // Step 3: Evaluate
-                if viewModel.hasRecording && !viewModel.isRecording {
-                    evaluateSection
-                }
-
-                // Step 4: Results
+                // Results (shown after evaluation)
                 if let result = viewModel.result {
                     resultsSection(result)
                 }
@@ -46,6 +42,23 @@ struct MelodyEvalView: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
 
+            Text("First 4 phrases of \(viewModel.referenceName):")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            // Preview what will be loaded
+            HStack(spacing: 8) {
+                ForEach(viewModel.segmentNames, id: \.self) { name in
+                    Text(name)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(6)
+                }
+            }
+
             Button("Load \(viewModel.referenceName)") {
                 viewModel.loadReference()
             }
@@ -53,34 +66,83 @@ struct MelodyEvalView: View {
         }
     }
 
-    private var referenceInfoSection: some View {
+    private var patternDisplaySection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.green)
-                Text("Reference: \(viewModel.referenceName)")
-                    .font(.subheadline)
-            }
-
-            Text("\(viewModel.segments.count) segments loaded")
+            Text("Phrases to Sing:")
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(0..<viewModel.segmentNames.count, id: \.self) { index in
+                        segmentChip(index: index)
+                    }
+                }
+            }
         }
-        .padding(8)
-        .background(Color.green.opacity(0.1))
+        .padding(12)
+        .background(Color.blue.opacity(0.1))
         .cornerRadius(8)
     }
 
-    private var recordingSection: some View {
+    private func segmentChip(index: Int) -> some View {
+        let isActive = viewModel.currentSegmentIndex == index
+        let score = viewModel.segmentScore(at: index)
+
+        let backgroundColor: Color = {
+            if let score = score {
+                if score >= 0.8 {
+                    return .green
+                } else if score >= 0.6 {
+                    return .orange
+                } else {
+                    return .red
+                }
+            } else if isActive {
+                return .blue
+            } else {
+                return Color(.secondarySystemBackground)
+            }
+        }()
+
+        let foregroundColor: Color = (score != nil || isActive) ? .white : .primary
+
+        return VStack(spacing: 2) {
+            Text(viewModel.segmentNames[index])
+                .font(.caption)
+                .fontWeight(.medium)
+            if let score = score {
+                Text("\(Int(score * 100))%")
+                    .font(.system(size: 10))
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(backgroundColor)
+        .foregroundColor(foregroundColor)
+        .cornerRadius(8)
+        .animation(.easeInOut(duration: 0.2), value: isActive)
+    }
+
+    private var singalongSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 2: Record Your Performance")
+            Text("Step 2: Singalong")
                 .font(.subheadline)
                 .fontWeight(.medium)
 
+            Text("Listen to the reference and sing along")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
             HStack {
-                if viewModel.isRecording {
-                    Button("Stop Recording") {
-                        viewModel.stopRecording()
+                if viewModel.isSingalongActive {
+                    Button {
+                        viewModel.stopSingalong()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "stop.fill")
+                            Text("Stop")
+                        }
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.red)
@@ -95,43 +157,55 @@ struct MelodyEvalView: View {
                             .font(.caption)
                             .monospacedDigit()
                     }
-                } else {
-                    Button(viewModel.hasRecording ? "Re-record" : "Start Recording") {
-                        viewModel.startRecording()
+                } else if viewModel.isPreparing {
+                    Button {
+                        // Disabled while preparing
+                    } label: {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            Text("Preparing...")
+                        }
                     }
                     .buttonStyle(.borderedProminent)
+                    .disabled(true)
+                } else {
+                    Button {
+                        viewModel.startSingalong()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "music.mic")
+                            Text(viewModel.hasRecording ? "Try Again" : "Start Singalong")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(!viewModel.isReady || viewModel.isEvaluating)
 
-                    if viewModel.hasRecording {
+                    if viewModel.hasRecording && !viewModel.isEvaluating {
                         Spacer()
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Recording ready")
-                            .font(.caption)
                     }
                 }
             }
 
-            if viewModel.isRecording {
+            if viewModel.isSingalongActive {
                 HStack {
                     Text("Level:")
                         .font(.caption)
                     ProgressView(value: Double(min(max(viewModel.recordingLevel, 0), 1)))
                 }
             }
-        }
-    }
 
-    private var evaluateSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Step 3: Evaluate")
-                .font(.subheadline)
-                .fontWeight(.medium)
-
-            Button(viewModel.isEvaluating ? "Evaluating..." : "Evaluate Performance") {
-                viewModel.evaluate()
+            if viewModel.isEvaluating {
+                HStack {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("Evaluating...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.isEvaluating)
         }
     }
 
@@ -146,7 +220,7 @@ struct MelodyEvalView: View {
 
             // Per-segment breakdown
             if !result.segmentResults.isEmpty {
-                Text("Per-Segment Scores")
+                Text("Per-Phrase Scores")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -170,6 +244,20 @@ struct MelodyEvalView: View {
             }
         }()
 
+        let feedbackMessage: String = {
+            if result.overallScore >= 0.9 {
+                return "Excellent! Perfect performance."
+            } else if result.overallScore >= 0.8 {
+                return "Great job! Almost perfect."
+            } else if result.overallScore >= 0.7 {
+                return "Good job! Keep practicing."
+            } else if result.overallScore >= 0.5 {
+                return "Not bad. Focus on pitch accuracy."
+            } else {
+                return "Keep practicing! Match each phrase carefully."
+            }
+        }()
+
         return VStack(spacing: 4) {
             Text("Overall Score")
                 .font(.caption)
@@ -178,6 +266,9 @@ struct MelodyEvalView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
+            Text(feedbackMessage)
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.9))
         }
         .frame(maxWidth: .infinity)
         .padding(16)
@@ -196,15 +287,16 @@ struct MelodyEvalView: View {
             }
         }()
 
+        let phraseName = index < viewModel.segmentNames.count ? viewModel.segmentNames[index] : "Phrase \(index + 1)"
+
         return HStack {
-            Text("Segment \(index + 1)")
+            Text(phraseName)
                 .font(.caption)
-            if !result.segment.lyrics.isEmpty {
-                Text("(\(result.segment.lyrics))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-            }
+                .fontWeight(.medium)
+            Text("(\(result.segment.lyrics.trimmingCharacters(in: .whitespaces)))")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
             Spacer()
             Text("\(Int(result.score * 100))%")
                 .font(.caption)

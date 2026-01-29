@@ -152,7 +152,14 @@ final class EffectsViewModel: ObservableObject {
         // Build effects config and create chain (ADR-001: Builder builds Config)
         let config = CalibraEffectsConfig.Builder()
             .addNoiseGate(thresholdDb: noiseGateThreshold, holdTimeMs: 100, timeConstMs: 10)
-            .addCompressor(thresholdDb: compressorThreshold, ratio: compressorRatio)
+            .addCompressor(
+                thresholdDb: compressorThreshold,
+                ratio: compressorRatio,
+                attackMs: 10,
+                releaseMs: 100,
+                autoMakeup: false,
+                makeupDb: 0
+            )
             .addReverb(mix: reverbMix, roomSize: reverbRoomSize)
             .build()
         effects = CalibraEffects.create(config: config)
@@ -171,7 +178,14 @@ final class EffectsViewModel: ObservableObject {
         // Build effects config and create chain (ADR-001: Builder builds Config)
         let config = CalibraEffectsConfig.Builder()
             .addNoiseGate(thresholdDb: noiseGateThreshold, holdTimeMs: 100, timeConstMs: 10)
-            .addCompressor(thresholdDb: compressorThreshold, ratio: compressorRatio)
+            .addCompressor(
+                thresholdDb: compressorThreshold,
+                ratio: compressorRatio,
+                attackMs: 10,
+                releaseMs: 100,
+                autoMakeup: false,
+                makeupDb: 0
+            )
             .addReverb(mix: reverbMix, roomSize: reverbRoomSize)
             .build()
         effects = CalibraEffects.create(config: config)

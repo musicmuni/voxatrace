@@ -7,18 +7,20 @@ import com.musicmuni.voxatrace.calibra.CalibraLiveEval
 import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
 import com.musicmuni.voxatrace.calibra.model.PracticePhase
-import com.musicmuni.voxatrace.calibra.model.PitchContour
 import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.calibra.model.PitchContour
 import com.musicmuni.voxatrace.calibra.model.Segment
 import com.musicmuni.voxatrace.calibra.model.SegmentResult
-import com.musicmuni.voxatrace.calibra.model.SessionConfig
+import com.musicmuni.voxatrace.demo.sections.singafter.model.PhrasePair
+import com.musicmuni.voxatrace.demo.sections.singafter.model.SingafterUIState
+import com.musicmuni.voxatrace.demo.sections.singalong.model.SessionPreset
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixPlayerConfig
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.util.Parser
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,52 +30,38 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileOutputStream
+import java.util.UUID
 
 /**
- * Data class representing a phrase pair (teacher + student segment).
- */
-data class PhrasePair(
-    val index: Int,
-    val lyrics: String,
-    val teacherStartTime: Float,
-    val teacherEndTime: Float,
-    val studentStartTime: Float,
-    val studentEndTime: Float,
-    val teacherId: Int
-)
-
-/**
- * ViewModel for singafter (call and response) evaluation using CalibraLiveEval.
+ * ViewModel for Singafter (call and response) Practice.
  *
- * ## VoxaTrace Integration (~25 lines)
+ * Responsibilities:
+ * - Manages CalibraLiveEval session lifecycle
+ * - Transforms session state for UI consumption
+ * - Exposes actions for user interactions
+ *
+ * ## CalibraLiveEval Integration
+ *
+ * The actual library integration is minimal (~30 lines):
  * ```kotlin
- * // 1. Create session with singafter segments
- * val segments = phrasePairs.mapIndexed { index, pair ->
- *     Segment.create(
- *         index = index,
- *         startSeconds = pair.teacherStartTime,
- *         endSeconds = pair.studentEndTime,
- *         lyrics = pair.lyrics,
- *         studentStartSeconds = pair.studentStartTime,
- *         studentEndSeconds = pair.studentEndTime
- *     )
- * }
- * session = CalibraLiveEval.create(reference, SessionConfig.PRACTICE, detector, player, recorder)
+ * // 1. Create session with singafter segments (includes studentStartSeconds/studentEndSeconds)
+ * session = CalibraLiveEval.create(reference, session, detector, player, recorder)
  *
  * // 2. Setup callbacks
- * session.onPhaseChanged { phase -> }
- * session.onSegmentComplete { result -> }
+ * session.onPhaseChanged { }      // Handles LISTENING -> SINGING transition
+ * session.onSegmentComplete { }
  *
- * // 3. Start practice - handles LISTENING -> SINGING transition automatically
- * session.playSegment(index = currentPairIndex)
+ * // 3. Control playback
+ * session.playSegment(index)
+ * session.pause()
  * ```
  */
 class SingafterViewModel : ViewModel() {
 
     // MARK: - Published State
 
-    private val _lessonLoaded = MutableStateFlow(false)
-    val lessonLoaded: StateFlow<Boolean> = _lessonLoaded.asStateFlow()
+    private val _uiState = MutableStateFlow<SingafterUIState>(SingafterUIState.Idle)
+    val uiState: StateFlow<SingafterUIState> = _uiState.asStateFlow()
 
     private val _phrasePairs = MutableStateFlow<List<PhrasePair>>(emptyList())
     val phrasePairs: StateFlow<List<PhrasePair>> = _phrasePairs.asStateFlow()
@@ -81,24 +69,42 @@ class SingafterViewModel : ViewModel() {
     private val _currentPairIndex = MutableStateFlow(0)
     val currentPairIndex: StateFlow<Int> = _currentPairIndex.asStateFlow()
 
+    private val _completedPairIndices = MutableStateFlow<Set<Int>>(emptySet())
+    val completedPairIndices: StateFlow<Set<Int>> = _completedPairIndices.asStateFlow()
+
+    private val _completedResults = MutableStateFlow<Map<Int, List<SegmentResult>>>(emptyMap())
+    val completedResults: StateFlow<Map<Int, List<SegmentResult>>> = _completedResults.asStateFlow()
+
     private val _practicePhase = MutableStateFlow(PracticePhase.IDLE)
     val practicePhase: StateFlow<PracticePhase> = _practicePhase.asStateFlow()
 
-    private val _status = MutableStateFlow("Ready")
-    val status: StateFlow<String> = _status.asStateFlow()
+    private val _currentPitch = MutableStateFlow(-1f)
+    val currentPitch: StateFlow<Float> = _currentPitch.asStateFlow()
 
-    private val _segmentScore = MutableStateFlow(0f)
-    val segmentScore: StateFlow<Float> = _segmentScore.asStateFlow()
-
-    private val _feedbackMessage = MutableStateFlow("")
-    val feedbackMessage: StateFlow<String> = _feedbackMessage.asStateFlow()
+    private val _segmentProgress = MutableStateFlow(0f)
+    val segmentProgress: StateFlow<Float> = _segmentProgress.asStateFlow()
 
     private val _lastResult = MutableStateFlow<SegmentResult?>(null)
     val lastResult: StateFlow<SegmentResult?> = _lastResult.asStateFlow()
 
+    private val _selectedPreset = MutableStateFlow(SessionPreset.PRACTICE)
+    val selectedPreset: StateFlow<SessionPreset> = _selectedPreset.asStateFlow()
+
     private val lessonName = "Chalan"
 
     // MARK: - Computed Properties
+
+    val canGoPrevious: Boolean
+        get() = _currentPairIndex.value > 0
+
+    val canGoNext: Boolean
+        get() = _currentPairIndex.value < _phrasePairs.value.size - 1
+
+    val canRetry: Boolean
+        get() = _practicePhase.value != PracticePhase.SINGING && _practicePhase.value != PracticePhase.LISTENING
+
+    val isPracticing: Boolean
+        get() = _practicePhase.value == PracticePhase.SINGING || _practicePhase.value == PracticePhase.LISTENING
 
     val currentLyrics: String
         get() {
@@ -107,153 +113,232 @@ class SingafterViewModel : ViewModel() {
             return if (pairs.isNotEmpty() && index < pairs.size) pairs[index].lyrics else ""
         }
 
-    val canNavigatePrevious: Boolean
-        get() = _currentPairIndex.value > 0 && _practicePhase.value == PracticePhase.IDLE
-
-    val canNavigateNext: Boolean
-        get() = _currentPairIndex.value < _phrasePairs.value.size - 1 && _practicePhase.value == PracticePhase.IDLE
+    /**
+     * Status message based on current practice phase.
+     */
+    val statusMessage: String
+        get() = when (_practicePhase.value) {
+            PracticePhase.LISTENING -> "Listen to the teacher..."
+            PracticePhase.SINGING -> "Your turn! Sing now..."
+            PracticePhase.EVALUATED -> "Score: ${((_lastResult.value?.score ?: 0f) * 100).toInt()}%"
+            PracticePhase.IDLE -> "Ready"
+        }
 
     // MARK: - Private State
 
     private var player: SonixPlayer? = null
     private var recorder: SonixRecorder? = null
     private var session: CalibraLiveEval? = null
+    private var observerJob: Job? = null
+    private var resultsObserverJob: Job? = null
+    private var appContext: Context? = null
+
+    // MARK: - Lifecycle
+
+    fun onAppear(context: Context) {
+        appContext = context.applicationContext
+        viewModelScope.launch {
+            loadSession(context)
+        }
+    }
+
+    fun onDisappear() {
+        cleanup()
+    }
 
     // MARK: - Actions
 
-    fun loadLesson(context: Context) {
-        _status.value = "Loading lesson..."
+    fun play() {
+        session?.playSegment(_currentPairIndex.value)
+    }
 
-        viewModelScope.launch {
-            try {
-                // Load and parse trans file from assets
-                val transContent = withContext(Dispatchers.IO) {
-                    context.assets.open("$lessonName.trans").bufferedReader().readText()
-                }
+    fun pause() {
+        session?.pause()
+        _practicePhase.value = PracticePhase.IDLE
+    }
 
-                // Parse the trans file for singafter segments
-                val json = Json { ignoreUnknownKeys = true }
-                val segments = try {
-                    json.decodeFromString<List<SingafterSegment>>(transContent)
-                } catch (e: Exception) {
-                    _status.value = "Failed to parse trans file: ${e.message}"
-                    return@launch
-                }
+    fun goToPair(index: Int) {
+        val pairs = _phrasePairs.value
+        if (index < 0 || index >= pairs.size) return
+        _currentPairIndex.value = index
+        session?.seekToSegment(index)
+    }
 
-                // Group into phrase pairs (teacher + student segments)
-                val teacherSegments = segments.filter { it.type == "teacher_vocal" }
-                val pairs = teacherSegments.mapNotNull { teacher ->
-                    val student = segments.find { it.id == teacher.relatedSeg && it.type == "student_vocal" }
-                    if (student != null) {
-                        PhrasePair(
-                            index = teacher.id,
-                            lyrics = teacher.lyrics,
-                            teacherStartTime = teacher.startTime,
-                            teacherEndTime = teacher.endTime,
-                            studentStartTime = student.startTime,
-                            studentEndTime = student.endTime,
-                            teacherId = teacher.id
-                        )
-                    } else null
-                }
+    fun nextPair() {
+        if (!canGoNext) return
+        val newIndex = _currentPairIndex.value + 1
+        _currentPairIndex.value = newIndex
+        session?.playSegment(newIndex)
+    }
 
-                _phrasePairs.value = pairs
+    fun previousPair() {
+        if (!canGoPrevious) return
+        val newIndex = _currentPairIndex.value - 1
+        _currentPairIndex.value = newIndex
+        session?.playSegment(newIndex)
+    }
 
-                // Copy audio file and create player
-                val audioPath = withContext(Dispatchers.IO) {
-                    copyAssetToFile(context, "$lessonName.m4a").absolutePath
-                }
+    fun retry() {
+        session?.retryCurrentSegment()
+        play()
+    }
 
-                player?.release()
-                player = SonixPlayer.create(audioPath, SonixPlayerConfig.DEFAULT)
+    fun finish() {
+        session?.pause()
+        _lastResult.value = null
+        session?.finishSession()
+        _uiState.value = SingafterUIState.Summary
+    }
 
-                // Create recorder
-                val tempPath = "${context.cacheDir}/singafter_temp.m4a"
-                val recorderConfig = SonixRecorderConfig.Builder()
-                    .preset(SonixRecorderConfig.VOICE)
-                    .build()
-                recorder = SonixRecorder.create(tempPath, recorderConfig)
+    fun reset() {
+        session?.restartSession(fromSegment = 0)
+        _uiState.value = SingafterUIState.Ready
+        _completedResults.value = emptyMap()
+        _completedPairIndices.value = emptySet()
+        _lastResult.value = null
+        _practicePhase.value = PracticePhase.IDLE
+    }
 
-                // Decode audio for reference material
-                val audioData = withContext(Dispatchers.IO) {
-                    SonixDecoder.decode(audioPath)
-                }
-
-                if (audioData == null) {
-                    _status.value = "Failed to decode reference audio"
-                    return@launch
-                }
-
-                // Create Calibra segments for singafter
-                val calibraSegments = pairs.mapIndexed { index, pair ->
-                    Segment(
-                        index = index,
-                        startSeconds = pair.teacherStartTime,
-                        endSeconds = pair.studentEndTime,
-                        lyrics = pair.lyrics,
-                        studentStartSeconds = pair.studentStartTime,
-                        studentEndSeconds = pair.studentEndTime
-                    )
-                }
-
-                // Create reference material
-                val reference = LessonMaterial.fromAudio(
-                    samples = audioData.samples,
-                    sampleRate = audioData.sampleRate,
-                    segments = calibraSegments,
-                    keyHz = 196.0f
-                )
-
-                // Create pitch detector
-                val detector = CalibraPitch.createDetector(PitchDetectorConfig.BALANCED)
-
-                // Create live evaluation session
-                session = CalibraLiveEval.create(
-                    reference = reference,
-                    session = SessionConfig.DEFAULT,
-                    detector = detector,
-                    player = player,
-                    recorder = recorder
-                )
-
-                setupCallbacks()
-
-                session?.prepare()
-
-                _lessonLoaded.value = true
-                _currentPairIndex.value = 0
-                _status.value = "Lesson loaded: ${pairs.size} phrase pairs"
-            } catch (e: Exception) {
-                _status.value = "Error loading lesson: ${e.message}"
+    fun changePreset(preset: SessionPreset) {
+        if (preset == _selectedPreset.value) return
+        if (isPracticing) pause()
+        _selectedPreset.value = preset
+        cleanup()
+        appContext?.let { ctx ->
+            viewModelScope.launch {
+                loadSession(ctx)
             }
         }
     }
 
-    fun navigatePrevious() {
-        if (canNavigatePrevious) {
-            _currentPairIndex.value--
+    // MARK: - Session Management
+
+    private suspend fun loadSession(context: Context) {
+        _uiState.value = SingafterUIState.Loading
+
+        try {
+            // Load and parse trans file from assets
+            val transContent = withContext(Dispatchers.IO) {
+                context.assets.open("$lessonName.trans").bufferedReader().readText()
+            }
+
+            // Parse the trans file for singafter segments
+            val json = Json { ignoreUnknownKeys = true }
+            val segments = try {
+                json.decodeFromString<List<SingafterSegment>>(transContent)
+            } catch (e: Exception) {
+                _uiState.value = SingafterUIState.Error("Failed to parse trans file: ${e.message}")
+                return
+            }
+
+            // Group into phrase pairs (teacher + student segments)
+            val teacherSegments = segments.filter { it.type == "teacher_vocal" }
+            val pairs = teacherSegments.mapNotNull { teacher ->
+                val student = segments.find { it.id == teacher.relatedSeg && it.type == "student_vocal" }
+                if (student != null) {
+                    PhrasePair(
+                        index = teacher.id,
+                        lyrics = teacher.lyrics,
+                        teacherStartTime = teacher.startTime,
+                        teacherEndTime = teacher.endTime,
+                        studentStartTime = student.startTime,
+                        studentEndTime = student.endTime,
+                        teacherId = teacher.id
+                    )
+                } else null
+            }
+
+            if (pairs.isEmpty()) {
+                _uiState.value = SingafterUIState.Error("No phrase pairs found in lesson")
+                return
+            }
+
+            _phrasePairs.value = pairs
+
+            // Copy audio file and create player
+            val audioPath = withContext(Dispatchers.IO) {
+                copyAssetToFile(context, "$lessonName.m4a").absolutePath
+            }
+
+            player?.release()
+            player = SonixPlayer.create(audioPath, SonixPlayerConfig.DEFAULT)
+
+            // Create recorder
+            val tempPath = "${context.cacheDir}/singafter_${UUID.randomUUID()}.m4a"
+            val recorderConfig = SonixRecorderConfig.Builder()
+                .preset(SonixRecorderConfig.VOICE)
+                .echoCancellation(true)
+                .build()
+            recorder = SonixRecorder.create(tempPath, recorderConfig)
+
+            // Decode audio for reference material
+            val audioData = withContext(Dispatchers.IO) {
+                SonixDecoder.decode(audioPath)
+            }
+
+            if (audioData == null) {
+                _uiState.value = SingafterUIState.Error("Failed to decode reference audio")
+                return
+            }
+
+            // Create Calibra segments for singafter
+            val calibraSegments = pairs.mapIndexed { index, pair ->
+                Segment(
+                    index = index,
+                    startSeconds = pair.teacherStartTime,
+                    endSeconds = pair.studentEndTime,
+                    lyrics = pair.lyrics,
+                    studentStartSeconds = pair.studentStartTime,
+                    studentEndSeconds = pair.studentEndTime
+                )
+            }
+
+            // Load pitch contour (optional optimization)
+            val pitchContour: PitchContour? = withContext(Dispatchers.IO) {
+                try {
+                    val pitchContent = context.assets.open("$lessonName.pitchPP").bufferedReader().readText()
+                    val pitchData = com.musicmuni.voxatrace.sonix.util.Parser.parsePitchString(pitchContent)
+                    if (pitchData != null) {
+                        PitchContour.fromArrays(
+                            times = pitchData.times,
+                            pitches = pitchData.pitchesHz
+                        )
+                    } else null
+                } catch (e: Exception) {
+                    null // Pitch file is optional
+                }
+            }
+
+            // Create reference material
+            val reference = LessonMaterial.fromAudio(
+                samples = audioData.samples,
+                sampleRate = audioData.sampleRate,
+                segments = calibraSegments,
+                keyHz = 196.0f,
+                pitchContour = pitchContour
+            )
+
+            // Create pitch detector
+            val detector = CalibraPitch.createDetector(PitchDetectorConfig.BALANCED)
+
+            // Create live evaluation session
+            session = CalibraLiveEval.create(
+                reference = reference,
+                session = _selectedPreset.value.config,
+                detector = detector,
+                player = player,
+                recorder = recorder
+            )
+
+            setupCallbacks()
+            setupObservers()
+
+            session?.prepare()
+
+            _uiState.value = SingafterUIState.Ready
+        } catch (e: Exception) {
+            _uiState.value = SingafterUIState.Error("Error loading lesson: ${e.message}")
         }
-    }
-
-    fun navigateNext() {
-        if (canNavigateNext) {
-            _currentPairIndex.value++
-        }
-    }
-
-    fun startPractice() {
-        if (!_lessonLoaded.value) return
-
-        _segmentScore.value = 0f
-        _feedbackMessage.value = ""
-
-        session?.playSegment(_currentPairIndex.value)
-    }
-
-    fun forceStop() {
-        session?.pause()
-        _practicePhase.value = PracticePhase.IDLE
-        _status.value = "Stopped"
     }
 
     private fun setupCallbacks() {
@@ -261,19 +346,53 @@ class SingafterViewModel : ViewModel() {
 
         s.onPhaseChanged { phase ->
             _practicePhase.value = phase
-            _status.value = when (phase) {
-                PracticePhase.LISTENING -> "Listen to the teacher..."
-                PracticePhase.SINGING -> "Your turn! Sing now..."
-                PracticePhase.EVALUATED -> "Score: ${(_segmentScore.value * 100).toInt()}%"
-                PracticePhase.IDLE -> "Ready"
-            }
+        }
+
+        s.onReferenceEnd { _ ->
+            // Reference ended - no action needed for singafter
         }
 
         s.onSegmentComplete { result ->
             _lastResult.value = result
-            _segmentScore.value = result.score
-            _feedbackMessage.value = result.feedbackMessage
         }
+
+        s.onSessionComplete { _ ->
+            _uiState.value = SingafterUIState.Summary
+        }
+    }
+
+    private fun setupObservers() {
+        val s = session ?: return
+
+        observerJob?.cancel()
+        observerJob = viewModelScope.launch {
+            s.state.collect { state ->
+                _currentPairIndex.value = state.activeSegmentIndex ?: 0
+                _currentPitch.value = state.currentPitch
+                _segmentProgress.value = state.segmentProgress
+                _completedPairIndices.value = state.completedSegments.toSet()
+            }
+        }
+
+        resultsObserverJob?.cancel()
+        resultsObserverJob = viewModelScope.launch {
+            s.completedSegments.collect { results ->
+                _completedResults.value = results
+            }
+        }
+    }
+
+    private fun cleanup() {
+        observerJob?.cancel()
+        resultsObserverJob?.cancel()
+        player?.stop()
+        player?.release()
+        recorder?.stop()
+        recorder?.release()
+        session?.close()
+        session = null
+        player = null
+        recorder = null
     }
 
     private fun copyAssetToFile(context: Context, assetName: String): File {
@@ -290,11 +409,7 @@ class SingafterViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        player?.stop()
-        player?.release()
-        recorder?.stop()
-        recorder?.release()
-        session?.close()
+        cleanup()
     }
 }
 
