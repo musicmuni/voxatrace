@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CalibraMelodyEval</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+            <a class="library-name--link" href="../../../index.html">
+                    voxatrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+1.0.0        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active=""
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                        data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    voxatrace
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="voxatrace::com.musicmuni.voxatrace.calibra/CalibraMelodyEval///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">voxatrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra</a><span class="delimiter">/</span><span class="current">CalibraMelodyEval</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Calibra</span><wbr></wbr><span>Melody</span><wbr></wbr><span><span>Eval</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">CalibraMelodyEval</a></div><p class="paragraph">Offline melody/song evaluation for post-recording analysis.</p><h2 class="">What is Melody Evaluation?</h2><p class="paragraph">Melody evaluation compares a <strong>complete recorded performance</strong> against a reference melody after the fact. Unlike live evaluation (real-time), this analyzes pre-recorded audio.</p><p class="paragraph">Use it for:</p><ul><li><p class="paragraph"><strong>Post-recording feedback</strong>: Score a recording after the session ends</p></li><li><p class="paragraph"><strong>Batch processing</strong>: Analyze multiple recordings at once</p></li><li><p class="paragraph"><strong>Detailed analysis</strong>: More thorough analysis than real-time allows</p></li></ul><h2 class="">When to Use</h2><table><thead><tr><th>Scenario</th><th>Use This?</th><th>Why</th></tr></thead><tbody><tr><td>Analyze recorded audio</td><td>Yes</td><td>Core use case</td></tr><tr><td>Real-time scoring</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">CalibraLiveEval</code></td></tr><tr><td>Evaluate scales/exercises</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">CalibraNoteEval</code></td></tr><tr><td>Just detect pitch</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">CalibraPitch</code></td></tr></tbody></table><h2 class="">Quick Start</h2><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val reference = LessonMaterial.fromAudio(<br>    samples = referenceAudio,<br>    sampleRate = 16000,<br>    segments = listOf(<br>        Segment(0, 0.0f, 3.5f, &quot;First line&quot;),<br>        Segment(1, 3.5f, 7.0f, &quot;Second line&quot;)<br>    ),<br>    keyHz = 261.63f  // Middle C<br>)<br><br>val student = LessonMaterial.fromAudio(<br>    samples = studentAudio,<br>    sampleRate = 16000,<br>    segments = emptyList(),  // Uses reference segments<br>    keyHz = 261.63f<br>)<br><br>val extractor = CalibraPitch.createContourExtractor(ContourExtractorConfig.SCORING)<br>val result = CalibraMelodyEval.evaluate(reference, student, extractor)<br>extractor.release()<br><br>println(&quot;Overall: ${result.overallScorePercent}%&quot;)<br>result.segmentResults.forEach { (index, attempts) -&gt;<br>    println(&quot;Segment $index: ${attempts.last().scorePercent}%&quot;)<br>}</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><h3 class="">Swift</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">let reference = LessonMaterial.fromAudio(<br>    samples: referenceAudio,<br>    sampleRate: 16000,<br>    segments: [<br>        Segment(index: 0, startSeconds: 0.0, endSeconds: 3.5, label: &quot;First line&quot;),<br>        Segment(index: 1, startSeconds: 3.5, endSeconds: 7.0, label: &quot;Second line&quot;)<br>    ],<br>    keyHz: 261.63<br>)<br><br>let student = LessonMaterial.fromAudio(<br>    samples: studentAudio,<br>    sampleRate: 16000,<br>    segments: [],<br>    keyHz: 261.63<br>)<br><br>let extractor = CalibraPitch.companion.createContourExtractor(<br>    config: ContourExtractorConfig.companion.SCORING<br>)<br>let result = CalibraMelodyEval.companion.evaluate(<br>    reference: reference,<br>    student: student,<br>    contourExtractor: extractor<br>)<br>extractor.release()<br><br>print(&quot;Overall: \(result.overallScorePercent)%&quot;)</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><h2 class="">Platform Notes</h2><h3 class="">iOS</h3><ul><li><p class="paragraph">Audio must be 16kHz mono; use SonixDecoder to decode and resample</p></li><li><p class="paragraph">Contour extractor must be released after use</p></li></ul><h3 class="">Android</h3><ul><li><p class="paragraph">Audio must be 16kHz mono; use SonixDecoder to decode and resample</p></li><li><p class="paragraph">Runs on background thread; wrap in coroutine if needed</p></li></ul><h2 class="">Common Pitfalls</h2><ol><li><p class="paragraph"><strong>Wrong sample rate</strong>: Audio must be 16kHz; use SonixDecoder with default settings</p></li><li><p class="paragraph"><strong>Forgetting to release extractor</strong>: Call <code class="lang-kotlin">extractor.release()</code> when done</p></li><li><p class="paragraph"><strong>Empty segments</strong>: If student.segments is empty, reference.segments is used</p></li><li><p class="paragraph"><strong>Key mismatch</strong>: Set studentKeyHz if student sings in different key</p></li></ol><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-live-eval/index.html"><span>Calibra</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For real-time evaluation during singing</p></div></div></div></div><div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-note-eval/index.html"><span>Calibra</span><wbr></wbr><span>Note</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For note-by-note exercise evaluation</p></div></div></div></div><div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html"><span>Lesson</span><wbr></wbr><span><span>Material</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For input format specification</p></div></div></div></div><div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.calibra.model/-singing-result/index.html"><span>Singing</span><wbr></wbr><span><span>Result</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For understanding evaluation results</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="521326378%2FFunctions%2F-1201622999" anchor-label="evaluate" id="521326378%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="evaluate.html"><span><span>evaluate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="521326378%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="evaluate.html"><span class="token function">evaluate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reference<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a><span class="token punctuation">, </span></span><span class="parameter ">student<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a><span class="token punctuation">, </span></span><span class="parameter ">contourExtractor<span class="token operator">: </span><a href="../-calibra-pitch/-contour-extractor/index.html">CalibraPitch.ContourExtractor</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-singing-result/index.html">SingingResult</a></div><div class="brief "><p class="paragraph">Evaluate a melody performance against a reference.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2026 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

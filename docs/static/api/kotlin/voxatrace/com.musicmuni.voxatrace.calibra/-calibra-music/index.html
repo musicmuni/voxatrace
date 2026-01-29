@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CalibraMusic</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+            <a class="library-name--link" href="../../../index.html">
+                    voxatrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+1.0.0        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active=""
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                        data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    voxatrace
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="voxatrace::com.musicmuni.voxatrace.calibra/CalibraMusic///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">voxatrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra</a><span class="delimiter">/</span><span class="current">CalibraMusic</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Calibra</span><wbr></wbr><span><span>Music</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">CalibraMusic</a></div><p class="paragraph">Music theory utilities for pitch and note conversions.</p><h2 class="">What is CalibraMusic?</h2><p class="paragraph">CalibraMusic provides <strong>conversion functions</strong> between different musical pitch representations:</p><ul><li><p class="paragraph"><strong>Hz (Hertz)</strong>: Physical frequency (e.g., 440.0 Hz)</p></li><li><p class="paragraph"><strong>MIDI note numbers</strong>: Integer scale (60 = middle C, 69 = A4)</p></li><li><p class="paragraph"><strong>Note labels</strong>: Human-readable (e.g., &quot;C4&quot;, &quot;A#5&quot;, &quot;Bb3&quot;)</p></li><li><p class="paragraph"><strong>Cents</strong>: Fine pitch deviation (100 cents = 1 semitone)</p></li></ul><p class="paragraph">Use it when you need to:</p><ul><li><p class="paragraph">Display detected pitch as a note name</p></li><li><p class="paragraph">Calculate pitch deviation from a target note</p></li><li><p class="paragraph">Convert between different pitch units for analysis</p></li></ul><h2 class="">When to Use</h2><table><thead><tr><th>Scenario</th><th>Use This?</th><th>Why</th></tr></thead><tbody><tr><td>Convert Hz to note name</td><td>Yes</td><td><code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">hzToNoteLabel(440f)</code> → &quot;A4&quot;</td></tr><tr><td>Show pitch deviation</td><td>Yes</td><td><code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">centsDeviation(442f)</code> → +7.8 cents</td></tr><tr><td>Create note frequencies</td><td>Yes</td><td><code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">noteLabelToHz(&quot;C4&quot;)</code> → 261.63 Hz</td></tr><tr><td>Detect pitch from audio</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@25fa5e7f lang-kotlin">CalibraPitch</code></td></tr></tbody></table><h2 class="">Quick Start</h2><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">// Convert frequency to note name<br>val noteLabel = CalibraMusic.hzToNoteLabel(440f)  // &quot;A4&quot;<br><br>// Convert note name to frequency<br>val frequency = CalibraMusic.noteLabelToHz(&quot;C4&quot;)  // 261.63 Hz<br><br>// Get cents deviation from nearest note<br>val deviation = CalibraMusic.centsDeviation(442f)  // +7.8 cents (sharp)<br><br>// Convert between MIDI and Hz<br>val midi = CalibraMusic.hzToMidi(440f)  // 69.0<br>val hz = CalibraMusic.midiToHz(60f)     // 261.63 Hz (middle C)</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><h3 class="">Swift</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">// Convert frequency to note name<br>let noteLabel = CalibraMusic.companion.hzToNoteLabel(frequency: 440)  // &quot;A4&quot;<br><br>// Convert note name to frequency<br>let frequency = CalibraMusic.companion.noteLabelToHz(noteLabel: &quot;C4&quot;)  // 261.63 Hz<br><br>// Get cents deviation from nearest note<br>let deviation = CalibraMusic.companion.centsDeviation(frequency: 442)  // +7.8 cents<br><br>// Convert between MIDI and Hz<br>let midi = CalibraMusic.companion.hzToMidi(frequency: 440)  // 69.0<br>let hz = CalibraMusic.companion.midiToHz(midiNote: 60)      // 261.63 Hz</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><h2 class="">Pitch Reference</h2><table><thead><tr><th>Note</th><th>MIDI</th><th>Hz</th></tr></thead><tbody><tr><td>C4 (middle C)</td><td>60</td><td>261.63</td></tr><tr><td>A4 (concert pitch)</td><td>69</td><td>440.00</td></tr><tr><td>C5</td><td>72</td><td>523.25</td></tr></tbody></table><h2 class="">Common Pitfalls</h2><ol><li><p class="paragraph"><strong>Invalid frequencies</strong>: Functions return <code class="lang-kotlin">Float.NaN</code> or &quot;-&quot; for invalid input</p></li><li><p class="paragraph"><strong>Flat notation</strong>: Use lowercase 'b' for flats (e.g., &quot;Bb4&quot;, not &quot;BB4&quot;)</p></li><li><p class="paragraph"><strong>Octave numbering</strong>: Middle C is C4 (scientific pitch notation)</p></li><li><p class="paragraph"><strong>Cents interpretation</strong>: Positive = sharp, negative = flat</p></li></ol><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-pitch/index.html"><span>Calibra</span><wbr></wbr><span><span>Pitch</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For detecting pitch from audio</p></div></div></div></div><div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-live-eval/index.html"><span>Calibra</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For scoring pitch accuracy</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-742010524%2FProperties%2F-1201622999" anchor-label="A4_FREQUENCY" id="-742010524%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a4_-f-r-e-q-u-e-n-c-y.html"><span>A4_</span><wbr></wbr><span>FREQUENCY</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-742010524%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-a4_-f-r-e-q-u-e-n-c-y.html">A4_FREQUENCY</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">440.0f</span></div><div class="brief "><p class="paragraph">Reference pitch for A4 (Hz)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1933128167%2FProperties%2F-1201622999" anchor-label="A4_MIDI_NUMBER" id="-1933128167%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a4_-m-i-d-i_-n-u-m-b-e-r.html"><span>A4_</span><wbr></wbr><span>MIDI_</span><wbr></wbr><span>NUMBER</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1933128167%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-a4_-m-i-d-i_-n-u-m-b-e-r.html">A4_MIDI_NUMBER</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">69</span></div><div class="brief "><p class="paragraph">MIDI note number for A4</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-2072846833%2FFunctions%2F-1201622999" anchor-label="centsDeviation" id="-2072846833%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cents-deviation.html"><span>cents</span><wbr></wbr><span><span>Deviation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2072846833%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cents-deviation.html"><span class="token function">centsDeviation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">frequency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Get cents deviation from nearest note (-50 to +50).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-532290479%2FFunctions%2F-1201622999" anchor-label="centsToHz" id="-532290479%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cents-to-hz.html"><span>cents</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-532290479%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cents-to-hz.html"><span class="token function">centsToHz</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cents<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">tonicHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>A4_FREQUENCY</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert cents to frequency in Hz (relative to tonic).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="965910829%2FFunctions%2F-1201622999" anchor-label="centsToMidi" id="965910829%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cents-to-midi.html"><span>cents</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Midi</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="965910829%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cents-to-midi.html"><span class="token function">centsToMidi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cents<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">referenceMidi<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>A4_MIDI_NUMBER</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert cents to MIDI note number.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-941406137%2FFunctions%2F-1201622999" anchor-label="centsToNoteLabel" id="-941406137%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cents-to-note-label.html"><span>cents</span><wbr></wbr><span>To</span><wbr></wbr><span>Note</span><wbr></wbr><span><span>Label</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-941406137%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cents-to-note-label.html"><span class="token function">centsToNoteLabel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">cents<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">tonicHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Convert cents to note label (relative to tonic).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1667413015%2FFunctions%2F-1201622999" anchor-label="hzToCents" id="1667413015%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hz-to-cents.html"><span>hz</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Cents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1667413015%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="hz-to-cents.html"><span class="token function">hzToCents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">frequency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">tonicHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>A4_FREQUENCY</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert frequency in Hz to cents (relative to tonic).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1061529431%2FFunctions%2F-1201622999" anchor-label="hzToMidi" id="1061529431%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hz-to-midi.html"><span>hz</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Midi</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1061529431%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="hz-to-midi.html"><span class="token function">hzToMidi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">frequency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert frequency in Hz to MIDI note number.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1632739550%2FFunctions%2F-1201622999" anchor-label="hzToNoteLabel" id="-1632739550%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hz-to-note-label.html"><span>hz</span><wbr></wbr><span>To</span><wbr></wbr><span>Note</span><wbr></wbr><span><span>Label</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1632739550%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="hz-to-note-label.html"><span class="token function">hzToNoteLabel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">frequency<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Convert frequency in Hz to note label.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1126363915%2FFunctions%2F-1201622999" anchor-label="midiToCents" id="-1126363915%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="midi-to-cents.html"><span>midi</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Cents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1126363915%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="midi-to-cents.html"><span class="token function">midiToCents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">midiNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">referenceMidi<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>A4_MIDI_NUMBER</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert MIDI note number to cents.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-672903273%2FFunctions%2F-1201622999" anchor-label="midiToHz" id="-672903273%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="midi-to-hz.html"><span>midi</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-672903273%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="midi-to-hz.html"><span class="token function">midiToHz</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">midiNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert MIDI note number to frequency in Hz.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1962298127%2FFunctions%2F-1201622999" anchor-label="midiToNoteLabel" id="-1962298127%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="midi-to-note-label.html"><span>midi</span><wbr></wbr><span>To</span><wbr></wbr><span>Note</span><wbr></wbr><span><span>Label</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1962298127%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="midi-to-note-label.html"><span class="token function">midiToNoteLabel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">midiNote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Convert MIDI note number to note label (e.g., &quot;A4&quot;, &quot;C#5&quot;).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-264341070%2FFunctions%2F-1201622999" anchor-label="noteLabelToCents" id="-264341070%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="note-label-to-cents.html"><span>note</span><wbr></wbr><span>Label</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Cents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-264341070%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="note-label-to-cents.html"><span class="token function">noteLabelToCents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">noteLabel<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">tonicHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert note label to cents (relative to tonic).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1788668211%2FFunctions%2F-1201622999" anchor-label="noteLabelToHz" id="-1788668211%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="note-label-to-hz.html"><span>note</span><wbr></wbr><span>Label</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1788668211%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="note-label-to-hz.html"><span class="token function">noteLabelToHz</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">noteLabel<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert note label to frequency in Hz.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1265646436%2FFunctions%2F-1201622999" anchor-label="noteLabelToMidi" id="-1265646436%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="note-label-to-midi.html"><span>note</span><wbr></wbr><span>Label</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Midi</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1265646436%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="note-label-to-midi.html"><span class="token function">noteLabelToMidi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">noteLabel<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Convert note label to MIDI note number. Supports sharps (#), flats (b).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2026 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

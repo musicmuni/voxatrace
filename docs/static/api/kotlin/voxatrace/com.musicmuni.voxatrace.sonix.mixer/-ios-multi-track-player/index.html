@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>IosMultiTrackPlayer</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+            <a class="library-name--link" href="../../../index.html">
+                    voxatrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+1.0.0        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active=""
+                        data-filter=":modules:voxatrace/iosMain">ios</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/iosMain"
+                                       data-filter=":modules:voxatrace/iosMain"/>
+                                <span class="checkbox--icon"></span>
+                                ios
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                        data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    voxatrace
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="voxatrace::com.musicmuni.voxatrace.sonix.mixer/IosMultiTrackPlayer///PointingToDeclaration//-945217199">
+  <div class="breadcrumbs"><a href="../../../index.html">voxatrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.sonix.mixer</a><span class="delimiter">/</span><span class="current">IosMultiTrackPlayer</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Ios</span><wbr></wbr><span>Multi</span><wbr></wbr><span>Track</span><wbr></wbr><span><span>Player</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">IosMultiTrackPlayer</a> : <span data-unresolved-link="com.musicmuni.voxatrace.sonix.mixer/MultiTrackPlayer///PointingToDeclaration/">MultiTrackPlayer</span></div><p class="paragraph">iOS implementation of MultiTrackPlayer using AVAudioEngine.</p><p class="paragraph">Each track uses a separate AVAudioPlayerNode connected to a shared AVAudioMixerNode, allowing independent volume control per track.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-234005475%2FConstructors%2F-945217199" anchor-label="IosMultiTrackPlayer" id="-234005475%2FConstructors%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-ios-multi-track-player.html"><span>Ios</span><wbr></wbr><span>Multi</span><wbr></wbr><span>Track</span><wbr></wbr><span><span>Player</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-234005475%2FConstructors%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="1786203268%2FClasslikes%2F-945217199" anchor-label="Companion" id="1786203268%2FClasslikes%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1786203268%2FClasslikes%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1743880697%2FProperties%2F-945217199" anchor-label="completedLoops" id="1743880697%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="completed-loops.html"><span>completed</span><wbr></wbr><span><span>Loops</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1743880697%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="completed-loops.html">completedLoops</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="400427543%2FProperties%2F-945217199" anchor-label="currentTime" id="400427543%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-time.html"><span>current</span><wbr></wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="400427543%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="current-time.html">currentTime</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1042269039%2FProperties%2F-945217199" anchor-label="currentTimeMs" id="-1042269039%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-time-ms.html"><span>current</span><wbr></wbr><span>Time</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1042269039%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="current-time-ms.html">currentTimeMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1994638039%2FProperties%2F-945217199" anchor-label="duration" id="-1994638039%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="duration.html"><span><span>duration</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1994638039%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="duration.html">duration</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-597822685%2FProperties%2F-945217199" anchor-label="durationMs" id="-597822685%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="duration-ms.html"><span>duration</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-597822685%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="duration-ms.html">durationMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1849623211%2FProperties%2F-945217199" anchor-label="isCurrentlyPlaying" id="1849623211%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-currently-playing.html"><span>is</span><wbr></wbr><span>Currently</span><wbr></wbr><span><span>Playing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1849623211%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="is-currently-playing.html">isCurrentlyPlaying</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-899316711%2FProperties%2F-945217199" anchor-label="isPlaying" id="-899316711%2FProperties%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-playing.html"><span>is</span><wbr></wbr><span><span>Playing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-899316711%2FProperties%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="is-playing.html">isPlaying</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1238888264%2FFunctions%2F-945217199" anchor-label="fadeTrackVolume" id="-1238888264%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="fade-track-volume.html"><span>fade</span><wbr></wbr><span>Track</span><wbr></wbr><span><span>Volume</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1238888264%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="fade-track-volume.html"><span class="token function">fadeTrackVolume</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">targetVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">durationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="fade-track-volume.html"><span class="token function">fadeTrackVolume</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">startVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">endVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">durationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1481676266%2FFunctions%2F-945217199" anchor-label="getTrackNames" id="1481676266%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-track-names.html"><span>get</span><wbr></wbr><span>Track</span><wbr></wbr><span><span>Names</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1481676266%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-track-names.html"><span class="token function">getTrackNames</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-859629064%2FFunctions%2F-945217199" anchor-label="hasTrack" id="-859629064%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-track.html"><span>has</span><wbr></wbr><span><span>Track</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-859629064%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="has-track.html"><span class="token function">hasTrack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-738732145%2FFunctions%2F-945217199" anchor-label="loadTrack" id="-738732145%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-track.html"><span>load</span><wbr></wbr><span><span>Track</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-738732145%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="load-track.html"><span class="token function">loadTrack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">data<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a><span class="token punctuation">, </span></span><span class="parameter ">sampleRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">channels<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1265396217%2FFunctions%2F-945217199" anchor-label="pause" id="-1265396217%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pause.html"><span><span>pause</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1265396217%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="pause.html"><span class="token function">pause</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1488901001%2FFunctions%2F-945217199" anchor-label="play" id="1488901001%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="play.html"><span><span>play</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1488901001%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="play.html"><span class="token function">play</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-942180074%2FFunctions%2F-945217199" anchor-label="release" id="-942180074%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="release.html"><span><span>release</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942180074%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="release.html"><span class="token function">release</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="458000078%2FFunctions%2F-945217199" anchor-label="removeTrack" id="458000078%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-track.html"><span>remove</span><wbr></wbr><span><span>Track</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="458000078%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="remove-track.html"><span class="token function">removeTrack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1926718670%2FFunctions%2F-945217199" anchor-label="reset" id="1926718670%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset.html"><span><span>reset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1926718670%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="reset.html"><span class="token function">reset</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2103864209%2FFunctions%2F-945217199" anchor-label="seekTo" id="-2103864209%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="seek-to.html"><span>seek</span><wbr></wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2103864209%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="seek-to.html"><span class="token function">seekTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1771583886%2FFunctions%2F-945217199" anchor-label="setLoopCount" id="-1771583886%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-loop-count.html"><span>set</span><wbr></wbr><span>Loop</span><wbr></wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1771583886%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-loop-count.html"><span class="token function">setLoopCount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">count<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1493229319%2FFunctions%2F-945217199" anchor-label="setPlaybackListener" id="1493229319%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-playback-listener.html"><span>set</span><wbr></wbr><span>Playback</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1493229319%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-playback-listener.html"><span class="token function">setPlaybackListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><span data-unresolved-link="com.musicmuni.voxatrace.sonix.mixer/MultiTrackPlayer.PlaybackListener///PointingToDeclaration/">MultiTrackPlayer.PlaybackListener</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-182885978%2FFunctions%2F-945217199" anchor-label="setTrackVolume" id="-182885978%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-track-volume.html"><span>set</span><wbr></wbr><span>Track</span><wbr></wbr><span><span>Volume</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-182885978%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-track-volume.html"><span class="token function">setTrackVolume</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">volume<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1828829819%2FFunctions%2F-945217199" anchor-label="stop" id="1828829819%2FFunctions%2F-945217199" data-filterable-set=":modules:voxatrace/iosMain"></a>
+          <div class="table-row" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stop.html"><span><span>stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1828829819%2FFunctions%2F-945217199"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-active="" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="stop.html"><span class="token function">stop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2026 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
