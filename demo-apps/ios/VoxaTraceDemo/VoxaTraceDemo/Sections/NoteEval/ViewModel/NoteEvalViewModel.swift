@@ -2,20 +2,22 @@ import Foundation
 import Combine
 import VoxaTrace
 
-/// ViewModel for note/exercise evaluation using CalibraNoteEval.
+/// ViewModel for note/exercise evaluation using CalibraNoteEval with singalong mode.
 ///
-/// ## VoxaTrace Integration (~20 lines)
+/// ## VoxaTrace Integration
 /// ```swift
-/// // 1. Create exercise pattern
-/// let pattern = ExercisePattern.fromMidiNotes(midiNotes: midiNotes, noteDurationMs: 500)
+/// // 1. Synthesize reference notes
+/// let synth = SonixMidiSynthesizer.Builder().soundFontPath(path: sfPath).build()
+/// synth.synthesizeFromNotes(notes: midiNotes, outputPath: outputPath)
 ///
-/// // 2. Record student performance
-/// recorder = SonixRecorder.create(outputPath: path, config: .voice, audioSession: .recording)
+/// // 2. Play reference + record student simultaneously (singalong)
+/// player = SonixPlayer.create(source: referencePath, audioSession: .playAndRecord)
+/// recorder = SonixRecorder.create(outputPath: path, config: .voice, audioSession: .playAndRecord)
 ///
 /// // 3. Extract pitch and evaluate
 /// let extractor = CalibraPitch.createContourExtractor()
 /// let contour = extractor.extract(audio: studentAudio, sampleRate: 16000)
-/// let result = CalibraNoteEval.evaluate(pattern:, student:, referenceKeyHz:, studentKeyHz:, scoreType:, leewaySamples:)
+/// let result = CalibraNoteEval.evaluate(pattern:, student:, referenceKeyHz:, ...)
 /// ```
 @MainActor
 final class NoteEvalViewModel: ObservableObject {
@@ -23,13 +25,24 @@ final class NoteEvalViewModel: ObservableObject {
     // MARK: - Published State
 
     @Published private(set) var selectedExercise = 0
-    @Published private(set) var isRecording = false
+    @Published private(set) var isSingalongActive = false
     @Published private(set) var hasRecording = false
     @Published private(set) var recordingDuration: Float = 0.0
     @Published private(set) var recordingLevel: Float = 0.0
     @Published private(set) var isEvaluating = false
     @Published private(set) var result: ExerciseResult?
-    @Published private(set) var status = "Select an exercise and record"
+    @Published private(set) var status = "Select an exercise and tap Singalong"
+
+    // Synthesis state
+    @Published private(set) var isPreparing = false
+    @Published private(set) var isReady = false
+
+    // Evaluation settings
+    @Published var selectedPreset: NoteEvalPreset = .balanced
+    @Published var noteDurationMs: Int32 = 1000
+
+    /// Available note durations (0.5s to 2s)
+    let availableDurations: [Int32] = [500, 1000, 1500, 2000]
 
     // Exercise definitions: (name, MIDI notes, key MIDI note)
     let exercises: [(String, [Int32], Int32)] = [
@@ -61,6 +74,13 @@ final class NoteEvalViewModel: ObservableObject {
     private var recorder: SonixRecorder?
     private var collectedAudio: [Float] = []
 
+    // Singalong
+    private var referencePlayer: SonixPlayer?
+    private var playerObserverTask: Task<Void, Never>?
+    private var synthesizedOutputPath: URL?
+    private var lastSynthesizedExercise: Int = -1
+    private var lastSynthesizedDuration: Int32 = -1
+
     // MARK: - Lifecycle
 
     func onDisappear() {
@@ -73,22 +93,78 @@ final class NoteEvalViewModel: ObservableObject {
         selectedExercise = index
         result = nil
         hasRecording = false
+        // Mark reference as needing re-synthesis if exercise changed
+        if index != lastSynthesizedExercise {
+            isReady = false
+        }
         status = "Selected: \(exercises[index].0)"
     }
 
-    func startRecording() {
+    /// Update note duration and invalidate reference if needed.
+    func setNoteDuration(_ ms: Int32) {
+        noteDurationMs = ms
+        // Force re-synthesis with new duration
+        if ms != lastSynthesizedDuration {
+            isReady = false
+        }
+    }
+
+    // MARK: - Singalong Actions
+
+    /// Prepare the singalong session by synthesizing reference audio.
+    func prepare() {
+        guard !isPreparing else { return }
+
+        isPreparing = true
+        status = "Preparing..."
+
+        Task {
+            await synthesizeReferenceIfNeeded()
+            await loadPlayerForSingalong()
+
+            await MainActor.run {
+                isPreparing = false
+                if isReady {
+                    status = "Ready! Tap Singalong to start."
+                }
+            }
+        }
+    }
+
+    /// Start singalong: play reference and record simultaneously.
+    func startSingalong() {
+        guard isReady else {
+            // Auto-prepare and start
+            Task {
+                prepare()
+                while isPreparing {
+                    try? await Task.sleep(nanoseconds: 100_000_000)
+                }
+                if isReady {
+                    startSingalong()
+                }
+            }
+            return
+        }
+
         collectedAudio = []
         hasRecording = false
         result = nil
         recordingDuration = 0.0
-        status = "Recording..."
+        status = "Sing along with the notes..."
 
+        // Create recorder for simultaneous playback+recording with echo cancellation
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("note_eval_temp.m4a").path
-        recorder = SonixRecorder.create(outputPath: tempPath, config: .voice, audioSession: .recording)
+        let recorderConfig = SonixRecorderConfig.Builder()
+            .preset(.voice)
+            .echoCancellation(true)
+            .build()
+        recorder = SonixRecorder.create(outputPath: tempPath, config: recorderConfig, audioSession: .playAndRecord)
 
-        isRecording = true
+        isSingalongActive = true
 
+        // Start collecting audio
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
             var sampleCount = 0
@@ -115,18 +191,99 @@ final class NoteEvalViewModel: ObservableObject {
             }
         }
 
+        // Start recorder and player together
         recorder?.start()
+        referencePlayer?.play()
     }
 
-    func stopRecording() {
+    /// Stop singalong session and auto-evaluate.
+    func stopSingalong() {
         recorder?.stop()
-        isRecording = false
+        referencePlayer?.stop()
+        isSingalongActive = false
 
         if !collectedAudio.isEmpty {
             hasRecording = true
-            status = "Recording complete. Ready to evaluate."
+            status = "Recording complete. Evaluating..."
+            evaluate()
         } else {
             status = "No audio recorded. Try again."
+        }
+    }
+
+    // MARK: - Private Synthesis Methods
+
+    private func synthesizeReferenceIfNeeded() async {
+        // Skip if already synthesized for this exercise and duration
+        let needsResynthesize = selectedExercise != lastSynthesizedExercise ||
+                                noteDurationMs != lastSynthesizedDuration
+        guard needsResynthesize else { return }
+
+        guard let sfPath = copyAssetToFile(name: "harmonium", ext: "sf2") else {
+            await MainActor.run {
+                status = "Soundfont not found"
+            }
+            return
+        }
+
+        let midiNotes = currentMidiNotes
+        let duration = noteDurationMs
+
+        // Create MidiNote objects with proper timing (times in milliseconds as Float)
+        var notes: [MidiNote] = []
+        for (index, midi) in midiNotes.enumerated() {
+            let startTime = Float(index) * Float(duration)
+            let endTime = startTime + Float(duration) - 50 // Small gap between notes
+            notes.append(MidiNote(note: midi, startTime: startTime, endTime: endTime))
+        }
+
+        let tempDir = FileManager.default.temporaryDirectory
+        let outFile = tempDir.appendingPathComponent("note_eval_reference.wav")
+
+        let synth = SonixMidiSynthesizer.Builder()
+            .soundFontPath(path: sfPath)
+            .sampleRate(rate: 44100)
+            .build()
+
+        let success = synth.synthesizeFromNotes(notes: notes, outputPath: outFile.path)
+
+        if success {
+            synthesizedOutputPath = outFile
+            lastSynthesizedExercise = selectedExercise
+            lastSynthesizedDuration = duration
+        } else {
+            await MainActor.run {
+                status = "Synthesis failed"
+            }
+        }
+    }
+
+    private func loadPlayerForSingalong() async {
+        guard let outputPath = synthesizedOutputPath else { return }
+
+        playerObserverTask?.cancel()
+        referencePlayer?.release()
+
+        do {
+            // Use playAndRecord mode for simultaneous playback+recording
+            let player = try await SonixPlayer.create(source: outputPath.path, audioSession: .playAndRecord)
+            referencePlayer = player
+
+            // Auto-stop when playback finishes
+            playerObserverTask = player.observeIsPlaying { [weak self] playing in
+                guard let self = self else { return }
+                if !playing && self.isSingalongActive {
+                    self.stopSingalong()
+                }
+            }
+
+            await MainActor.run {
+                isReady = true
+            }
+        } catch {
+            await MainActor.run {
+                status = "Player error: \(error.localizedDescription)"
+            }
         }
     }
 
@@ -142,10 +299,12 @@ final class NoteEvalViewModel: ObservableObject {
         Task {
             let midiNotes = currentMidiNotes
             let keyMidi = currentKeyMidi
+            let duration = noteDurationMs
+            let preset = selectedPreset
 
             let pattern = ExercisePattern.fromMidiNotes(
                 midiNotes: midiNotes,
-                noteDurationMs: 500
+                noteDurationMs: duration
             )
 
             let studentAudio = collectedAudio
@@ -160,9 +319,7 @@ final class NoteEvalViewModel: ObservableObject {
                 pattern: pattern,
                 student: studentContour,
                 referenceKeyHz: keyHz,
-                studentKeyHz: 0,
-                scoreType: 0,
-                leewaySamples: 0
+                preset: preset
             )
 
             await MainActor.run {
@@ -183,5 +340,9 @@ final class NoteEvalViewModel: ObservableObject {
         recorder?.stop()
         recorder?.release()
         recorder = nil
+
+        playerObserverTask?.cancel()
+        referencePlayer?.release()
+        referencePlayer = nil
     }
 }

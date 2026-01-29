@@ -74,11 +74,11 @@ final class BundleSingafterRepository: SingafterRepositoryProtocol, @unchecked S
         let segments: [Segment] = phrasePairs.enumerated().map { (index, pair) in
             .create(
                 index: index,
-                startSeconds: Float(pair.teacherStartTime),
-                endSeconds: Float(pair.studentEndTime),
+                startSeconds: pair.teacherStartTime,
+                endSeconds: pair.studentEndTime,
                 lyrics: pair.lyrics,
-                studentStartSeconds: Float(pair.studentStartTime),
-                studentEndSeconds: Float(pair.studentEndTime)
+                studentStartSeconds: pair.studentStartTime,
+                studentEndSeconds: pair.studentEndTime
             )
         }
 

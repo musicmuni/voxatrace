@@ -1,13 +1,14 @@
 import SwiftUI
 import VoxaTrace
 
-/// Note/Exercise evaluation view demonstrating CalibraNoteEval.
+/// Note/Exercise evaluation view with singalong mode.
+/// Students hear the reference notes while recording their performance.
 struct NoteEvalView: View {
     @StateObject private var viewModel = NoteEvalViewModel()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Note/Exercise Evaluation")
+            Text("Note Singalong")
                 .font(.headline)
 
             Text(viewModel.status)
@@ -20,18 +21,16 @@ struct NoteEvalView: View {
             // Visual pattern display
             patternDisplaySection
 
-            // Step 2: Record
-            recordingSection
+            // Step 2: Singalong (play + record)
+            singalongSection
 
-            // Step 3: Evaluate
-            if viewModel.hasRecording && !viewModel.isRecording {
-                evaluateSection
-            }
-
-            // Step 4: Results
+            // Results (shown after evaluation)
             if let result = viewModel.result {
                 resultsSection(result)
             }
+        }
+        .onAppear {
+            viewModel.prepare()
         }
         .onDisappear {
             viewModel.onDisappear()
@@ -46,19 +45,57 @@ struct NoteEvalView: View {
 
             Picker("Exercise", selection: Binding(
                 get: { viewModel.selectedExercise },
-                set: { viewModel.selectExercise($0) }
+                set: {
+                    viewModel.selectExercise($0)
+                    viewModel.prepare()
+                }
             )) {
                 ForEach(0..<viewModel.exercises.count, id: \.self) { index in
                     Text(viewModel.exercises[index].0).tag(index)
                 }
             }
             .pickerStyle(.menu)
+
+            // Difficulty picker
+            HStack {
+                Text("Difficulty:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Picker("Difficulty", selection: $viewModel.selectedPreset) {
+                    Text("Lenient").tag(NoteEvalPreset.lenient)
+                    Text("Balanced").tag(NoteEvalPreset.balanced)
+                    Text("Strict").tag(NoteEvalPreset.strict)
+                }
+                .pickerStyle(.segmented)
+            }
+
+            // Note duration picker
+            HStack {
+                Text("Note Duration:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Picker("Duration", selection: Binding(
+                    get: { viewModel.noteDurationMs },
+                    set: {
+                        viewModel.setNoteDuration($0)
+                        viewModel.prepare()
+                    }
+                )) {
+                    Text("0.5s").tag(Int32(500))
+                    Text("1.0s").tag(Int32(1000))
+                    Text("1.5s").tag(Int32(1500))
+                    Text("2.0s").tag(Int32(2000))
+                }
+                .pickerStyle(.segmented)
+            }
         }
     }
 
     private var patternDisplaySection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Notes to Play:")
+            Text("Notes to Sing:")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -113,20 +150,25 @@ struct NoteEvalView: View {
         .cornerRadius(6)
     }
 
-    private var recordingSection: some View {
+    private var singalongSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Step 2: Record Your Performance")
+            Text("Step 2: Singalong")
                 .font(.subheadline)
                 .fontWeight(.medium)
 
-            Text("Play each note for about 0.5 seconds")
+            Text("Listen to the reference and sing along")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             HStack {
-                if viewModel.isRecording {
-                    Button("Stop Recording") {
-                        viewModel.stopRecording()
+                if viewModel.isSingalongActive {
+                    Button {
+                        viewModel.stopSingalong()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "stop.fill")
+                            Text("Stop")
+                        }
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.red)
@@ -141,43 +183,55 @@ struct NoteEvalView: View {
                             .font(.caption)
                             .monospacedDigit()
                     }
-                } else {
-                    Button(viewModel.hasRecording ? "Re-record" : "Start Recording") {
-                        viewModel.startRecording()
+                } else if viewModel.isPreparing {
+                    Button {
+                        // Disabled while preparing
+                    } label: {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            Text("Preparing...")
+                        }
                     }
                     .buttonStyle(.borderedProminent)
+                    .disabled(true)
+                } else {
+                    Button {
+                        viewModel.startSingalong()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "music.mic")
+                            Text(viewModel.hasRecording ? "Try Again" : "Start Singalong")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(viewModel.isEvaluating)
 
-                    if viewModel.hasRecording {
+                    if viewModel.hasRecording && !viewModel.isEvaluating {
                         Spacer()
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Recording ready")
-                            .font(.caption)
                     }
                 }
             }
 
-            if viewModel.isRecording {
+            if viewModel.isSingalongActive {
                 HStack {
                     Text("Level:")
                         .font(.caption)
                     ProgressView(value: Double(min(max(viewModel.recordingLevel, 0), 1)))
                 }
             }
-        }
-    }
 
-    private var evaluateSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Step 3: Evaluate")
-                .font(.subheadline)
-                .fontWeight(.medium)
-
-            Button(viewModel.isEvaluating ? "Evaluating..." : "Evaluate Performance") {
-                viewModel.evaluate()
+            if viewModel.isEvaluating {
+                HStack {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("Evaluating...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.isEvaluating)
         }
     }
 
