@@ -21,12 +21,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.musicmuni.voxatrace.calibra.Calibra
-import com.musicmuni.voxatrace.demo.calibra.*
-import com.musicmuni.voxatrace.demo.calibra.pitch.PitchSection
-import com.musicmuni.voxatrace.demo.components.OptionChip
-import com.musicmuni.voxatrace.demo.sonix.*
-import com.musicmuni.voxatrace.demo.sonix.simplified.*
+import com.musicmuni.voxatrace.demo.sections.recording.view.RecordingView
+import com.musicmuni.voxatrace.demo.sections.playback.view.PlaybackView
+import com.musicmuni.voxatrace.demo.sections.multitrack.view.MultiTrackView
+import com.musicmuni.voxatrace.demo.sections.metronome.view.MetronomeView
+import com.musicmuni.voxatrace.demo.sections.midi.view.MIDIView
+import com.musicmuni.voxatrace.demo.sections.decoding.view.DecodingView
+import com.musicmuni.voxatrace.demo.sections.parser.view.ParserView
+import com.musicmuni.voxatrace.demo.sections.pitch.view.PitchView
+import com.musicmuni.voxatrace.demo.sections.vad.view.VADView
+import com.musicmuni.voxatrace.demo.sections.breathmonitor.view.BreathMonitorView
+import com.musicmuni.voxatrace.demo.sections.vocalrange.view.VocalRangeView
+import com.musicmuni.voxatrace.demo.sections.speakingpitch.view.SpeakingPitchView
+import com.musicmuni.voxatrace.demo.sections.singalong.view.SingalongView
+import com.musicmuni.voxatrace.demo.sections.singafter.view.SingafterView
+import com.musicmuni.voxatrace.demo.sections.melodyeval.view.MelodyEvalView
+import com.musicmuni.voxatrace.demo.sections.noteeval.view.NoteEvalView
 import com.musicmuni.voxatrace.VT
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -42,8 +52,7 @@ class MainActivity : ComponentActivity() {
 
         Napier.base(DebugAntilog())
 
-        // Initialize SDKs
-        Calibra.init()
+        // Initialize SDK
         try {
             VT.initialize(BuildConfig.SONIX_API_KEY, this)
         } catch (e: Exception) {
@@ -68,7 +77,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    VoxaTraceDemoApp(context = this)
+                    VoxaTraceDemoApp()
                 }
             }
         }
@@ -100,16 +109,13 @@ sealed class Screen {
     data object Home : Screen()
     data object Sonix : Screen()
     data object Calibra : Screen()
-    data class SonixFeature(val name: String, val apiMode: ApiMode) : Screen()
+    data class SonixFeature(val name: String) : Screen()
     data class CalibraFeature(val name: String) : Screen()
 }
 
-enum class ApiMode { SIMPLE, ADVANCED }
-
 @Composable
-fun VoxaTraceDemoApp(context: ComponentActivity) {
+fun VoxaTraceDemoApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
-    var apiMode by remember { mutableStateOf(ApiMode.SIMPLE) }
 
     when (val screen = currentScreen) {
         Screen.Home -> HomeScreen(
@@ -117,10 +123,8 @@ fun VoxaTraceDemoApp(context: ComponentActivity) {
             onCalibraClick = { currentScreen = Screen.Calibra }
         )
         Screen.Sonix -> SonixScreen(
-            apiMode = apiMode,
-            onApiModeChange = { apiMode = it },
             onBack = { currentScreen = Screen.Home },
-            onFeatureClick = { feature -> currentScreen = Screen.SonixFeature(feature, apiMode) }
+            onFeatureClick = { feature -> currentScreen = Screen.SonixFeature(feature) }
         )
         Screen.Calibra -> CalibraScreen(
             onBack = { currentScreen = Screen.Home },
@@ -128,9 +132,7 @@ fun VoxaTraceDemoApp(context: ComponentActivity) {
         )
         is Screen.SonixFeature -> SonixFeatureScreen(
             feature = screen.name,
-            apiMode = screen.apiMode,
-            onBack = { currentScreen = Screen.Sonix },
-            context = context
+            onBack = { currentScreen = Screen.Sonix }
         )
         is Screen.CalibraFeature -> CalibraFeatureScreen(
             feature = screen.name,
@@ -212,29 +214,18 @@ data class FeatureItem(val name: String, val description: String)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SonixScreen(
-    apiMode: ApiMode,
-    onApiModeChange: (ApiMode) -> Unit,
     onBack: () -> Unit,
     onFeatureClick: (String) -> Unit
 ) {
-    val baseFeatures = listOf(
+    val features = listOf(
         FeatureItem("Playback", "Audio playback with pitch shifting"),
         FeatureItem("Recording", "Audio recording to M4A/MP3"),
         FeatureItem("Multi-Track", "Multi-track mixing"),
         FeatureItem("Metronome", "Click track with visual feedback"),
-        FeatureItem("MIDI Synthesis", "SoundFont-based synthesis")
-    )
-
-    val advancedFeatures = listOf(
+        FeatureItem("MIDI Synthesis", "SoundFont-based synthesis"),
         FeatureItem("Decoding", "Audio decode/encode"),
         FeatureItem("Parser", "Parse notation files")
     )
-
-    val visibleFeatures = if (apiMode == ApiMode.ADVANCED) {
-        baseFeatures + advancedFeatures
-    } else {
-        baseFeatures
-    }
 
     Scaffold(
         topBar = {
@@ -248,42 +239,19 @@ fun SonixScreen(
             )
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // API Mode Toggle
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OptionChip(
-                    selected = apiMode == ApiMode.SIMPLE,
-                    onClick = { onApiModeChange(ApiMode.SIMPLE) },
-                    label = "Simple"
+            items(features) { feature ->
+                FeatureCard(
+                    title = feature.name,
+                    description = feature.description,
+                    onClick = { onFeatureClick(feature.name) }
                 )
-                OptionChip(
-                    selected = apiMode == ApiMode.ADVANCED,
-                    onClick = { onApiModeChange(ApiMode.ADVANCED) },
-                    label = "Advanced"
-                )
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(visibleFeatures) { feature ->
-                    FeatureCard(
-                        title = feature.name,
-                        description = feature.description,
-                        onClick = { onFeatureClick(feature.name) }
-                    )
-                }
             }
         }
     }
@@ -414,9 +382,7 @@ fun FeatureCard(title: String, description: String, onClick: () -> Unit) {
 @Composable
 fun SonixFeatureScreen(
     feature: String,
-    apiMode: ApiMode,
-    onBack: () -> Unit,
-    context: ComponentActivity
+    onBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -438,13 +404,13 @@ fun SonixFeatureScreen(
         ) {
             SectionCard {
                 when (feature) {
-                    "Playback" -> if (apiMode == ApiMode.SIMPLE) PlaybackSectionSimplified(context) else PlaybackSection(context)
-                    "Recording" -> if (apiMode == ApiMode.SIMPLE) RecordingSectionSimplified(context) else RecordingSection(context)
-                    "Multi-Track" -> if (apiMode == ApiMode.SIMPLE) MultiTrackSectionSimplified(context) else MultiTrackSection(context)
-                    "Metronome" -> if (apiMode == ApiMode.SIMPLE) MetronomeSectionSimplified() else MetronomeSection()
-                    "MIDI Synthesis" -> if (apiMode == ApiMode.SIMPLE) MidiSectionSimplified(context) else MidiSection(context)
-                    "Decoding" -> DecodingSection(context)
-                    "Parser" -> ParserSection(context)
+                    "Playback" -> PlaybackView()
+                    "Recording" -> RecordingView()
+                    "Multi-Track" -> MultiTrackView()
+                    "Metronome" -> MetronomeView()
+                    "MIDI Synthesis" -> MIDIView()
+                    "Decoding" -> DecodingView()
+                    "Parser" -> ParserView()
                     else -> Text("Unknown feature: $feature")
                 }
             }
@@ -475,15 +441,15 @@ fun CalibraFeatureScreen(feature: String, onBack: () -> Unit) {
         ) {
             SectionCard {
                 when (feature) {
-                    "Pitch" -> PitchSection()
-                    "VAD" -> VADSection()
-                    "Breath Monitor" -> BreathMonitorSection()
-                    "Vocal Range" -> VocalRangeSection()
-                    "Speaking Pitch" -> SpeakingPitchDetectorSection()
-                    "Singalong" -> SingalongLiveEvalSection()
-                    "Singafter" -> SingafterLiveEvalSection()
-                    "Melody Eval" -> MelodyEvalSection()
-                    "Note Eval" -> NoteEvalSection()
+                    "Pitch" -> PitchView()
+                    "VAD" -> VADView()
+                    "Breath Monitor" -> BreathMonitorView()
+                    "Vocal Range" -> VocalRangeView()
+                    "Speaking Pitch" -> SpeakingPitchView()
+                    "Singalong" -> SingalongView()
+                    "Singafter" -> SingafterView()
+                    "Melody Eval" -> MelodyEvalView()
+                    "Note Eval" -> NoteEvalView()
                     else -> Text("Unknown feature: $feature")
                 }
             }
