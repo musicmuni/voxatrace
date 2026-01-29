@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Audio effects view demonstrating CalibraEffects.Builder pattern.
+/// Audio effects view demonstrating CalibraEffectsConfig.Builder pattern (ADR-001).
 struct EffectsView: View {
     @StateObject private var viewModel = EffectsViewModel()
 

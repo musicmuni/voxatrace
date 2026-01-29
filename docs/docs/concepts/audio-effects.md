@@ -134,29 +134,33 @@ val effects = CalibraEffects.create(EffectsPreset.VOICE)
 
 ### Custom Chain
 
-Build exactly what you need:
+Build exactly what you need using the Config Builder pattern (ADR-001 compliant):
 
 ```kotlin
-val effects = CalibraEffects.Builder()
-    .addNoiseGate(NoiseGatePreset.GENTLE)        // Light gating
+val config = CalibraEffectsConfig.Builder()
+    .addNoiseGate(NoiseGatePreset.LIGHT)         // Light gating
     .addCompressor(CompressorPreset.VOCALS)       // Vocal compression
     .addReverb(mix = 0.2f, roomSize = 0.4f)      // Subtle reverb
-    .build()
+    .build()  // Returns CalibraEffectsConfig
+
+val effects = CalibraEffects.create(config)
 ```
 
 Or omit effects you don't need:
 
 ```kotlin
 // Reverb only
-val effects = CalibraEffects.Builder()
+val config = CalibraEffectsConfig.Builder()
     .addReverb(ReverbPreset.SMALL_ROOM)
     .build()
+val effects = CalibraEffects.create(config)
 
 // Gate and compressor only (no reverb)
-val effects = CalibraEffects.Builder()
+val config = CalibraEffectsConfig.Builder()
     .addNoiseGate()
     .addCompressor()
     .build()
+val effects = CalibraEffects.create(config)
 ```
 
 ### Runtime Adjustment
@@ -238,41 +242,45 @@ Tips:
 
 ```kotlin
 // Rich reverb for karaoke feel
-val effects = CalibraEffects.Builder()
-    .addNoiseGate(NoiseGatePreset.MODERATE)
+val config = CalibraEffectsConfig.Builder()
+    .addNoiseGate(NoiseGatePreset.STANDARD)
     .addCompressor(CompressorPreset.VOCALS)
     .addReverb(mix = 0.35f, roomSize = 0.6f)  // More reverb
     .build()
+val effects = CalibraEffects.create(config)
 ```
 
 ### Practice/Learning App
 
 ```kotlin
 // Minimal processing - hear your real voice
-val effects = CalibraEffects.Builder()
-    .addNoiseGate(NoiseGatePreset.GENTLE)  // Just reduce noise
+val config = CalibraEffectsConfig.Builder()
+    .addNoiseGate(NoiseGatePreset.LIGHT)  // Just reduce noise
     .build()
+val effects = CalibraEffects.create(config)
 ```
 
 ### Voice Recording
 
 ```kotlin
 // Clean, professional sound
-val effects = CalibraEffects.Builder()
-    .addNoiseGate(NoiseGatePreset.MODERATE)
-    .addCompressor(CompressorPreset.GENTLE)
+val config = CalibraEffectsConfig.Builder()
+    .addNoiseGate(NoiseGatePreset.STANDARD)
+    .addCompressor(CompressorPreset.VOCALS)
     .addReverb(mix = 0.1f, roomSize = 0.3f)  // Subtle room
     .build()
+val effects = CalibraEffects.create(config)
 ```
 
 ### Podcast Style
 
 ```kotlin
 // Consistent volume, no reverb
-val effects = CalibraEffects.Builder()
+val config = CalibraEffectsConfig.Builder()
     .addNoiseGate(NoiseGatePreset.AGGRESSIVE)
-    .addCompressor(CompressorPreset.BROADCAST)  // Heavy compression
+    .addCompressor(CompressorPreset.VOCALS)  // Heavy compression
     .build()
+val effects = CalibraEffects.create(config)
 ```
 
 ## Troubleshooting

@@ -101,17 +101,22 @@ final class SingafterViewModel: ObservableObject {
 
     func goToPair(_ index: Int) {
         guard index >= 0, index < phrasePairs.count else { return }
+        currentPairIndex = index
         session?.seekToSegment(index: index)
     }
 
     func nextPair() {
         guard canGoNext else { return }
-        session?.startPracticingSegment(index: currentPairIndex + 1)
+        let newIndex = currentPairIndex + 1
+        currentPairIndex = newIndex
+        session?.startPracticingSegment(index: newIndex)
     }
 
     func previousPair() {
         guard canGoPrevious else { return }
-        session?.startPracticingSegment(index: currentPairIndex - 1)
+        let newIndex = currentPairIndex - 1
+        currentPairIndex = newIndex
+        session?.startPracticingSegment(index: newIndex)
     }
 
     func retry() {
@@ -199,7 +204,8 @@ final class SingafterViewModel: ObservableObject {
 
     private func setupCallbacks() {
         session?.onPhaseChanged { [weak self] phase in
-            self?.practicePhase = phase
+            guard let self = self else { return }
+            self.practicePhase = phase
         }
 
         session?.onReferenceEnd { segment in
