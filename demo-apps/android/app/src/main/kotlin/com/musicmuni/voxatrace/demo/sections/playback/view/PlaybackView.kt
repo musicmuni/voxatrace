@@ -31,6 +31,13 @@ fun PlaybackView(viewModel: PlaybackViewModel = viewModel()) {
         viewModel.initialize(context)
     }
 
+    // Stop playback when leaving the screen (matches iOS onDisappear)
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stop()
+        }
+    }
+
     // Collect state from ViewModel
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val currentTimeMs by viewModel.currentTimeMs.collectAsStateWithLifecycle()

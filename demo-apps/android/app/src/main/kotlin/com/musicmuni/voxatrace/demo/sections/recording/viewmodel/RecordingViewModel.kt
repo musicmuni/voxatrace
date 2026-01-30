@@ -7,7 +7,6 @@ import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixPlayerConfig
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.model.AudioFormat
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -109,9 +108,9 @@ class RecordingViewModel : ViewModel() {
             val outputPath = "$outputDir/recording_$timestamp.$format"
 
             // Create recorder using Config + Factory pattern (ADR-001)
+            // Note: Format is auto-detected from file extension (matches iOS behavior)
             val recorderConfig = SonixRecorderConfig.Builder()
                 .preset(SonixRecorderConfig.VOICE)
-                .format(if (format == "mp3") AudioFormat.MP3 else AudioFormat.M4A)
                 .sampleRate(16000)
                 .channels(1)
                 .bitrate(128000)

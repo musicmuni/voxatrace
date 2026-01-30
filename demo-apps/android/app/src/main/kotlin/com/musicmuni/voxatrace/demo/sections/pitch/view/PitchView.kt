@@ -25,16 +25,18 @@ fun PitchView() {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Demo picker
-        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        // Demo picker using ScrollableTabRow for better fit
+        ScrollableTabRow(
+            selectedTabIndex = selectedDemo,
+            edgePadding = 0.dp,
+            divider = {}
+        ) {
             demos.forEachIndexed { index, label ->
-                SegmentedButton(
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = demos.size),
+                Tab(
+                    selected = selectedDemo == index,
                     onClick = { selectedDemo = index },
-                    selected = selectedDemo == index
-                ) {
-                    Text(label, style = MaterialTheme.typography.labelSmall)
-                }
+                    text = { Text(label) }
+                )
             }
         }
 

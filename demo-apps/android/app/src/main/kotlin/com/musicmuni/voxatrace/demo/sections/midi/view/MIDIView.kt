@@ -25,6 +25,13 @@ import com.musicmuni.voxatrace.demo.sections.midi.viewmodel.MIDIViewModel
 fun MIDIView(viewModel: MIDIViewModel = viewModel()) {
     val context = LocalContext.current
 
+    // Stop playback when leaving the screen (matches iOS onDisappear)
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stop()
+        }
+    }
+
     // Collect state from ViewModel
     val status by viewModel.status.collectAsStateWithLifecycle()
     val isSynthesizing by viewModel.isSynthesizing.collectAsStateWithLifecycle()

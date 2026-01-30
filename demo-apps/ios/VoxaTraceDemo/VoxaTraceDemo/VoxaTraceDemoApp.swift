@@ -8,6 +8,7 @@ struct VoxaTraceDemoApp: App {
     init() {
         // Initialize VoxaTrace SDK with API key
         // debugLogging: true enables console output in Xcode
+        // After this call, AI models auto-load from bundled voxatrace.bundle
         do {
             try VT.initialize(apiKey: Config.apiKey, debugLogging: true)
             Log.i(.general, "VoxaTrace SDK initialized")
@@ -18,14 +19,6 @@ struct VoxaTraceDemoApp: App {
             Log.e(.general, "License validation failed", error: error)
             _licenseError = State(initialValue: "License validation failed: \(error.localizedDescription)")
         }
-
-        // Configure ModelLoader for AI features (VAD, Pitch extraction)
-        // Must be called before using ModelLoader.loadSileroVAD() or ModelLoader.loadSwiftF0()
-        ModelLoader.configure()
-
-        // Register AI models for auto-loading by CalibraPitch factories
-        // After this, SwiftF0-based detectors/extractors work without explicit modelProvider
-        AIModelRegistry.shared.registerSwiftF0 { ModelLoader.loadSwiftF0() }
     }
 
     var body: some Scene {

@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.musicmuni.voxatrace.calibra.CalibraMusic
@@ -373,5 +374,29 @@ fun PitchComparisonGraphView(
         times = times,
         title = "Raw vs Processed",
         height = height
+    )
+}
+
+/**
+ * Overload that accepts FloatArray and Dp height.
+ */
+@Composable
+fun PitchGraphView(
+    pitchesHz: FloatArray,
+    times: FloatArray? = null,
+    color: Color = Color.Blue,
+    title: String? = null,
+    series: String = "Pitch",
+    height: Dp = 200.dp,
+    inputIsMidi: Boolean = false
+) {
+    PitchGraphView(
+        pitchesHz = pitchesHz.toList(),
+        times = times?.toList(),
+        color = color,
+        title = title,
+        series = series,
+        height = height.value.toInt(),
+        inputIsMidi = inputIsMidi
     )
 }
