@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,6 +34,12 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
     val isVoiceDetected by viewModel.isVoiceDetected.collectAsStateWithLifecycle()
     val recordingLevel by viewModel.recordingLevel.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
+
+    // Offline analysis state
+    val offlineBreathCapacity by viewModel.offlineBreathCapacity.collectAsStateWithLifecycle()
+    val offlineVoicedTime by viewModel.offlineVoicedTime.collectAsStateWithLifecycle()
+    val offlineHasEnoughData by viewModel.offlineHasEnoughData.collectAsStateWithLifecycle()
+    val isAnalyzingOffline by viewModel.isAnalyzingOffline.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -171,6 +178,183 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
                     }
                 }
             }
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        // Offline Analysis Section
+        OfflineAnalysisSection(
+            viewModel = viewModel,
+            context = context,
+            offlineBreathCapacity = offlineBreathCapacity,
+            offlineVoicedTime = offlineVoicedTime,
+            offlineHasEnoughData = offlineHasEnoughData,
+            isAnalyzingOffline = isAnalyzingOffline
+        )
+    }
+}
+
+@Composable
+private fun OfflineAnalysisSection(
+    viewModel: BreathMonitorViewModel,
+    context: android.content.Context,
+    offlineBreathCapacity: Float,
+    offlineVoicedTime: Float,
+    offlineHasEnoughData: Boolean,
+    isAnalyzingOffline: Boolean
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "Offline Breath Analysis",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = "Analyze breath capacity from audio file",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        OutlinedButton(
+            onClick = { viewModel.analyzeOffline(context) },
+            enabled = !isAnalyzingOffline
+        ) {
+            Text("Analyze Alankaar Voice")
+        }
+
+        if (isAnalyzingOffline) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        if (offlineVoicedTime > 0) {
+            OfflineResultCard(
+                breathCapacity = offlineBreathCapacity,
+                voicedTime = offlineVoicedTime,
+                hasEnoughData = offlineHasEnoughData
+            )
+        }
+
+        ApiInfoCard()
+    }
+}
+
+@Composable
+private fun OfflineResultCard(
+    breathCapacity: Float,
+    voicedTime: Float,
+    hasEnoughData: Boolean
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Offline Result",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "Breath Capacity",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = BreathMonitorViewModel.formatTime(breathCapacity),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Voiced Time",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = BreathMonitorViewModel.formatTime(voicedTime),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Enough Data",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = if (hasEnoughData) "Yes" else "No",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = if (hasEnoughData) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ApiInfoCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "APIs Demonstrated:",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "- SonixDecoder.decode() - Load audio from file",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "- CalibraPitch.createContourExtractor() - Extract pitch contour",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "- CalibraBreath.hasEnoughData() - Check data sufficiency",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "- CalibraBreath.computeCapacity() - Compute breath capacity",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "- CalibraBreath.getCumulativeVoicedTime() - Get voiced time",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

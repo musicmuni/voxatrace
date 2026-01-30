@@ -9,11 +9,11 @@ import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.calibra.model.PitchPoint
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchAlgorithmInfo
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchPresetInfo
+import com.musicmuni.voxatrace.demo.sections.pitch.model.QuietHandlingInfo
+import com.musicmuni.voxatrace.demo.sections.pitch.model.StrictnessInfo
 import com.musicmuni.voxatrace.demo.sections.pitch.model.VoiceTypeInfo
-import com.musicmuni.voxatrace.sonix.AudioSessionManager
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.SonixResampler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +35,12 @@ class RealtimePitchViewModel : ViewModel() {
     private val _selectedVoiceType = MutableStateFlow(0) // Auto
     val selectedVoiceType: StateFlow<Int> = _selectedVoiceType.asStateFlow()
 
+    private val _selectedQuietHandling = MutableStateFlow(1) // NORMAL
+    val selectedQuietHandling: StateFlow<Int> = _selectedQuietHandling.asStateFlow()
+
+    private val _selectedStrictness = MutableStateFlow(1) // BALANCED
+    val selectedStrictness: StateFlow<Int> = _selectedStrictness.asStateFlow()
+
     // Runtime state
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
@@ -45,10 +51,26 @@ class RealtimePitchViewModel : ViewModel() {
     private val _amplitude = MutableStateFlow(0f)
     val amplitude: StateFlow<Float> = _amplitude.asStateFlow()
 
+    // Pitch history for scrolling graph
+    private val _pitchHistory = MutableStateFlow<List<Float>>(emptyList())
+    val pitchHistory: StateFlow<List<Float>> = _pitchHistory.asStateFlow()
+
+    // Recorded pitches for session graph
+    private val _recordedPitches = MutableStateFlow<List<Float>>(emptyList())
+    val recordedPitches: StateFlow<List<Float>> = _recordedPitches.asStateFlow()
+
+    // Show session graph after stopping
+    private val _showGraph = MutableStateFlow(false)
+    val showGraph: StateFlow<Boolean> = _showGraph.asStateFlow()
+
     // Config data
     val algorithms = PitchAlgorithmInfo.all
     val presets = PitchPresetInfo.all
     val voiceTypes = VoiceTypeInfo.all
+    val quietHandlings = QuietHandlingInfo.all
+    val strictnesses = StrictnessInfo.all
+
+    val maxHistoryPoints = 200
 
     // Private state
     private var detector: CalibraPitch.Detector? = null
@@ -60,16 +82,43 @@ class RealtimePitchViewModel : ViewModel() {
     fun setSelectedAlgorithm(index: Int) {
         _selectedAlgorithm.value = index
         if (_isRecording.value) {
-            stopRecording()
+            recreateDetectorIfRecording()
         }
     }
 
     fun setSelectedPreset(index: Int) {
         _selectedPreset.value = index
+        if (_isRecording.value) {
+            recreateDetectorIfRecording()
+        }
     }
 
     fun setSelectedVoiceType(index: Int) {
         _selectedVoiceType.value = index
+        if (_isRecording.value) {
+            recreateDetectorIfRecording()
+        }
+    }
+
+    fun setSelectedQuietHandling(index: Int) {
+        _selectedQuietHandling.value = index
+        if (_isRecording.value) {
+            recreateDetectorIfRecording()
+        }
+    }
+
+    fun setSelectedStrictness(index: Int) {
+        _selectedStrictness.value = index
+        if (_isRecording.value) {
+            recreateDetectorIfRecording()
+        }
+    }
+
+    private fun recreateDetectorIfRecording() {
+        if (_isRecording.value) {
+            detector?.release()
+            detector = createDetector()
+        }
     }
 
     fun startRecording(context: Context) {
@@ -80,6 +129,11 @@ class RealtimePitchViewModel : ViewModel() {
 
             detector?.release()
             detector = createDetector()
+            detector?.reset()
+
+            _recordedPitches.value = emptyList()
+            _pitchHistory.value = emptyList()
+            _showGraph.value = false
 
             recorder?.start()
             _isRecording.value = true
@@ -89,20 +143,26 @@ class RealtimePitchViewModel : ViewModel() {
                 recorder?.audioBuffers?.collect { buffer ->
                     val det = detector ?: return@collect
 
-                    // Resample to 16kHz for pitch detection
-                    val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
-                    val samples16k = SonixResampler.resample(
-                        samples = buffer.samples,
-                        fromRate = hwRate,
-                        toRate = 16000
-                    )
+                    // VOICE preset records at 16kHz - use directly, no resampling needed
+                    val samples = buffer.samples
 
                     // Detect pitch
-                    val result = det.detect(samples16k, 16000)
-                    val amp = det.getAmplitude(samples16k, 16000)
+                    val result = det.detect(samples, 16000)
+                    val amp = det.getAmplitude(samples, 16000)
 
                     _currentPitch.value = result
                     _amplitude.value = amp
+
+                    // Update pitch history (for scrolling view)
+                    val newHistory = _pitchHistory.value.toMutableList()
+                    newHistory.add(result.pitch)
+                    if (newHistory.size > maxHistoryPoints) {
+                        newHistory.removeAt(0)
+                    }
+                    _pitchHistory.value = newHistory
+
+                    // Record all pitches
+                    _recordedPitches.value = _recordedPitches.value + result.pitch
                 }
             }
         }
@@ -117,16 +177,39 @@ class RealtimePitchViewModel : ViewModel() {
             _isRecording.value = false
             _currentPitch.value = null
             _amplitude.value = 0f
+            detector?.reset()
+
+            // Show graph if we have recorded pitches
+            if (_recordedPitches.value.isNotEmpty()) {
+                _showGraph.value = true
+            }
         }
+    }
+
+    fun toggleRecording(context: Context) {
+        if (_isRecording.value) {
+            stopRecording()
+        } else {
+            startRecording(context)
+        }
+    }
+
+    fun clearRecording() {
+        _recordedPitches.value = emptyList()
+        _showGraph.value = false
     }
 
     private fun createDetector(): CalibraPitch.Detector {
         val algorithm = if (_selectedAlgorithm.value == 0) PitchAlgorithm.YIN else PitchAlgorithm.SWIFT_F0
         val voiceType = voiceTypes[_selectedVoiceType.value].voiceType
+        val quietHandling = quietHandlings[_selectedQuietHandling.value].handling
+        val strictness = strictnesses[_selectedStrictness.value].strictness
 
         val detectorConfig = PitchDetectorConfig.Builder()
             .algorithm(algorithm)
             .voiceType(voiceType)
+            .quietHandling(quietHandling)
+            .strictness(strictness)
             .build()
 
         return CalibraPitch.createDetector(detectorConfig)

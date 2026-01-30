@@ -3,6 +3,7 @@ package com.musicmuni.voxatrace.demo.sections.playback.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.musicmuni.voxatrace.sonix.AudioMode
 import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixPlayerConfig
 import io.github.aakira.napier.Napier
@@ -30,7 +31,7 @@ import java.io.FileOutputStream
  *     .onLoopComplete { loopIndex, totalLoops -> }
  *     .onError { }
  *     .build()
- * val player = SonixPlayer.create(source, config)
+ * val player = SonixPlayer.create(source, config, audioSession = AudioMode.PLAYBACK)
  *
  * // 2. Observe state via StateFlows
  * player.isPlaying.collect { }
@@ -106,7 +107,11 @@ class PlaybackViewModel : ViewModel() {
                     }
                     .build()
 
-                val newPlayer = SonixPlayer.create(assetFile.absolutePath, playerConfig)
+                val newPlayer = SonixPlayer.create(
+                    source = assetFile.absolutePath,
+                    config = playerConfig,
+                    audioSession = AudioMode.PLAYBACK
+                )
 
                 player = newPlayer
                 _durationMs.value = newPlayer.duration

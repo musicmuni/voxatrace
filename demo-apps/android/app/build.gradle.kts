@@ -22,23 +22,24 @@ android {
         val localPropertiesFile = rootProject.file("local.properties")
         if (!localPropertiesFile.exists()) {
             throw GradleException(
-                "local.properties file not found. Please create it and add 'sonix.apiKey=YOUR_API_KEY'"
+                "local.properties file not found. Please create it and add 'voxatrace.apiKey=YOUR_API_KEY'"
             )
         }
 
         val properties = Properties()
         properties.load(localPropertiesFile.inputStream())
-        val apiKey = properties.getProperty("sonix.apiKey")
+        val apiKey = properties.getProperty("voxatrace.apiKey")
             ?: throw GradleException(
-                "Sonix API key not found in local.properties. Please add 'sonix.apiKey=YOUR_API_KEY'"
+                "VoxaTrace API key not found in local.properties. Please add 'voxatrace.apiKey=YOUR_API_KEY'"
             )
 
-        buildConfigField("String", "SONIX_API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "VOXATRACE_API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -71,6 +72,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
     implementation("io.ktor:ktor-client-core:2.3.12")
     implementation("io.ktor:ktor-client-android:2.3.12")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // Compose
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
@@ -78,8 +80,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+
+    // Permissions
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
     // Core
     implementation("androidx.core:core-ktx:1.12.0")

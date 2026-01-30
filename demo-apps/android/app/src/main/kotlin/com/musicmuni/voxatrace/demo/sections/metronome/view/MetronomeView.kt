@@ -34,6 +34,13 @@ fun MetronomeView(viewModel: MetronomeViewModel = viewModel()) {
         viewModel.initialize(context)
     }
 
+    // Stop metronome when leaving the screen (matches iOS onDisappear)
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stop()
+        }
+    }
+
     // Collect state from ViewModel
     val isRunning by viewModel.isRunning.collectAsStateWithLifecycle()
     val bpm by viewModel.bpm.collectAsStateWithLifecycle()

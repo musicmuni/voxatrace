@@ -137,11 +137,11 @@ class SingalongViewModel : ViewModel() {
     // MARK: - Actions
 
     fun play() {
-        session?.playSegment(_currentSegmentIndex.value)
+        session?.startPracticingSegment(_currentSegmentIndex.value)
     }
 
     fun pause() {
-        session?.pause()
+        session?.pausePlayback()
         _practicePhase.value = PracticePhase.IDLE
     }
 
@@ -153,12 +153,12 @@ class SingalongViewModel : ViewModel() {
 
     fun nextSegment() {
         if (!canGoNext) return
-        session?.playSegment(_currentSegmentIndex.value + 1)
+        session?.startPracticingSegment(_currentSegmentIndex.value + 1)
     }
 
     fun previousSegment() {
         if (!canGoPrevious) return
-        session?.playSegment(_currentSegmentIndex.value - 1)
+        session?.startPracticingSegment(_currentSegmentIndex.value - 1)
     }
 
     fun retry() {
@@ -167,7 +167,7 @@ class SingalongViewModel : ViewModel() {
     }
 
     fun finish() {
-        session?.pause()
+        session?.pausePlayback()
         _lastResult.value = null
         session?.finishSession()
         _uiState.value = SingalongUIState.Summary
@@ -239,7 +239,7 @@ class SingalongViewModel : ViewModel() {
         setupObservers()
 
         // 5. Prepare session
-        session?.prepare()
+        session?.prepareSession()
 
         // 6. Update UI
         _segments.value = session?.segments ?: emptyList()

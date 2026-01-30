@@ -4,12 +4,10 @@ import VoxaTrace
 
 /// ViewModel for live voice activity detection.
 ///
-/// ## VoxaTrace Integration (~10 lines)
+/// ## VoxaTrace Integration (~8 lines)
 /// ```swift
-/// // 1. Create VAD for selected backend
-/// let vad = CalibraVAD.create(.singingRealtime {
-///     ModelLoader.loadSingingRealtimeVAD()
-/// })
+/// // 1. Create VAD for selected backend (auto-loads bundled models)
+/// let vad = CalibraVAD.create(.singingRealtime())
 ///
 /// // 2. Process audio buffers
 /// let samples16k = SonixResampler.resample(samples:fromRate:toRate:)
@@ -53,23 +51,20 @@ final class LiveVADViewModel: ObservableObject {
             """
         case .speech:
             return """
-            let vad = CalibraVAD.create(.speech {
-                ModelLoader.loadSileroVAD()
-            })
+            // Auto-loads bundled Silero model
+            let vad = CalibraVAD.create(.speech())
             let ratio = vad.getVADRatio(samples: samples16k)
             """
         case .singingRealtime:
             return """
-            let vad = CalibraVAD.create(.singingRealtime {
-                ModelLoader.loadSingingRealtimeVAD()
-            })
+            // Auto-loads bundled SwiftF0 model
+            let vad = CalibraVAD.create(.singingRealtime())
             let ratio = vad.getVADRatio(samples: samples16k)
             """
         case .singing:
             return """
-            let vad = CalibraVAD.create(.singing {
-                ModelLoader.loadSingingVAD()
-            })
+            // Auto-loads bundled YAMNet models
+            let vad = CalibraVAD.create(.singing())
             let ratio = vad.getVADRatio(samples: samples16k)
             """
         default:
@@ -106,11 +101,14 @@ final class LiveVADViewModel: ObservableObject {
         case .general:
             return CalibraVAD.create(.general)
         case .speech:
-            return CalibraVAD.create(.speech { ModelLoader.loadSpeechVAD() })
+            // Auto-loads bundled Silero model
+            return CalibraVAD.create(.speech())
         case .singingRealtime:
-            return CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
+            // Auto-loads bundled SwiftF0 model
+            return CalibraVAD.create(.singingRealtime())
         case .singing:
-            return CalibraVAD.create(.singing { ModelLoader.loadSingingVAD() })
+            // Auto-loads bundled YAMNet models
+            return CalibraVAD.create(.singing())
         default:
             return CalibraVAD.create(.general)
         }

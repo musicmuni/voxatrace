@@ -149,11 +149,11 @@ class SingafterViewModel : ViewModel() {
     // MARK: - Actions
 
     fun play() {
-        session?.playSegment(_currentPairIndex.value)
+        session?.startPracticingSegment(_currentPairIndex.value)
     }
 
     fun pause() {
-        session?.pause()
+        session?.pausePlayback()
         _practicePhase.value = PracticePhase.IDLE
     }
 
@@ -168,14 +168,14 @@ class SingafterViewModel : ViewModel() {
         if (!canGoNext) return
         val newIndex = _currentPairIndex.value + 1
         _currentPairIndex.value = newIndex
-        session?.playSegment(newIndex)
+        session?.startPracticingSegment(newIndex)
     }
 
     fun previousPair() {
         if (!canGoPrevious) return
         val newIndex = _currentPairIndex.value - 1
         _currentPairIndex.value = newIndex
-        session?.playSegment(newIndex)
+        session?.startPracticingSegment(newIndex)
     }
 
     fun retry() {
@@ -184,7 +184,7 @@ class SingafterViewModel : ViewModel() {
     }
 
     fun finish() {
-        session?.pause()
+        session?.pausePlayback()
         _lastResult.value = null
         session?.finishSession()
         _uiState.value = SingafterUIState.Summary
@@ -333,7 +333,7 @@ class SingafterViewModel : ViewModel() {
             setupCallbacks()
             setupObservers()
 
-            session?.prepare()
+            session?.prepareSession()
 
             _uiState.value = SingafterUIState.Ready
         } catch (e: Exception) {

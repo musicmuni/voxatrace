@@ -1,6 +1,8 @@
 package com.musicmuni.voxatrace.demo.sections.speakingpitch.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,29 +13,54 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.musicmuni.voxatrace.calibra.CalibraMusic
+import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.CalibraSpeakingPitch
-import com.musicmuni.voxatrace.sonix.AudioSessionManager
+import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
+import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
 import com.musicmuni.voxatrace.sonix.SonixResampler
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+
+private const val FEMALE_THRESHOLD_HZ = 174.61f // F3
+private const val RMS_THRESHOLD = 0.02f
+private const val COUNTDOWN_SECONDS = 4
+
+enum class Gender { MALE, FEMALE }
+
+/**
+ * Detection state for speaking pitch.
+ */
+enum class SpeakingPitchDetectionState {
+    IDLE,
+    LISTENING,
+    COUNTDOWN,
+    PROCESSING,
+    COMPLETE
+}
 
 /**
  * Speaking pitch result data.
  */
 data class SpeakingPitchResult(
     val frequencyHz: Float,
-    val noteLabel: String
+    val noteLabel: String,
+    val gender: Gender? = null
 )
 
 /**
- * Speaking Pitch (Shruti) Detector View.
+ * Speaking Pitch & Gender Detector View.
  *
  * Uses CalibraSpeakingPitch.detectFromAudio() - a stateless one-shot detection.
- * Records several seconds of speech, then analyzes offline.
+ * Automatically detects when user starts speaking, counts down, then analyzes.
  */
 @Composable
 fun SpeakingPitchView() {
@@ -41,88 +68,188 @@ fun SpeakingPitchView() {
     val scope = rememberCoroutineScope()
 
     var recorder by remember { mutableStateOf<SonixRecorder?>(null) }
+    var pitchDetector by remember { mutableStateOf<CalibraPitch.Detector?>(null) }
     var recordingJob by remember { mutableStateOf<Job?>(null) }
+    var countdownJob by remember { mutableStateOf<Job?>(null) }
     var collectedAudio by remember { mutableStateOf(mutableListOf<Float>()) }
 
-    var isRecording by remember { mutableStateOf(false) }
-    var isAnalyzing by remember { mutableStateOf(false) }
-    var recordingDuration by remember { mutableFloatStateOf(0f) }
+    var detectionState by remember { mutableStateOf(SpeakingPitchDetectionState.IDLE) }
+    var countdownSeconds by remember { mutableIntStateOf(COUNTDOWN_SECONDS) }
+    var currentLevel by remember { mutableFloatStateOf(0f) }
     var result by remember { mutableStateOf<SpeakingPitchResult?>(null) }
-    var error by remember { mutableStateOf<String?>(null) }
 
-    val targetDuration = 5f // seconds of speech needed
+    // Offline analysis state
+    var offlineResult by remember { mutableStateOf<SpeakingPitchResult?>(null) }
+    var isAnalyzingOffline by remember { mutableStateOf(false) }
 
-    fun startRecording() {
-        collectedAudio = mutableListOf()
-        result = null
-        error = null
-        recordingDuration = 0f
-        isRecording = true
-
-        recorder = SonixRecorder.create("${context.cacheDir}/shruti_temp.m4a", SonixRecorderConfig.VOICE)
-        recorder?.start()
-
-        recordingJob = scope.launch {
-            val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
-            var sampleCount = 0
-
-            recorder?.audioBuffers?.collect { buffer ->
-                val samples16k = SonixResampler.resample(buffer.samples, hwRate, 16000)
-                collectedAudio.addAll(samples16k.toList())
-                sampleCount += samples16k.size
-                recordingDuration = sampleCount / 16000f
-            }
-        }
+    val status = when (detectionState) {
+        SpeakingPitchDetectionState.IDLE -> "Speak naturally to detect your speaking pitch"
+        SpeakingPitchDetectionState.LISTENING -> "Say something..."
+        SpeakingPitchDetectionState.COUNTDOWN -> "Keep speaking..."
+        SpeakingPitchDetectionState.PROCESSING -> "Processing..."
+        SpeakingPitchDetectionState.COMPLETE -> if (result != null) "Detection complete!" else "Could not detect. Try again."
     }
 
-    fun stopRecording() {
-        recordingJob?.cancel()
-        recorder?.stop()
-        isRecording = false
-    }
-
-    fun analyze() {
+    fun processAudio() {
         if (collectedAudio.isEmpty()) {
-            error = "No audio recorded"
+            detectionState = SpeakingPitchDetectionState.COMPLETE
             return
         }
 
-        isAnalyzing = true
-        error = null
-
         scope.launch {
             val audioArray = collectedAudio.toFloatArray()
-
             val detectedHz = withContext(Dispatchers.Default) {
                 CalibraSpeakingPitch.detectFromAudio(audioArray)
             }
 
             if (detectedHz > 0) {
                 val noteLabel = CalibraMusic.hzToNoteLabel(detectedHz)
+                val gender = if (detectedHz >= FEMALE_THRESHOLD_HZ) Gender.FEMALE else Gender.MALE
                 result = SpeakingPitchResult(
                     frequencyHz = detectedHz,
-                    noteLabel = noteLabel
+                    noteLabel = noteLabel,
+                    gender = gender
                 )
-            } else {
-                error = "Could not detect speaking pitch. Try speaking more clearly."
             }
 
-            isAnalyzing = false
+            detectionState = SpeakingPitchDetectionState.COMPLETE
         }
     }
 
-    fun reset() {
-        stopRecording()
+    fun startCountdown() {
+        countdownJob?.cancel()
+        countdownJob = scope.launch {
+            for (i in COUNTDOWN_SECONDS downTo 1) {
+                countdownSeconds = i
+                delay(1000)
+                if (detectionState != SpeakingPitchDetectionState.COUNTDOWN) {
+                    return@launch
+                }
+            }
+
+            // Countdown finished
+            detectionState = SpeakingPitchDetectionState.PROCESSING
+            recorder?.stop()
+            processAudio()
+        }
+    }
+
+    fun startDetection() {
+        // Setup pitch detector if needed
+        if (pitchDetector == null) {
+            val config = PitchDetectorConfig.Builder()
+                .algorithm(PitchAlgorithm.YIN)
+                .build()
+            pitchDetector = CalibraPitch.createDetector(config)
+        }
+
+        // Reset state
         collectedAudio = mutableListOf()
         result = null
-        error = null
-        recordingDuration = 0f
+        currentLevel = 0f
+        countdownSeconds = COUNTDOWN_SECONDS
+        detectionState = SpeakingPitchDetectionState.LISTENING
+
+        recorder = SonixRecorder.create("${context.cacheDir}/shruti_temp.m4a", SonixRecorderConfig.VOICE)
+        recorder?.start()
+
+        recordingJob = scope.launch {
+            recorder?.audioBuffers?.collect { buffer ->
+                // VOICE preset records at 16kHz; CalibraPitch handles resampling internally (ADR-017)
+                val samples = buffer.samples
+                val calculatedRms = pitchDetector?.getAmplitude(samples, 16000) ?: 0f
+                currentLevel = calculatedRms
+
+                when (detectionState) {
+                    SpeakingPitchDetectionState.LISTENING -> {
+                        if (calculatedRms > RMS_THRESHOLD) {
+                            detectionState = SpeakingPitchDetectionState.COUNTDOWN
+                            startCountdown()
+                        }
+                    }
+                    SpeakingPitchDetectionState.COUNTDOWN -> {
+                        collectedAudio.addAll(samples.toList())
+                    }
+                    else -> { }
+                }
+            }
+        }
+    }
+
+    fun stopDetection() {
+        recordingJob?.cancel()
+        countdownJob?.cancel()
+        recorder?.stop()
+        detectionState = SpeakingPitchDetectionState.IDLE
+    }
+
+    fun copyAssetToFile(assetName: String): File {
+        val file = File(context.cacheDir, assetName)
+        if (!file.exists()) {
+            context.assets.open(assetName).use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+        return file
+    }
+
+    fun analyzeOffline() {
+        isAnalyzingOffline = true
+        offlineResult = null
+
+        scope.launch {
+            try {
+                val audioFile = withContext(Dispatchers.IO) {
+                    copyAssetToFile("Alankaar 01_voice.m4a")
+                }
+
+                val audioData = withContext(Dispatchers.IO) {
+                    SonixDecoder.decode(audioFile.absolutePath)
+                }
+
+                if (audioData == null) {
+                    Napier.e("Failed to decode audio file")
+                    isAnalyzingOffline = false
+                    return@launch
+                }
+
+                val samples16k = withContext(Dispatchers.IO) {
+                    SonixResampler.resample(
+                        samples = audioData.samples,
+                        fromRate = audioData.sampleRate,
+                        toRate = 16000
+                    )
+                }
+
+                val detectedHz = withContext(Dispatchers.Default) {
+                    CalibraSpeakingPitch.detectFromAudio(samples16k)
+                }
+
+                if (detectedHz > 0) {
+                    val noteLabel = CalibraMusic.hzToNoteLabel(detectedHz)
+                    val gender = if (detectedHz >= FEMALE_THRESHOLD_HZ) Gender.FEMALE else Gender.MALE
+                    offlineResult = SpeakingPitchResult(
+                        frequencyHz = detectedHz,
+                        noteLabel = noteLabel,
+                        gender = gender
+                    )
+                }
+            } catch (e: Exception) {
+                Napier.e("Offline analysis failed", e)
+            } finally {
+                isAnalyzingOffline = false
+            }
+        }
     }
 
     DisposableEffect(Unit) {
         onDispose {
             recordingJob?.cancel()
+            countdownJob?.cancel()
             recorder?.release()
+            pitchDetector?.release()
         }
     }
 
@@ -130,138 +257,351 @@ fun SpeakingPitchView() {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Speaking Pitch Detector", style = MaterialTheme.typography.titleMedium)
+        Text("Speaking Pitch & Gender Detector", style = MaterialTheme.typography.titleMedium)
 
         Text(
-            text = "Detects your natural speaking pitch (shruti)",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        HorizontalDivider()
-
-        // Instructions
-        Text(
-            text = when {
-                isAnalyzing -> "Analyzing..."
-                isRecording -> "Speak naturally for ${targetDuration.toInt()} seconds"
-                result != null -> "Detection complete!"
-                else -> "Press Start and speak naturally"
-            },
+            text = status,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        // Recording progress
-        if (isRecording) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = "Recording: ${"%.1f".format(recordingDuration)}s / ${targetDuration.toInt()}s",
-                    style = MaterialTheme.typography.bodySmall
-                )
+        // Main display card
+        MainDisplayCard(
+            detectionState = detectionState,
+            countdownSeconds = countdownSeconds,
+            result = result
+        )
+
+        // Level meter
+        if (detectionState == SpeakingPitchDetectionState.LISTENING ||
+            detectionState == SpeakingPitchDetectionState.COUNTDOWN) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Level:", style = MaterialTheme.typography.bodySmall)
                 LinearProgressIndicator(
-                    progress = { (recordingDuration / targetDuration).coerceIn(0f, 1f) },
-                    modifier = Modifier.fillMaxWidth().height(8.dp)
+                    progress = { currentLevel.coerceIn(0f, 1f) },
+                    modifier = Modifier.weight(1f).height(8.dp),
+                    color = if (currentLevel > RMS_THRESHOLD) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary
                 )
             }
         }
 
-        // Analysis progress
-        if (isAnalyzing) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-
-        // Error display
-        error?.let { e ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Text(
-                    text = e,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
-        }
-
-        // Result display
-        result?.let { r ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF4CAF50)
-                )
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Your Speaking Pitch",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = r.noteLabel,
-                        fontSize = 48.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                    Text(
-                        text = "${"%.1f".format(r.frequencyHz)} Hz",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White.copy(alpha = 0.7f)
-                    )
-                }
-            }
-        }
-
-        // Controls
+        // Control buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            when {
-                result != null -> {
-                    Button(onClick = { reset(); startRecording() }, modifier = Modifier.weight(1f)) {
-                        Text("Detect Again")
+            when (detectionState) {
+                SpeakingPitchDetectionState.IDLE -> {
+                    Button(
+                        onClick = { startDetection() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Start Detection")
                     }
                 }
-                isAnalyzing -> {
-                    // Disabled during analysis
+                SpeakingPitchDetectionState.COMPLETE -> {
                     Button(
-                        onClick = { },
-                        modifier = Modifier.weight(1f),
-                        enabled = false
+                        onClick = { startDetection() },
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text("Analyzing...")
+                        Text("Try Again")
                     }
                 }
-                isRecording -> {
+                else -> {
                     Button(
-                        onClick = { stopRecording(); analyze() },
-                        modifier = Modifier.weight(1f),
-                        enabled = recordingDuration >= 2f
-                    ) {
-                        Text("Stop & Analyze")
-                    }
-                    Button(
-                        onClick = { reset() },
+                        onClick = { stopDetection() },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text("Cancel")
                     }
                 }
-                else -> {
-                    Button(onClick = { startRecording() }, modifier = Modifier.weight(1f)) {
-                        Text("Start Detection")
+            }
+        }
+
+        // Info text
+        Text(
+            text = "Speak naturally for a few seconds. Your natural speaking pitch will be detected.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        // Offline Analysis Section
+        OfflineAnalysisSection(
+            onAnalyze = { analyzeOffline() },
+            isAnalyzing = isAnalyzingOffline,
+            result = offlineResult
+        )
+    }
+}
+
+@Composable
+private fun MainDisplayCard(
+    detectionState: SpeakingPitchDetectionState,
+    countdownSeconds: Int,
+    result: SpeakingPitchResult?
+) {
+    val backgroundColor = when (detectionState) {
+        SpeakingPitchDetectionState.COUNTDOWN -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            when (detectionState) {
+                SpeakingPitchDetectionState.LISTENING -> {
+                    Text(
+                        text = "Listening...",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                SpeakingPitchDetectionState.COUNTDOWN -> {
+                    Text(
+                        text = "$countdownSeconds",
+                        fontSize = 72.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Keep speaking",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.8f)
+                    )
+                }
+                SpeakingPitchDetectionState.PROCESSING -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(48.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Analyzing...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                SpeakingPitchDetectionState.COMPLETE -> {
+                    if (result != null) {
+                        Text(
+                            text = result.noteLabel,
+                            fontSize = 48.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "${"%.1f".format(result.frequencyHz)} Hz",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        result.gender?.let { gender ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "Inferred Voice Type:",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = if (gender == Gender.FEMALE) "FEMALE" else "MALE",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .background(
+                                            if (gender == Gender.FEMALE) Color(0xFFE91E63) else Color(0xFF2196F3),
+                                            RoundedCornerShape(4.dp)
+                                        )
+                                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = "No pitch detected",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                SpeakingPitchDetectionState.IDLE -> {
+                    Text(
+                        text = "Ready",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OfflineAnalysisSection(
+    onAnalyze: () -> Unit,
+    isAnalyzing: Boolean,
+    result: SpeakingPitchResult?
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "Offline Analysis",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = "Analyze speaking pitch from audio file",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        OutlinedButton(
+            onClick = onAnalyze,
+            enabled = !isAnalyzing
+        ) {
+            Text("Analyze Alankaar Voice")
+        }
+
+        if (isAnalyzing) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        result?.let { r ->
+            OfflineResultCard(result = r)
+        }
+
+        ApiInfoCard()
+    }
+}
+
+@Composable
+private fun OfflineResultCard(result: SpeakingPitchResult) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Offline Result",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "Detected Note",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = result.noteLabel,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Frequency",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "${"%.1f".format(result.frequencyHz)} Hz",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                result.gender?.let { gender ->
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = "Voice Type",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = if (gender == Gender.FEMALE) "FEMALE" else "MALE",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White,
+                            modifier = Modifier
+                                .background(
+                                    if (gender == Gender.FEMALE) Color(0xFFE91E63) else Color(0xFF2196F3),
+                                    RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ApiInfoCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = "APIs Demonstrated:",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "- SonixDecoder.decode() - Load audio from file",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "- SonixResampler.resample() - Resample to 16kHz",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "- CalibraSpeakingPitch.detectFromAudio() - Detect speaking pitch",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

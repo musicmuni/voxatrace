@@ -473,23 +473,28 @@ private fun SegmentResultCard(result: SegmentResult) {
         }
 
         // Pitch comparison graph
-        val refData = result.referencePitchData
-        val stdData = result.studentPitchData
+        val refContour = result.referencePitch
+        val stdContour = result.studentPitch
 
-        if (refData.pitchesMidi.isNotEmpty() || stdData.pitchesMidi.isNotEmpty()) {
+        val refPitchesMidi = refContour?.pitchesMidi?.toList() ?: emptyList()
+        val refTimes = refContour?.times?.toList() ?: emptyList()
+        val stdPitchesMidi = stdContour?.pitchesMidi?.toList() ?: emptyList()
+        val stdTimes = stdContour?.times?.toList() ?: emptyList()
+
+        if (refPitchesMidi.isNotEmpty() || stdPitchesMidi.isNotEmpty()) {
             PitchGraphView(
                 contours = listOf(
                     ContourData(
-                        pitches = refData.pitchesMidi,
+                        pitches = refPitchesMidi,
                         color = Color.Blue,
                         label = "Reference",
-                        times = refData.times
+                        times = refTimes
                     ),
                     ContourData(
-                        pitches = stdData.pitchesMidi,
+                        pitches = stdPitchesMidi,
                         color = Color(0xFFFF9800),
                         label = "You",
-                        times = stdData.times
+                        times = stdTimes
                     )
                 ),
                 height = 120,

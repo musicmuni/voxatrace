@@ -3,17 +3,22 @@ package com.musicmuni.voxatrace.demo.sections.breathmonitor.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.musicmuni.voxatrace.calibra.CalibraBreath
 import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
-import com.musicmuni.voxatrace.sonix.AudioSessionManager
+import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.SonixResampler
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 private const val PREFS_NAME = "breath_monitor_prefs"
 private const val KEY_BEST_SCORE = "best_score"
@@ -50,6 +55,19 @@ class BreathMonitorViewModel : ViewModel() {
 
     private val _status = MutableStateFlow("Hold a note as long as you can!")
     val status: StateFlow<String> = _status.asStateFlow()
+
+    // Offline analysis state
+    private val _offlineBreathCapacity = MutableStateFlow(0f)
+    val offlineBreathCapacity: StateFlow<Float> = _offlineBreathCapacity.asStateFlow()
+
+    private val _offlineVoicedTime = MutableStateFlow(0f)
+    val offlineVoicedTime: StateFlow<Float> = _offlineVoicedTime.asStateFlow()
+
+    private val _offlineHasEnoughData = MutableStateFlow(false)
+    val offlineHasEnoughData: StateFlow<Boolean> = _offlineHasEnoughData.asStateFlow()
+
+    private val _isAnalyzingOffline = MutableStateFlow(false)
+    val isAnalyzingOffline: StateFlow<Boolean> = _isAnalyzingOffline.asStateFlow()
 
     // Private state
     private var recorder: SonixRecorder? = null
@@ -103,16 +121,11 @@ class BreathMonitorViewModel : ViewModel() {
 
                     val det = detector ?: return@collect
 
-                    // Resample to 16kHz for pitch detection
-                    val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
-                    val samples16k = SonixResampler.resample(
-                        samples = buffer.samples,
-                        fromRate = hwRate,
-                        toRate = 16000
-                    )
+                    // VOICE preset records at 16kHz; CalibraPitch handles resampling internally (ADR-017)
+                    val samples = buffer.samples
 
                     // Detect pitch using high-level API
-                    val result = det.detect(samples16k, 16000)
+                    val result = det.detect(samples, 16000)
                     val pitch = result.pitch
 
                     // Voice is detected if pitch is valid and level is above threshold
@@ -176,6 +189,67 @@ class BreathMonitorViewModel : ViewModel() {
             _monitoringState.value = BreathMonitorState.IDLE
             _status.value = "Hold a note as long as you can!"
         }
+    }
+
+    fun analyzeOffline(context: Context) {
+        viewModelScope.launch {
+            _isAnalyzingOffline.value = true
+            _offlineBreathCapacity.value = 0f
+            _offlineVoicedTime.value = 0f
+            _offlineHasEnoughData.value = false
+
+            try {
+                // Copy asset to file and decode
+                val audioFile = withContext(Dispatchers.IO) {
+                    copyAssetToFile(context, "Alankaar 01_voice.m4a")
+                }
+
+                val audioData = withContext(Dispatchers.IO) {
+                    SonixDecoder.decode(audioFile.absolutePath)
+                }
+
+                if (audioData == null) {
+                    Napier.e("Failed to decode audio file")
+                    _isAnalyzingOffline.value = false
+                    return@launch
+                }
+
+                // Extract pitch contour - ContourExtractor handles resampling internally (ADR-017)
+                val extractor = CalibraPitch.createContourExtractor()
+                val contour = withContext(Dispatchers.IO) {
+                    extractor.extract(audioData.samples, audioData.sampleRate)
+                }
+                extractor.release()
+
+                val times = contour.toTimesArray()
+                val pitches = contour.toPitchesArray()
+
+                // Compute breath metrics
+                val hasEnough = CalibraBreath.hasEnoughData(times, pitches)
+                val capacity = if (hasEnough) CalibraBreath.computeCapacity(times, pitches) else 0f
+                val voicedTime = CalibraBreath.getCumulativeVoicedTime(times, pitches)
+
+                _offlineHasEnoughData.value = hasEnough
+                _offlineBreathCapacity.value = capacity
+                _offlineVoicedTime.value = voicedTime
+            } catch (e: Exception) {
+                Napier.e("Offline analysis failed", e)
+            } finally {
+                _isAnalyzingOffline.value = false
+            }
+        }
+    }
+
+    private fun copyAssetToFile(context: Context, assetName: String): File {
+        val file = File(context.cacheDir, assetName)
+        if (!file.exists()) {
+            context.assets.open(assetName).use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+        return file
     }
 
     fun resetBestScore(context: Context) {

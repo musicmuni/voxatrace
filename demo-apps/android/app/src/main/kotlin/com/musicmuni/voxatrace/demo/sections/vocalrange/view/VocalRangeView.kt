@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.musicmuni.voxatrace.calibra.CalibraPitch
@@ -17,10 +18,8 @@ import com.musicmuni.voxatrace.calibra.VocalRangeSession
 import com.musicmuni.voxatrace.calibra.VocalRangeState
 import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
 import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
-import com.musicmuni.voxatrace.sonix.AudioSessionManager
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.SonixResampler
 import kotlinx.coroutines.launch
 
 /**
@@ -49,10 +48,9 @@ fun VocalRangeView() {
         recorder?.start()
 
         scope.launch {
-            val hwRate = AudioSessionManager.hardwareSampleRate.toInt()
+            // VOICE preset records at 16kHz; VocalRangeSession handles resampling internally (ADR-017)
             recorder?.audioBuffers?.collect { buffer ->
-                val resampled = SonixResampler.resample(buffer.samples, hwRate, 16000)
-                session?.addAudio(resampled, 16000)
+                session?.addAudio(buffer.samples, 16000)
             }
         }
     }
@@ -108,6 +106,21 @@ fun VocalRangeView() {
                 isStable = state.stabilityProgress >= 1.0f
             )
 
+            // Best note card with "Lock & Continue" button
+            val bestNote = when (state.phase) {
+                VocalRangePhase.DETECTING_LOW -> state.bestLowNote
+                VocalRangePhase.DETECTING_HIGH -> state.bestHighNote
+                else -> null
+            }
+            bestNote?.let { note ->
+                BestNoteCard(
+                    label = if (state.phase == VocalRangePhase.DETECTING_LOW) "Lowest so far" else "Highest so far",
+                    noteLabel = note.pitch.noteLabel,
+                    frequencyHz = note.pitch.frequencyHz,
+                    onConfirm = { session?.confirmNote() }
+                )
+            }
+
             // Stability progress
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -120,6 +133,22 @@ fun VocalRangeView() {
                     modifier = Modifier.fillMaxWidth().height(8.dp),
                     color = if (state.stabilityProgress >= 1.0f) Color(0xFF4CAF50)
                             else MaterialTheme.colorScheme.primary
+                )
+            }
+
+            // Level meter
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Level:",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                LinearProgressIndicator(
+                    progress = { state.currentAmplitude.coerceIn(0f, 1f) },
+                    modifier = Modifier.weight(1f).height(8.dp)
                 )
             }
         }
@@ -222,6 +251,57 @@ private fun PitchDisplayCard(noteLabel: String, frequencyHz: Float, isStable: Bo
         ) {
             Text(noteLabel, style = MaterialTheme.typography.displayMedium)
             Text("${"%.1f".format(frequencyHz)} Hz", style = MaterialTheme.typography.bodyLarge)
+        }
+    }
+}
+
+@Composable
+private fun BestNoteCard(
+    label: String,
+    noteLabel: String,
+    frequencyHz: Float,
+    onConfirm: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFF9800))
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = noteLabel,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "${"%.1f".format(frequencyHz)} Hz",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+            }
+            OutlinedButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Lock & Continue")
+            }
         }
     }
 }

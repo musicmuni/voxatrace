@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
         // Initialize SDK
         try {
-            VT.initialize(BuildConfig.SONIX_API_KEY, this)
+            VT.initialize(BuildConfig.VOXATRACE_API_KEY, this)
         } catch (e: Exception) {
             Napier.e("VT initialization failed", e)
             setContent {
@@ -217,6 +218,9 @@ fun SonixScreen(
     onBack: () -> Unit,
     onFeatureClick: (String) -> Unit
 ) {
+    // Handle system back gesture
+    BackHandler(onBack = onBack)
+
     val features = listOf(
         FeatureItem("Playback", "Audio playback with pitch shifting"),
         FeatureItem("Recording", "Audio recording to M4A/MP3"),
@@ -260,6 +264,9 @@ fun SonixScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalibraScreen(onBack: () -> Unit, onFeatureClick: (String) -> Unit) {
+    // Handle system back gesture
+    BackHandler(onBack = onBack)
+
     val analysisFeatures = listOf(
         FeatureItem("Pitch", "Pitch detection & processing"),
         FeatureItem("VAD", "Voice activity detection"),
@@ -384,6 +391,9 @@ fun SonixFeatureScreen(
     feature: String,
     onBack: () -> Unit
 ) {
+    // Handle system back gesture
+    BackHandler(onBack = onBack)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -421,6 +431,9 @@ fun SonixFeatureScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalibraFeatureScreen(feature: String, onBack: () -> Unit) {
+    // Handle system back gesture
+    BackHandler(onBack = onBack)
+
     Scaffold(
         topBar = {
             TopAppBar(

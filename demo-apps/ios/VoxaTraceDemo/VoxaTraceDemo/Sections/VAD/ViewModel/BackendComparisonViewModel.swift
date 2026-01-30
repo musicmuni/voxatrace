@@ -4,11 +4,11 @@ import VoxaTrace
 
 /// ViewModel for comparing two VAD backends side-by-side.
 ///
-/// ## VoxaTrace Integration (~15 lines)
+/// ## VoxaTrace Integration (~10 lines)
 /// ```swift
-/// // 1. Create VADs for two backends
-/// let vadLeft = CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
-/// let vadRight = CalibraVAD.create(.speech { ModelLoader.loadSpeechVAD() })
+/// // 1. Create VADs for two backends (auto-loads bundled models)
+/// let vadLeft = CalibraVAD.create(.singingRealtime())
+/// let vadRight = CalibraVAD.create(.speech())
 ///
 /// // 2. Process same audio through both
 /// let ratioLeft = vadLeft.getVADRatio(samples: samples16k)
@@ -99,11 +99,14 @@ final class BackendComparisonViewModel: ObservableObject {
         case .general:
             return CalibraVAD.create(.general)
         case .speech:
-            return CalibraVAD.create(.speech { ModelLoader.loadSpeechVAD() })
+            // Auto-loads bundled Silero model
+            return CalibraVAD.create(.speech())
         case .singingRealtime:
-            return CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
+            // Auto-loads bundled SwiftF0 model
+            return CalibraVAD.create(.singingRealtime())
         case .singing:
-            return CalibraVAD.create(.singing { ModelLoader.loadSingingVAD() })
+            // Auto-loads bundled YAMNet models
+            return CalibraVAD.create(.singing())
         default:
             return CalibraVAD.create(.general)
         }

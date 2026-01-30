@@ -27,6 +27,14 @@ import java.io.File
 fun RecordingView(viewModel: RecordingViewModel = viewModel()) {
     val context = LocalContext.current
 
+    // Stop recording/playback when leaving the screen (matches iOS onDisappear)
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopRecording()
+            viewModel.stopPlayback()
+        }
+    }
+
     // Collect state from ViewModel
     val isRecording by viewModel.isRecording.collectAsStateWithLifecycle()
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
@@ -117,47 +125,47 @@ fun RecordingView(viewModel: RecordingViewModel = viewModel()) {
             }
         }
 
-        // Show saved file info and playback controls
-        savedFilePath?.let { path ->
-            val file = File(path)
-            if (file.exists() && !isRecording) {
+        // Show saved file info and playback controls (match iOS: show when savedFilePath exists and not recording)
+        if (savedFilePath != null && !isRecording) {
+            val file = File(savedFilePath!!)
+            if (file.exists()) {
                 Text(
                     text = "Saved: ${file.name} (${file.length() / 1024} KB)",
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
 
-                // Playback time display
-                if (playbackDurationMs > 0) {
-                    Text(
-                        text = "Playback: ${RecordingViewModel.formatDuration(playbackTimeMs)} / ${RecordingViewModel.formatDuration(playbackDurationMs)}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+            // Playback time display
+            if (playbackDurationMs > 0) {
+                Text(
+                    text = "Playback: ${RecordingViewModel.formatDuration(playbackTimeMs)} / ${RecordingViewModel.formatDuration(playbackDurationMs)}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            // Playback controls
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { viewModel.playRecording() },
+                    enabled = !isRecording && !isPlaying && file.exists()
+                ) {
+                    Text("Play")
                 }
 
-                // Playback controls
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Button(
+                    onClick = { viewModel.pausePlayback() },
+                    enabled = isPlaying
                 ) {
-                    Button(
-                        onClick = { viewModel.playRecording() },
-                        enabled = !isRecording && !isPlaying
-                    ) {
-                        Text("Play")
-                    }
+                    Text("Pause")
+                }
 
-                    Button(
-                        onClick = { viewModel.pausePlayback() },
-                        enabled = isPlaying
-                    ) {
-                        Text("Pause")
-                    }
-
-                    Button(
-                        onClick = { viewModel.stopPlayback() },
-                        enabled = playbackDurationMs > 0
-                    ) {
-                        Text("Stop")
-                    }
+                Button(
+                    onClick = { viewModel.stopPlayback() },
+                    enabled = playbackDurationMs > 0
+                ) {
+                    Text("Stop")
                 }
             }
         }

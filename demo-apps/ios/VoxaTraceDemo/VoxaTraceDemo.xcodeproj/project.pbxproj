@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		9F0E85422F265A4100AA35DF /* voxatrace.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F0E85412F265A4100AA35DF /* voxatrace.xcframework */; };
 		9F0E85432F265A4100AA35DF /* voxatrace.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F0E85412F265A4100AA35DF /* voxatrace.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9FEB55A32F238B7C00BB78A6 /* voxatrace.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9FEB55A22F238B7C00BB78A6 /* voxatrace.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,7 +28,6 @@
 /* Begin PBXFileReference section */
 		9F0E85412F265A4100AA35DF /* voxatrace.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = voxatrace.xcframework; path = Frameworks/voxatrace.xcframework; sourceTree = "<group>"; };
 		9FC6986A2EF2CEA400FE73BF /* VoxaTraceDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoxaTraceDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9FEB55A22F238B7C00BB78A6 /* voxatrace.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = voxatrace.bundle; path = Frameworks/voxatrace.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -63,7 +61,6 @@
 		9FC698612EF2CEA400FE73BF = {
 			isa = PBXGroup;
 			children = (
-				9FEB55A22F238B7C00BB78A6 /* voxatrace.bundle */,
 				9FC6986C2EF2CEA400FE73BF /* VoxaTraceDemo */,
 				9F4282702EFB20A30013368A /* Frameworks */,
 				9FC6986B2EF2CEA400FE73BF /* Products */,
@@ -143,7 +140,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FEB55A32F238B7C00BB78A6 /* voxatrace.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
