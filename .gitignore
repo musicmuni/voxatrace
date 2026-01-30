@@ -67,3 +67,6 @@ demo-apps/ios/VoxaTraceDemo/Frameworks/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Swift Package Manager
+.build/
