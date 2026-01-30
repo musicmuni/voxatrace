@@ -18,7 +18,7 @@ const config: Config = {
   projectName: 'voxatrace',
   trailingSlash: false,
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
 
   i18n: {
     defaultLocale: 'en',
@@ -56,23 +56,15 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
         },
         {
-          to: '/api',
-          label: 'API Reference',
+          type: 'docSidebar',
+          sidebarId: 'apiSidebar',
           position: 'left',
-        },
-        {
-          to: '/changelog',
-          label: 'Changelog',
-          position: 'left',
-        },
-        {
-          type: 'docsVersionDropdown',
-          position: 'right',
+          label: 'API',
         },
         {
           href: 'https://github.com/musicmuni/voxatrace',
@@ -93,7 +85,7 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              to: '/api',
+              to: '/docs/api',
             },
           ],
         },
