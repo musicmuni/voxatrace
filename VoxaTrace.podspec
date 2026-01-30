@@ -15,14 +15,9 @@ Pod::Spec.new do |spec|
   spec.swift_versions = ["5.9"]
 
   spec.source = {
-    :http => "https://github.com/musicmuni/voxatrace/releases/download/#{spec.version}/VoxaTrace-#{spec.version}.xcframework.zip"
+    :http => "https://github.com/musicmuni/voxatrace/releases/download/voxatrace-v#{spec.version}/voxatrace.xcframework.zip"
   }
 
   spec.vendored_frameworks = "VoxaTrace.xcframework"
   spec.frameworks = "AVFoundation", "AudioToolbox", "CoreAudio", "Accelerate"
-
-  # Resource bundle downloaded separately
-  spec.resource_bundles = {
-    "VoxaTraceResources" => ["voxatrace.bundle/**/*"]
-  }
 end
