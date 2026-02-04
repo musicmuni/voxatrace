@@ -15,7 +15,8 @@ struct VoxaTraceDemoApp: App {
         // do {
         //     try VT.initialize(
         //         proxyEndpoint: "https://your-server.com/api/voxatrace/register",
-        //         debugLogging: true
+        //         debugLogging: true,
+        //         preload: [AIModels.Pitch.realtime, AIModels.VAD.speech]
         //     )
         //     // SDK ready immediately
         // } catch let error as VoxaTraceKilledException {
@@ -27,25 +28,25 @@ struct VoxaTraceDemoApp: App {
         // === AIModels Preload Examples ===
         //
         // Default: Just pitch model (most apps)
-        // preload: AIModels.shared.DEFAULT
+        // preload: AIModels.default
         //
         // Pitch + Speech VAD
-        // preload: Set([AIModels.Pitch.shared.REALTIME, AIModels.VAD.shared.SPEECH])
+        // preload: [AIModels.Pitch.realtime, AIModels.VAD.speech]
         //
         // All models (~17MB)
-        // preload: AIModels.shared.ALL
+        // preload: AIModels.all
         //
         // No preload (fully lazy, download on first use)
-        // preload: AIModels.shared.NONE
+        // preload: AIModels.none
         //
         // Specific algorithm (power users)
-        // preload: Set([AIModels.Pitch.Algorithms.shared.SWIFT_F0])
+        // preload: [AIModels.Pitch.Algorithms.swiftF0]
 
         // For demo app: preload all models to showcase all features
         VT.initializeWithAttestation(
             apiKey: Config.apiKey,
             debugLogging: true,
-            preload: AIModels.shared.ALL
+            preload: AIModels.all
         ) { success, error in
             DispatchQueue.main.async {
                 if success {
