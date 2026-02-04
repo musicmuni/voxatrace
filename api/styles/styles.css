@@ -1,10 +1,46 @@
 /* MusicMuni Design System for Dokka */
 
+/* === Back to Docs Link === */
+.back-to-docs {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin-right: 8px;
+    color: var(--mm-text-secondary) !important;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-right: 1px solid var(--mm-border);
+    white-space: nowrap;
+}
+
+.back-to-docs:hover {
+    color: var(--mm-primary) !important;
+}
+
+/* === Library Logo === */
+.library-logo {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Hide default Kotlin logo */
+.library-name--logo,
+.navigation .library-name--link > svg,
+.library-name--link::before {
+    display: none !important;
+}
+
 /* Import fonts to match Docusaurus */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Nunito+Sans:wght@400;600&display=swap');
 
 /* === Color Variables === */
 :root {
+    /* Override Dokka's Kotlin logo with our favicon */
+    --dokka-logo-image-url: url('../images/favicon.png');
+
     /* Primary brand */
     --mm-primary: #FFC800;
     --mm-primary-dark: #e6b400;
