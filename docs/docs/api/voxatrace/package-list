@@ -42,18 +42,6 @@ $dokka.location:com.musicmuni.voxatrace.ai/SingingVADModels/classifier/#/Pointin
 $dokka.location:com.musicmuni.voxatrace.ai/SingingVADModels/equals/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.ai/-singing-v-a-d-models/equals.md
 $dokka.location:com.musicmuni.voxatrace.ai/SingingVADModels/hashCode/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.ai/-singing-v-a-d-models/hash-code.md
 $dokka.location:com.musicmuni.voxatrace.ai/SingingVADModels/yamnet/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.ai/-singing-v-a-d-models/yamnet.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal////PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/index.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni.Companion///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/-companion/index.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni.Companion/isAvailable/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/-companion/is-available.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/index.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/SoundTouchJni/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/-sound-touch-jni.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/close/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/close.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/getVersionString/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/get-version-string.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/processBuffer/#kotlin.ByteArray#kotlin.Int#kotlin.Int#kotlin.Int#kotlin.Int/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/process-buffer.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/processFile/#kotlin.String#kotlin.String/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/process-file.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/setPitchSemiTones/#kotlin.Float/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/set-pitch-semi-tones.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/setSpeed/#kotlin.Float/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/set-speed.md
-$dokka.location:com.musicmuni.voxatrace.audio.internal/SoundTouchJni/setTempo/#kotlin.Float/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.audio.internal/-sound-touch-jni/set-tempo.md
 $dokka.location:com.musicmuni.voxatrace.calibra.model////PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.calibra.model/index.md
 $dokka.location:com.musicmuni.voxatrace.calibra.model//toContour/kotlin.collections.List[com.musicmuni.voxatrace.calibra.model.PitchPoint]#kotlin.Int/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.calibra.model/to-contour.md
 $dokka.location:com.musicmuni.voxatrace.calibra.model/ActiveSegmentState///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.calibra.model/-active-segment-state/index.md
@@ -896,46 +884,7 @@ $dokka.location:com.musicmuni.voxatrace.features/PitchHpcpExtractor///PointingTo
 $dokka.location:com.musicmuni.voxatrace.features/PitchHpcpExtractor/createHandle/#kotlin.Int#kotlin.Int#kotlin.Float#kotlin.Float#kotlin.Float#kotlin.Int/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.features/-pitch-hpcp-extractor/create-handle.md
 $dokka.location:com.musicmuni.voxatrace.features/PitchHpcpExtractor/destroyHandle/#kotlin.Long/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.features/-pitch-hpcp-extractor/destroy-handle.md
 $dokka.location:com.musicmuni.voxatrace.features/PitchHpcpExtractor/extractFeatures/#kotlin.Long#kotlin.FloatArray/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.features/-pitch-hpcp-extractor/extract-features.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation////PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationCallback///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-callback/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationCallback/onError/#kotlin.String/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-callback/on-error.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationCallback/onSuccess/#com.musicmuni.voxatrace.internal.attestation.AttestationResult/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-callback/on-success.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationProvider///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-provider/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationProvider/AttestationProvider/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-provider/-attestation-provider.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationProvider/generateAttestation/#kotlin.Any?#kotlin.String#com.musicmuni.voxatrace.internal.attestation.AttestationCallback/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-provider/generate-attestation.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationProvider/getPlatform/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-provider/get-platform.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationProvider/isAvailable/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-provider/is-available.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationResult///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-result/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationResult/AttestationResult/#kotlin.String#kotlin.collections.Map[kotlin.String,kotlin.String]/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-result/-attestation-result.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationResult/data/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-result/data.md
-$dokka.location:com.musicmuni.voxatrace.internal.attestation/AttestationResult/platform/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.attestation/-attestation-result/platform.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing////PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing//generateDeviceId/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/generate-device-id.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/clear/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/clear.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/getExpiresAt/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/get-expires-at.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/getToken/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/get-token.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/hasValidToken/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/has-valid-token.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/isExpired/#kotlin.Int/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/is-expired.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/isExpiringSoon/#kotlin.Int/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/is-expiring-soon.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/load/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/load.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/DeviceToken/save/#kotlin.String#kotlin.Long#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-device-token/save.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch/activate/#kotlin.String#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/activate.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch/deactivate/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/deactivate.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch/getMessage/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/get-message.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch/hasValidatedBefore/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/has-validated-before.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch/isActive/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/is-active.md
-$dokka.location:com.musicmuni.voxatrace.internal.licensing/KillSwitch/load/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.licensing/-kill-switch/load.md
 $dokka.location:com.musicmuni.voxatrace.internal.platform////PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform//currentTimeMillis/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/current-time-millis.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform//generateTempPath/#kotlin.String/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/generate-temp-path.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform//getHardwareSampleRate/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/get-hardware-sample-rate.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform//platformFileSystem/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/platform-file-system.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/AppLifecycleObserver///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-app-lifecycle-observer/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/AppLifecycleObserver/AppLifecycleObserver/#kotlin.Function0[kotlin.Unit]#kotlin.Function0[kotlin.Unit]/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-app-lifecycle-observer/-app-lifecycle-observer.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/AppLifecycleObserver/register/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-app-lifecycle-observer/register.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/AppLifecycleObserver/unregister/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-app-lifecycle-observer/unregister.md
 $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-array-interop/index.md
 $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop/byteArrayFromNSData/#[Error type: Unresolved type for NSData]/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-array-interop/byte-array-from-n-s-data.md
 $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop/byteArrayToNSData/#kotlin.ByteArray/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-array-interop/byte-array-to-n-s-data.md
@@ -949,16 +898,6 @@ $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop/floatArra
 $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop/intArrayFromNSData/#[Error type: Unresolved type for NSData]/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-array-interop/int-array-from-n-s-data.md
 $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop/intArrayFromPointer/#[Error type: Unresolved type for CPointer<IntVar>][[Error type: Unresolved type for IntVar]]#kotlin.Int/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-array-interop/int-array-from-pointer.md
 $dokka.location:com.musicmuni.voxatrace.internal.platform/ArrayInterop/intArrayToNSData/#kotlin.IntArray/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-array-interop/int-array-to-n-s-data.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger/d/#kotlin.String#kotlin.Function0[kotlin.String]/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/d.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger/d/#kotlin.String#kotlin.String/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/d.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger/e/#kotlin.String#kotlin.String#kotlin.Throwable?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/e.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger/i/#kotlin.String#kotlin.String/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/i.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger/initialize/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/initialize.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/Logger/w/#kotlin.String#kotlin.String/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-logger/w.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/PlatformContext///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-platform-context/index.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/PlatformContext/get/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-platform-context/get.md
-$dokka.location:com.musicmuni.voxatrace.internal.platform/PlatformContext/set/#kotlin.Any?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.internal.platform/-platform-context/set.md
 $dokka.location:com.musicmuni.voxatrace.sonix.midi////PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.sonix.midi/index.md
 $dokka.location:com.musicmuni.voxatrace.sonix.midi/MidiNote///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.sonix.midi/-midi-note/index.md
 $dokka.location:com.musicmuni.voxatrace.sonix.midi/MidiNote/MidiNote/#kotlin.Int#kotlin.Float#kotlin.Float/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace.sonix.midi/-midi-note/-midi-note.md
@@ -1419,20 +1358,17 @@ $dokka.location:com.musicmuni.voxatrace/VT.Companion.InitCallback///PointingToDe
 $dokka.location:com.musicmuni.voxatrace/VT.Companion.InitCallback/onComplete/#kotlin.Boolean#kotlin.String?/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/-init-callback/on-complete.md
 $dokka.location:com.musicmuni.voxatrace/VT.Companion///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/index.md
 $dokka.location:com.musicmuni.voxatrace/VT.Companion/initialize/#kotlin.String#kotlin.Any?#kotlin.Boolean/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/initialize.md
-$dokka.location:com.musicmuni.voxatrace/VT.Companion/initializeWithApiKey/#kotlin.String#kotlin.Any?#kotlin.Boolean/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/initialize-with-api-key.md
+$dokka.location:com.musicmuni.voxatrace/VT.Companion/initializeForServer/#kotlin.String#kotlin.Any?#kotlin.Boolean/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/initialize-for-server.md
 $dokka.location:com.musicmuni.voxatrace/VT.Companion/initializeWithAttestation/#kotlin.String#kotlin.Any?#kotlin.Boolean#com.musicmuni.voxatrace.VT.Companion.InitCallback/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/initialize-with-attestation.md
 $dokka.location:com.musicmuni.voxatrace/VT.Companion/isInitialized/#/PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/-companion/is-initialized.md
 $dokka.location:com.musicmuni.voxatrace/VT///PointingToDeclaration/voxatrace/com.musicmuni.voxatrace/-v-t/index.md
 com.musicmuni.voxatrace
 com.musicmuni.voxatrace.ai
-com.musicmuni.voxatrace.audio.internal
 com.musicmuni.voxatrace.calibra
 com.musicmuni.voxatrace.calibra.model
 com.musicmuni.voxatrace.common
 com.musicmuni.voxatrace.exceptions
 com.musicmuni.voxatrace.features
-com.musicmuni.voxatrace.internal.attestation
-com.musicmuni.voxatrace.internal.licensing
 com.musicmuni.voxatrace.internal.platform
 com.musicmuni.voxatrace.sonix
 com.musicmuni.voxatrace.sonix.midi

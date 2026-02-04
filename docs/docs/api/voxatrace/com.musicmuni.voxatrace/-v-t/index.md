@@ -13,7 +13,7 @@ VoxaTrace SDK main entry point and initialization.
 This class provides:
 
 - 
-   SDK initialization with API key (direct) or proxy endpoint (recommended)
+   SDK initialization via proxy endpoint (recommended) or app attestation
 - 
    Logging initialization
 - 
@@ -23,7 +23,7 @@ This class provides:
 
 ### Recommended: Proxy-based initialization
 
-For production apps, use proxy-based initialization to keep API keys secure on your server:
+For production apps with a backend, use proxy-based initialization to keep API keys secure:
 
 ```kotlin
 // Android - in Application.onCreate()
@@ -63,17 +63,16 @@ VT.initializeWithAttestation(apiKey: "sk_live_abc123...") { success, error in
 }
 ```
 
-### Direct API key initialization (testing only)
+### Server-side / Desktop / Python bindings
 
-For testing or simple deployments:
+For non-mobile environments (server-side processing, desktop apps, Python bindings, CLI tools):
 
 ```kotlin
-// Android - in Application.onCreate()
-VT.initializeWithApiKey("sk_live_abc123...", this)
+VT.initializeForServer("sk_live_abc123...")
 ```
-```swift
-// iOS - in AppDelegate or App init
-VT.initializeWithApiKey(apiKey: "sk_live_abc123...")
+```python
+# Python bindings
+vt.initialize_for_server("sk_live_abc123...")
 ```
 
 All factory methods in Sonix and Calibra will throw VoxaTraceNotInitializedException if called before initialization.
