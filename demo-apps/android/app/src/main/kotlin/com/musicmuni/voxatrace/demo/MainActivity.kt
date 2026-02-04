@@ -53,25 +53,64 @@ class MainActivity : ComponentActivity() {
 
         Napier.base(DebugAntilog())
 
-        // Initialize SDK
-        try {
-            VT.initialize(BuildConfig.VOXATRACE_API_KEY, this)
-        } catch (e: Exception) {
-            Napier.e("VT initialization failed", e)
-            setContent {
-                MaterialTheme {
-                    LicenseErrorScreen(e.message ?: "License validation failed")
-                }
-            }
-            return
-        }
-
+        // Request microphone permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
 
+        // Show loading UI while initializing
+        setContent {
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    InitializingScreen()
+                }
+            }
+        }
+
+        // Initialize VoxaTrace SDK using App Attestation (Play Integrity API).
+        // This verifies the app is running on a genuine device before granting access.
+        //
+        // ALTERNATIVE: If you have a backend server, use proxy-based initialization:
+        // ```
+        // try {
+        //     VT.initialize(
+        //         proxyEndpoint = "https://your-server.com/api/voxatrace/register",
+        //         context = this,
+        //         debugLogging = BuildConfig.DEBUG
+        //     )
+        //     // SDK ready immediately - show main content
+        // } catch (e: VoxaTraceKilledException) {
+        //     // Handle license error
+        // }
+        // ```
+        // See docs/client-proxy-setup.md for proxy server implementation.
+
+        VT.initializeWithAttestation(
+            apiKey = BuildConfig.VOXATRACE_API_KEY,
+            context = this,
+            debugLogging = BuildConfig.DEBUG,
+            callback = object : VT.Companion.InitCallback {
+                override fun onComplete(success: Boolean, error: String?) {
+                    runOnUiThread {
+                        if (success) {
+                            Napier.i("VoxaTrace SDK initialized successfully")
+                            showMainContent()
+                        } else {
+                            Napier.e("VoxaTrace initialization failed: $error")
+                            showErrorContent(error ?: "License validation failed")
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    private fun showMainContent() {
         setContent {
             MaterialTheme {
                 Surface(
@@ -80,6 +119,14 @@ class MainActivity : ComponentActivity() {
                 ) {
                     VoxaTraceDemoApp()
                 }
+            }
+        }
+    }
+
+    private fun showErrorContent(message: String) {
+        setContent {
+            MaterialTheme {
+                LicenseErrorScreen(message)
             }
         }
     }
@@ -100,6 +147,23 @@ fun LicenseErrorScreen(message: String) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = message,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@Composable
+fun InitializingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Initializing VoxaTrace...",
                 style = MaterialTheme.typography.bodyLarge
             )
         }

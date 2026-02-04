@@ -3,21 +3,41 @@ import VoxaTrace
 
 @main
 struct VoxaTraceDemoApp: App {
+    @State private var isInitialized = false
     @State private var licenseError: String? = nil
 
     init() {
-        // Initialize VoxaTrace SDK with API key
-        // debugLogging: true enables console output in Xcode
-        // After this call, AI models auto-load from bundled voxatrace.bundle
-        do {
-            try VT.initialize(apiKey: Config.apiKey, debugLogging: true)
-            Log.i(.general, "VoxaTrace SDK initialized")
-        } catch let error as VoxaTraceKilledException {
-            Log.e(.general, "License validation failed: \(error.message)")
-            _licenseError = State(initialValue: error.message)
-        } catch {
-            Log.e(.general, "License validation failed", error: error)
-            _licenseError = State(initialValue: "License validation failed: \(error.localizedDescription)")
+        // Initialize VoxaTrace SDK using App Attestation (App Attest on iOS 14+).
+        // This verifies the app is running on a genuine device before granting access.
+        //
+        // ALTERNATIVE: If you have a backend server, use proxy-based initialization:
+        // ```
+        // do {
+        //     try VT.initialize(
+        //         proxyEndpoint: "https://your-server.com/api/voxatrace/register",
+        //         debugLogging: true
+        //     )
+        //     // SDK ready immediately
+        // } catch let error as VoxaTraceKilledException {
+        //     // Handle license error
+        // }
+        // ```
+        // See docs/client-proxy-setup.md for proxy server implementation.
+
+        VT.initializeWithAttestation(
+            apiKey: Config.apiKey,
+            debugLogging: true
+        ) { success, error in
+            DispatchQueue.main.async {
+                if success {
+                    Log.i(.general, "VoxaTrace SDK initialized")
+                    self.isInitialized = true
+                } else {
+                    let errorMessage = error ?? "License validation failed"
+                    Log.e(.general, "License validation failed: \(errorMessage)")
+                    self.licenseError = errorMessage
+                }
+            }
         }
     }
 
@@ -25,8 +45,10 @@ struct VoxaTraceDemoApp: App {
         WindowGroup {
             if let error = licenseError {
                 LicenseErrorView(message: error)
-            } else {
+            } else if isInitialized {
                 ContentView()
+            } else {
+                InitializingView()
             }
         }
     }
@@ -56,5 +78,19 @@ struct LicenseErrorView: View {
                 .foregroundColor(.secondary)
         }
         .padding(32)
+    }
+}
+
+/// View displayed while SDK is initializing
+struct InitializingView: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .scaleEffect(1.5)
+
+            Text("Initializing VoxaTrace...")
+                .font(.body)
+                .foregroundColor(.secondary)
+        }
     }
 }
