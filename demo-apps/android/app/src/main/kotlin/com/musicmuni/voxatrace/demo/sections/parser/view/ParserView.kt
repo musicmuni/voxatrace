@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.musicmuni.voxatrace.sonix.util.Parser
+import com.musicmuni.voxatrace.sonix.SonixParser
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,9 +18,9 @@ import kotlinx.coroutines.withContext
  * Parser View - UI for file parsing demo.
  *
  * Demonstrates:
- * - Parser.parsePitchString() for .pitchPP files
- * - Parser.parseNotesString() for .notes files
- * - Parser.parseTransString() for .trans JSON files
+ * - SonixParser.parsePitchString() for .pitchPP files
+ * - SonixParser.parseNotesString() for .notes files
+ * - SonixParser.parseTransString() for .trans JSON files
  */
 @Composable
 fun ParserView() {
@@ -59,7 +59,7 @@ fun ParserView() {
                                     .bufferedReader()
                                     .readText()
                             }
-                            val data = Parser.parsePitchString(content)
+                            val data = SonixParser.parsePitchString(content)
                             if (data != null) {
                                 val minTime = data.times.minOrNull() ?: 0f
                                 val maxTime = data.times.maxOrNull() ?: 0f
@@ -98,7 +98,7 @@ fun ParserView() {
                                     .bufferedReader()
                                     .readText()
                             }
-                            val data = Parser.parseNotesString(content)
+                            val data = SonixParser.parseNotesString(content)
                             if (data != null) {
                                 val uniqueLabels = data.labels.toSet()
                                 val totalDuration = data.endTimes.maxOrNull()?.minus(
@@ -136,7 +136,7 @@ fun ParserView() {
                                     .bufferedReader()
                                     .readText()
                             }
-                            val data = Parser.parseTransString(content)
+                            val data = SonixParser.parseTransString(content)
                             if (data != null) {
                                 val totalNotes = data.segments.sumOf { it.trans.size }
                                 val allLabels = data.segments.flatMap { seg ->

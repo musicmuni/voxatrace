@@ -70,8 +70,8 @@ struct ParserView: View {
                 return
             }
 
-            // Parser.parsePitchString() - uses Swift extension for clean API
-            if let data = Parser.parsePitchString(content: content) {
+            // SonixParser.parsePitchString() - uses Swift extension for clean API
+            if let data = SonixParser.parsePitchString(content: content) {
                 // Swift extensions return native [Float] arrays directly
                 let times = data.times
                 let pitches = data.pitchesHz
@@ -108,8 +108,8 @@ struct ParserView: View {
                 return
             }
 
-            // Parser.parseNotesString() - uses Swift extension for clean API
-            if let data = Parser.parseNotesString(content: content) {
+            // SonixParser.parseNotesString() - uses Swift extension for clean API
+            if let data = SonixParser.parseNotesString(content: content) {
                 // Swift extensions return native Swift arrays directly
                 let labels = data.labels
                 let startTimes = data.startTimes
@@ -146,8 +146,8 @@ struct ParserView: View {
                 return
             }
 
-            // Parser.parseTransString() - uses Swift extension for clean API
-            if let data = Parser.parseTransString(content: content) {
+            // SonixParser.parseTransString() - uses Swift extension for clean API
+            if let data = SonixParser.parseTransString(content: content) {
                 // Convert Kotlin List to Swift Array
                 let segments = Array(data.segments)
                 var totalNotes = 0

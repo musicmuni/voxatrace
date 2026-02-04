@@ -34,7 +34,7 @@ final class BundleLessonRepository: LessonRepositoryProtocol, @unchecked Sendabl
         // 1. Load transcript
         guard let transURL = Bundle.main.url(forResource: name, withExtension: "trans"),
               let transContent = try? String(contentsOf: transURL),
-              let transData = Parser.parseTransString(content: transContent) else {
+              let transData = SonixParser.parseTransString(content: transContent) else {
             throw LessonError.transFileNotFound
         }
 
@@ -61,7 +61,7 @@ final class BundleLessonRepository: LessonRepositoryProtocol, @unchecked Sendabl
         var pitchContour: PitchContour? = nil
         if let pitchURL = Bundle.main.url(forResource: name, withExtension: "pitchPP"),
            let pitchContent = try? String(contentsOf: pitchURL),
-           let pitchData = Parser.parsePitchString(content: pitchContent) {
+           let pitchData = SonixParser.parsePitchString(content: pitchContent) {
             pitchContour = PitchContour.fromArrays(
                 times: pitchData.times,
                 pitches: pitchData.pitchesHz

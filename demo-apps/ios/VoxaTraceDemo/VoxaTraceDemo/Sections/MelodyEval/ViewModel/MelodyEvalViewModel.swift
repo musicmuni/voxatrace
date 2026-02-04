@@ -7,7 +7,7 @@ import VoxaTrace
 /// ## VoxaTrace Integration
 /// ```swift
 /// // 1. Load reference (first 4 segments of Alankaar 01)
-/// let transData = Parser.parseTransString(content: transContent)
+/// let transData = SonixParser.parseTransString(content: transContent)
 /// let audioData = SonixDecoder.decode(path: audioURL.path)
 /// reference = LessonMaterial.fromAudio(samples:, sampleRate:, segments:, keyHz:)
 ///
@@ -75,7 +75,7 @@ final class MelodyEvalViewModel: ObservableObject {
 
         guard let transURL = Bundle.main.url(forResource: referenceName, withExtension: "trans"),
               let transContent = try? String(contentsOf: transURL),
-              let transData = Parser.parseTransString(content: transContent) else {
+              let transData = SonixParser.parseTransString(content: transContent) else {
             status = "Failed to load trans file"
             isPreparing = false
             return

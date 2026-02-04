@@ -19,7 +19,7 @@ import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixPlayerConfig
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.util.Parser
+import com.musicmuni.voxatrace.sonix.SonixParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -251,7 +251,7 @@ class SingalongViewModel : ViewModel() {
         val transContent = withContext(Dispatchers.IO) {
             context.assets.open("$lessonName.trans").bufferedReader().readText()
         }
-        val transData = Parser.parseTransString(transContent)
+        val transData = SonixParser.parseTransString(transContent)
             ?: throw Exception("Failed to parse trans file")
 
         // Copy audio file
@@ -278,7 +278,7 @@ class SingalongViewModel : ViewModel() {
         val pitchContour: PitchContour? = withContext(Dispatchers.IO) {
             try {
                 val pitchContent = context.assets.open("$lessonName.pitchPP").bufferedReader().readText()
-                val pitchData = Parser.parsePitchString(pitchContent)
+                val pitchData = SonixParser.parsePitchString(pitchContent)
                 if (pitchData != null) {
                     PitchContour.fromArrays(
                         times = pitchData.times,

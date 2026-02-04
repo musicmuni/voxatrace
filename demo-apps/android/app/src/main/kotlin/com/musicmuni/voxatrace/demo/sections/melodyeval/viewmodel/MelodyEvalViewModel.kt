@@ -14,7 +14,7 @@ import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixPlayerConfig
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.util.Parser
+import com.musicmuni.voxatrace.sonix.SonixParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +33,7 @@ import kotlin.math.sqrt
  * ## VoxaTrace Integration
  * ```kotlin
  * // 1. Load reference (first 4 segments of Alankaar 01)
- * val transData = Parser.parseTransString(transContent)
+ * val transData = SonixParser.parseTransString(transContent)
  * val audioData = SonixDecoder.decode(audioPath)
  * reference = LessonMaterial.fromAudio(samples, sampleRate, segments, keyHz)
  *
@@ -122,7 +122,7 @@ class MelodyEvalViewModel : ViewModel() {
                 val transContent = withContext(Dispatchers.IO) {
                     context.assets.open("$referenceName.trans").bufferedReader().readText()
                 }
-                val transData = Parser.parseTransString(transContent)
+                val transData = SonixParser.parseTransString(transContent)
                 if (transData == null) {
                     _status.value = "Failed to parse trans file"
                     _isPreparing.value = false

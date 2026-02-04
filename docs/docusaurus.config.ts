@@ -14,7 +14,7 @@ const config: Config = {
 
   // GitHub Pages URL
   url: 'https://musicmuni.github.io',
-  baseUrl: '/',
+  baseUrl: '/voxatrace/',
   organizationName: 'musicmuni',
   projectName: 'voxatrace',
   trailingSlash: false,
@@ -76,7 +76,7 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'pathname:///api/index.html',
+          href: 'pathname:///voxatrace/api/index.html',
           position: 'left',
           label: 'API Reference',
           target: '_self',
@@ -100,7 +100,7 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              href: 'pathname:///api/index.html',
+              href: 'pathname:///voxatrace/api/index.html',
             },
           ],
         },

@@ -297,7 +297,7 @@ class SingafterViewModel : ViewModel() {
             val pitchContour: PitchContour? = withContext(Dispatchers.IO) {
                 try {
                     val pitchContent = context.assets.open("$lessonName.pitchPP").bufferedReader().readText()
-                    val pitchData = com.musicmuni.voxatrace.sonix.util.Parser.parsePitchString(pitchContent)
+                    val pitchData = com.musicmuni.voxatrace.sonix.SonixParser.parsePitchString(pitchContent)
                     if (pitchData != null) {
                         PitchContour.fromArrays(
                             times = pitchData.times,

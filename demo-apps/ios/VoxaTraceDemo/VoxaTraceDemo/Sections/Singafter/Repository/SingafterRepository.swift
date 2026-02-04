@@ -86,7 +86,7 @@ final class BundleSingafterRepository: SingafterRepositoryProtocol, @unchecked S
         var pitchContour: PitchContour? = nil
         if let pitchURL = Bundle.main.url(forResource: name, withExtension: "pitchPP"),
            let pitchContent = try? String(contentsOf: pitchURL),
-           let pitchData = Parser.parsePitchString(content: pitchContent) {
+           let pitchData = SonixParser.parsePitchString(content: pitchContent) {
             pitchContour = PitchContour.fromArrays(
                 times: pitchData.times,
                 pitches: pitchData.pitchesHz
