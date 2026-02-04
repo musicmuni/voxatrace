@@ -158,7 +158,7 @@ dependencies {
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace-spm", from: "{{version}}")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
 ]
 ```
 

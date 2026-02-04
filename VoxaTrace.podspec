@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "VoxaTrace"
-  spec.version      = "2025.129.1000"
+  spec.version      = "0.9.0"
   spec.summary      = "Cross-platform audio SDK for music applications"
   spec.description  = <<-DESC
     VoxaTrace provides real-time pitch detection, audio playback with pitch shifting,

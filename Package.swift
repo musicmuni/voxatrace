@@ -1,7 +1,7 @@
 // swift-tools-version:5.9
 import PackageDescription
 
-let version = "2025.129.1000"
+let version = "0.9.0"
 let releaseTag = "voxatrace-v\(version)"
 let checksum = "CHECKSUM_HERE"
 

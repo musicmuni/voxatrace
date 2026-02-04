@@ -48,7 +48,7 @@ Eight years of R&D. Five million users in production. All running natively on An
 
 ```kotlin
 dependencies {
-    implementation("com.musicmuni:voxatrace:{{version}}")
+    implementation("com.musicmuni:voxatrace:0.9.0")
 }
 ```
 
@@ -56,7 +56,7 @@ dependencies {
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.0")
 ]
 ```
 
