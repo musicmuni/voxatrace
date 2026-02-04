@@ -1,6 +1,0 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[PitchContour](index.md)/[PitchContour](-pitch-contour.md)
-
-# PitchContour
-
-[common]\
-constructor(samples: [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html)&lt;[PitchPoint](../-pitch-point/index.md)&gt;, sampleRate: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html) = 16000)

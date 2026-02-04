@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>SonixPlayer</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2026.204.1354        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.sonix/SonixPlayer///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.sonix</a><span class="delimiter">/</span><span class="current">SonixPlayer</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Sonix</span><wbr></wbr><span><span>Player</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">SonixPlayer</a></div><p class="paragraph">Unified audio player for playback with pitch shifting and tempo control.</p><h2 class="">What is SonixPlayer?</h2><p class="paragraph">SonixPlayer plays audio files with real-time control over:</p><ul><li><p class="paragraph"><strong>Pitch</strong>: Shift up/down by semitones without affecting speed</p></li><li><p class="paragraph"><strong>Tempo</strong>: Speed up/slow down without affecting pitch</p></li><li><p class="paragraph"><strong>Volume</strong>: Control playback volume</p></li><li><p class="paragraph"><strong>Looping</strong>: Repeat audio any number of times</p></li></ul><p class="paragraph">Use it for:</p><ul><li><p class="paragraph"><strong>Karaoke apps</strong>: Play backing tracks with pitch/tempo adjustment</p></li><li><p class="paragraph"><strong>Music practice</strong>: Slow down songs to learn parts</p></li><li><p class="paragraph"><strong>Audio players</strong>: Standard playback with seek and loop</p></li></ul><h2 class="">Quick Start</h2><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val player = SonixPlayer.create(&quot;song.mp3&quot;)<br>player.play()<br>// Later...<br>player.pause()<br>player.release()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Swift</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">let player = try await SonixPlayer.create(source: &quot;song.mp3&quot;)<br>player.play()<br>// Later...<br>player.pause()<br>player.release()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Usage Tiers</h2><h3 class="">Tier 1: Zero-Config (80% of users)</h3><h4 class="">Kotlin</h4><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val player = SonixPlayer.create(&quot;song.mp3&quot;)<br>player.play()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="">Swift</h4><div class="sample-container"><pre><code class="block lang-swift" theme="idea">let player = try await SonixPlayer.create(source: &quot;song.mp3&quot;)<br>player.play()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Tier 2: With Config (15% of users)</h3><h4 class="">Kotlin</h4><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val config = SonixPlayerConfig.Builder()<br>    .volume(0.8f)<br>    .pitch(-2f)        // Lower by 2 semitones<br>    .tempo(0.75f)      // 75% speed<br>    .loopCount(3)      // Repeat 3 times<br>    .onComplete { println(&quot;Done!&quot;) }<br>    .build()<br>val player = SonixPlayer.create(&quot;song.mp3&quot;, config)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="">Swift</h4><div class="sample-container"><pre><code class="block lang-swift" theme="idea">let config = SonixPlayerConfig.Builder()<br>    .volume(0.8)<br>    .pitch(-2)<br>    .tempo(0.75)<br>    .loopCount(3)<br>    .onComplete { print(&quot;Done!&quot;) }<br>    .build()<br>let player = try await SonixPlayer.create(source: &quot;song.mp3&quot;, config: config)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Tier 3: Runtime Control (5% of users)</h3><h4 class="">Kotlin</h4><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">player.pitch = -3f      // Change key at runtime<br>player.tempo = 0.5f     // Slow down to half speed<br>player.volume = 0.5f    // Reduce volume</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Platform Notes</h2><h3 class="">iOS</h3><ul><li><p class="paragraph">Uses AVFoundation under the hood</p></li><li><p class="paragraph">Supports M4A, MP3, WAV, and other system-supported formats</p></li><li><p class="paragraph">Audio session automatically configured for playback</p></li></ul><h3 class="">Android</h3><ul><li><p class="paragraph">Uses ExoPlayer under the hood</p></li><li><p class="paragraph">Supports M4A, MP3, WAV, OGG, and other ExoPlayer-supported formats</p></li><li><p class="paragraph">Audio focus handled automatically</p></li></ul><h2 class="">Common Pitfalls</h2><ol><li><p class="paragraph"><strong>Forgetting to release</strong>: Call <code class="lang-kotlin">player.release()</code> to free resources</p></li><li><p class="paragraph"><strong>File not found</strong>: Ensure path is accessible (bundle/assets on iOS/Android)</p></li><li><p class="paragraph"><strong>Extreme tempo values</strong>: Keep between 0.25 and 4.0 for quality audio</p></li><li><p class="paragraph"><strong>Using after release</strong>: Create a new player if you need to play again</p></li></ol><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-sonix-player-config/index.html"><span>Sonix</span><wbr></wbr><span>Player</span><wbr></wbr><span><span>Config</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Configuration options for playback</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-sonix-recorder/index.html"><span>Sonix</span><wbr></wbr><span><span>Recorder</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For recording audio</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><span>Calibra</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Eval</span></span></div></span></div><div><div class="title"><p class="paragraph">For coordinated playback with live evaluation</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="1105754301%2FClasslikes%2F-1201622999" anchor-label="Companion" id="1105754301%2FClasslikes%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1105754301%2FClasslikes%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2060784138%2FClasslikes%2F-1201622999" anchor-label="PlaybackListener" id="2060784138%2FClasslikes%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-playback-listener/index.html"><span>Playback</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2060784138%2FClasslikes%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-playback-listener/index.html">PlaybackListener</a></div><div class="brief "><p class="paragraph">Listener interface for playback events. Alternative to StateFlow observation and Builder callbacks.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1571699624%2FProperties%2F-1201622999" anchor-label="asPlaybackInfoProvider" id="-1571699624%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="as-playback-info-provider.html"><span>as</span><wbr></wbr><span>Playback</span><wbr></wbr><span>Info</span><wbr></wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1571699624%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="as-playback-info-provider.html">asPlaybackInfoProvider</a><span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.sonix.model/-playback-info-provider/index.html">PlaybackInfoProvider</a></div><div class="brief "><p class="paragraph">This player as a PlaybackInfoProvider for recording sync. Use with SonixRecorder.Builder().playbackSyncProvider()</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-676000752%2FProperties%2F-1201622999" anchor-label="currentTime" id="-676000752%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-time.html"><span>current</span><wbr></wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-676000752%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="current-time.html">currentTime</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Current playback position in milliseconds</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-215472688%2FProperties%2F-1201622999" anchor-label="duration" id="-215472688%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="duration.html"><span><span>duration</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-215472688%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="duration.html">duration</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">Total duration in milliseconds</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1906471662%2FProperties%2F-1201622999" anchor-label="error" id="1906471662%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="error.html"><span><span>error</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1906471662%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="error.html">error</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../-sonix-error/index.html">SonixError</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1579765678%2FProperties%2F-1201622999" anchor-label="isPlaying" id="-1579765678%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-playing.html"><span>is</span><wbr></wbr><span><span>Playing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1579765678%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-playing.html">isPlaying</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Whether currently playing</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-473140981%2FProperties%2F-1201622999" anchor-label="loopCount" id="-473140981%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="loop-count.html"><span>loop</span><wbr></wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-473140981%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="loop-count.html">loopCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Loop count: 1 = play once, 2 = repeat once, -1 = infinite</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="613863606%2FProperties%2F-1201622999" anchor-label="pitch" id="613863606%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pitch.html"><span><span>pitch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="613863606%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="pitch.html">pitch</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Pitch shift in semitones (-12 to +12)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-496903877%2FProperties%2F-1201622999" anchor-label="tempo" id="-496903877%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="tempo.html"><span><span>tempo</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-496903877%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="tempo.html">tempo</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Tempo/speed multiplier (0.25 to 4.0, 1.0 = normal speed)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-167424822%2FProperties%2F-1201622999" anchor-label="volume" id="-167424822%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="volume.html"><span><span>volume</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-167424822%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="volume.html">volume</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Volume from 0.0 (silent) to 1.0 (full)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="630554478%2FFunctions%2F-1201622999" anchor-label="fadeIn" id="630554478%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="fade-in.html"><span>fade</span><wbr></wbr><span><span>In</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="630554478%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="fade-in.html"><span class="token function">fadeIn</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">1.0f</span><span class="token punctuation">, </span></span><span class="parameter ">durationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">500</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Fade in to target volume</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="897505781%2FFunctions%2F-1201622999" anchor-label="fadeOut" id="897505781%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="fade-out.html"><span>fade</span><wbr></wbr><span><span>Out</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="897505781%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="fade-out.html"><span class="token function">fadeOut</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">durationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">500</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Fade out to silence</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1187752396%2FFunctions%2F-1201622999" anchor-label="load" id="-1187752396%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load.html"><span><span>load</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1187752396%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="load.html"><span class="token function">load</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">path<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Load audio from file path (for Builder without source)</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="load.html"><span class="token function">load</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">data<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a><span class="token punctuation">, </span></span><span class="parameter ">sampleRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">44100</span><span class="token punctuation">, </span></span><span class="parameter ">channels<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Load audio from raw PCM data</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1517143744%2FFunctions%2F-1201622999" anchor-label="pause" id="1517143744%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pause.html"><span><span>pause</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1517143744%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="pause.html"><span class="token function">pause</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Pause playback</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1192286288%2FFunctions%2F-1201622999" anchor-label="play" id="-1192286288%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="play.html"><span><span>play</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1192286288%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="play.html"><span class="token function">play</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Start or resume playback</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1609064335%2FFunctions%2F-1201622999" anchor-label="release" id="1609064335%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="release.html"><span><span>release</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1609064335%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="release.html"><span class="token function">release</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Release all resources</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1451194061%2FFunctions%2F-1201622999" anchor-label="seek" id="1451194061%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="seek.html"><span><span>seek</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1451194061%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="seek.html"><span class="token function">seek</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">positionMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Seek to position in milliseconds</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="190128932%2FFunctions%2F-1201622999" anchor-label="setPlaybackListener" id="190128932%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-playback-listener.html"><span>set</span><wbr></wbr><span>Playback</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="190128932%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-playback-listener.html"><span class="token function">setPlaybackListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="-playback-listener/index.html">SonixPlayer.PlaybackListener</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set a listener for playback events.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1794198476%2FFunctions%2F-1201622999" anchor-label="setProcessingTap" id="-1794198476%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-processing-tap.html"><span>set</span><wbr></wbr><span>Processing</span><wbr></wbr><span><span>Tap</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1794198476%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="set-processing-tap.html"><span class="token function">setProcessingTap</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Installs a processing tap to receive and modify audio buffers during playback.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1307497357%2FFunctions%2F-1201622999" anchor-label="setVolumeSmooth" id="-1307497357%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-volume-smooth.html"><span>set</span><wbr></wbr><span>Volume</span><wbr></wbr><span><span>Smooth</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1307497357%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="set-volume-smooth.html"><span class="token function">setVolumeSmooth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targetVolume<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">durationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter ">easing<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.sonix.model/-volume-easing/index.html">VolumeEasing</a><span class="token operator"> = </span>VolumeEasing.Linear</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Smoothly transition volume with easing curve.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-852357470%2FFunctions%2F-1201622999" anchor-label="stop" id="-852357470%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stop.html"><span><span>stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-852357470%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="stop.html"><span class="token function">stop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Stop playback and reset to beginning</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

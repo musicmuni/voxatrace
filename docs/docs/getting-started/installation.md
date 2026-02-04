@@ -19,10 +19,10 @@ repositories {
 }
 
 dependencies {
-    implementation("com.musicmuni:voxatrace:<version>")
+    implementation("com.musicmuni:voxatrace:{{version}}")
 
     // Optional: AI models for SwiftF0 pitch detection
-    implementation("com.musicmuni:voxatrace-ai-models:<version>")
+    implementation("com.musicmuni:voxatrace-ai-models:{{version}}")
 }
 ```
 
@@ -34,10 +34,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.musicmuni:voxatrace:<version>'
+    implementation 'com.musicmuni:voxatrace:{{version}}'
 
     // Optional: AI models for SwiftF0 pitch detection
-    implementation 'com.musicmuni:voxatrace-ai-models:<version>'
+    implementation 'com.musicmuni:voxatrace-ai-models:{{version}}'
 }
 ```
 
@@ -65,7 +65,7 @@ Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace-swift", from: "<version>")
+    .package(url: "https://github.com/musicmuni/voxatrace-swift", from: "{{version}}")
 ]
 ```
 

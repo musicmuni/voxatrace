@@ -24,9 +24,28 @@ struct VoxaTraceDemoApp: App {
         // ```
         // See docs/client-proxy-setup.md for proxy server implementation.
 
+        // === AIModels Preload Examples ===
+        //
+        // Default: Just pitch model (most apps)
+        // preload: AIModels.shared.DEFAULT
+        //
+        // Pitch + Speech VAD
+        // preload: Set([AIModels.Pitch.shared.REALTIME, AIModels.VAD.shared.SPEECH])
+        //
+        // All models (~17MB)
+        // preload: AIModels.shared.ALL
+        //
+        // No preload (fully lazy, download on first use)
+        // preload: AIModels.shared.NONE
+        //
+        // Specific algorithm (power users)
+        // preload: Set([AIModels.Pitch.Algorithms.shared.SWIFT_F0])
+
+        // For demo app: preload all models to showcase all features
         VT.initializeWithAttestation(
             apiKey: Config.apiKey,
-            debugLogging: true
+            debugLogging: true,
+            preload: AIModels.shared.ALL
         ) { success, error in
             DispatchQueue.main.async {
                 if success {

@@ -1,6 +1,0 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[VocalRangeState](index.md)/[VocalRangeState](-vocal-range-state.md)
-
-# VocalRangeState
-
-[common]\
-constructor(phase: [VocalRangePhase](../-vocal-range-phase/index.md) = VocalRangePhase.IDLE, countdownSeconds: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html) = 0, phaseMessage: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html) = &quot;Ready to detect your vocal range&quot;, currentPitch: [VocalPitch](../-vocal-pitch/index.md)? = null, currentAmplitude: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html) = 0.0f, stabilityProgress: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html) = 0.0f, bestLowNote: [DetectedNote](../-detected-note/index.md)? = null, bestHighNote: [DetectedNote](../-detected-note/index.md)? = null, lowNote: [DetectedNote](../-detected-note/index.md)? = null, highNote: [DetectedNote](../-detected-note/index.md)? = null, result: [VocalRangeResult](../-vocal-range-result/index.md)? = null, error: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)? = null)
