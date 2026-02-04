@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ModelLoader</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2026.204.1845        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/iosMain">ios</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/androidMain"
+                                       data-filter=":modules:voxatrace/androidMain"/>
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/iosMain"
+                                       data-filter=":modules:voxatrace/iosMain"/>
+                                <span class="checkbox--icon"></span>
+                                ios
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.ai/ModelLoader///PointingToDeclaration//-1489898343">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.ai</a><span class="delimiter">/</span><span class="current">ModelLoader</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Model</span><wbr></wbr><span><span>Loader</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="index.html">ModelLoader</a></div><p class="paragraph">Android implementation of ModelLoader.</p><p class="paragraph">Loads models from downloaded files via <span data-unresolved-link="com.musicmuni.voxatrace.ai/ModelDownloader///PointingToDeclaration/">ModelDownloader</span>. After <code class="lang-kotlin">VT.initialize()</code>, models are downloaded in background and loaded on demand.</p></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">object </span><a href="index.html">ModelLoader</a></div><p class="paragraph">Platform-specific model loader.</p><p class="paragraph">Provides access to bundled ONNX models for VAD and pitch detection. Method names align with public VADBackend enum values.</p></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="index.html">ModelLoader</a></div><p class="paragraph">iOS implementation of ModelLoader.</p><p class="paragraph">Loads models from downloaded files via <span data-unresolved-link="com.musicmuni.voxatrace.ai/ModelDownloader///PointingToDeclaration/">ModelDownloader</span>. After <code class="lang-kotlin">VT.initialize()</code>, models are downloaded in background and loaded on demand.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1366280175%2FFunctions%2F-1489898343" anchor-label="configure" id="1366280175%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="configure.html"><span><span>configure</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1366280175%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="configure.html"><span class="token function">configure</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="configure.html"><span class="token function">configure</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Configure the model loader. Must be called before loading any models.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="configure.html"><span class="token function">configure</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="225839364%2FFunctions%2F-1489898343" anchor-label="hasSingingRealtimeVAD" id="225839364%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-singing-realtime-v-a-d.html"><span>has</span><wbr></wbr><span>Singing</span><wbr></wbr><span>Realtime</span><wbr></wbr><span><span>VAD</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="225839364%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-singing-realtime-v-a-d.html"><span class="token function">hasSingingRealtimeVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="has-singing-realtime-v-a-d.html"><span class="token function">hasSingingRealtimeVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Check if Singing Realtime VAD model is available.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-singing-realtime-v-a-d.html"><span class="token function">hasSingingRealtimeVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1174358777%2FFunctions%2F-1489898343" anchor-label="hasSingingVAD" id="1174358777%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-singing-v-a-d.html"><span>has</span><wbr></wbr><span>Singing</span><wbr></wbr><span><span>VAD</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1174358777%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-singing-v-a-d.html"><span class="token function">hasSingingVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="has-singing-v-a-d.html"><span class="token function">hasSingingVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Check if Singing VAD models are available (both YAMNet and classifier).</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-singing-v-a-d.html"><span class="token function">hasSingingVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1399242980%2FFunctions%2F-1489898343" anchor-label="hasSpeechVAD" id="1399242980%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-speech-v-a-d.html"><span>has</span><wbr></wbr><span>Speech</span><wbr></wbr><span><span>VAD</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1399242980%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-speech-v-a-d.html"><span class="token function">hasSpeechVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="has-speech-v-a-d.html"><span class="token function">hasSpeechVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Check if Speech VAD model is available.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-speech-v-a-d.html"><span class="token function">hasSpeechVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="798447614%2FFunctions%2F-1489898343" anchor-label="hasSwiftF0" id="798447614%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-swift-f0.html"><span>has</span><wbr></wbr><span>Swift</span><wbr></wbr><span><span>F0</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="798447614%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-swift-f0.html"><span class="token function">hasSwiftF0</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="has-swift-f0.html"><span class="token function">hasSwiftF0</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Check if SwiftF0 model is available.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="has-swift-f0.html"><span class="token function">hasSwiftF0</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-680429184%2FFunctions%2F-1489898343" anchor-label="loadSingingRealtimeVAD" id="-680429184%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-singing-realtime-v-a-d.html"><span>load</span><wbr></wbr><span>Singing</span><wbr></wbr><span>Realtime</span><wbr></wbr><span><span>VAD</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-680429184%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-singing-realtime-v-a-d.html"><span class="token function">loadSingingRealtimeVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="load-singing-realtime-v-a-d.html"><span class="token function">loadSingingRealtimeVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div><div class="brief "><p class="paragraph">Load the Singing Realtime VAD model (SwiftF0). Use with VADBackend.SINGING_REALTIME.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-singing-realtime-v-a-d.html"><span class="token function">loadSingingRealtimeVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="356579189%2FFunctions%2F-1489898343" anchor-label="loadSingingVAD" id="356579189%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-singing-v-a-d.html"><span>load</span><wbr></wbr><span>Singing</span><wbr></wbr><span><span>VAD</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="356579189%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-singing-v-a-d.html"><span class="token function">loadSingingVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-singing-v-a-d-models/index.html">SingingVADModels</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="load-singing-v-a-d.html"><span class="token function">loadSingingVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-singing-v-a-d-models/index.html">SingingVADModels</a></div><div class="brief "><p class="paragraph">Load the Singing VAD models (YAMNet + classifier). Use with VADBackend.SINGING.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-singing-v-a-d.html"><span class="token function">loadSingingVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.musicmuni.voxatrace.ai/SingingVADModels///PointingToDeclaration/">SingingVADModels</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-12610328%2FFunctions%2F-1489898343" anchor-label="loadSpeechVAD" id="-12610328%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-speech-v-a-d.html"><span>load</span><wbr></wbr><span>Speech</span><wbr></wbr><span><span>VAD</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-12610328%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-speech-v-a-d.html"><span class="token function">loadSpeechVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="load-speech-v-a-d.html"><span class="token function">loadSpeechVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div><div class="brief "><p class="paragraph">Load the Speech VAD model (Silero). Use with VADBackend.SPEECH.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-speech-v-a-d.html"><span class="token function">loadSpeechVAD</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="350051586%2FFunctions%2F-1489898343" anchor-label="loadSwiftF0" id="350051586%2FFunctions%2F-1489898343" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/commonMain,:modules:voxatrace/androidMain,:modules:voxatrace/iosMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-swift-f0.html"><span>load</span><wbr></wbr><span>Swift</span><wbr></wbr><span><span>F0</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="350051586%2FFunctions%2F-1489898343"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/androidMain" data-filterable-set=":modules:voxatrace/androidMain" data-active="" data-toggle=":modules:voxatrace/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain" data-toggle=":modules:voxatrace/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":modules:voxatrace/iosMain" data-filterable-set=":modules:voxatrace/iosMain" data-toggle=":modules:voxatrace/iosMain">ios</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-swift-f0.html"><span class="token function">loadSwiftF0</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="load-swift-f0.html"><span class="token function">loadSwiftF0</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div><div class="brief "><p class="paragraph">Load the SwiftF0 pitch detection model. Use with CalibraPitch for pitch detection.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":modules:voxatrace/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="load-swift-f0.html"><span class="token function">loadSwiftF0</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte-array/index.html">ByteArray</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

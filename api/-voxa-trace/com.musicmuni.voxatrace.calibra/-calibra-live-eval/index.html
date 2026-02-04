@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CalibraLiveEval</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2026.204.1845        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.calibra/CalibraLiveEval///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra</a><span class="delimiter">/</span><span class="current">CalibraLiveEval</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Calibra</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Eval</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">CalibraLiveEval</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-auto-closeable/index.html">AutoCloseable</a></div><p class="paragraph">Real-time singing evaluation session with segment support.</p><h2 class="">What is Live Evaluation?</h2><p class="paragraph">Live evaluation scores a singer's performance <strong>in real-time</strong> by comparing their pitch to a reference melody. Use it for:</p><ul><li><p class="paragraph"><strong>Karaoke apps</strong>: Score singing as users perform</p></li><li><p class="paragraph"><strong>Music education</strong>: Provide instant feedback on pitch accuracy</p></li><li><p class="paragraph"><strong>Practice apps</strong>: Track improvement across attempts</p></li></ul><p class="paragraph">The session breaks a song into <strong>segments</strong> (phrases or sections), evaluates each one, and tracks the user's progress.</p><h2 class="">When to Use</h2><div class="table--container"><table><thead><tr><th>Scenario</th><th>Use This?</th><th>Why</th></tr></thead><tbody><tr><td>Score singing against reference</td><td>Yes</td><td>Core use case</td></tr><tr><td>Just detect pitch (no scoring)</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">CalibraPitch.createDetector()</code></td></tr><tr><td>Analyze recorded audio (not live)</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">CalibraMelodyEval</code></td></tr><tr><td>Voice activity detection only</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">CalibraVAD</code></td></tr></tbody></table></div><h2 class="">Quick Start</h2><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">// 1. Create detector and session<br>val detector = CalibraPitch.createDetector()<br>val session = CalibraLiveEval.create(lessonMaterial, detector = detector)<br><br>// 2. Prepare (loads reference, extracts features)<br>session.prepareSession()<br><br>// 3. Start segment and feed audio<br>session.startPracticingSegment(0)<br>recorder.audioBuffers.collect { buffer -&gt;<br>    session.feedAudioSamples(buffer.toFloatArray(), sampleRate = 48000)<br>}<br><br>// 4. Get result<br>val result = session.finishPracticingSegment()<br>println(&quot;Score: ${result?.score}&quot;)<br><br>// 5. Cleanup<br>session.closeSession()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Swift</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">// 1. Create detector and session<br>let detector = CalibraPitch.createDetector()<br>let session = CalibraLiveEval.create(<br>    reference: lessonMaterial,<br>    detector: detector<br>)<br><br>// 2. Prepare (loads reference, extracts features)<br>try await session.prepareSession()<br><br>// 3. Start segment and feed audio<br>session.startPracticingSegment(index: 0)<br>for await buffer in recorder.audioBuffers {<br>    session.feedAudioSamples(samples: buffer.toFloatArray(), sampleRate: 48000)<br>}<br><br>// 4. Get result<br>if let result = session.finishPracticingSegment() {<br>    print(&quot;Score: \(result.score)&quot;)<br>}<br><br>// 5. Cleanup<br>session.closeSession()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Usage Tiers</h2><h3 class="">Tier 1: Convenience API (80% of users)</h3><p class="paragraph">Pass player and recorder handles; the session coordinates everything.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val session = CalibraLiveEval.create(<br>    reference = lessonMaterial,<br>    detector = CalibraPitch.createDetector(),<br>    player = player,<br>    recorder = recorder<br>)<br>session.prepareSession()<br>session.onSegmentComplete { result -&gt; showScore(result) }<br>session.startPracticingSegment(0)  // Seeks, plays, records, scores automatically</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Tier 2: Low-Level API (15% of users)</h3><p class="paragraph">Manually manage audio; full control over timing.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val session = CalibraLiveEval.create(reference, detector = detector)<br>session.prepareSession()<br>session.startPracticingSegment(0)<br>recorder.audioBuffers.collect { buffer -&gt;<br>    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)<br>}<br>val result = session.finishPracticingSegment()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Phase Progressions</h2><ul><li><p class="paragraph"><strong>Singalong:</strong> <code class="lang-kotlin">IDLE → SINGING → EVALUATED</code></p></li><li><p class="paragraph"><strong>Singafter:</strong> <code class="lang-kotlin">IDLE → LISTENING → SINGING → EVALUATED</code></p></li></ul><p class="paragraph">Observe <code class="lang-kotlin">phase</code> StateFlow for UI updates.</p><h2 class="">State Machine</h2><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">IDLE ──prepareSession()──► READY<br>READY ──startPracticingSegment()──► PRACTICING<br>PRACTICING ──finishPracticingSegment()──► BETWEEN (or COMPLETED if last)<br>PRACTICING ──discardCurrentSegment()──► BETWEEN<br>PRACTICING ──seekToSegment()──► PRACTICING (new segment)<br>BETWEEN ──startPracticingSegment()──► PRACTICING<br>BETWEEN ──advanceToNextSegment()──► PRACTICING (or COMPLETED if last)<br>BETWEEN ──finishSession()──► COMPLETED<br>* ──closeSession()──► (released)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Ownership Model</h2><div class="table--container"><table><thead><tr><th>Dependency</th><th>Ownership</th><th>Rationale</th></tr></thead><tbody><tr><td><code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">detector</code></td><td><strong>Owned</strong> - session closes it</td><td>Created specifically for this session</td></tr><tr><td><code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">player</code></td><td><strong>Borrowed</strong> - caller manages</td><td>Shared resource, UI may need direct access</td></tr><tr><td><code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">recorder</code></td><td><strong>Borrowed</strong> - caller manages</td><td>Shared resource, may be reused</td></tr></tbody></table></div><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-pitch/index.html"><span>Calibra</span><wbr></wbr><span><span>Pitch</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For pitch detection without scoring</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html"><span>Lesson</span><wbr></wbr><span><span>Material</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Input format with reference audio and segments</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.calibra.model/-session-config/index.html"><span>Session</span><wbr></wbr><span><span>Config</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Configuration for auto-advance, thresholds, etc.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.calibra.model/-segment-result/index.html"><span>Segment</span><wbr></wbr><span><span>Result</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Per-segment scoring results</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="-1193462548%2FClasslikes%2F-1201622999" anchor-label="Companion" id="-1193462548%2FClasslikes%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1193462548%2FClasslikes%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="586148600%2FProperties%2F-1201622999" anchor-label="activeSegment" id="586148600%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="active-segment.html"><span>active</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="586148600%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="active-segment.html">activeSegment</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-active-segment-state/index.html">ActiveSegmentState</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Current active segment state, or null if not practicing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="846546682%2FProperties%2F-1201622999" anchor-label="completedSegments" id="846546682%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="completed-segments.html"><span>completed</span><wbr></wbr><span><span>Segments</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="846546682%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="completed-segments.html">completedSegments</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment-result/index.html">SegmentResult</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Map of segment index to list of attempts (from SegmentResultStore).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1684764799%2FProperties%2F-1201622999" anchor-label="currentTime" id="1684764799%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-time.html"><span>current</span><wbr></wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1684764799%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="current-time.html">currentTime</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Current playback position in seconds (from player or clock in manual mode).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="415984769%2FProperties%2F-1201622999" anchor-label="isPlaying" id="415984769%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-playing.html"><span>is</span><wbr></wbr><span><span>Playing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="415984769%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-playing.html">isPlaying</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Whether the player is currently playing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="494480286%2FProperties%2F-1201622999" anchor-label="isRecording" id="494480286%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-recording.html"><span>is</span><wbr></wbr><span><span>Recording</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="494480286%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-recording.html">isRecording</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Whether recording is active.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-831741839%2FProperties%2F-1201622999" anchor-label="livePitch" id="-831741839%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="live-pitch.html"><span>live</span><wbr></wbr><span><span>Pitch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-831741839%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="live-pitch.html">livePitch</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-pitch-point/index.html">PitchPoint</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Real-time pitch point for visualization (includes time and confidence).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1085105935%2FProperties%2F-1201622999" anchor-label="livePitchContour" id="1085105935%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="live-pitch-contour.html"><span>live</span><wbr></wbr><span>Pitch</span><wbr></wbr><span><span>Contour</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1085105935%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="live-pitch-contour.html">livePitchContour</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-pitch-contour/index.html">PitchContour</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Live pitch contour accumulated during the current segment.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1789435530%2FProperties%2F-1201622999" anchor-label="phase" id="1789435530%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="phase.html"><span><span>phase</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1789435530%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="phase.html">phase</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-practice-phase/index.html">PracticePhase</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Current practice phase. Observe this for unified singalong/singafter UI.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1328751431%2FProperties%2F-1201622999" anchor-label="pitchProcessingEnabled" id="1328751431%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pitch-processing-enabled.html"><span>pitch</span><wbr></wbr><span>Processing</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1328751431%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="pitch-processing-enabled.html">pitchProcessingEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether pitch processing is currently enabled</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1255244721%2FProperties%2F-1201622999" anchor-label="referenceKeyHz" id="-1255244721%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reference-key-hz.html"><span>reference</span><wbr></wbr><span>Key</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1255244721%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="reference-key-hz.html">referenceKeyHz</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Reference key in Hz from LessonMaterial.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-90844363%2FProperties%2F-1201622999" anchor-label="segments" id="-90844363%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="segments.html"><span><span>segments</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-90844363%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="segments.html">segments</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment/index.html">Segment</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">All segments from the reference.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1782683596%2FProperties%2F-1201622999" anchor-label="state" id="-1782683596%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="state.html"><span><span>state</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1782683596%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="state.html">state</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-session-state/index.html">SessionState</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Current session state. Observe this in your UI.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1453809983%2FProperties%2F-1201622999" anchor-label="studentKeyHz" id="1453809983%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="student-key-hz.html"><span>student</span><wbr></wbr><span>Key</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1453809983%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="student-key-hz.html">studentKeyHz</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Current student key in Hz. 0 = same as reference.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1354204590%2FFunctions%2F-1201622999" anchor-label="advanceToNextSegment" id="-1354204590%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="advance-to-next-segment.html"><span>advance</span><wbr></wbr><span>To</span><wbr></wbr><span>Next</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1354204590%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="advance-to-next-segment.html"><span class="token function">advanceToNextSegment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Advance to the next segment.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1325308724%2FFunctions%2F-1201622999" anchor-label="beginSingingPhase" id="1325308724%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="begin-singing-phase.html"><span>begin</span><wbr></wbr><span>Singing</span><wbr></wbr><span><span>Phase</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1325308724%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="begin-singing-phase.html"><span class="token function">beginSingingPhase</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Manually trigger LISTENING → SINGING transition.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="848421037%2FFunctions%2F-1201622999" anchor-label="close" id="848421037%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="close.html"><span><span>close</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="848421037%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="close.html"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Release all resources.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="78671639%2FFunctions%2F-1201622999" anchor-label="closeSession" id="78671639%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="close-session.html"><span>close</span><wbr></wbr><span><span>Session</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="78671639%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="close-session.html"><span class="token function">closeSession</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Close the session and release all resources.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1309339373%2FFunctions%2F-1201622999" anchor-label="discardCurrentSegment" id="1309339373%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="discard-current-segment.html"><span>discard</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1309339373%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="discard-current-segment.html"><span class="token function">discardCurrentSegment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Discard the current segment without scoring.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-40971255%2FFunctions%2F-1201622999" anchor-label="feedAudioSamples" id="-40971255%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="feed-audio-samples.html"><span>feed</span><wbr></wbr><span>Audio</span><wbr></wbr><span><span>Samples</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-40971255%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="feed-audio-samples.html"><span class="token function">feedAudioSamples</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">samples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">sampleRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">16000</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Feed audio samples to the session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-404218339%2FFunctions%2F-1201622999" anchor-label="finishPracticingSegment" id="-404218339%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="finish-practicing-segment.html"><span>finish</span><wbr></wbr><span>Practicing</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-404218339%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="finish-practicing-segment.html"><span class="token function">finishPracticingSegment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment-result/index.html">SegmentResult</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Finish the current segment and get its result.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2040342146%2FFunctions%2F-1201622999" anchor-label="finishSession" id="2040342146%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="finish-session.html"><span>finish</span><wbr></wbr><span><span>Session</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2040342146%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="finish-session.html"><span class="token function">finishSession</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-singing-result/index.html">SingingResult</a></div><div class="brief "><p class="paragraph">Finish the session and get aggregated results.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-998408215%2FFunctions%2F-1201622999" anchor-label="getResultsForSegment" id="-998408215%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-results-for-segment.html"><span>get</span><wbr></wbr><span>Results</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-998408215%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-results-for-segment.html"><span class="token function">getResultsForSegment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">index<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment-result/index.html">SegmentResult</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get all results for a specific segment.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-615291743%2FFunctions%2F-1201622999" anchor-label="hasCompletedSegment" id="-615291743%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-completed-segment.html"><span>has</span><wbr></wbr><span>Completed</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-615291743%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="has-completed-segment.html"><span class="token function">hasCompletedSegment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">index<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Check if a segment has been completed at least once.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1987301827%2FFunctions%2F-1201622999" anchor-label="onPhaseChanged" id="1987301827%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-phase-changed.html"><span>on</span><wbr></wbr><span>Phase</span><wbr></wbr><span><span>Changed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1987301827%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="on-phase-changed.html"><span class="token function">onPhaseChanged</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="../../com.musicmuni.voxatrace.calibra.model/-practice-phase/index.html">PracticePhase</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Register callback for phase changes. Called when practice phase transitions (e.g., LISTENING → SINGING).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="908605261%2FFunctions%2F-1201622999" anchor-label="onReferenceEnd" id="908605261%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-reference-end.html"><span>on</span><wbr></wbr><span>Reference</span><wbr></wbr><span><span>End</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="908605261%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="on-reference-end.html"><span class="token function">onReferenceEnd</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment/index.html">Segment</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Register callback for reference end (singafter mode). Called when reference audio finishes playing, before student starts singing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="583382104%2FFunctions%2F-1201622999" anchor-label="onSegmentComplete" id="583382104%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-segment-complete.html"><span>on</span><wbr></wbr><span>Segment</span><wbr></wbr><span><span>Complete</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="583382104%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="on-segment-complete.html"><span class="token function">onSegmentComplete</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment-result/index.html">SegmentResult</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Register callback for segment completion. Called when a segment finishes with its result.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-376607557%2FFunctions%2F-1201622999" anchor-label="onSessionComplete" id="-376607557%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-session-complete.html"><span>on</span><wbr></wbr><span>Session</span><wbr></wbr><span><span>Complete</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-376607557%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="on-session-complete.html"><span class="token function">onSessionComplete</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">callback<span class="token operator">: </span><span class="token punctuation">(</span><a href="../../com.musicmuni.voxatrace.calibra.model/-singing-result/index.html">SingingResult</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Register callback for session completion. Called when all segments are finished.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1161539948%2FFunctions%2F-1201622999" anchor-label="pausePlayback" id="-1161539948%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pause-playback.html"><span>pause</span><wbr></wbr><span><span>Playback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1161539948%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="pause-playback.html"><span class="token function">pausePlayback</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Pause playback and recording.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1266629670%2FFunctions%2F-1201622999" anchor-label="prepareSession" id="1266629670%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="prepare-session.html"><span>prepare</span><wbr></wbr><span><span>Session</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1266629670%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="prepare-session.html"><span class="token function">prepareSession</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Prepare the session for practice.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2095547724%2FFunctions%2F-1201622999" anchor-label="restartSession" id="2095547724%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="restart-session.html"><span>restart</span><wbr></wbr><span><span>Session</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2095547724%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="restart-session.html"><span class="token function">restartSession</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fromSegment<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Restart the session from a clean state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1400736659%2FFunctions%2F-1201622999" anchor-label="resumePlayback" id="-1400736659%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resume-playback.html"><span>resume</span><wbr></wbr><span><span>Playback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1400736659%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="resume-playback.html"><span class="token function">resumePlayback</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resume from paused state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-755116125%2FFunctions%2F-1201622999" anchor-label="retryCurrentSegment" id="-755116125%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="retry-current-segment.html"><span>retry</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-755116125%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="retry-current-segment.html"><span class="token function">retryCurrentSegment</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Retry the current segment.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-270349725%2FFunctions%2F-1201622999" anchor-label="seekToSegment" id="-270349725%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="seek-to-segment.html"><span>seek</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-270349725%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="seek-to-segment.html"><span class="token function">seekToSegment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">index<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Seek to a specific segment (discards current attempt if practicing).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1957516902%2FFunctions%2F-1201622999" anchor-label="seekToTime" id="1957516902%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="seek-to-time.html"><span>seek</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1957516902%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="seek-to-time.html"><span class="token function">seekToTime</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">seconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Seek to a specific time position.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1183456218%2FFunctions%2F-1201622999" anchor-label="setPitchProcessingEnabled" id="1183456218%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-pitch-processing-enabled.html"><span>set</span><wbr></wbr><span>Pitch</span><wbr></wbr><span>Processing</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1183456218%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-pitch-processing-enabled.html"><span class="token function">setPitchProcessingEnabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable or disable pitch processing (smoothing + octave correction) at runtime.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1853909282%2FFunctions%2F-1201622999" anchor-label="setStudentKeyHz" id="-1853909282%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-student-key-hz.html"><span>set</span><wbr></wbr><span>Student</span><wbr></wbr><span>Key</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1853909282%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-student-key-hz.html"><span class="token function">setStudentKeyHz</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">keyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set student key for transposition.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2050648314%2FFunctions%2F-1201622999" anchor-label="startPracticingSegment" id="2050648314%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="start-practicing-segment.html"><span>start</span><wbr></wbr><span>Practicing</span><wbr></wbr><span><span>Segment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2050648314%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="start-practicing-segment.html"><span class="token function">startPracticingSegment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">index<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Start practicing a specific segment.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Builder</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../images/prism-swift.js" async="async"></script>
+<link href="../../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2026.204.1845        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.calibra.model/PitchDetectorConfig.Builder///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../../index.html">com.musicmuni.voxatrace.calibra.model</a><span class="delimiter">/</span><a href="../index.html">PitchDetectorConfig</a><span class="delimiter">/</span><span class="current">Builder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Builder</a></div><p class="paragraph">Builder for PitchDetectorConfig.</p><p class="paragraph">Provides Tier 2 API with discoverability via autocomplete. Builds <strong>Config objects</strong>, not detector instances.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="626157848%2FConstructors%2F-1201622999" anchor-label="Builder" id="626157848%2FConstructors%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="626157848%2FConstructors%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-187007142%2FFunctions%2F-1201622999" anchor-label="algorithm" id="-187007142%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="algorithm.html"><span><span>algorithm</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-187007142%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="algorithm.html"><span class="token function">algorithm</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">algo<span class="token operator">: </span><a href="../../-pitch-algorithm/index.html">PitchAlgorithm</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set pitch detection algorithm</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-210477980%2FFunctions%2F-1201622999" anchor-label="bufferSize" id="-210477980%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="buffer-size.html"><span>buffer</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-210477980%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="buffer-size.html"><span class="token function">bufferSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">size<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set buffer size for analysis</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="910128901%2FFunctions%2F-1201622999" anchor-label="build" id="910128901%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="910128901%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">PitchDetectorConfig</a></div><div class="brief "><p class="paragraph">Build the immutable config</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1380760623%2FFunctions%2F-1201622999" anchor-label="enableProcessing" id="-1380760623%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enable-processing.html"><span>enable</span><wbr></wbr><span><span>Processing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1380760623%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="enable-processing.html"><span class="token function">enableProcessing</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Enable post-processing (smoothing + octave correction)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-756825625%2FFunctions%2F-1201622999" anchor-label="hopSize" id="-756825625%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hop-size.html"><span>hop</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-756825625%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="hop-size.html"><span class="token function">hopSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">samples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set hop size between frames</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-455734803%2FFunctions%2F-1201622999" anchor-label="preset" id="-455734803%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="preset.html"><span><span>preset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-455734803%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="preset.html"><span class="token function">preset</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">config<span class="token operator">: </span><a href="../index.html">PitchDetectorConfig</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Start from a preset configuration</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1084507978%2FFunctions%2F-1201622999" anchor-label="quietHandling" id="1084507978%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="quiet-handling.html"><span>quiet</span><wbr></wbr><span><span>Handling</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1084507978%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="quiet-handling.html"><span class="token function">quietHandling</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">handling<span class="token operator">: </span><a href="../../-quiet-handling/index.html">QuietHandling</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set how to handle quiet audio</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-423932207%2FFunctions%2F-1201622999" anchor-label="strictness" id="-423932207%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="strictness.html"><span><span>strictness</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-423932207%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="strictness.html"><span class="token function">strictness</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">strictness<span class="token operator">: </span><a href="../../-detection-strictness/index.html">DetectionStrictness</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set detection strictness</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-60321977%2FFunctions%2F-1201622999" anchor-label="swiftF0BatchSize" id="-60321977%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="swift-f0-batch-size.html"><span>swift</span><wbr></wbr><span>F0Batch</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-60321977%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="swift-f0-batch-size.html"><span class="token function">swiftF0BatchSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">samples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set SwiftF0 batch size</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="220579799%2FFunctions%2F-1201622999" anchor-label="tolerance" id="220579799%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="tolerance.html"><span><span>tolerance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="220579799%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="tolerance.html"><span class="token function">tolerance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set YIN algorithm tolerance</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1065399062%2FFunctions%2F-1201622999" anchor-label="voiceType" id="-1065399062%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="voice-type.html"><span>voice</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1065399062%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="voice-type.html"><span class="token function">voiceType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">type<span class="token operator">: </span><a href="../../-voice-type/index.html">VoiceType</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PitchDetectorConfig.Builder</a></div><div class="brief "><p class="paragraph">Set voice type for frequency range optimization</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CalibraVocalRange</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2026.204.1845        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.calibra/CalibraVocalRange///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra</a><span class="delimiter">/</span><span class="current">CalibraVocalRange</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Calibra</span><wbr></wbr><span>Vocal</span><wbr></wbr><span><span>Range</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">CalibraVocalRange</a></div><p class="paragraph">Streaming vocal range analyzer for determining a singer's pitch range.</p><h2 class="">What is Vocal Range?</h2><p class="paragraph">Vocal range is the span between a singer's lowest and highest notes. This analyzer detects the range using <strong>pedagogically-valid criteria</strong> based on ASHA 2018 guidelines and voice science research.</p><p class="paragraph">Use it for:</p><ul><li><p class="paragraph"><strong>Onboarding</strong>: Determine user's comfortable singing range</p></li><li><p class="paragraph"><strong>Song selection</strong>: Match songs to user's range</p></li><li><p class="paragraph"><strong>Progress tracking</strong>: See if range expands over time</p></li><li><p class="paragraph"><strong>Key transposition</strong>: Calculate optimal key for user</p></li></ul><h2 class="">When to Use</h2><div class="table--container"><table><thead><tr><th>Scenario</th><th>Use This?</th><th>Why</th></tr></thead><tbody><tr><td>Find singer's range</td><td>Yes</td><td>Core use case</td></tr><tr><td>Guided range finding</td><td>Yes</td><td><code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">getStableNote()</code> for step-by-step</td></tr><tr><td>Real-time pitch display</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">CalibraPitch</code></td></tr><tr><td>Score singing</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@2bdb010a lang-kotlin">CalibraLiveEval</code></td></tr></tbody></table></div><h2 class="">Quick Start</h2><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val analyzer = CalibraVocalRange.create()<br><br>// Feed audio from recorder<br>recorder.audioBuffers.collect { buffer -&gt;<br>    analyzer.addAudio(buffer.toFloatArray())<br>}<br><br>// Get detected range<br>val range = analyzer.getRange()<br>if (range != null) {<br>    println(&quot;Range: ${range.lower.noteLabel} to ${range.upper.noteLabel}&quot;)<br>    println(&quot;Octaves: ${range.octaves}&quot;)<br>}<br><br>analyzer.release()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Swift</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">let analyzer = CalibraVocalRange.create()<br><br>// Feed audio from recorder<br>for await buffer in recorder.audioBuffersStream() {<br>    analyzer.addAudio(samples: buffer.toFloatArray())<br>}<br><br>// Get detected range<br>if let range = analyzer.getRange() {<br>    print(&quot;Range: \(range.lower.noteLabel) to \(range.upper.noteLabel)&quot;)<br>    print(&quot;Octaves: \(range.octaves)&quot;)<br>}<br><br>analyzer.release()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Guided Range Detection</h2><p class="paragraph">For step-by-step range finding (e.g., &quot;sing your lowest note&quot;):</p><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val analyzer = CalibraVocalRange.create()<br><br>// Phase 1: Detect lowest note<br>showPrompt(&quot;Sing your lowest comfortable note&quot;)<br>// ... user sings, feed audio via addAudio() ...<br>val lowestNote = analyzer.getStableNote()<br>analyzer.reset()  // Reset for next phase<br><br>// Phase 2: Detect highest note<br>showPrompt(&quot;Sing your highest comfortable note&quot;)<br>// ... user sings, feed audio via addAudio() ...<br>val highestNote = analyzer.getStableNote()<br><br>// Calculate range<br>val rangeOctaves = (highestNote.pitch.midiNote - lowestNote.pitch.midiNote) / 12f<br><br>analyzer.release()</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Detection Criteria (ASHA 2018)</h2><p class="paragraph">The analyzer uses these criteria for pedagogical validity:</p><ul><li><p class="paragraph"><strong>Minimum 1 second</strong> sustained pitch for note inclusion</p></li><li><p class="paragraph"><strong>Confidence threshold</strong> of 0.5 minimum</p></li><li><p class="paragraph"><strong>Stability</strong>: pitch deviation < 1 semitone within 50ms</p></li><li><p class="paragraph"><strong>Percentile-based</strong> range extraction (5th-95th percentile)</p></li></ul><h2 class="">Platform Notes</h2><h3 class="">iOS</h3><ul><li><p class="paragraph">Audio is typically 48kHz from microphone; internal resampling handles this</p></li><li><p class="paragraph">Uses YIN algorithm for pitch detection (no external dependencies)</p></li></ul><h3 class="">Android</h3><ul><li><p class="paragraph">Audio varies by device (44.1kHz, 48kHz, 16kHz)</p></li><li><p class="paragraph">Uses YIN algorithm for pitch detection (pure Kotlin)</p></li></ul><h2 class="">Common Pitfalls</h2><ol><li><p class="paragraph"><strong>Forgetting to release</strong>: Call <code class="lang-kotlin">analyzer.release()</code> to free resources</p></li><li><p class="paragraph"><strong>Not resetting between phases</strong>: Call <code class="lang-kotlin">reset()</code> when starting new detection</p></li><li><p class="paragraph"><strong>Not enough sustained notes</strong>: User must hold notes for 1+ second</p></li><li><p class="paragraph"><strong>Background noise</strong>: High noise can trigger false detections</p></li></ol><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-vocal-range/index.html"><span>Vocal</span><wbr></wbr><span><span>Range</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For the result structure</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-vocal-range-config/index.html"><span>Vocal</span><wbr></wbr><span>Range</span><wbr></wbr><span><span>Config</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For customizing detection parameters</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-pitch/index.html"><span>Calibra</span><wbr></wbr><span><span>Pitch</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For general pitch detection</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="-1369998196%2FClasslikes%2F-1201622999" anchor-label="Companion" id="-1369998196%2FClasslikes%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1369998196%2FClasslikes%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-748735720%2FFunctions%2F-1201622999" anchor-label="addAudio" id="-748735720%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-audio.html"><span>add</span><wbr></wbr><span><span>Audio</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-748735720%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="add-audio.html"><span class="token function">addAudio</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">samples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Add audio samples for analysis.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="107985941%2FFunctions%2F-1201622999" anchor-label="getLowerLimit" id="107985941%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-lower-limit.html"><span>get</span><wbr></wbr><span>Lower</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="107985941%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-lower-limit.html"><span class="token function">getLowerLimit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-vocal-pitch/index.html">VocalPitch</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get lower limit from accumulated data (5th percentile of stable pitches).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-31235698%2FFunctions%2F-1201622999" anchor-label="getRange" id="-31235698%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-range.html"><span>get</span><wbr></wbr><span><span>Range</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-31235698%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-range.html"><span class="token function">getRange</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-vocal-range/index.html">VocalRange</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get complete range analysis.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="322815714%2FFunctions%2F-1201622999" anchor-label="getStableNote" id="322815714%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stable-note.html"><span>get</span><wbr></wbr><span>Stable</span><wbr></wbr><span><span>Note</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="322815714%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-stable-note.html"><span class="token function">getStableNote</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-detected-note/index.html">DetectedNote</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get the stable note detected so far.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-668923796%2FFunctions%2F-1201622999" anchor-label="getStats" id="-668923796%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stats.html"><span>get</span><wbr></wbr><span><span>Stats</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-668923796%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-stats.html"><span class="token function">getStats</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-range-stats/index.html">RangeStats</a></div><div class="brief "><p class="paragraph">Get statistics about accumulated data.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1883773430%2FFunctions%2F-1201622999" anchor-label="getUpperLimit" id="1883773430%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-upper-limit.html"><span>get</span><wbr></wbr><span>Upper</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1883773430%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-upper-limit.html"><span class="token function">getUpperLimit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-vocal-pitch/index.html">VocalPitch</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get upper limit from accumulated data (95th percentile of stable pitches).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1217661726%2FFunctions%2F-1201622999" anchor-label="release" id="1217661726%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="release.html"><span><span>release</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1217661726%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="release.html"><span class="token function">release</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Release resources.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="539023574%2FFunctions%2F-1201622999" anchor-label="reset" id="539023574%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset.html"><span><span>reset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="539023574%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reset.html"><span class="token function">reset</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Reset for new detection session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
