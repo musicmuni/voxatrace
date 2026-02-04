@@ -58,14 +58,14 @@ Add to your `AndroidManifest.xml`:
 ### Swift Package Manager (Recommended)
 
 1. In Xcode, go to **File > Add Package Dependencies**
-2. Enter the repository URL: `https://github.com/musicmuni/voxatrace-swift`
+2. Enter the repository URL: `https://github.com/musicmuni/voxatrace`
 3. Select version and add to your target
 
 Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace-swift", from: "{{version}}")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
 ]
 ```
 

@@ -7,7 +7,7 @@ Voice AI today understands what you say: the words, the language, the text. But 
 Eight years of R&D. Five million users in production. All running natively on Android and iOS, without a single server call.
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.musicmuni/voxatrace)](https://central.sonatype.com/artifact/com.musicmuni/voxatrace)
-[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen)](https://github.com/musicmuni/voxatrace-swift)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen)](https://github.com/musicmuni/voxatrace)
 
 ## What Speech AI Misses
 
@@ -56,7 +56,7 @@ dependencies {
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace-swift", from: "{{version}}")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
 ]
 ```
 
