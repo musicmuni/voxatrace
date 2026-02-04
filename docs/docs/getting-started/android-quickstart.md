@@ -136,6 +136,31 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
+## What You'll See
+
+When you sing into the microphone, Logcat will show:
+
+```text
+Note: A4, Frequency: 440 Hz, Confidence: 92%
+Note: A4, Frequency: 441 Hz, Confidence: 89%
+Note: B4, Frequency: 494 Hz, Confidence: 87%
+Note: --, Frequency: 0 Hz, Confidence: 0%   ← breath/silence
+Note: C5, Frequency: 523 Hz, Confidence: 91%
+```
+
+The app is:
+
+1. Recording audio buffers from the microphone (~50ms chunks)
+2. Running pitch detection on each buffer
+3. Converting frequency to musical note name
+4. Showing confidence (how certain the detection is)
+
+**Troubleshooting:**
+
+- Seeing lots of `--` entries? Make sure microphone permission is granted
+- Low confidence values? Sing closer to the device, reduce background noise
+- No output at all? Check that `recorder?.start()` is being called
+
 ## Step 3: Add UI (Optional)
 
 Create a simple layout in `activity_main.xml`:

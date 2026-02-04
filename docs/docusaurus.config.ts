@@ -1,6 +1,7 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+const remarkVersion = require('./plugins/remark-version');
 
 const config: Config = {
   title: 'VoxaTrace',
@@ -31,6 +32,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          routeBasePath: '/', // Docs at root, no /docs prefix
+          remarkPlugins: [remarkVersion],
         },
         blog: false,
         theme: {
@@ -73,10 +76,10 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'apiSidebar',
+          href: '/voxatrace/api/index.html',
           position: 'left',
-          label: 'API',
+          label: 'API Reference',
+          target: '_self',
         },
         {
           href: 'https://github.com/musicmuni/voxatrace',
@@ -93,11 +96,11 @@ const config: Config = {
           items: [
             {
               label: 'Getting Started',
-              to: '/docs/intro',
+              to: '/',
             },
             {
               label: 'API Reference',
-              to: '/docs/api',
+              href: '/voxatrace/api/index.html',
             },
           ],
         },

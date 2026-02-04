@@ -39,6 +39,7 @@ import com.musicmuni.voxatrace.demo.sections.singafter.view.SingafterView
 import com.musicmuni.voxatrace.demo.sections.melodyeval.view.MelodyEvalView
 import com.musicmuni.voxatrace.demo.sections.noteeval.view.NoteEvalView
 import com.musicmuni.voxatrace.VT
+import com.musicmuni.voxatrace.ai.AIModels
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -75,13 +76,31 @@ class MainActivity : ComponentActivity() {
         // Initialize VoxaTrace SDK using App Attestation (Play Integrity API).
         // This verifies the app is running on a genuine device before granting access.
         //
+        // === AIModels Preload Examples ===
+        //
+        // Default: Just pitch model (most apps)
+        // preload = AIModels.DEFAULT
+        //
+        // Pitch + Speech VAD
+        // preload = setOf(AIModels.Pitch.REALTIME, AIModels.VAD.SPEECH)
+        //
+        // All models
+        // preload = AIModels.ALL
+        //
+        // No preload (fully lazy, download on first use)
+        // preload = AIModels.NONE
+        //
+        // Specific algorithm (power users)
+        // preload = setOf(AIModels.Pitch.Algorithms.SWIFT_F0)
+        //
         // ALTERNATIVE: If you have a backend server, use proxy-based initialization:
         // ```
         // try {
         //     VT.initialize(
         //         proxyEndpoint = "https://your-server.com/api/voxatrace/register",
         //         context = this,
-        //         debugLogging = BuildConfig.DEBUG
+        //         debugLogging = BuildConfig.DEBUG,
+        //         preload = setOf(AIModels.Pitch.REALTIME, AIModels.VAD.SPEECH)
         //     )
         //     // SDK ready immediately - show main content
         // } catch (e: VoxaTraceKilledException) {
@@ -94,6 +113,12 @@ class MainActivity : ComponentActivity() {
             apiKey = BuildConfig.VOXATRACE_API_KEY,
             context = this,
             debugLogging = BuildConfig.DEBUG,
+            // Demo app preloads all models to showcase all features
+            preload = setOf(
+                AIModels.Pitch.REALTIME,    // For pitch detection demos
+                AIModels.VAD.SPEECH,        // For speech VAD demo
+                AIModels.VAD.SINGING        // For singing VAD demo
+            ),
             callback = object : VT.Companion.InitCallback {
                 override fun onComplete(success: Boolean, error: String?) {
                     runOnUiThread {

@@ -76,6 +76,36 @@ val detector = CalibraPitch.createDetector(
 )
 ```
 
+### Performance Comparison
+
+| Metric | YIN | SwiftF0 |
+| ------ | --- | ------- |
+| Latency | ~50ms | ~50ms |
+| CPU usage | Low | Medium |
+| Memory | Minimal | ~10MB (model) |
+| Accuracy (clean audio) | 92–95% | 96–98% |
+| Accuracy (noisy audio) | 70–80% | 85–92% |
+| Vibrato handling | Fair | Excellent |
+| Dependencies | None | ONNX Runtime |
+
+### Decision Tree
+
+```text
+What are you building?
+│
+├─► Simple tuner app
+│   └─► Use YIN (minimal dependencies, good enough accuracy)
+│
+├─► Karaoke / singing app
+│   └─► Use SwiftF0 (better handling of vibrato and background noise)
+│
+├─► Low-end device support required?
+│   └─► Use YIN (lower memory and CPU)
+│
+└─► Accuracy is critical?
+    └─► Use SwiftF0 (neural network handles edge cases better)
+```
+
 ## Key Concepts
 
 ### Confidence

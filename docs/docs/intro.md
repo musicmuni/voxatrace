@@ -5,136 +5,166 @@ slug: /
 
 # VoxaTrace
 
-VoxaTrace is a cross-platform audio SDK for mobile apps, built with Kotlin Multiplatform.
+Voice AI today understands what you say: the words, the language, the text. But it's deaf to **how you actually sound** — pitch, timbre, emotion, vocal quality, rhythm, melody. Everything that makes a voice a voice, not just a transcript.
 
-## What is VoxaTrace?
+**VoxaTrace is an on-device SDK that makes any application acoustically intelligent.**
 
-VoxaTrace provides everything you need to build singing and music apps:
+Eight years of R&D. Five million users in production. All running natively on Android and iOS, without a single server call.
 
-| Module | What It Does |
-|--------|--------------|
-| **Sonix** | Audio playback, recording, effects, and synthesis |
-| **Calibra** | Pitch detection, voice activity, and singing evaluation |
+## What Speech AI Misses
 
-## Who is it for?
+| Speech AI | VoxaTrace |
+| --------- | --------- |
+| "The user said 'hello'" | "The user sang A4 at 440 Hz with 92% confidence" |
+| Words and language | Pitch, melody, rhythm, vocal quality |
+| Transcription | Acoustic analysis |
+| Cloud-dependent | On-device, real-time |
 
-- **Karaoke apps** - Play backing tracks, record vocals, score singing
-- **Music education** - Real-time pitch feedback, practice tracking
-- **Tuner apps** - Detect pitch for instruments and voice
-- **Voice recorders** - Capture and encode audio
+## What You Can Build
 
-## Quick Start
+| Application | What VoxaTrace Enables |
+| ----------- | ---------------------- |
+| **Singing apps** | Pitch detection, real-time scoring, performance feedback |
+| **Vocal training** | Intonation analysis, progress tracking, guided exercises |
+| **Music education** | Ear training, sight-singing evaluation, pitch matching |
+| **Voice games** | Pitch as input — sing to jump, hum to control |
+| **Accessibility** | Voice-based input beyond speech recognition |
+| **Health & wellness** | Vocal health monitoring, breathing exercises |
 
-### Install
+## What You Get
 
-See [Installation](./getting-started/installation) for Gradle and SPM setup.
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│                         VoxaTrace                               │
+├──────────────────────────────┬──────────────────────────────────┤
+│           Sonix              │            Calibra               │
+│       (Audio Engine)         │      (Acoustic Analysis)         │
+├──────────────────────────────┼──────────────────────────────────┤
+│  • Multi-track playback (8)  │  • Pitch detection (YIN/SwiftF0) │
+│  • Recording (M4A/MP3)       │  • Voice activity detection      │
+│  • Pitch shifting ±12 semi   │  • Singing evaluation & scoring  │
+│  • Tempo control 0.5x–2x     │  • Vocal range detection         │
+│  • MIDI synthesis (SoundFont)│  • Audio effects chain           │
+│  • Metronome with callbacks  │  • Octave error correction       │
+└──────────────────────────────┴──────────────────────────────────┘
+```
 
-### Hello Pitch
+## Performance
 
-#### Kotlin
+| Metric | Specification |
+| ------ | ------------- |
+| Pitch detection latency | ~50ms |
+| Frequency range | 50 Hz – 2000 Hz |
+| Confidence threshold | 0.0 – 1.0 (recommended > 0.7) |
+| Simultaneous tracks | Up to 8 synchronized |
+| Sample rates | Auto-resampling to 16kHz |
+| Minimum Android | API 24 (Android 7.0) |
+| Minimum iOS | iOS 14 |
+
+## Hello, Pitch Detection
+
+### Kotlin
 
 ```kotlin
 val detector = CalibraPitch.createDetector()
-val point = detector.detect(samples, sampleRate = 16000)
-println("Pitch: ${point.pitch} Hz")
+val point = detector.detect(audioSamples, sampleRate = 16000)
+println("${point.pitch} Hz @ ${(point.confidence * 100).toInt()}% confidence")
 detector.close()
 ```
 
-#### Swift
+### Swift
 
 ```swift
 let detector = CalibraPitch.companion.createDetector()
-let point = detector.detect(samples: samples, sampleRate: 16000)
-print("Pitch: \(point.pitch) Hz")
+let point = detector.detect(samples: audioSamples, sampleRate: 16000)
+print("\(point.pitch) Hz @ \(Int(point.confidence * 100))% confidence")
 detector.close()
 ```
 
-## Documentation Structure
+**Output:**
 
-### Getting Started
-
-Step-by-step guides to get up and running:
-
-- [Installation](./getting-started/installation) - Add VoxaTrace to your project
-- [Android Quickstart](./getting-started/android-quickstart) - Build your first Android app
-- [iOS Quickstart](./getting-started/ios-quickstart) - Build your first iOS app
-
-### Concepts
-
-Understand the "what" and "why":
-
-- [Pitch Detection](./concepts/pitch-detection) - How pitch detection works
-- [Voice Activity](./concepts/voice-activity) - Detecting when someone is singing
-- [Live Evaluation](./concepts/live-evaluation) - Scoring singing in real-time
-- [Audio Effects](./concepts/audio-effects) - Noise gate, compressor, reverb
-- [API Patterns](./concepts/api-patterns) - The three-tier API pattern
-
-### Guides
-
-Implementation details and best practices:
-
-- [Playing Audio](./guides/playing-audio) - SonixPlayer features
-- [Recording Audio](./guides/recording-audio) - SonixRecorder features
-- [Detecting Pitch](./guides/detecting-pitch) - CalibraPitch features
-- [Live Evaluation](./guides/live-evaluation) - CalibraLiveEval features
-
-### Cookbook
-
-Complete app recipes:
-
-- [Karaoke App](./cookbook/karaoke-app) - Player + Recorder + LiveEval
-- [Tuner App](./cookbook/tuner-app) - Pitch detector + visualization
-- [Voice Recorder](./cookbook/voice-recorder) - Record + encode + save
-- [Practice Tracker](./cookbook/practice-tracker) - Store scores, show progress
-
-### API Reference
-
-Detailed class documentation:
-
-- [Sonix](/docs/sonix/overview) - Audio engine APIs
-- [Calibra](/docs/calibra/overview) - Analysis APIs
-
-## Design Principles
-
-### Three-Tier API
-
-Every API supports three usage levels:
-
-```kotlin
-// Tier 1: Presets (80% of users)
-val detector = CalibraPitch.createDetector()
-
-// Tier 2: Builder (15% of users)
-val config = PitchDetectorConfig.Builder()
-    .algorithm(PitchAlgorithm.SWIFT_F0)
-    .build()
-val detector = CalibraPitch.createDetector(config)
-
-// Tier 3: .copy() (5% of users)
-val config = PitchDetectorConfig.PRECISE.copy(tolerance = 0.08f)
+```text
+440.0 Hz @ 92% confidence
 ```
 
-### Dual Platform
+## Why VoxaTrace?
 
-Every example in both Kotlin and Swift:
+**On-device, not cloud:**
+
+- Zero latency from network calls
+- Works offline
+- User data stays on device
+
+**Battle-tested:**
+
+- 8 years of R&D
+- 5 million users in production
+- Same API on Android and iOS
+
+**Three-tier API:**
 
 ```kotlin
-// Kotlin
-val player = SonixPlayer.create("song.mp3")
-player.play()
+// Tier 1: Just works
+val detector = CalibraPitch.createDetector()
+
+// Tier 2: Configurable
+val detector = CalibraPitch.createDetector(
+    PitchDetectorConfig.Builder()
+        .algorithm(PitchAlgorithm.SWIFT_F0)
+        .build()
+)
+
+// Tier 3: Full control
+val config = PitchDetectorConfig.PRECISE.copy(confidenceThreshold = 0.6f)
+```
+
+[Read more about why VoxaTrace →](./why-voxatrace)
+
+## Start Building
+
+### 5-Minute Quickstarts
+
+- [Android Quickstart](./getting-started/android-quickstart) – Pitch detector in Compose
+- [iOS Quickstart](./getting-started/ios-quickstart) – Pitch detector in SwiftUI
+
+### Complete App Recipes
+
+- [Karaoke App](./cookbook/karaoke-app) – Play + record + score
+- [Tuner App](./cookbook/tuner-app) – Chromatic tuner with cents display
+- [Voice Recorder](./cookbook/voice-recorder) – Record + encode + save
+- [Practice Tracker](./cookbook/practice-tracker) – Store scores, track progress
+
+### Understand the Concepts
+
+- [Pitch Detection](./concepts/pitch-detection) – YIN vs SwiftF0, when to use each
+- [Live Evaluation](./concepts/live-evaluation) – How singing scoring works
+- [Voice Activity](./concepts/voice-activity) – Detecting when someone is singing
+- [API Patterns](./concepts/api-patterns) – The three-tier API design
+
+### Module Deep Dives
+
+- [Calibra Overview](./calibra/overview) – Acoustic analysis features
+- [Sonix Overview](./sonix/overview) – Audio engine features
+
+## Installation
+
+```kotlin
+// build.gradle.kts
+dependencies {
+    implementation("com.musicmuni:voxatrace:{{version}}")
+}
 ```
 
 ```swift
-// Swift
-let player = try await SonixPlayer.companion.create(source: "song.mp3")
-player.play()
+// Package.swift
+dependencies: [
+    .package(url: "https://github.com/musicmuni/voxatrace-spm", from: "{{version}}")
+]
 ```
 
-### Source-First Documentation
-
-KDoc is the ground truth. This documentation links to API reference, not vice versa.
+[Full installation guide →](./getting-started/installation)
 
 ## Support
 
-- [GitHub Issues](https://github.com/musicmuni/voxatrace/issues) - Bug reports and feature requests
-- [Demo Apps](https://github.com/musicmuni/voxatrace-demos) - Working examples
+- [GitHub Issues](https://github.com/musicmuni/voxatrace/issues) – Bug reports and feature requests
+- [Demo Apps](https://github.com/musicmuni/voxatrace-demos) – Working examples
