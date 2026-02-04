@@ -41,7 +41,7 @@ println("Pitch: ${result.pitch} Hz")
 
 ## Documentation
 
-**[musicmuni.github.io/voxatrace](https://musicmuni.github.io/voxatrace/)**
+**[musicmuni.github.io](https://musicmuni.github.io/)**
 
 ## License
 

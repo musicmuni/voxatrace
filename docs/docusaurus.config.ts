@@ -6,7 +6,7 @@ const remarkVersion = require('./plugins/remark-version');
 const config: Config = {
   title: 'VoxaTrace',
   tagline: 'Audio SDK for Mobile Apps',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.png',
 
   future: {
     v4: true,
@@ -14,7 +14,7 @@ const config: Config = {
 
   // GitHub Pages URL
   url: 'https://musicmuni.github.io',
-  baseUrl: '/voxatrace/',
+  baseUrl: '/',
   organizationName: 'musicmuni',
   projectName: 'voxatrace',
   trailingSlash: false,
@@ -66,7 +66,7 @@ const config: Config = {
       title: 'VoxaTrace',
       logo: {
         alt: 'VoxaTrace Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {
@@ -76,7 +76,7 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: '/voxatrace/api/index.html',
+          href: 'pathname:///api/index.html',
           position: 'left',
           label: 'API Reference',
           target: '_self',
@@ -100,7 +100,7 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              href: '/voxatrace/api/index.html',
+              href: 'pathname:///api/index.html',
             },
           ],
         },
