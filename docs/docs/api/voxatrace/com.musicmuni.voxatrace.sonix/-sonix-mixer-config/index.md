@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixMixerConfig](index.md)
+---
+sidebar_label: "SonixMixerConfig"
+---
+
 
 # SonixMixerConfig
 

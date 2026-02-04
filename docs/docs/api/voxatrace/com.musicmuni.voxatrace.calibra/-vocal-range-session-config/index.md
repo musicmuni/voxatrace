@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[VocalRangeSessionConfig](index.md)
+---
+sidebar_label: "VocalRangeSessionConfig"
+---
+
 
 # VocalRangeSessionConfig
 

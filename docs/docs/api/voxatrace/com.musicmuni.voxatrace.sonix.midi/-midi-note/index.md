@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.midi](../index.md)/[MidiNote](index.md)
+---
+sidebar_label: "MidiNote"
+---
+
 
 # MidiNote
 

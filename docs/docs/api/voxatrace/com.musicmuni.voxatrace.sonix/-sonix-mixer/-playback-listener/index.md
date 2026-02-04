@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.sonix](../../index.md)/[SonixMixer](../index.md)/[PlaybackListener](index.md)
+---
+sidebar_label: "PlaybackListener"
+---
+
 
 # PlaybackListener
 

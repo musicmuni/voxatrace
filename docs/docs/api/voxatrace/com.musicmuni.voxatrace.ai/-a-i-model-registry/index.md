@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.ai](../index.md)/[AIModelRegistry](index.md)
+---
+sidebar_label: "AIModelRegistry"
+---
+
 
 # AIModelRegistry
 
@@ -15,7 +18,7 @@ After calling `VT.initialize()`, models are auto-loaded from bundled assets:
 
 ```kotlin
 // At app startup
-VT.initialize("api_key", context)
+VT.initializeWithApiKey("api_key", context)
 
 // Later, anywhere in the app - models auto-load from bundled assets
 val detector = CalibraPitch.createDetector(config)

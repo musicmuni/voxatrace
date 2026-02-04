@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.exceptions](../index.md)/[VoxaTraceNotInitializedException](index.md)
+---
+sidebar_label: "VoxaTraceNotInitializedException"
+---
+
 
 # VoxaTraceNotInitializedException
 

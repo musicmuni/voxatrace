@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.features](../index.md)/[PitchHpcpExtractor](index.md)
+---
+sidebar_label: "PitchHpcpExtractor"
+---
+
 
 # PitchHpcpExtractor
 

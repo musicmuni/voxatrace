@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[NoteEvalConfig](index.md)
+---
+sidebar_label: "NoteEvalConfig"
+---
+
 
 # NoteEvalConfig
 

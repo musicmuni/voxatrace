@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixMixer](index.md)
+---
+sidebar_label: "SonixMixer"
+---
+
 
 # SonixMixer
 
@@ -27,9 +30,9 @@ mixer.release()
 ### Swift
 
 ```swift
-let mixer = SonixMixer.companion.create(
-    config: SonixMixerConfig.companion.DEFAULT,
-    audioSession: AudioMode.playback
+let mixer = SonixMixer.create(
+    config: .default,
+    audioSession: .playback
 )
 await mixer.addTrack(name: "backing", filePath: "/path/to/backing.mp3")
 await mixer.addTrack(name: "vocal", filePath: "/path/to/vocal.mp3")

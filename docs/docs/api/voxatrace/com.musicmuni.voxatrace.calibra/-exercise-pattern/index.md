@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[ExercisePattern](index.md)
+---
+sidebar_label: "ExercisePattern"
+---
+
 
 # ExercisePattern
 

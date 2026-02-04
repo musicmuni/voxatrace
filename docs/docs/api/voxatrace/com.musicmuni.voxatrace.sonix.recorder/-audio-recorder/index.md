@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.recorder](../index.md)/[AudioRecorder](index.md)
+---
+sidebar_label: "AudioRecorder"
+---
+
 
 # AudioRecorder
 
@@ -61,15 +64,9 @@ recorder.audioStream.collect { buffer ->
 
 | | |
 |---|---|
-| [AudioSession](../-audio-session/index.md) | For higher-level recording with encoding support |
+| AudioSession | For higher-level recording with encoding support |
 | AudioConfig | For configuration options |
 | [AudioBufferPool](../../com.musicmuni.voxatrace.sonix.model.buffer/-audio-buffer-pool/index.md) | For zero-allocation buffer management |
-
-#### Inheritors
-
-| |
-|---|
-| AndroidAudioRecorder |
 
 ## Properties
 

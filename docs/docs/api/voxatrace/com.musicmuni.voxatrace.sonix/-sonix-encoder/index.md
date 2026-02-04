@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixEncoder](index.md)
+---
+sidebar_label: "SonixEncoder"
+---
+
 
 # SonixEncoder
 
@@ -61,8 +64,8 @@ if (SonixEncoder.isFormatAvailable("mp3")) {
 
 ```swift
 // Encode from AudioRawData
-if let rawData = SonixDecoder.companion.decode(path: "input.wav", targetSampleRate: nil) {
-    let success = SonixEncoder.companion.encode(
+if let rawData = SonixDecoder.decode(path: "input.wav", targetSampleRate: nil) {
+    let success = SonixEncoder.encode(
         data: rawData,
         outputPath: "/path/to/output.mp3",
         format: "mp3",
@@ -71,7 +74,7 @@ if let rawData = SonixDecoder.companion.decode(path: "input.wav", targetSampleRa
 }
 
 // Encode from float samples
-let success = SonixEncoder.companion.encode(
+let success = SonixEncoder.encode(
     samples: floatArray,
     sampleRate: 44100,
     channels: 1,

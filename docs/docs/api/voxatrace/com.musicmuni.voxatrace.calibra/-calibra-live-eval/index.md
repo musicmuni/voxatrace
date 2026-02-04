@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraLiveEval](index.md)
+---
+sidebar_label: "CalibraLiveEval"
+---
+
 
 # CalibraLiveEval
 
@@ -58,8 +61,8 @@ session.closeSession()
 
 ```swift
 // 1. Create detector and session
-let detector = CalibraPitch.companion.createDetector()
-let session = CalibraLiveEval.companion.create(
+let detector = CalibraPitch.createDetector()
+let session = CalibraLiveEval.create(
     reference: lessonMaterial,
     detector: detector
 )

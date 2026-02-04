@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraPitch](index.md)
+---
+sidebar_label: "CalibraPitch"
+---
+
 
 # CalibraPitch
 
@@ -46,7 +49,7 @@ detector.close()
 
 ```swift
 // Real-time pitch detection
-let detector = CalibraPitch.companion.createDetector()
+let detector = CalibraPitch.createDetector()
 let point = detector.detect(samples: audioBuffer, sampleRate: 16000)
 print("Pitch: \(point.pitch) Hz, Confidence: \(point.confidence)")
 detector.close()
@@ -67,7 +70,7 @@ detector.close()
 #### Swift
 
 ```swift
-let detector = CalibraPitch.companion.createDetector(config: PitchDetectorConfig.companion.BALANCED)
+let detector = CalibraPitch.createDetector(config: .balanced)
 let point = detector.detect(samples: buffer, sampleRate: sampleRate)
 detector.close()
 ```
@@ -89,11 +92,11 @@ val detector = CalibraPitch.createDetector(config, modelProvider = { ModelLoader
 
 ```swift
 let config = PitchDetectorConfig.Builder()
-    .algorithm(algorithm: .swiftF0)
-    .voiceType(voiceType: .carnaticMale)
+    .algorithm(.swiftF0)
+    .voiceType(.carnaticMale)
     .enableProcessing()
     .build()
-let detector = CalibraPitch.companion.createDetector(
+let detector = CalibraPitch.createDetector(
     config: config,
     modelProvider: { ModelLoader.shared.loadSwiftF0() }
 )
@@ -124,8 +127,8 @@ extractor.release()
 ### Swift
 
 ```swift
-let extractor = CalibraPitch.companion.createContourExtractor(
-    config: ContourExtractorConfig.companion.SCORING,
+let extractor = CalibraPitch.createContourExtractor(
+    config: .scoring,
     modelProvider: { ModelLoader.shared.loadSwiftF0() }
 )
 let contour = extractor.extract(audio: audioSamples, sampleRate: 16000)
@@ -148,10 +151,10 @@ val smoothed = CalibraPitch.PostProcess.smooth(contour)
 
 ```swift
 // Apply cleanup presets to contours
-let cleaned = CalibraPitch.PostProcess.shared.cleanup(contour: contour, options: ContourCleanup.companion.SCORING)
+let cleaned = CalibraPitch.PostProcess.cleanup(contour: contour, options: .scoring)
 
 // Or individual operations
-let smoothed = CalibraPitch.PostProcess.shared.smooth(contour: contour)
+let smoothed = CalibraPitch.PostProcess.smooth(contour: contour)
 ```
 
 ## Platform Notes

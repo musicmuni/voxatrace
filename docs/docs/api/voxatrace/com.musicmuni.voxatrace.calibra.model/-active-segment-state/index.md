@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[ActiveSegmentState](index.md)
+---
+sidebar_label: "ActiveSegmentState"
+---
+
 
 # ActiveSegmentState
 

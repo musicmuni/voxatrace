@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.player](../index.md)/[PlaybackInfoProvider](index.md)
+---
+sidebar_label: "PlaybackInfoProvider"
+---
+
 
 # PlaybackInfoProvider
 
@@ -35,7 +38,6 @@ session.setPlaybackInfoProvider(YouTubePlayerProvider(youtubePlayer))
 
 | |
 |---|
-| [MultiTrackPlayer](../../com.musicmuni.voxatrace.sonix.mixer/-multi-track-player/index.md) |
 | [AudioPlayer](../-audio-player/index.md) |
 
 ## Properties

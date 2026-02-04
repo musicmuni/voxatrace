@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[PitchProcessorConfig](index.md)
+---
+sidebar_label: "PitchProcessorConfig"
+---
+
 
 # PitchProcessorConfig
 

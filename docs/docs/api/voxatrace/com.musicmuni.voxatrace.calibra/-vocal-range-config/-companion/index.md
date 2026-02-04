@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra](../../index.md)/[VocalRangeConfig](../index.md)/[Companion](index.md)
+---
+sidebar_label: "Companion"
+---
+
 
 # Companion
 

@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.features](../index.md)/[HpcpExtractor](index.md)
+---
+sidebar_label: "HpcpExtractor"
+---
+
 
 # HpcpExtractor
 

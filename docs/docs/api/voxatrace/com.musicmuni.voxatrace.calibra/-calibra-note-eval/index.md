@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraNoteEval](index.md)
+---
+sidebar_label: "CalibraNoteEval"
+---
+
 
 # CalibraNoteEval
 
@@ -60,7 +63,7 @@ let pattern = ExercisePattern(
 )
 
 let studentContour = pitchExtractor.extract(audio: studentAudio, sampleRate: 16000)
-let result = CalibraNoteEval.companion.evaluate(
+let result = CalibraNoteEval.evaluate(
     pattern: pattern,
     student: studentContour,
     referenceKeyHz: 261.63

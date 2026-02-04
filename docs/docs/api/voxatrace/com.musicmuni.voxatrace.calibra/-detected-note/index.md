@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[DetectedNote](index.md)
+---
+sidebar_label: "DetectedNote"
+---
+
 
 # DetectedNote
 

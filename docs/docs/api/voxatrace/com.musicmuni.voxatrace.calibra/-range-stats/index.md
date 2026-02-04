@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[RangeStats](index.md)
+---
+sidebar_label: "RangeStats"
+---
+
 
 # RangeStats
 

@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[AudioSource](../index.md)/[File](index.md)
+---
+sidebar_label: "File"
+---
+
 
 # File
 

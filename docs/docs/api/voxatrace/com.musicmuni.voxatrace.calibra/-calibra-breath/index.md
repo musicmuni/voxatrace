@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraBreath](index.md)
+---
+sidebar_label: "CalibraBreath"
+---
+
 
 # CalibraBreath
 
@@ -63,13 +66,13 @@ let times = contour.toTimesArray()
 let pitches = contour.toPitchesArray()
 
 // Check if enough data (needs 5+ seconds of voiced audio)
-if CalibraBreath.companion.hasEnoughData(times: times, pitchesHz: pitches) {
-    let capacity = CalibraBreath.companion.computeCapacity(times: times, pitchesHz: pitches)
+if CalibraBreath.hasEnoughData(times: times, pitchesHz: pitches) {
+    let capacity = CalibraBreath.computeCapacity(times: times, pitchesHz: pitches)
     print("Breath capacity: \(capacity) seconds")
 }
 
 // Get total voiced time
-let voicedTime = CalibraBreath.companion.getCumulativeVoicedTime(times: times, pitchesHz: pitches)
+let voicedTime = CalibraBreath.getCumulativeVoicedTime(times: times, pitchesHz: pitches)
 print("Total sung time: \(voicedTime) seconds")
 ```
 

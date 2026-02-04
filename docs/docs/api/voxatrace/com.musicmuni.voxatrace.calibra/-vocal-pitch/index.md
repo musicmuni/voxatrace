@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[VocalPitch](index.md)
+---
+sidebar_label: "VocalPitch"
+---
+
 
 # VocalPitch
 

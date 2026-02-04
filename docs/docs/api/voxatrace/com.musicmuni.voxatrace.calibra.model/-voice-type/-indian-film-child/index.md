@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[IndianFilmChild](index.md)
+---
+sidebar_label: "IndianFilmChild"
+---
+
 
 # IndianFilmChild
 

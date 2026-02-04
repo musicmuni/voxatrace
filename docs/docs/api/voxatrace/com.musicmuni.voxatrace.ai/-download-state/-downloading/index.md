@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.ai](../../index.md)/[DownloadState](../index.md)/[Downloading](index.md)
+---
+sidebar_label: "Downloading"
+---
+
 
 # Downloading
 

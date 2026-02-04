@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[CompressorConfig](index.md)
+---
+sidebar_label: "CompressorConfig"
+---
+
 
 # CompressorConfig
 

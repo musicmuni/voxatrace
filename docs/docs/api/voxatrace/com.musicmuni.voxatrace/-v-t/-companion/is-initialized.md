@@ -5,4 +5,4 @@
 [common]\
 val [isInitialized](is-initialized.md): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html)
 
-Whether the SDK has been initialized with an API key.
+Whether the SDK has been initialized with an API key or device token.

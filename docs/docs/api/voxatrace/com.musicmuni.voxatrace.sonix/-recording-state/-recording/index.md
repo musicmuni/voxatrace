@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.sonix](../../index.md)/[RecordingState](../index.md)/[Recording](index.md)
+---
+sidebar_label: "Recording"
+---
+
 
 # Recording
 

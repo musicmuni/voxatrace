@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[ContourExtractorConfig](index.md)
+---
+sidebar_label: "ContourExtractorConfig"
+---
+
 
 # ContourExtractorConfig
 
@@ -24,8 +27,8 @@ val extractor = CalibraPitch.createContourExtractor(
 #### Swift
 
 ```swift
-let extractor = CalibraPitch.companion.createContourExtractor(
-    config: ContourExtractorConfig.companion.SCORING,
+let extractor = CalibraPitch.createContourExtractor(
+    config: .scoring,
     modelProvider: { ModelLoader.shared.loadSwiftF0() }
 )
 ```
@@ -47,11 +50,11 @@ val extractor = CalibraPitch.createContourExtractor(config, modelProvider = { ..
 
 ```swift
 let config = ContourExtractorConfig.Builder()
-    .preset(config: ContourExtractorConfig.companion.SCORING)
-    .sampleRate(rate: 16000)
-    .hopMs(hop: 10)
+    .preset(.scoring)
+    .sampleRate(16000)
+    .hopMs(10)
     .build()
-let extractor = CalibraPitch.companion.createContourExtractor(config: config, modelProvider: { ... })
+let extractor = CalibraPitch.createContourExtractor(config: config, modelProvider: { ... })
 ```
 
 ### Tier 3: .copy() (5% of users)

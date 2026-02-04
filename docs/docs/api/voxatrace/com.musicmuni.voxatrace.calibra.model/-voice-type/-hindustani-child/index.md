@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[HindustaniChild](index.md)
+---
+sidebar_label: "HindustaniChild"
+---
+
 
 # HindustaniChild
 

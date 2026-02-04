@@ -1,4 +1,7 @@
-//[voxatrace](../../index.md)/[com.musicmuni.voxatrace.sonix.model.buffer](index.md)
+---
+sidebar_label: "buffer"
+---
+
 
 # Package-level declarations
 
@@ -6,11 +9,4 @@
 
 | Name | Summary |
 |---|---|
-| [AudioBufferPitchQueue](-audio-buffer-pitch-queue/index.md) | [common]<br/>class [AudioBufferPitchQueue](-audio-buffer-pitch-queue/index.md)(bufferSize: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), queueSize: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), hopSizeMs: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), hopSizeBytes: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), pitchFrameBytes: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html)) : SynchronizedObject |
 | [AudioBufferPool](-audio-buffer-pool/index.md) | [common]<br/>class [AudioBufferPool](-audio-buffer-pool/index.md)(poolSize: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), bufferSize: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html))<br/>Pre-allocated buffer pool for zero-allocation audio processing. |
-| [AudioBufferWithTime](-audio-buffer-with-time/index.md) | [common]<br/>class [AudioBufferWithTime](-audio-buffer-with-time/index.md)(val buffer: [ByteArray](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html), val timeStamp: [Long](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html)) |
-| [AudioCircularBuffer](-audio-circular-buffer/index.md) | [common]<br/>class [AudioCircularBuffer](-audio-circular-buffer/index.md)(bufferLength: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), val mInputFrameSize: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), val mHopSizeBytes: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), val mReqFrameBytes: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), val mSampleSizeBytes: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html), val mSampRate: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html)) : SynchronizedObject |
-| [FloatCircularBuffer](-float-circular-buffer/index.md) | [common]<br/>class [FloatCircularBuffer](-float-circular-buffer/index.md)(bufferLength: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html))<br/>Thread-safe circular buffer for float values. Used in audio processing pipelines. |
-| [IntCircularBuffer](-int-circular-buffer/index.md) | [common]<br/>class [IntCircularBuffer](-int-circular-buffer/index.md)(bufferLength: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html))<br/>Thread-safe circular buffer for Int values. |
-| [LongCircularBuffer](-long-circular-buffer/index.md) | [common]<br/>class [LongCircularBuffer](-long-circular-buffer/index.md)(bufferLength: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html))<br/>Thread-safe circular buffer for Long values. |
-| [RecordingBuffer](-recording-buffer/index.md) | [common]<br/>class [RecordingBuffer](-recording-buffer/index.md)(maxSizeBytes: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html) = 10 * 1024 * 1024) : SynchronizedObject<br/>Thread-safe ring buffer for recording data. Optimized for single producer (recorder thread), single consumer (encoder thread). |

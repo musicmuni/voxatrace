@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixResampler](index.md)
+---
+sidebar_label: "SonixResampler"
+---
+
 
 # SonixResampler
 
@@ -47,7 +50,7 @@ val contour = pitchExtractor.extract(resampled, 16000)
 
 ```swift
 // Resample from 44100 Hz to 16000 Hz (for Calibra)
-let resampled = SonixResampler.companion.resample(
+let resampled = SonixResampler.resample(
     samples: audioSamples,
     fromRate: 44100,
     toRate: 16000

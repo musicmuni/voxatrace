@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixPlayer](index.md)
+---
+sidebar_label: "SonixPlayer"
+---
+
 
 # SonixPlayer
 
@@ -43,7 +46,7 @@ player.release()
 ### Swift
 
 ```swift
-let player = try await SonixPlayer.companion.create(source: "song.mp3")
+let player = try await SonixPlayer.create(source: "song.mp3")
 player.play()
 // Later...
 player.pause()
@@ -64,7 +67,7 @@ player.play()
 #### Swift
 
 ```swift
-let player = try await SonixPlayer.companion.create(source: "song.mp3")
+let player = try await SonixPlayer.create(source: "song.mp3")
 player.play()
 ```
 
@@ -87,13 +90,13 @@ val player = SonixPlayer.create("song.mp3", config)
 
 ```swift
 let config = SonixPlayerConfig.Builder()
-    .volume(volume: 0.8)
-    .pitch(semitones: -2)
-    .tempo(value: 0.75)
-    .loopCount(count: 3)
+    .volume(0.8)
+    .pitch(-2)
+    .tempo(0.75)
+    .loopCount(3)
     .onComplete { print("Done!") }
     .build()
-let player = try await SonixPlayer.companion.create(source: "song.mp3", config: config)
+let player = try await SonixPlayer.create(source: "song.mp3", config: config)
 ```
 
 ### Tier 3: Runtime Control (5% of users)

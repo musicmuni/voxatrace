@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraException](index.md)
+---
+sidebar_label: "CalibraException"
+---
+
 
 # CalibraException
 

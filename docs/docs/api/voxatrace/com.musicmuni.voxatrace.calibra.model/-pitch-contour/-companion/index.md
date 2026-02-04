@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[PitchContour](../index.md)/[Companion](index.md)
+---
+sidebar_label: "Companion"
+---
+
 
 # Companion
 

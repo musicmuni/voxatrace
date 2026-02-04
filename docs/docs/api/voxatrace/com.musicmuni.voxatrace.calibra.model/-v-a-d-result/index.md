@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[VADResult](index.md)
+---
+sidebar_label: "VADResult"
+---
+
 
 # VADResult
 

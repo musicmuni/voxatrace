@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[PitchPoint](index.md)
+---
+sidebar_label: "PitchPoint"
+---
+
 
 # PitchPoint
 

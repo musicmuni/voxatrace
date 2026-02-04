@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixDecoder](index.md)
+---
+sidebar_label: "SonixDecoder"
+---
+
 
 # SonixDecoder
 
@@ -43,7 +46,7 @@ val nativeAudio = SonixDecoder.decode("/path/to/audio.mp3", targetSampleRate = n
 
 ```swift
 // Decode to 16kHz (default) for use with Calibra
-if let audioData = SonixDecoder.companion.decode(path: "/path/to/audio.mp3", targetSampleRate: 16000) {
+if let audioData = SonixDecoder.decode(path: "/path/to/audio.mp3", targetSampleRate: 16000) {
     print("Sample rate: \(audioData.sampleRate)")  // Always 16000
     print("Channels: \(audioData.numChannels)")
     print("Duration: \(audioData.durationMilliSecs)ms")
@@ -53,7 +56,7 @@ if let audioData = SonixDecoder.companion.decode(path: "/path/to/audio.mp3", tar
 }
 
 // Decode at native sample rate
-let nativeAudio = SonixDecoder.companion.decodeNative(path: "/path/to/audio.mp3")
+let nativeAudio = SonixDecoder.decodeNative(path: "/path/to/audio.mp3")
 ```
 
 ## Supported Formats

@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.sonix](../../index.md)/[RecordingState](../index.md)/[Error](index.md)
+---
+sidebar_label: "Error"
+---
+
 
 # Error
 

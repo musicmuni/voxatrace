@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[AudioSessionManager](index.md)
+---
+sidebar_label: "AudioSessionManager"
+---
+
 
 # AudioSessionManager
 

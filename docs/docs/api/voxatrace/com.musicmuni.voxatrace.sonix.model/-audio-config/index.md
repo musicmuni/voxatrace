@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.model](../index.md)/[AudioConfig](index.md)
+---
+sidebar_label: "AudioConfig"
+---
+
 
 # AudioConfig
 

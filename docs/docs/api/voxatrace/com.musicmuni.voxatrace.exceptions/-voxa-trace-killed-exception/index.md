@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.exceptions](../index.md)/[VoxaTraceKilledException](index.md)
+---
+sidebar_label: "VoxaTraceKilledException"
+---
+
 
 # VoxaTraceKilledException
 

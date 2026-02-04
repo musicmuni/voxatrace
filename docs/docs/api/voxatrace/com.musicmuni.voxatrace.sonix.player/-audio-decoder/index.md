@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.player](../index.md)/[AudioDecoder](index.md)
+---
+sidebar_label: "AudioDecoder"
+---
+
 
 # AudioDecoder
 

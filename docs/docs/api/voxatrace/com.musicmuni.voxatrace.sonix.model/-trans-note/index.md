@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.model](../index.md)/[TransNote](index.md)
+---
+sidebar_label: "TransNote"
+---
+
 
 # TransNote
 

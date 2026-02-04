@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.sonix](../../index.md)/[RecordingState](../index.md)/[Starting](index.md)
+---
+sidebar_label: "Starting"
+---
+
 
 # Starting
 

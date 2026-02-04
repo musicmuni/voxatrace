@@ -3,20 +3,49 @@
 # initialize
 
 [common]\
-fun [initialize](initialize.md)(apiKey: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html), context: [Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html)? = null, debugLogging: [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html) = false)
+fun [initialize](initialize.md)(proxyEndpoint: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html), context: [Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html)? = null, debugLogging: [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html) = false)
 
-Initialize SDK with API key for licensed usage.
+Initialize SDK with proxy endpoint for secure production deployment.
 
-Validates the API key synchronously with the server (10 second timeout). This ensures invalid or revoked keys are rejected at initialization, not during normal operation.
+This is the recommended initialization method for production apps. Your API key stays secure on your server, and the SDK receives a device-specific token for telemetry.
+
+Device token lifecycle:
+
+- 
+   Tokens expire after 30 days
+- 
+   SDK automatically refreshes tokens when < 7 days remaining
+- 
+   7-day grace period allows continued operation during refresh
+- 
+   Fully transparent to app developers - no action required
 
 ```kotlin
-// Android - wrap in try-catch to handle license errors
+// Android
 try {
-    VT.initialize("sk_live_abc123...", this, debugLogging = true)
+    VT.initialize(
+        proxyEndpoint = "https://your-server.com/voxatrace/register",
+        context = this,
+        debugLogging = BuildConfig.DEBUG
+    )
 } catch (e: VoxaTraceKilledException) {
-    // Show error to user, disable audio features
+    // License error - disable audio features
     showError("License error: ${e.message}")
 }
+```
+
+Your proxy server implementation:
+
+```kotlin
+POST /voxatrace/register
+Request:  { "device_id": "sha256_hash" }
+Response: { "device_token": "dt_xxx", "expires_at": 1735689600 }
+
+Proxy should:
+1. Verify user is authenticated (your auth system)
+2. POST to https://api.musicmuni.com/v1/voxatrace/devices/register
+   with Authorization: Bearer sk_live_xxx
+3. Forward response to SDK
 ```
 
 #### Parameters
@@ -25,12 +54,12 @@ common
 
 | | |
 |---|---|
-| apiKey | Your VoxaTrace API key (starts with &quot;sk_live_&quot; or &quot;sk_test_&quot;) |
+| proxyEndpoint | Your proxy server's device registration endpoint |
 | context | Android Context (required on Android, ignored on iOS) |
-| debugLogging | Enable debug logging output (default: false for production safety) |
+| debugLogging | Enable debug logging output (default: false) |
 
 #### Throws
 
 | | |
 |---|---|
-| [VoxaTraceKilledException](../../../com.musicmuni.voxatrace.exceptions/-voxa-trace-killed-exception/index.md) | if API key is invalid or revoked (401/403) |
+| [VoxaTraceKilledException](../../../com.musicmuni.voxatrace.exceptions/-voxa-trace-killed-exception/index.md) | if registration fails or license is invalid |

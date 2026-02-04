@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[AudioFocusListener](index.md)
+---
+sidebar_label: "AudioFocusListener"
+---
+
 
 # AudioFocusListener
 

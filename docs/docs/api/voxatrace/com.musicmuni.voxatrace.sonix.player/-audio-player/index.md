@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.player](../index.md)/[AudioPlayer](index.md)
+---
+sidebar_label: "AudioPlayer"
+---
+
 
 # AudioPlayer
 
@@ -69,12 +72,6 @@ player.release()
 |---|---|
 | MultiTrackPlayer | For synchronized multi-track playback |
 | [PlaybackInfoProvider](../-playback-info-provider/index.md) | For synchronization interface |
-
-#### Inheritors
-
-| |
-|---|
-| AndroidAudioPlayer |
 
 ## Types
 

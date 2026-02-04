@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.sonix](../../index.md)/[SonixRecorder](../index.md)/[Companion](index.md)
+---
+sidebar_label: "Companion"
+---
+
 
 # Companion
 

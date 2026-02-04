@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[CarnaticMale](index.md)
+---
+sidebar_label: "CarnaticMale"
+---
+
 
 # CarnaticMale
 

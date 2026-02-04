@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraVAD](index.md)
+---
+sidebar_label: "CalibraVAD"
+---
+
 
 # CalibraVAD
 
@@ -46,7 +49,7 @@ vad.release()
 
 ```swift
 // Simple energy-based detection (no model required)
-let vad = CalibraVAD.companion.create(modelProvider: VADModelProvider.General())
+let vad = CalibraVAD.create(modelProvider: .general())
 let ratio = vad.getVADRatio(samples: samples, sampleRate: 48000)
 if ratio 0.5 {
     print("Voice detected!")
@@ -72,11 +75,11 @@ val vad = CalibraVAD.create(VADModelProvider.Speech { ModelLoader.loadSpeechVAD(
 
 ```swift
 // GENERAL backend (no model required)
-let vad = CalibraVAD.companion.create(modelProvider: VADModelProvider.General())
+let vad = CalibraVAD.create(modelProvider: .general())
 
 // SPEECH backend (Silero model)
-let vad = CalibraVAD.companion.create(
-    modelProvider: VADModelProvider.Speech { ModelLoader.shared.loadSpeechVAD() }
+let vad = CalibraVAD.create(
+    modelProvider: .speech { ModelLoader.shared.loadSpeechVAD() }
 )
 ```
 
@@ -96,12 +99,12 @@ val vad = CalibraVAD.create(config, VADModelProvider.Speech { ModelLoader.loadSp
 
 ```swift
 let config = VADConfig.Builder()
-    .preset(config: VADConfig.companion.SPEECH)
-    .threshold(threshold: 0.4)
+    .preset(.speech)
+    .threshold(0.4)
     .build()
-let vad = CalibraVAD.companion.create(
+let vad = CalibraVAD.create(
     config: config,
-    modelProvider: VADModelProvider.Speech { ModelLoader.shared.loadSpeechVAD() }
+    modelProvider: .speech { ModelLoader.shared.loadSpeechVAD() }
 )
 ```
 

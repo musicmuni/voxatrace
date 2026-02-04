@@ -5,7 +5,7 @@
 [common]\
 expect suspend fun [awaitModel](await-model.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [ByteArray](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html)
 
-Await until a specific model is available. Downloads the appropriate zip on-demand if not already present.
+Await until a specific model is available (suspends if downloading).
 
 #### Return
 
@@ -17,7 +17,7 @@ common
 
 | | |
 |---|---|
-| filename | Model filename from [BundleConfig.ModelFiles](../-bundle-config/-model-files/index.md) |
+| filename | Model filename from BundleConfig.ModelFiles |
 
 #### Throws
 

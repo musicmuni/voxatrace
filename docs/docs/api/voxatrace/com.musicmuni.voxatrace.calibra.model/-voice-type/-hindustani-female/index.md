@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[HindustaniFemale](index.md)
+---
+sidebar_label: "HindustaniFemale"
+---
+
 
 # HindustaniFemale
 

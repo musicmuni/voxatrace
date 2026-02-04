@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraMusic](index.md)
+---
+sidebar_label: "CalibraMusic"
+---
+
 
 # CalibraMusic
 
@@ -60,17 +63,17 @@ val hz = CalibraMusic.midiToHz(60f)     // 261.63 Hz (middle C)
 
 ```swift
 // Convert frequency to note name
-let noteLabel = CalibraMusic.companion.hzToNoteLabel(frequency: 440)  // "A4"
+let noteLabel = CalibraMusic.hzToNoteLabel(440)  // "A4"
 
 // Convert note name to frequency
-let frequency = CalibraMusic.companion.noteLabelToHz(noteLabel: "C4")  // 261.63 Hz
+let frequency = CalibraMusic.noteLabelToHz("C4")  // 261.63 Hz
 
 // Get cents deviation from nearest note
-let deviation = CalibraMusic.companion.centsDeviation(frequency: 442)  // +7.8 cents
+let deviation = CalibraMusic.centsDeviation(442)  // +7.8 cents
 
 // Convert between MIDI and Hz
-let midi = CalibraMusic.companion.hzToMidi(frequency: 440)  // 69.0
-let hz = CalibraMusic.companion.midiToHz(midiNote: 60)      // 261.63 Hz
+let midi = CalibraMusic.hzToMidi(440)  // 69.0
+let hz = CalibraMusic.midiToHz(60)      // 261.63 Hz
 ```
 
 ## Pitch Reference

@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[WesternBass](index.md)
+---
+sidebar_label: "WesternBass"
+---
+
 
 # WesternBass
 

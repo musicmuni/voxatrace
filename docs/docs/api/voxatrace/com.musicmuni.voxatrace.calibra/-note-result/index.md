@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[NoteResult](index.md)
+---
+sidebar_label: "NoteResult"
+---
+
 
 # NoteResult
 

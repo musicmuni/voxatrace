@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixMetronome](index.md)
+---
+sidebar_label: "SonixMetronome"
+---
+
 
 # SonixMetronome
 
@@ -57,7 +60,7 @@ metronome.release()
 
 ```swift
 // Create metronome with default settings
-let metronome = SonixMetronome.companion.create(
+let metronome = SonixMetronome.create(
     samaSamplePath: "/path/to/sama.wav",
     beatSamplePath: "/path/to/beat.wav",
     bpm: 120,

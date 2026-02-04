@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixMidiSynthesizer](index.md)
+---
+sidebar_label: "SonixMidiSynthesizer"
+---
+
 
 # SonixMidiSynthesizer
 
@@ -51,7 +54,7 @@ synth.release()  // Optional - synth is stateless
 ### Swift
 
 ```swift
-let synth = SonixMidiSynthesizer.companion.create(soundFontPath: "/path/to/soundfont.sf2")
+let synth = SonixMidiSynthesizer.create(soundFontPath: "/path/to/soundfont.sf2")
 
 // Synthesize from MIDI file
 synth.synthesize(midiPath: "input.mid", outputPath: "output.wav")

@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[VocalRangeResult](index.md)
+---
+sidebar_label: "VocalRangeResult"
+---
+
 
 # VocalRangeResult
 

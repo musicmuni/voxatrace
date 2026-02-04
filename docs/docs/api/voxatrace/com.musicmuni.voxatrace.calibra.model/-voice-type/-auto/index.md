@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[Auto](index.md)
+---
+sidebar_label: "Auto"
+---
+
 
 # Auto
 

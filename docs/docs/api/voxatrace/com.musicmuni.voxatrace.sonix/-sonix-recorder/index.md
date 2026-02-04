@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixRecorder](index.md)
+---
+sidebar_label: "SonixRecorder"
+---
+
 
 # SonixRecorder
 
@@ -47,7 +50,7 @@ recorder.release()
 ### Swift
 
 ```swift
-let recorder = SonixRecorder.companion.create(outputPath: "/path/to/output.m4a")
+let recorder = SonixRecorder.create(outputPath: "/path/to/output.m4a")
 recorder.start()
 // ... record for a while ...
 recorder.stop()
@@ -70,7 +73,7 @@ recorder.stop()
 #### Swift
 
 ```swift
-let recorder = SonixRecorder.companion.create(outputPath: "/path/to/output.m4a")
+let recorder = SonixRecorder.create(outputPath: "/path/to/output.m4a")
 recorder.start()
 // ...
 recorder.stop()
@@ -95,13 +98,13 @@ val recorder = SonixRecorder.create("/path/to/output.mp3", config)
 
 ```swift
 let config = SonixRecorderConfig.Builder()
-    .preset(config: SonixRecorderConfig.companion.STANDARD)
-    .format(format: AudioFormat.mp3)
-    .echoCancellation(enabled: true)
+    .preset(.standard)
+    .format(.mp3)
+    .echoCancellation(true)
     .onRecordingStarted { print("Started!") }
     .onRecordingStopped { path in print("Saved to: \(path)") }
     .build()
-let recorder = SonixRecorder.companion.create(outputPath: "/path/to/output.mp3", config: config)
+let recorder = SonixRecorder.create(outputPath: "/path/to/output.mp3", config: config)
 ```
 
 ### Tier 3: Real-time Audio Access (5% of users)

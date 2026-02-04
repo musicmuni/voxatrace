@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixFrames](index.md)
+---
+sidebar_label: "SonixFrames"
+---
+
 
 # SonixFrames
 

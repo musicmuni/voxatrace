@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.ai](../../index.md)/[DownloadState](../index.md)/[Idle](index.md)
+---
+sidebar_label: "Idle"
+---
+
 
 # Idle
 

@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[AudioSource](../index.md)/[Samples](index.md)
+---
+sidebar_label: "Samples"
+---
+
 
 # Samples
 

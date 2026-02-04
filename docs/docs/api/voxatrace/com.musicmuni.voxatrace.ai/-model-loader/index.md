@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.ai](../index.md)/[ModelLoader](index.md)
+---
+sidebar_label: "ModelLoader"
+---
+
 
 # ModelLoader
 

@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraEffects](index.md)
+---
+sidebar_label: "CalibraEffects"
+---
+
 
 # CalibraEffects
 
@@ -47,7 +50,7 @@ effects.release()
 
 ```swift
 // Create with preset
-let effects = CalibraEffects.companion.create(preset: EffectsPreset.vocalChain)
+let effects = CalibraEffects.create(preset: .vocalChain)
 
 // Process audio in-place
 effects.process(samples: &samples)
@@ -74,10 +77,10 @@ val effects = CalibraEffects.create(EffectsPreset.PRACTICE)
 
 ```swift
 // Default vocal chain
-let effects = CalibraEffects.companion.create()
+let effects = CalibraEffects.create()
 
 // Specific preset
-let effects = CalibraEffects.companion.create(preset: EffectsPreset.practice)
+let effects = CalibraEffects.create(preset: .practice)
 ```
 
 ### Tier 2: Config Builder (15% of users)
@@ -98,10 +101,10 @@ val effects = CalibraEffects.create(config)
 ```swift
 let config = CalibraEffectsConfig.Builder()
     .addNoiseGate()
-    .addCompressor(preset: CompressorPreset.vocals)
+    .addCompressor(preset: .vocals)
     .addReverb(mix: 0.3, roomSize: 0.5)
     .build()
-let effects = CalibraEffects.companion.create(config: config)
+let effects = CalibraEffects.create(config: config)
 ```
 
 ### Tier 3: Runtime Adjustment (5% of users)

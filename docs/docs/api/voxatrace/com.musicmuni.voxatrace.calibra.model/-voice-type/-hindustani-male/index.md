@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[HindustaniMale](index.md)
+---
+sidebar_label: "HindustaniMale"
+---
+
 
 # HindustaniMale
 

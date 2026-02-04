@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraEffectsConfig](index.md)
+---
+sidebar_label: "CalibraEffectsConfig"
+---
+
 
 # CalibraEffectsConfig
 

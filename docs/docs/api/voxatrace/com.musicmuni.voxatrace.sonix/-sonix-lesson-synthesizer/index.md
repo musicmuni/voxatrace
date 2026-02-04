@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixLessonSynthesizer](index.md)
+---
+sidebar_label: "SonixLessonSynthesizer"
+---
+
 
 # SonixLessonSynthesizer
 
@@ -83,7 +86,7 @@ let svaras = [
     )
 ]
 
-let synth = SonixLessonSynthesizer.companion.create(
+let synth = SonixLessonSynthesizer.create(
     svaras: svaras,
     beatLengthMs: 500
 )

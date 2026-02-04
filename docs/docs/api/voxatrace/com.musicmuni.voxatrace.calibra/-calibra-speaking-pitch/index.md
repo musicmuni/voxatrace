@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraSpeakingPitch](index.md)
+---
+sidebar_label: "CalibraSpeakingPitch"
+---
+
 
 # CalibraSpeakingPitch
 
@@ -60,17 +63,17 @@ val speakingPitch = CalibraSpeakingPitch.detectFromPitch(contour.toPitchesArray(
 
 ```swift
 // From audio samples (16kHz mono)
-let speakingPitch = CalibraSpeakingPitch.companion.detectFromAudio(audioMono: audioSamples)
+let speakingPitch = CalibraSpeakingPitch.detectFromAudio(audioMono: audioSamples)
 
 if speakingPitch 0 {
     print("Speaking pitch: \(speakingPitch) Hz")
-    let note = CalibraMusic.companion.hzToNoteLabel(frequency: speakingPitch)
+    let note = CalibraMusic.hzToNoteLabel(speakingPitch)
     print("Closest note: \(note)")
 }
 
 // Or from existing pitch contour
 let contour = pitchExtractor.extract(audio: audio, sampleRate: 16000)
-let speakingPitch = CalibraSpeakingPitch.companion.detectFromPitch(pitchesHz: contour.toPitchesArray())
+let speakingPitch = CalibraSpeakingPitch.detectFromPitch(pitchesHz: contour.toPitchesArray())
 ```
 
 ## Typical Speaking Pitches

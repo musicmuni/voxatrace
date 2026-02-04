@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra](../../index.md)/[CalibraPitch](../index.md)/[ContourExtractor](index.md)
+---
+sidebar_label: "ContourExtractor"
+---
+
 
 # ContourExtractor
 

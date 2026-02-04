@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraMelodyEval](index.md)
+---
+sidebar_label: "CalibraMelodyEval"
+---
+
 
 # CalibraMelodyEval
 
@@ -80,10 +83,10 @@ let student = LessonMaterial.fromAudio(
     keyHz: 261.63
 )
 
-let extractor = CalibraPitch.companion.createContourExtractor(
-    config: ContourExtractorConfig.companion.SCORING
+let extractor = CalibraPitch.createContourExtractor(
+    config: .scoring
 )
-let result = CalibraMelodyEval.companion.evaluate(
+let result = CalibraMelodyEval.evaluate(
     reference: reference,
     student: student,
     contourExtractor: extractor

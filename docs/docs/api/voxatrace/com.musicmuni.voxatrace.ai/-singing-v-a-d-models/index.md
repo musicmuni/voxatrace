@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.ai](../index.md)/[SingingVADModels](index.md)
+---
+sidebar_label: "SingingVADModels"
+---
+
 
 # SingingVADModels
 

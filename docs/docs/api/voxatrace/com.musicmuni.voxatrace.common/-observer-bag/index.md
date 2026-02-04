@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.common](../index.md)/[ObserverBag](index.md)
+---
+sidebar_label: "ObserverBag"
+---
+
 
 # ObserverBag
 

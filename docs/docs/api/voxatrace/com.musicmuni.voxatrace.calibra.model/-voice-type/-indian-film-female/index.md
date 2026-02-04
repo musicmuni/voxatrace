@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VoiceType](../index.md)/[IndianFilmFemale](index.md)
+---
+sidebar_label: "IndianFilmFemale"
+---
+
 
 # IndianFilmFemale
 

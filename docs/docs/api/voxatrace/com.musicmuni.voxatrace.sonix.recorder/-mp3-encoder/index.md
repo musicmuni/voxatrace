@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.recorder](../index.md)/[Mp3Encoder](index.md)
+---
+sidebar_label: "Mp3Encoder"
+---
+
 
 # Mp3Encoder
 

@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixPlayerConfig](index.md)
+---
+sidebar_label: "SonixPlayerConfig"
+---
+
 
 # SonixPlayerConfig
 
@@ -21,7 +24,7 @@ val player = SonixPlayer.create("song.mp3", SonixPlayerConfig.DEFAULT)
 #### Swift
 
 ```swift
-let player = try await SonixPlayer.companion.create(source: "song.mp3", config: SonixPlayerConfig.companion.DEFAULT)
+let player = try await SonixPlayer.create(source: "song.mp3", config: .default)
 ```
 
 ### Tier 2: Builder (15% of users)
@@ -41,11 +44,11 @@ val player = SonixPlayer.create("song.mp3", config)
 
 ```swift
 let config = SonixPlayerConfig.Builder()
-    .preset(config: SonixPlayerConfig.companion.LOOPING)
-    .volume(volume: 0.8)
-    .pitch(semitones: -2)
+    .preset(.looping)
+    .volume(0.8)
+    .pitch(-2)
     .build()
-let player = try await SonixPlayer.companion.create(source: "song.mp3", config: config)
+let player = try await SonixPlayer.create(source: "song.mp3", config: config)
 ```
 
 ### Tier 3: .copy() (5% of users)

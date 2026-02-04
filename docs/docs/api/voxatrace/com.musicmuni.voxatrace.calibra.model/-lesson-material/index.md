@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../index.md)/[LessonMaterial](index.md)
+---
+sidebar_label: "LessonMaterial"
+---
+
 
 # LessonMaterial
 

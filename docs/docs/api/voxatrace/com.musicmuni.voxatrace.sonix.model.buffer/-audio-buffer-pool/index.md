@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.model.buffer](../index.md)/[AudioBufferPool](index.md)
+---
+sidebar_label: "AudioBufferPool"
+---
+
 
 # AudioBufferPool
 

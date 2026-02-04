@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.calibra.model](../../index.md)/[VADModelProvider](../index.md)/[General](index.md)
+---
+sidebar_label: "General"
+---
+
 
 # General
 

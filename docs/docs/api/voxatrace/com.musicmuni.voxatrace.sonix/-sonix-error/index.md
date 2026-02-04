@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixError](index.md)
+---
+sidebar_label: "SonixError"
+---
+
 
 # SonixError
 

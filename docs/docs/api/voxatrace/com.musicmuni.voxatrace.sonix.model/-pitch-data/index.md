@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.model](../index.md)/[PitchData](index.md)
+---
+sidebar_label: "PitchData"
+---
+
 
 # PitchData
 

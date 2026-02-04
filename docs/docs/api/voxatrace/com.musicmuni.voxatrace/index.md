@@ -1,4 +1,7 @@
-//[voxatrace](../../index.md)/[com.musicmuni.voxatrace](index.md)
+---
+sidebar_label: "voxatrace"
+---
+
 
 # Package-level declarations
 

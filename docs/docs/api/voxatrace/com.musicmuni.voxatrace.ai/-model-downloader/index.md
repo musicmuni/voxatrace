@@ -1,24 +1,26 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.ai](../index.md)/[ModelDownloader](index.md)
+---
+sidebar_label: "ModelDownloader"
+---
+
 
 # ModelDownloader
 
 [common]\
 expect object [ModelDownloader](index.md)
 
-Downloads and extracts AI model bundles on demand.
+Downloads and extracts AI model bundles.
 
 All URLs return zip archives that are extracted to the models folder. This unified approach works for single-file or multi-file bundles.
 
 ## Usage
 
-Models are downloaded on-demand when features are first used:
+Models are downloaded automatically after `VT.initialize()`:
 
 ```kotlin
-VT.initialize("api_key", context)  // Configures downloader, no download yet
+VT.initializeWithApiKey("api_key", context)  // Starts background download
 
-// When using AI features, the required model downloads automatically
-val pitch = CalibraPitch.create()  // Downloads pitch.zip if not cached
-val vad = CalibraVAD.create(VADModelProvider.speech())  // Downloads vad-speech.zip if not cached
+// Later, when using AI features, models are awaited if not ready
+val vad = CalibraVAD.create(VADModelProvider.speech())
 ```
 
 ## Sideloading
@@ -34,14 +36,14 @@ actual object [ModelDownloader](index.md)
 
 Android implementation of ModelDownloader.
 
-Downloads models on-demand from per-feature zip files, extracts to internal storage, and provides model bytes.
+Downloads model bundle from BundleConfig.BUNDLE_URL, extracts to internal storage, and provides model bytes on demand.
 
 [ios]\
 actual object [ModelDownloader](index.md)
 
 iOS implementation of ModelDownloader.
 
-Downloads models on-demand from per-feature zip files, extracts to Application Support, and provides model bytes.
+Downloads model bundle from BundleConfig.BUNDLE_URL, extracts to Application Support, and provides model bytes on demand.
 
 ## Properties
 
@@ -53,7 +55,9 @@ Downloads models on-demand from per-feature zip files, extracts to Application S
 
 | Name | Summary |
 |---|---|
-| [awaitModel](await-model.md) | [common]<br/>expect suspend fun [awaitModel](await-model.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [ByteArray](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html)<br/>Await until a specific model is available. Downloads the appropriate zip on-demand if not already present.<br/>[android, ios]<br/>[android, ios]<br/>actual suspend fun [awaitModel](await-model.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [ByteArray](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html) |
+| [awaitModel](await-model.md) | [common]<br/>expect suspend fun [awaitModel](await-model.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [ByteArray](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html)<br/>Await until a specific model is available (suspends if downloading).<br/>[android, ios]<br/>[android, ios]<br/>actual suspend fun [awaitModel](await-model.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [ByteArray](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-byte-array/index.html) |
 | [configure](configure.md) | [common]<br/>expect fun [configure](configure.md)(context: [Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html)?)<br/>Configure the downloader with platform context. Called internally by VT.initialize().<br/>[android, ios]<br/>[android, ios]<br/>actual fun [configure](configure.md)(context: [Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html)?) |
 | [getModelsDirectory](get-models-directory.md) | [common]<br/>expect fun [getModelsDirectory](get-models-directory.md)(): [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)<br/>Get path to models directory<br/>[android, ios]<br/>[android, ios]<br/>actual fun [getModelsDirectory](get-models-directory.md)(): [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html) |
+| [isDownloadComplete](is-download-complete.md) | [common]<br/>expect fun [isDownloadComplete](is-download-complete.md)(): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html)<br/>Check if all models are downloaded<br/>[android, ios]<br/>[android, ios]<br/>actual fun [isDownloadComplete](is-download-complete.md)(): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html) |
 | [isModelDownloaded](is-model-downloaded.md) | [common]<br/>expect fun [isModelDownloaded](is-model-downloaded.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html)<br/>Check if a specific model is downloaded<br/>[android, ios]<br/>[android, ios]<br/>actual fun [isModelDownloaded](is-model-downloaded.md)(filename: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html)): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html) |
+| [startBackgroundDownload](start-background-download.md) | [common]<br/>expect fun [startBackgroundDownload](start-background-download.md)()<br/>Start background download of bundle (non-blocking)<br/>[android, ios]<br/>[android, ios]<br/>actual fun [startBackgroundDownload](start-background-download.md)() |

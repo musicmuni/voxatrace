@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix](../index.md)/[SonixRecorderConfig](index.md)
+---
+sidebar_label: "SonixRecorderConfig"
+---
+
 
 # SonixRecorderConfig
 
@@ -21,7 +24,7 @@ val recorder = SonixRecorder.create("/path/to/output.m4a", SonixRecorderConfig.V
 #### Swift
 
 ```swift
-let recorder = SonixRecorder.companion.create(outputPath: "/path/to/output.m4a", config: SonixRecorderConfig.companion.VOICE)
+let recorder = SonixRecorder.create(outputPath: "/path/to/output.m4a", config: .voice)
 ```
 
 ### Tier 2: Builder (15% of users)
@@ -41,11 +44,11 @@ val recorder = SonixRecorder.create("/path/to/output.mp3", config)
 
 ```swift
 let config = SonixRecorderConfig.Builder()
-    .preset(config: SonixRecorderConfig.companion.HIGH)
-    .format(format: AudioFormat.mp3)
-    .echoCancellation(enabled: true)
+    .preset(.high)
+    .format(.mp3)
+    .echoCancellation(true)
     .build()
-let recorder = SonixRecorder.companion.create(outputPath: "/path/to/output.mp3", config: config)
+let recorder = SonixRecorder.create(outputPath: "/path/to/output.mp3", config: config)
 ```
 
 ### Tier 3: .copy() (5% of users)

@@ -1,4 +1,7 @@
-//[voxatrace](../../../../index.md)/[com.musicmuni.voxatrace.sonix](../../index.md)/[SonixRecorder](../index.md)/[RecordingListener](index.md)
+---
+sidebar_label: "RecordingListener"
+---
+
 
 # RecordingListener
 

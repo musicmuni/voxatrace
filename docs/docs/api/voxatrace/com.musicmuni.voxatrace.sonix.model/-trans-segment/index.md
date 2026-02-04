@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.sonix.model](../index.md)/[TransSegment](index.md)
+---
+sidebar_label: "TransSegment"
+---
+
 
 # TransSegment
 

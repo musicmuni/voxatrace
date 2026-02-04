@@ -1,4 +1,7 @@
-//[voxatrace](../../index.md)/[com.musicmuni.voxatrace.exceptions](index.md)
+---
+sidebar_label: "exceptions"
+---
+
 
 # Package-level declarations
 

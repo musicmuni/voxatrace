@@ -1,4 +1,7 @@
-//[voxatrace](../../../index.md)/[com.musicmuni.voxatrace.calibra](../index.md)/[CalibraVocalRange](index.md)
+---
+sidebar_label: "CalibraVocalRange"
+---
+
 
 # CalibraVocalRange
 
@@ -55,7 +58,7 @@ analyzer.release()
 ### Swift
 
 ```swift
-let analyzer = CalibraVocalRange.companion.create()
+let analyzer = CalibraVocalRange.create()
 
 // Feed audio from recorder
 for await buffer in recorder.audioBuffersStream() {
