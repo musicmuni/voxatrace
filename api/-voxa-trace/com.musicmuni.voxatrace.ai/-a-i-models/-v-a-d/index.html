@@ -50,7 +50,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-2026.204.2025        </div>
+0.9.1        </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
                 <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
@@ -114,30 +114,11 @@
   <div class="breadcrumbs"><a href="../../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../../index.html">com.musicmuni.voxatrace.ai</a><span class="delimiter">/</span><a href="../index.html">AIModels</a><span class="delimiter">/</span><span class="current">VAD</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>VAD</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">VAD</a></div><p class="paragraph">Voice activity detection models for use with CalibraVAD.</p><h2 class="">Functional Presets</h2><ul><li><p class="paragraph"><a href="-s-p-e-e-c-h.html">SPEECH</a>: Optimized for speech detection (~628KB)</p></li><li><p class="paragraph"><a href="-s-i-n-g-i-n-g.html">SINGING</a>: Optimized for singing detection (~15.4MB)</p></li></ul><h2 class="">Algorithm Access</h2><ul><li><p class="paragraph"><a href="-algorithms/-s-i-l-e-r-o.html">Algorithms.SILERO</a>: Silero VAD model</p></li><li><p class="paragraph"><a href="-algorithms/-y-a-m-n-e-t.html">Algorithms.YAMNET</a>: YAMNet + classifier for singing</p></li></ul><p class="paragraph">Note: VADBackend.SINGING_REALTIME uses <a href="../-pitch/-r-e-a-l-t-i-m-e.html">Pitch.REALTIME</a> (SwiftF0), not a separate VAD model.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">VAD</a></div><p class="paragraph">Voice activity detection models for use with CalibraVAD.</p><h2 class="">Functional Presets (recommended)</h2><ul><li><p class="paragraph"><a href="-s-p-e-e-c-h.html">SPEECH</a>: Optimized for speech detection (~628KB)</p></li></ul><h2 class="">Algorithm Access (for reproducibility/research)</h2><ul><li><p class="paragraph"><a href="-s-i-l-e-r-o.html">SILERO</a>: Silero VAD model</p></li></ul><p class="paragraph">Note: VADBackend.SINGING_REALTIME uses <a href="../-pitch/-r-e-a-l-t-i-m-e.html">Pitch.REALTIME</a> (SwiftF0), not a separate VAD model.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
-      <div data-togglable="TYPE">
-        <h2 class="tableheader">Types</h2>
-        <div class="table"><a data-name="833337573%2FClasslikes%2F-1201622999" anchor-label="Algorithms" id="833337573%2FClasslikes%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
-          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-algorithms/index.html"><span><span>Algorithms</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="833337573%2FClasslikes%2F-1201622999"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-algorithms/index.html">Algorithms</a></div><div class="brief "><p class="paragraph">Direct access to specific VAD algorithms.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div data-togglable="PROPERTY">
         <h2 class="tableheader">Properties</h2>
         <div class="table"><a data-name="1623314597%2FProperties%2F-1201622999" anchor-label="ALL" id="1623314597%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
@@ -155,17 +136,17 @@
               </div>
             </div>
           </div>
-<a data-name="-984532205%2FProperties%2F-1201622999" anchor-label="SINGING" id="-984532205%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+<a data-name="1674477704%2FProperties%2F-1201622999" anchor-label="SILERO" id="1674477704%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-s-i-n-g-i-n-g.html"><span><span>SINGING</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-984532205%2FProperties%2F-1201622999"></span>
+                  <div><a href="-s-i-l-e-r-o.html"><span><span>SILERO</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1674477704%2FProperties%2F-1201622999"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="-s-i-n-g-i-n-g.html">SINGING</a><span class="token operator">: </span><a href="../../-a-i-model/index.html">AIModel</a></div><div class="brief "><p class="paragraph">Optimized for singing detection.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="-s-i-l-e-r-o.html">SILERO</a><span class="token operator">: </span><a href="../../-a-i-model/index.html">AIModel</a></div><div class="brief "><p class="paragraph">Silero VAD model for speech detection.</p></div></div></div>
                 </div>
               </div>
             </div>
