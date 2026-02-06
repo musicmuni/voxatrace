@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F0E85422F265A4100AA35DF /* voxatrace.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F0E85412F265A4100AA35DF /* voxatrace.xcframework */; };
-		9F0E85432F265A4100AA35DF /* voxatrace.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F0E85412F265A4100AA35DF /* voxatrace.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F7159D32F3626500066BAA5 /* VoxaTrace in Frameworks */ = {isa = PBXBuildFile; productRef = F1A2B3C42F26700100000002 /* VoxaTrace */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,7 +17,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F0E85432F265A4100AA35DF /* voxatrace.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -26,7 +24,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9F0E85412F265A4100AA35DF /* voxatrace.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = voxatrace.xcframework; path = Frameworks/voxatrace.xcframework; sourceTree = "<group>"; };
 		9FC6986A2EF2CEA400FE73BF /* VoxaTraceDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoxaTraceDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -43,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F0E85422F265A4100AA35DF /* voxatrace.xcframework in Frameworks */,
+				9F7159D32F3626500066BAA5 /* VoxaTrace in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +50,6 @@
 		9F4282702EFB20A30013368A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F0E85412F265A4100AA35DF /* voxatrace.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -96,6 +92,7 @@
 			);
 			name = VoxaTraceDemo;
 			packageProductDependencies = (
+				F1A2B3C42F26700100000002 /* VoxaTrace */,
 			);
 			productName = VoxaTraceDemo;
 			productReference = 9FC6986A2EF2CEA400FE73BF /* VoxaTraceDemo.app */;
@@ -125,6 +122,9 @@
 			);
 			mainGroup = 9FC698612EF2CEA400FE73BF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F1A2B3C42F26700100000001 /* XCRemoteSwiftPackageReference "voxatrace" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9FC6986B2EF2CEA400FE73BF /* Products */;
 			projectDirPath = "";
@@ -384,6 +384,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F1A2B3C42F26700100000001 /* XCRemoteSwiftPackageReference "voxatrace" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/musicmuni/voxatrace";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F1A2B3C42F26700100000002 /* VoxaTrace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1A2B3C42F26700100000001 /* XCRemoteSwiftPackageReference "voxatrace" */;
+			productName = VoxaTrace;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9FC698622EF2CEA400FE73BF /* Project object */;
 }

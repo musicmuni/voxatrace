@@ -60,8 +60,11 @@ android {
 }
 
 dependencies {
-    // VoxaTrace library (unified sonix + calibra)
-    implementation(files("libs/voxatrace.aar"))
+    // VoxaTrace SDK - Public release (Maven Central)
+    implementation("com.musicmuni:voxatrace:0.9.1")
+
+    // VoxaTrace SDK - Local AAR (uncomment below and comment above for local testing)
+    // implementation(files("libs/voxatrace.aar"))
 
     // Required by Sonix
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
