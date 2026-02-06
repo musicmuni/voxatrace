@@ -2,8 +2,8 @@
 import PackageDescription
 
 let version = "0.9.0"
-let releaseTag = "voxatrace-v\(version)"
-let checksum = "CHECKSUM_HERE"
+let releaseTag = "voxatrace-v0.9.0"
+let checksum = "f974ce45786b1484b4305f3e48fcb2dd4993cafaefc7c5e6e0f588e4dbb744e5"
 
 let package = Package(
     name: "VoxaTrace",
