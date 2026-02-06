@@ -408,6 +408,5 @@ class PitchRecorder {
 
 ## Next Steps
 
-- [SonixRecorder API Reference](/api/sonix/SonixRecorder) - Full API documentation
-- [Playing Audio Guide](/docs/guides/playing-audio) - Playback features
-- [Voice Recorder Recipe](/docs/cookbook/voice-recorder) - Complete example
+- [Playing Audio Guide](./playing-audio) - Playback features
+- [Voice Recorder Recipe](../cookbook/voice-recorder) - Complete example

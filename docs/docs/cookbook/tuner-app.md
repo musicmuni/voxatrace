@@ -355,6 +355,6 @@ fun findNearestNote(frequency: Float, mode: TunerMode): NoteInfo {
 
 ## Next Steps
 
-- [Detecting Pitch Guide](/docs/guides/detecting-pitch) - Pitch detection details
-- [Pitch Detection Concepts](/docs/concepts/pitch-detection) - Theory
-- [Demo App](https://github.com/musicmuni/voxatrace-demos) - Full source
+- [Detecting Pitch Guide](../guides/detecting-pitch) - Pitch detection details
+- [Pitch Detection Concepts](../concepts/pitch-detection) - Theory
+- [Demo App](https://github.com/musicmuni/voxatrace/tree/main/public/demo-apps) - Full source

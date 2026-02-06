@@ -19,10 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.musicmuni:voxatrace:{{version}}")
-
-    // Optional: AI models for SwiftF0 pitch detection
-    implementation("com.musicmuni:voxatrace-ai-models:{{version}}")
+    implementation("com.musicmuni:voxatrace:0.9.1")
 }
 ```
 
@@ -34,10 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.musicmuni:voxatrace:{{version}}'
-
-    // Optional: AI models for SwiftF0 pitch detection
-    implementation 'com.musicmuni:voxatrace-ai-models:{{version}}'
+    implementation 'com.musicmuni:voxatrace:0.9.1'
 }
 ```
 
@@ -65,9 +59,19 @@ Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.1")
 ]
 ```
+
+### CocoaPods
+
+Add to your `Podfile`:
+
+```ruby
+pod 'VoxaTrace', :podspec => 'https://raw.githubusercontent.com/musicmuni/voxatrace/main/VoxaTrace.podspec'
+```
+
+Then run `pod install`.
 
 ### XCFramework (Manual)
 
@@ -89,7 +93,7 @@ Add microphone usage description for recording:
 
 | VoxaTrace | Android Min SDK | iOS Min | Kotlin |
 |-----------|-----------------|---------|--------|
-| 1.x       | API 24 (7.0)    | iOS 14  | 1.9+   |
+| 0.9.x     | API 24 (7.0)    | iOS 14  | 1.9+   |
 
 ## Verifying Installation
 

@@ -31,22 +31,22 @@ val session = CalibraLiveEval.create(
 )
 
 // 2. Prepare (loads reference features)
-session.prepare()
+session.prepareSession()
 
 // 3. Start segment
-session.beginSegment(0)
+session.startPracticingSegment(0)
 
 // 4. Feed audio
 recorder.audioBuffers.collect { buffer ->
-    session.addAudio(buffer.toFloatArray(), buffer.sampleRate)
+    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)
 }
 
 // 5. Get result
-val result = session.endSegmentEarly()
+val result = session.finishPracticingSegment()
 println("Score: ${result?.score}")
 
 // 6. Cleanup
-session.close()
+session.closeSession()
 ```
 
 ### Swift
@@ -60,23 +60,23 @@ let session = CalibraLiveEval.companion.create(
 )
 
 // 2. Prepare
-try await session.prepare()
+try await session.prepareSession()
 
 // 3. Start segment
-session.beginSegment(index: 0)
+session.startPracticingSegment(index: 0)
 
 // 4. Feed audio
 for await buffer in recorder.audioBuffersStream() {
-    session.addAudio(samples: buffer.toFloatArray(), sampleRate: buffer.sampleRate)
+    session.feedAudioSamples(samples: buffer.toFloatArray(), sampleRate: buffer.sampleRate)
 }
 
 // 5. Get result
-if let result = session.endSegmentEarly() {
+if let result = session.finishPracticingSegment() {
     print("Score: \(result.score)")
 }
 
 // 6. Cleanup
-session.close()
+session.closeSession()
 ```
 
 ## Low-Level vs Convenience API
@@ -91,17 +91,17 @@ val session = CalibraLiveEval.create(
     detector = detector
 )
 
-session.prepare()
-session.beginSegment(0)
+session.prepareSession()
+session.startPracticingSegment(0)
 
 // You manage recorder
 recorder.start()
 recorder.audioBuffers.collect { buffer ->
-    session.addAudio(buffer.toFloatArray(), buffer.sampleRate)
+    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)
 }
 recorder.stop()
 
-val result = session.endSegmentEarly()
+val result = session.finishPracticingSegment()
 ```
 
 ### Convenience API
@@ -116,7 +116,7 @@ val session = CalibraLiveEval.create(
     recorder = recorder   // Library controls
 )
 
-session.prepare()
+session.prepareSession()
 
 // Register callbacks
 session.onSegmentComplete { result ->
@@ -124,7 +124,7 @@ session.onSegmentComplete { result ->
 }
 
 // Single call handles everything
-session.playSegment(0)  // Seeks, plays, records, scores
+session.startPracticingSegment(0)  // Seeks, plays, records, scores
 ```
 
 ## Configuration
@@ -203,20 +203,20 @@ session.livePitchContour.collect { contour ->
 
 ```kotlin
 // Jump to specific segment
-session.beginSegment(2)
+session.startPracticingSegment(2)
 
 // Retry current segment
-session.retrySegment()
+session.retryCurrentSegment()
 
 // Cancel without scoring
-session.cancelSegment()
+session.discardCurrentSegment()
 
 // End early and get result
-val result = session.endSegmentEarly()
+val result = session.finishPracticingSegment()
 
 // Navigate between segments
 segmentButtons.forEachIndexed { index, button ->
-    button.onClick { session.beginSegment(index) }
+    button.onClick { session.startPracticingSegment(index) }
 }
 ```
 
@@ -228,7 +228,7 @@ session.onSegmentComplete { result ->
     scoreLabel.text = "${(result.score * 100).toInt()}%"
 
     // Show performance level
-    levelLabel.text = result.level.name  // POOR, FAIR, GOOD, GREAT, PERFECT
+    levelLabel.text = result.level.name  // NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT
 
     // Draw pitch comparison
     drawPitchComparison(
@@ -269,7 +269,7 @@ class PracticeViewModel : ViewModel() {
             recorder = recorder
         )
 
-        session?.prepare()
+        session?.prepareSession()
 
         // Observe state
         viewModelScope.launch {
@@ -287,16 +287,16 @@ class PracticeViewModel : ViewModel() {
         }
     }
 
-    fun playSegment(index: Int) {
-        session?.playSegment(index)
+    fun startPracticingSegment(index: Int) {
+        session?.startPracticingSegment(index)
     }
 
-    fun retrySegment() {
-        session?.retrySegment()
+    fun retryCurrentSegment() {
+        session?.retryCurrentSegment()
     }
 
     fun cleanup() {
-        session?.close()
+        session?.closeSession()
         session = null
     }
 }
@@ -304,6 +304,5 @@ class PracticeViewModel : ViewModel() {
 
 ## Next Steps
 
-- [CalibraLiveEval API Reference](/api/calibra/CalibraLiveEval) - Full API documentation
-- [Live Evaluation Concepts](/docs/concepts/live-evaluation) - Theory and background
-- [Karaoke App Recipe](/docs/cookbook/karaoke-app) - Complete example
+- [Live Evaluation Concepts](../concepts/live-evaluation) - Theory and background
+- [Karaoke App Recipe](../cookbook/karaoke-app) - Complete example

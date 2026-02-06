@@ -369,7 +369,7 @@ class PracticeSession(
             recorder = recorder
         )
 
-        session?.prepare()
+        session?.prepareSession()
 
         // Collect segment results
         session?.onSegmentComplete { result ->
@@ -382,17 +382,17 @@ class PracticeSession(
         }
 
         // Start first segment
-        session?.playSegment(0)
+        session?.startPracticingSegment(0)
     }
 
     fun close() {
-        session?.close()
+        session?.closeSession()
     }
 }
 ```
 
 ## Next Steps
 
-- [Live Evaluation Guide](/docs/guides/live-evaluation) - Scoring details
-- [Karaoke App Recipe](/docs/cookbook/karaoke-app) - Full karaoke implementation
-- [Demo App](https://github.com/musicmuni/voxatrace-demos) - Full source
+- [Live Evaluation Guide](../guides/live-evaluation) - Scoring details
+- [Karaoke App Recipe](./karaoke-app) - Full karaoke implementation
+- [Demo App](https://github.com/musicmuni/voxatrace/tree/main/public/demo-apps) - Full source

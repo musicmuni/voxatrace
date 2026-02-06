@@ -29,7 +29,7 @@ Discover options through IDE autocomplete. Type-safe configuration.
 // Explore options with autocomplete
 val config = PitchDetectorConfig.Builder()
     .algorithm(PitchAlgorithm.SWIFT_F0)
-    .voiceType(VoiceType.Soprano)
+    .voiceType(VoiceType.WesternSoprano)
     .enableProcessing()
     .build()
 
@@ -86,7 +86,7 @@ SonixRecorderConfig.HIGH      // 48kHz stereo high fidelity
 // Detector presets
 PitchDetectorConfig.BALANCED  // Good tradeoff
 PitchDetectorConfig.PRECISE   // Higher accuracy, more CPU
-PitchDetectorConfig.FAST      // Lower latency, less accuracy
+PitchDetectorConfig.RELAXED      // Lower latency, less accuracy
 ```
 
 Start with presets, then customize with Builder if needed.
@@ -134,8 +134,8 @@ suspend fun createPlayer() {
 // Session preparation is async (extracts features)
 suspend fun startSession() {
     val session = CalibraLiveEval.create(...)
-    session.prepare()  // suspend
-    session.beginSegment(0)
+    session.prepareSession()  // suspend
+    session.startPracticingSegment(0)
 }
 ```
 
@@ -153,7 +153,7 @@ val session = CalibraLiveEval.create(
     reference = material,
     detector = detector  // Session takes ownership
 )
-session.close()  // Detector is released here
+session.closeSession()  // Detector is released here
 ```
 
 ### Borrowed Resources
@@ -169,7 +169,7 @@ val session = CalibraLiveEval.create(
     recorder = recorder   // Caller owns
 )
 
-session.close()       // Only releases detector
+session.closeSession()       // Only releases detector
 player.release()      // Caller must release
 recorder.release()    // Caller must release
 ```
@@ -253,7 +253,7 @@ Errors are communicated via:
 ### Return Values
 
 ```kotlin
-val result = session.endSegmentEarly()
+val result = session.finishPracticingSegment()
 if (result == null) {
     // Session wasn't in PRACTICING state
 }
@@ -319,6 +319,6 @@ func create() async throws -> SonixPlayer
 
 ## Next Steps
 
-- [Installation](/docs/getting-started/installation) - Set up VoxaTrace
-- [Android Quickstart](/docs/getting-started/android-quickstart) - Your first app
-- [iOS Quickstart](/docs/getting-started/ios-quickstart) - Your first iOS app
+- [Installation](../getting-started/installation) - Set up VoxaTrace
+- [Android Quickstart](../getting-started/android-quickstart) - Your first app
+- [iOS Quickstart](../getting-started/ios-quickstart) - Your first iOS app

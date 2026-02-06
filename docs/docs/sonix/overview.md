@@ -59,8 +59,8 @@ Microphone
 ```kotlin
 val player = SonixPlayer.create("song.mp3")
 player.play()
-player.setPitch(2)    // +2 semitones (higher key)
-player.setTempo(0.8f) // 80% speed (slower)
+player.pitch = 2f     // +2 semitones (higher key)
+player.tempo = 0.8f   // 80% speed (slower)
 player.seek(30_000)   // Jump to 30 seconds
 ```
 

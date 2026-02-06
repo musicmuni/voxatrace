@@ -313,6 +313,5 @@ The compressor may be squashing too hard:
 
 ## Next Steps
 
-- [CalibraEffects API Reference](/api/calibra/CalibraEffects) - Full API documentation
-- [Recording Audio Guide](/docs/guides/recording-audio) - Use effects with recording
-- [Karaoke App Recipe](/docs/cookbook/karaoke-app) - Complete example with effects
+- [Recording Audio Guide](../guides/recording-audio) - Use effects with recording
+- [Karaoke App Recipe](../cookbook/karaoke-app) - Complete example with effects

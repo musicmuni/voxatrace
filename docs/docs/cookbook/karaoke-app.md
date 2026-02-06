@@ -123,7 +123,7 @@ class KaraokeViewModel : ViewModel() {
             recorder = recorder
         )
 
-        session?.prepare()
+        session?.prepareSession()
 
         // Wire up callbacks
         session?.onSegmentComplete { result ->
@@ -162,11 +162,11 @@ class KaraokeViewModel : ViewModel() {
     }
 
     fun startSinging() {
-        session?.playSegment(0)
+        session?.startPracticingSegment(0)
     }
 
     fun skipToSegment(index: Int) {
-        session?.playSegment(index)
+        session?.startPracticingSegment(index)
     }
 
     fun pause() {
@@ -178,7 +178,7 @@ class KaraokeViewModel : ViewModel() {
     }
 
     private fun handleSongEnd() {
-        val result = session?.finish()
+        val result = session?.finishSession()
         _state.update {
             it.copy(
                 phase = KaraokePhase.FINISHED,
@@ -188,7 +188,7 @@ class KaraokeViewModel : ViewModel() {
     }
 
     fun cleanup() {
-        session?.close()
+        session?.closeSession()
         player?.release()
         recorder?.release()
     }
@@ -365,6 +365,6 @@ player.tempo = 0.75f  // 75% speed
 
 ## Next Steps
 
-- [Live Evaluation Guide](/docs/guides/live-evaluation) - Deeper into scoring
-- [Audio Effects Concepts](/docs/concepts/audio-effects) - Add reverb to vocals
-- [Demo App](https://github.com/musicmuni/voxatrace-demos) - Full source code
+- [Live Evaluation Guide](../guides/live-evaluation) - Deeper into scoring
+- [Audio Effects Concepts](../concepts/audio-effects) - Add reverb to vocals
+- [Demo App](https://github.com/musicmuni/voxatrace/tree/main/public/demo-apps) - Full source code

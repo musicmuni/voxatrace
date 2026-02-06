@@ -17,7 +17,6 @@ A complete guide to pitch detection with CalibraPitch.
 ## Prerequisites
 
 - VoxaTrace installed
-- For SwiftF0: `ai-models` module added to dependencies
 
 ## Quick Start
 
@@ -129,17 +128,6 @@ Best for:
 Deep learning model with better accuracy in noisy conditions.
 
 ```kotlin
-// Option 1: Register globally at app startup
-AIModelRegistry.registerSwiftF0 { ModelLoader.loadSwiftF0() }
-
-// Then create detector without provider
-val detector = CalibraPitch.createDetector(
-    PitchDetectorConfig.Builder()
-        .algorithm(PitchAlgorithm.SWIFT_F0)
-        .build()
-)
-
-// Option 2: Provide inline
 val detector = CalibraPitch.createDetector(
     PitchDetectorConfig.Builder()
         .algorithm(PitchAlgorithm.SWIFT_F0)
@@ -160,7 +148,7 @@ Best for:
 ```kotlin
 PitchDetectorConfig.BALANCED  // Good tradeoff (default)
 PitchDetectorConfig.PRECISE   // Higher accuracy, more CPU
-PitchDetectorConfig.FAST      // Lower latency, less accuracy
+PitchDetectorConfig.RELAXED      // Lower latency, less accuracy
 ```
 
 ### Voice Type
@@ -169,10 +157,9 @@ Optimize for specific vocal ranges:
 
 ```kotlin
 val config = PitchDetectorConfig.Builder()
-    .voiceType(VoiceType.Soprano)      // High female voice
-    .voiceType(VoiceType.Tenor)        // High male voice
-    .voiceType(VoiceType.Baritone)     // Mid male voice
-    .voiceType(VoiceType.Bass)         // Low male voice
+    .voiceType(VoiceType.WesternSoprano)  // High female voice
+    .voiceType(VoiceType.WesternTenor)    // High male voice
+    .voiceType(VoiceType.WesternBass)     // Low male voice
     .voiceType(VoiceType.Auto)         // Detect automatically
     .voiceType(VoiceType.carnaticMale) // Indian classical male
     .build()
@@ -183,8 +170,6 @@ val config = PitchDetectorConfig.Builder()
 ```kotlin
 val config = PitchDetectorConfig.Builder()
     .enableProcessing()  // Enable smoothing and octave correction
-    .smoothingWindowSize(7)
-    .octaveThresholdCents(500f)
     .build()
 
 // Or control at runtime
@@ -197,9 +182,9 @@ How to handle low-amplitude audio:
 
 ```kotlin
 val config = PitchDetectorConfig.Builder()
-    .quietHandling(QuietHandling.NORMAL)   // Standard gating
-    .quietHandling(QuietHandling.LENIENT)  // More sensitive for soft singers
-    .quietHandling(QuietHandling.STRICT)   // Stricter rejection
+    .quietHandling(QuietHandling.NORMAL)      // Standard gating
+    .quietHandling(QuietHandling.SENSITIVE)   // More sensitive for soft singers
+    .quietHandling(QuietHandling.NOISY)       // For noisy environments
     .build()
 ```
 
@@ -410,7 +395,7 @@ class PitchGraphView : View {
 - Check microphone permission
 - Verify audio is reaching detector (print buffer sizes)
 - Try lowering confidence threshold
-- Check if audio is too quiet (use `QuietHandling.LENIENT`)
+- Check if audio is too quiet (use `QuietHandling.SENSITIVE`)
 
 ### Wrong Octave
 
@@ -426,6 +411,5 @@ class PitchGraphView : View {
 
 ## Next Steps
 
-- [CalibraPitch API Reference](/api/calibra/CalibraPitch) - Full API documentation
-- [Pitch Detection Concepts](/docs/concepts/pitch-detection) - Theory and background
-- [Tuner App Recipe](/docs/cookbook/tuner-app) - Complete example
+- [Pitch Detection Concepts](../concepts/pitch-detection) - Theory and background
+- [Tuner App Recipe](../cookbook/tuner-app) - Complete example

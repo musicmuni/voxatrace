@@ -60,6 +60,12 @@ dependencies: [
 ]
 ```
 
+### iOS (CocoaPods)
+
+```ruby
+pod 'VoxaTrace', :podspec => 'https://raw.githubusercontent.com/musicmuni/voxatrace/main/VoxaTrace.podspec'
+```
+
 ## Quick Start
 
 ### Kotlin

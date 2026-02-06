@@ -56,7 +56,7 @@ A deep learning model trained on singing and speech data.
 |--------|---------|
 | **Accuracy** | Excellent, handles noise well |
 | **Latency** | ~50ms |
-| **Dependencies** | ONNX Runtime, ai-models module |
+| **Dependencies** | ONNX Runtime |
 | **Best For** | Singing apps, noisy environments |
 
 ### Choosing an Algorithm
@@ -199,7 +199,7 @@ VoxaTrace detects 50 Hz to 2000 Hz by default. Customize for your use case:
 
 ```kotlin
 val config = PitchDetectorConfig.Builder()
-    .voiceType(VoiceType.Soprano)  // Optimizes for soprano range
+    .voiceType(VoiceType.WesternSoprano)  // Optimizes for soprano range
     .build()
 ```
 
@@ -214,6 +214,5 @@ val point = detector.detect(samples, sampleRate = 48000)  // Resampled internall
 
 ## Next Steps
 
-- [Detecting Pitch Guide](/docs/guides/detecting-pitch) - Implementation guide
-- [CalibraPitch API Reference](/api/calibra/CalibraPitch) - Full API documentation
-- [Voice Activity Detection](/docs/concepts/voice-activity) - Detect when someone is singing
+- [Detecting Pitch Guide](../guides/detecting-pitch) - Implementation guide
+- [Voice Activity Detection](./voice-activity) - Detect when someone is singing

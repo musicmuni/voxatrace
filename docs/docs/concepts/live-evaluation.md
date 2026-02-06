@@ -78,7 +78,7 @@ Live evaluation returns several score types:
 |-------|------------------|
 | **Overall Score** | Combined pitch + timing accuracy (0.0 to 1.0) |
 | **Pitch Accuracy** | How many notes matched the reference pitch |
-| **Performance Level** | Qualitative rating (POOR, FAIR, GOOD, GREAT, PERFECT) |
+| **Performance Level** | Qualitative rating (NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT) |
 
 ## Session Lifecycle
 
@@ -99,29 +99,29 @@ val session = CalibraLiveEval.create(
 
 ```kotlin
 // Suspending - extracts features from reference audio
-session.prepare()
+session.prepareSession()
 ```
 
 ### 3. Practice Segment
 
 ```kotlin
 // Start practicing segment 0
-session.beginSegment(0)
+session.startPracticingSegment(0)
 
 // Feed audio from recorder
 recorder.audioBuffers.collect { buffer ->
-    session.addAudio(buffer.toFloatArray(), buffer.sampleRate)
+    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)
 }
 
 // End segment and get result
-val result = session.endSegmentEarly()
+val result = session.finishPracticingSegment()
 println("Score: ${result?.score}")
 ```
 
 ### 4. Cleanup
 
 ```kotlin
-session.close()  // Releases detector and resources
+session.closeSession()  // Releases detector and resources
 ```
 
 ## API Modes
@@ -136,16 +136,16 @@ val session = CalibraLiveEval.create(
     detector = CalibraPitch.createDetector()
 )
 
-session.prepare()
-session.beginSegment(0)
+session.prepareSession()
+session.startPracticingSegment(0)
 
 // You control when audio is fed
 myRecorder.audioFlow.collect { buffer ->
-    session.addAudio(buffer.samples, buffer.sampleRate)
+    session.feedAudioSamples(buffer.samples, buffer.sampleRate)
 }
 
-val result = session.endSegmentEarly()
-session.close()
+val result = session.finishPracticingSegment()
+session.closeSession()
 ```
 
 ### Convenience API
@@ -160,7 +160,7 @@ val session = CalibraLiveEval.create(
     recorder = myRecorder   // Library controls recording
 )
 
-session.prepare()
+session.prepareSession()
 
 // Register callbacks
 session.onSegmentComplete { result ->
@@ -168,7 +168,7 @@ session.onSegmentComplete { result ->
 }
 
 // Single call handles everything
-session.playSegment(0)  // Seeks, plays, records, evaluates
+session.startPracticingSegment(0)  // Starts practicing the first segment
 ```
 
 ## Observing State
@@ -252,7 +252,7 @@ data class SegmentResult(
     val segment: Segment,           // Which segment
     val score: Float,               // Overall score (0.0 to 1.0)
     val pitchAccuracy: Float,       // Pitch accuracy (0.0 to 1.0)
-    val level: PerformanceLevel,    // POOR, FAIR, GOOD, GREAT, PERFECT
+    val level: PerformanceLevel,    // NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT
     val attemptNumber: Int,         // Which attempt this was
     val referencePitch: PitchContour,  // What they should have sung
     val studentPitch: PitchContour     // What they actually sung
@@ -280,13 +280,13 @@ Understanding resource ownership prevents memory leaks:
 
 | Resource | Owned By | Cleanup |
 |----------|----------|---------|
-| Detector | Session | `session.close()` releases it |
+| Detector | Session | `session.closeSession()` releases it |
 | Player | Caller | You call `player.release()` |
 | Recorder | Caller | You call `recorder.release()` |
 
 ```kotlin
 // Correct cleanup order
-session.close()       // Releases detector
+session.closeSession()       // Releases detector
 player.release()      // You manage player
 recorder.release()    // You manage recorder
 ```
@@ -299,10 +299,10 @@ recorder.release()    // You manage recorder
 session.onSegmentComplete { result ->
     if (result.score < 0.7f) {
         showRetryButton {
-            session.retrySegment()
+            session.retryCurrentSegment()
         }
     } else {
-        session.beginSegment(result.segment.index + 1)
+        session.startPracticingSegment(result.segment.index + 1)
     }
 }
 ```
@@ -313,7 +313,7 @@ session.onSegmentComplete { result ->
 // Jump to any segment
 segmentButtons.forEachIndexed { index, button ->
     button.onClick {
-        session.beginSegment(index)
+        session.startPracticingSegment(index)
     }
 }
 ```
@@ -322,12 +322,11 @@ segmentButtons.forEachIndexed { index, button ->
 
 ```kotlin
 cancelButton.onClick {
-    session.cancelSegment()  // Discards current attempt
+    session.discardCurrentSegment()  // Discards the current attempt
 }
 ```
 
 ## Next Steps
 
-- [CalibraLiveEval API Reference](/api/calibra/CalibraLiveEval) - Full API documentation
-- [Live Evaluation Guide](/docs/guides/live-evaluation) - Implementation walkthrough
-- [Karaoke App Recipe](/docs/cookbook/karaoke-app) - Complete example
+- [Live Evaluation Guide](../guides/live-evaluation) - Implementation walkthrough
+- [Karaoke App Recipe](../cookbook/karaoke-app) - Complete example

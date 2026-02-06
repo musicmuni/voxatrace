@@ -56,29 +56,12 @@ Neural network trained on speech. Very accurate for spoken content.
 |--------|---------|
 | **Speed** | Fast |
 | **Accuracy** | Excellent for speech |
-| **Dependencies** | ONNX Runtime, ai-models |
+| **Dependencies** | ONNX Runtime |
 | **Best For** | Voice assistants, transcription |
 
 ```kotlin
 val vad = CalibraVAD.create(
     VADModelProvider.Speech { ModelLoader.loadSpeechVAD() }
-)
-```
-
-### Singing (YAMNet-based)
-
-Distinguishes singing from speech and other sounds.
-
-| Aspect | Details |
-|--------|---------|
-| **Speed** | Moderate |
-| **Accuracy** | Excellent for singing |
-| **Dependencies** | ONNX Runtime, ai-models |
-| **Best For** | Karaoke apps, singing detection |
-
-```kotlin
-val vad = CalibraVAD.create(
-    VADModelProvider.Singing { ModelLoader.loadSingingVAD() }
 )
 ```
 
@@ -90,7 +73,7 @@ Uses pitch detection confidence for low-latency singing detection.
 |--------|---------|
 | **Speed** | Very fast |
 | **Accuracy** | Good for singing |
-| **Dependencies** | ONNX Runtime, ai-models |
+| **Dependencies** | ONNX Runtime |
 | **Best For** | Real-time singing apps, low latency |
 
 ```kotlin
@@ -144,11 +127,10 @@ The `analyze()` method returns a `VADResult`:
 
 ```kotlin
 data class VADResult(
-    val ratio: Float,           // 0.0 to 1.0
-    val level: VADLevel,        // SILENCE, SPARSE, MODERATE, STRONG
-    val isSilence: Boolean,     // ratio < 0.1
-    val hasVoice: Boolean,      // ratio > 0.3
-    val isStrongVoice: Boolean  // ratio > 0.7
+    val ratio: Float,              // 0.0 to 1.0
+    val level: VoiceActivityLevel, // NONE, PARTIAL, FULL
+    val isVoiceDetected: Boolean,  // ratio > 0.3
+    val isFullActivity: Boolean    // ratio > 0.7
 )
 ```
 
@@ -156,10 +138,9 @@ Use the level for UI feedback:
 
 ```kotlin
 when (result.level) {
-    VADLevel.SILENCE -> showSilenceState()
-    VADLevel.SPARSE -> showWeakVoice()
-    VADLevel.MODERATE -> showActiveVoice()
-    VADLevel.STRONG -> showStrongVoice()
+    VoiceActivityLevel.NONE -> showSilenceState()
+    VoiceActivityLevel.PARTIAL -> showWeakVoice()
+    VoiceActivityLevel.FULL -> showStrongVoice()
 }
 ```
 
@@ -251,6 +232,5 @@ For battery-sensitive apps, use **General** backend and only load neural models 
 
 ## Next Steps
 
-- [CalibraVAD API Reference](/api/calibra/CalibraVAD) - Full API documentation
-- [Pitch Detection](/docs/concepts/pitch-detection) - Detect what note is being sung
-- [Live Evaluation](/docs/concepts/live-evaluation) - Score singing in real-time
+- [Pitch Detection](./pitch-detection) - Detect what note is being sung
+- [Live Evaluation](./live-evaluation) - Score singing in real-time

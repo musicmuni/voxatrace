@@ -329,6 +329,6 @@ class PitchDetectorViewController: UIViewController {
 
 ## Next Steps
 
-- [Detecting Pitch Guide](/docs/guides/detecting-pitch) - Deep dive into pitch detection options
-- [Recording Audio Guide](/docs/guides/recording-audio) - Learn about recording features
-- [Live Evaluation Guide](/docs/guides/live-evaluation) - Score singing against reference
+- [Detecting Pitch Guide](../guides/detecting-pitch) - Deep dive into pitch detection options
+- [Recording Audio Guide](../guides/recording-audio) - Learn about recording features
+- [Live Evaluation Guide](../guides/live-evaluation) - Score singing against reference

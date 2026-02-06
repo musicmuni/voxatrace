@@ -324,6 +324,6 @@ recorder?.level?.collect { level ->
 
 ## Next Steps
 
-- [Recording Audio Guide](/docs/guides/recording-audio) - Detailed recording options
-- [Playing Audio Guide](/docs/guides/playing-audio) - Playback features
-- [Demo App](https://github.com/musicmuni/voxatrace-demos) - Full source
+- [Recording Audio Guide](../guides/recording-audio) - Detailed recording options
+- [Playing Audio Guide](../guides/playing-audio) - Playback features
+- [Demo App](https://github.com/musicmuni/voxatrace/tree/main/public/demo-apps) - Full source

@@ -406,6 +406,5 @@ class KaraokePlayer(
 
 ## Next Steps
 
-- [SonixPlayer API Reference](/api/sonix/SonixPlayer) - Full API documentation
-- [Recording Audio Guide](/docs/guides/recording-audio) - Capture audio
-- [Karaoke App Recipe](/docs/cookbook/karaoke-app) - Complete example
+- [Recording Audio Guide](./recording-audio) - Capture audio
+- [Karaoke App Recipe](../cookbook/karaoke-app) - Complete example

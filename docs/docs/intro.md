@@ -151,15 +151,20 @@ val config = PitchDetectorConfig.PRECISE.copy(confidenceThreshold = 0.6f)
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.musicmuni:voxatrace:{{version}}")
+    implementation("com.musicmuni:voxatrace:0.9.1")
 }
 ```
 
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.1")
 ]
+```
+
+```ruby
+# Podfile
+pod 'VoxaTrace', :podspec => 'https://raw.githubusercontent.com/musicmuni/voxatrace/main/VoxaTrace.podspec'
 ```
 
 [Full installation guide →](./getting-started/installation)
@@ -167,4 +172,4 @@ dependencies: [
 ## Support
 
 - [GitHub Issues](https://github.com/musicmuni/voxatrace/issues) – Bug reports and feature requests
-- [Demo Apps](https://github.com/musicmuni/voxatrace-demos) – Working examples
+- [Demo Apps](https://github.com/musicmuni/voxatrace/tree/main/public/demo-apps) – Working examples
