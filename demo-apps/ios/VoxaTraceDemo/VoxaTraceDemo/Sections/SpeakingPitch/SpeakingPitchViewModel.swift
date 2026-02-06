@@ -59,6 +59,7 @@ final class SpeakingPitchViewModel: ObservableObject {
     private var recorder: SonixRecorder?
     private var pitch: CalibraPitch.Detector?
     private var collectedChunks: [Float] = []
+    private var collectedSampleRate: Int = 16000
 
     // MARK: - Lifecycle
 
@@ -83,17 +84,12 @@ final class SpeakingPitchViewModel: ObservableObject {
         status = "Say something..."
 
         // Collect audio buffers
+        // ADR-017: Pass sampleRate directly; CalibraPitch handles resampling internally
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
-
-                let calculatedRms = pitch?.getAmplitude(samples: samples16k, sampleRate: 16000) ?? 0.0
+                let calculatedRms = pitch?.getAmplitude(samples: buffer.samples, sampleRate: hwRate) ?? 0.0
 
                 await MainActor.run {
                     currentLevel = calculatedRms
@@ -103,11 +99,12 @@ final class SpeakingPitchViewModel: ObservableObject {
                         if calculatedRms > RMS_THRESHOLD {
                             detectionState = .countdown
                             status = "Keep speaking..."
+                            collectedSampleRate = hwRate
                             startCountdown()
                         }
 
                     case .countdown:
-                        collectedChunks.append(contentsOf: samples16k)
+                        collectedChunks.append(contentsOf: buffer.samples)
 
                     default:
                         break
@@ -138,13 +135,8 @@ final class SpeakingPitchViewModel: ObservableObject {
                 return
             }
 
-            let samples16k = SonixResampler.resample(
-                samples: audioData.samples,
-                fromRate: Int(audioData.sampleRate),
-                toRate: 16000
-            )
-
-            let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: samples16k)
+            // ADR-017: Pass original samples; CalibraSpeakingPitch handles resampling internally
+            let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: audioData.samples, sampleRate: audioData.sampleRate)
 
             await MainActor.run {
                 if pitchHz > 0 {
@@ -209,7 +201,8 @@ final class SpeakingPitchViewModel: ObservableObject {
         }
 
         let allSamples = collectedChunks
-        let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: allSamples)
+        // ADR-017: Pass sampleRate; CalibraSpeakingPitch handles resampling internally
+        let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: allSamples, sampleRate: collectedSampleRate)
 
         if pitchHz > 0 {
             detectedPitchHz = pitchHz

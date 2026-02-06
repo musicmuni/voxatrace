@@ -279,12 +279,7 @@ class SingalongViewModel : ViewModel() {
             try {
                 val pitchContent = context.assets.open("$lessonName.pitchPP").bufferedReader().readText()
                 val pitchData = SonixParser.parsePitchString(pitchContent)
-                if (pitchData != null) {
-                    PitchContour.fromArrays(
-                        times = pitchData.times,
-                        pitches = pitchData.pitchesHz
-                    )
-                } else null
+                pitchData?.let { PitchContour.fromPitchData(it) }
             } catch (e: Exception) {
                 null // Pitch file is optional
             }

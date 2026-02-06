@@ -73,10 +73,12 @@ final class NoteEvalViewModel: ObservableObject {
 
     private var recorder: SonixRecorder?
     private var collectedAudio: [Float] = []
+    private var recordingSampleRate: Int = 16000
 
     // Singalong
     private var referencePlayer: SonixPlayer?
     private var playerObserverTask: Task<Void, Never>?
+    private var audioCollectionTask: Task<Void, Never>?
     private var synthesizedOutputPath: URL?
     private var lastSynthesizedExercise: Int = -1
     private var lastSynthesizedDuration: Int32 = -1
@@ -164,49 +166,78 @@ final class NoteEvalViewModel: ObservableObject {
 
         isSingalongActive = true
 
-        // Start collecting audio
-        Task {
-            let hwRate = AudioSessionManager.hardwareSampleRate
-            var sampleCount = 0
+        // Start recorder first to get actual sample rate
+        recorder?.start()
 
-            guard let recorder = recorder else { return }
+        // Capture actual sample rate (SDK handles resampling internally per ADR-017)
+        recordingSampleRate = Int(recorder?.actualSampleRate ?? 16000)
+        print("[NoteEval] 🎤 Recorder started, sampleRate=\(recordingSampleRate)")
+
+        // Start collecting audio (store task to properly cancel on stop)
+        audioCollectionTask = Task {
+            var sampleCount = 0
+            var bufferCount = 0
+
+            guard let recorder = recorder else {
+                print("[NoteEval] ❌ Recorder is nil in collection task")
+                return
+            }
 
             for await buffer in recorder.audioBuffers {
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
+                let samples = buffer.samples
+                bufferCount += 1
 
-                collectedAudio.append(contentsOf: samples16k)
-                sampleCount += samples16k.count
+                collectedAudio.append(contentsOf: samples)
+                sampleCount += samples.count
 
-                let sum = samples16k.reduce(0) { $0 + $1 * $1 }
-                let rms = sqrt(sum / Float(samples16k.count))
+                let sum = samples.reduce(0) { $0 + $1 * $1 }
+                let rms = sqrt(sum / Float(samples.count))
+                let minSample = samples.min() ?? 0
+                let maxSample = samples.max() ?? 0
+
+                // Log every 10th buffer to avoid spam
+                if bufferCount % 10 == 0 {
+                    print("[NoteEval] 📦 Buffer #\(bufferCount): samples=\(samples.count), total=\(sampleCount), rms=\(String(format: "%.4f", rms)), range=[\(String(format: "%.4f", minSample)), \(String(format: "%.4f", maxSample))]")
+                }
 
                 await MainActor.run {
                     recordingLevel = min(rms * 5, 1.0)
-                    recordingDuration = Float(sampleCount) / 16000.0
+                    recordingDuration = Float(sampleCount) / Float(recordingSampleRate)
                 }
             }
+            print("[NoteEval] 🏁 Audio collection ended: \(bufferCount) buffers, \(sampleCount) total samples")
         }
 
-        // Start recorder and player together
-        recorder?.start()
+        // Start player
         referencePlayer?.play()
     }
 
     /// Stop singalong session and auto-evaluate.
     func stopSingalong() {
+        print("[NoteEval] 🛑 stopSingalong called, collectedAudio.count=\(collectedAudio.count)")
+
+        // Cancel audio collection first (matches Android pattern)
+        audioCollectionTask?.cancel()
+        audioCollectionTask = nil
+
         recorder?.stop()
         referencePlayer?.stop()
         isSingalongActive = false
 
+        // Log audio stats
         if !collectedAudio.isEmpty {
+            let minSample = collectedAudio.min() ?? 0
+            let maxSample = collectedAudio.max() ?? 0
+            let sum = collectedAudio.reduce(0) { $0 + $1 * $1 }
+            let rms = sqrt(sum / Float(collectedAudio.count))
+            let durationSec = Float(collectedAudio.count) / Float(recordingSampleRate)
+            print("[NoteEval] 📊 Audio stats: samples=\(collectedAudio.count), duration=\(String(format: "%.2f", durationSec))s, rms=\(String(format: "%.4f", rms)), range=[\(String(format: "%.4f", minSample)), \(String(format: "%.4f", maxSample))]")
+
             hasRecording = true
             status = "Recording complete. Evaluating..."
             evaluate()
         } else {
+            print("[NoteEval] ⚠️ No audio collected!")
             status = "No audio recorded. Try again."
         }
     }
@@ -289,6 +320,7 @@ final class NoteEvalViewModel: ObservableObject {
 
     func evaluate() {
         guard !collectedAudio.isEmpty else {
+            print("[NoteEval] ❌ evaluate() called but collectedAudio is empty")
             status = "No recording to evaluate"
             return
         }
@@ -302,18 +334,56 @@ final class NoteEvalViewModel: ObservableObject {
             let duration = noteDurationMs
             let preset = selectedPreset
 
+            print("[NoteEval] 🎼 Pattern: midiNotes=\(midiNotes), keyMidi=\(keyMidi), duration=\(duration)ms, preset=\(preset)")
+
             let pattern = ExercisePattern.fromMidiNotes(
                 midiNotes: midiNotes,
                 noteDurationMs: duration
             )
+            print("[NoteEval] 🎼 Pattern created: noteCount=\(pattern.noteFrequencies.count), totalDuration=\(pattern.totalDurationMs)ms")
+            for (i, freq) in pattern.noteFrequencies.enumerated() {
+                let dur = pattern.noteDurations[i]
+                print("[NoteEval]    Note[\(i)]: freq=\(String(format: "%.1f", freq))Hz, duration=\(dur)ms")
+            }
 
             let studentAudio = collectedAudio
+            let sampleRate = recordingSampleRate
+            print("[NoteEval] 🔊 Audio to extract: \(studentAudio.count) samples @ \(sampleRate)Hz = \(String(format: "%.2f", Float(studentAudio.count) / Float(sampleRate)))s")
 
+            // SDK handles resampling internally (ADR-017)
             let extractor = CalibraPitch.createContourExtractor()
-            let studentContour = extractor.extract(audio: studentAudio, sampleRate: 16000)
+            let studentContour = extractor.extract(audio: studentAudio, sampleRate: sampleRate)
             extractor.release()
 
-            let keyHz = MusicUtils.midiToHz(Int(keyMidi))
+            // Log pitch extraction results
+            let pitchSamples = studentContour.samples
+            let voicedSamples = pitchSamples.filter { $0.isVoiced }
+            print("[NoteEval] 🎵 Pitch extraction: totalSamples=\(pitchSamples.count), voicedSamples=\(voicedSamples.count)")
+
+            if !voicedSamples.isEmpty {
+                let pitches = voicedSamples.map { $0.pitch }
+                let minPitch = pitches.min() ?? 0
+                let maxPitch = pitches.max() ?? 0
+                let avgPitch = pitches.reduce(0, +) / Float(pitches.count)
+                print("[NoteEval] 🎵 Voiced pitch stats: min=\(String(format: "%.1f", minPitch))Hz, max=\(String(format: "%.1f", maxPitch))Hz, avg=\(String(format: "%.1f", avgPitch))Hz")
+
+                // Show first few and last few samples
+                let firstFew = Array(voicedSamples.prefix(5))
+                let lastFew = Array(voicedSamples.suffix(5))
+                print("[NoteEval] 🎵 First voiced samples:")
+                for p in firstFew {
+                    print("[NoteEval]    t=\(String(format: "%.3f", p.timeSeconds))s, pitch=\(String(format: "%.1f", p.pitch))Hz")
+                }
+                print("[NoteEval] 🎵 Last voiced samples:")
+                for p in lastFew {
+                    print("[NoteEval]    t=\(String(format: "%.3f", p.timeSeconds))s, pitch=\(String(format: "%.1f", p.pitch))Hz")
+                }
+            } else {
+                print("[NoteEval] ⚠️ NO VOICED SAMPLES DETECTED!")
+            }
+
+            let keyHz = CalibraMusic.midiToHz(Float(keyMidi))
+            print("[NoteEval] 🎹 Reference key: midi=\(keyMidi), hz=\(String(format: "%.2f", keyHz))Hz")
 
             let evalResult = CalibraNoteEval.evaluate(
                 pattern: pattern,
@@ -321,6 +391,14 @@ final class NoteEvalViewModel: ObservableObject {
                 referenceKeyHz: keyHz,
                 preset: preset
             )
+
+            // Log evaluation results
+            print("[NoteEval] 📈 EVALUATION RESULT:")
+            print("[NoteEval]    Overall score: \(evalResult.scorePercent)%")
+            print("[NoteEval]    Note results count: \(evalResult.noteResults.count)")
+            for noteResult in evalResult.noteResults {
+                print("[NoteEval]    Note[\(noteResult.noteIndex)]: score=\(noteResult.scorePercent)%, expectedFreq=\(String(format: "%.1f", noteResult.expectedFrequencyHz))Hz, level=\(noteResult.level), passing=\(noteResult.isPassing)")
+            }
 
             await MainActor.run {
                 result = evalResult
@@ -337,6 +415,9 @@ final class NoteEvalViewModel: ObservableObject {
     // MARK: - Private Methods
 
     private func cleanup() {
+        audioCollectionTask?.cancel()
+        audioCollectionTask = nil
+
         recorder?.stop()
         recorder?.release()
         recorder = nil

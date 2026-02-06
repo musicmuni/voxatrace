@@ -61,12 +61,6 @@ final class LiveVADViewModel: ObservableObject {
             let vad = CalibraVAD.create(.singingRealtime())
             let ratio = vad.getVADRatio(samples: samples16k)
             """
-        case .singing:
-            return """
-            // Auto-loads bundled YAMNet models
-            let vad = CalibraVAD.create(.singing())
-            let ratio = vad.getVADRatio(samples: samples16k)
-            """
         default:
             return "// Unknown backend"
         }
@@ -106,9 +100,6 @@ final class LiveVADViewModel: ObservableObject {
         case .singingRealtime:
             // Auto-loads bundled SwiftF0 model
             return CalibraVAD.create(.singingRealtime())
-        case .singing:
-            // Auto-loads bundled YAMNet models
-            return CalibraVAD.create(.singing())
         default:
             return CalibraVAD.create(.general)
         }
@@ -155,19 +146,14 @@ final class LiveVADViewModel: ObservableObject {
         isRecording = true
         resetStatistics()
 
+        // ADR-017: Pass sampleRate directly; CalibraVAD handles resampling internally
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
                 let startTime = CFAbsoluteTimeGetCurrent()
 
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
-
-                let ratio = vad.getVADRatio(samples: samples16k)
+                let ratio = vad.getVADRatio(samples: buffer.samples, sampleRate: hwRate)
 
                 let endTime = CFAbsoluteTimeGetCurrent()
                 let latencyMs = Int((endTime - startTime) * 1000)
@@ -176,7 +162,7 @@ final class LiveVADViewModel: ObservableObject {
                     continue
                 }
 
-                let amplitude = calculateRMS(samples: samples16k)
+                let amplitude = calculateRMS(samples: buffer.samples)
                 let isVoice = ratio > threshold
                 let frameDuration: Float = 0.032
 

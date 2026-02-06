@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.musicmuni.voxatrace.demo.components.OptionChip
+import kotlin.math.roundToInt
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,11 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel.DifficultyPreset
-import com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel.ExerciseEvalResult
-import com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel.NoteEvalResult
+import com.musicmuni.voxatrace.calibra.CalibraMusic
+import com.musicmuni.voxatrace.calibra.ExerciseResult
+import com.musicmuni.voxatrace.calibra.NoteResult
+import com.musicmuni.voxatrace.calibra.model.NoteEvalPreset
 import com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel.NoteEvalViewModel
-import kotlin.math.pow
 
 /**
  * Note/Exercise evaluation view with singalong mode.
@@ -97,7 +99,7 @@ fun NoteEvalView(
         // Visual pattern display
         PatternDisplaySection(
             midiNotes = viewModel.currentMidiNotes,
-            getNoteResult = { viewModel.noteResult(it) }
+            noteResults = result?.noteResults
         )
 
         // Step 2: Singalong (play + record)
@@ -124,11 +126,11 @@ fun NoteEvalView(
 private fun ExercisePickerSection(
     exercises: List<com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel.ExerciseInfo>,
     selectedExercise: Int,
-    selectedPreset: DifficultyPreset,
+    selectedPreset: NoteEvalPreset,
     noteDurationMs: Int,
     availableDurations: List<Int>,
     onSelectExercise: (Int) -> Unit,
-    onSelectPreset: (DifficultyPreset) -> Unit,
+    onSelectPreset: (NoteEvalPreset) -> Unit,
     onSelectDuration: (Int) -> Unit
 ) {
     var exerciseMenuExpanded by remember { mutableStateOf(false) }
@@ -183,60 +185,65 @@ private fun ExercisePickerSection(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.weight(1f)
-            ) {
-                DifficultyPreset.entries.forEachIndexed { index, preset ->
-                    SegmentedButton(
-                        selected = selectedPreset == preset,
-                        onClick = { onSelectPreset(preset) },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = DifficultyPreset.entries.size
-                        ),
-                        label = {
-                            Text(
-                                text = when (preset) {
-                                    DifficultyPreset.LENIENT -> "Lenient"
-                                    DifficultyPreset.BALANCED -> "Balanced"
-                                    DifficultyPreset.STRICT -> "Strict"
-                                },
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    )
-                }
+            NoteEvalPreset.entries.forEach { preset ->
+                OptionChip(
+                    selected = selectedPreset == preset,
+                    onClick = { onSelectPreset(preset) },
+                    label = when (preset) {
+                        NoteEvalPreset.LENIENT -> "Lenient"
+                        NoteEvalPreset.BALANCED -> "Balanced"
+                        NoteEvalPreset.STRICT -> "Strict"
+                    }
+                )
             }
         }
 
-        // Note duration picker
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        // Note duration slider
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(
-                text = "Note Duration:",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Note Duration:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${noteDurationMs / 1000.0}s",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            val currentIndex = availableDurations.indexOf(noteDurationMs).coerceAtLeast(0)
+            Slider(
+                value = currentIndex.toFloat(),
+                onValueChange = { newIndex ->
+                    val index = newIndex.roundToInt().coerceIn(0, availableDurations.lastIndex)
+                    onSelectDuration(availableDurations[index])
+                },
+                valueRange = 0f..(availableDurations.size - 1).toFloat(),
+                steps = availableDurations.size - 2, // steps between endpoints
+                modifier = Modifier.fillMaxWidth()
             )
 
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.weight(1f)
+            // Show discrete value labels
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                availableDurations.forEachIndexed { index, duration ->
-                    SegmentedButton(
-                        selected = noteDurationMs == duration,
-                        onClick = { onSelectDuration(duration) },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = availableDurations.size
-                        ),
-                        label = {
-                            Text(
-                                text = "${duration / 1000.0}s",
-                                style = MaterialTheme.typography.labelSmall
-                            )
+                availableDurations.forEach { duration ->
+                    Text(
+                        text = "${duration / 1000.0}s",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (noteDurationMs == duration) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
                         }
                     )
                 }
@@ -248,7 +255,7 @@ private fun ExercisePickerSection(
 @Composable
 private fun PatternDisplaySection(
     midiNotes: List<Int>,
-    getNoteResult: (Int) -> NoteEvalResult?
+    noteResults: List<NoteResult>?
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -271,7 +278,7 @@ private fun PatternDisplaySection(
                 itemsIndexed(midiNotes) { index, midiNote ->
                     NoteChip(
                         midiNote = midiNote,
-                        result = getNoteResult(index)
+                        result = noteResults?.firstOrNull { it.noteIndex == index }
                     )
                 }
             }
@@ -282,9 +289,9 @@ private fun PatternDisplaySection(
 @Composable
 private fun NoteChip(
     midiNote: Int,
-    result: NoteEvalResult?
+    result: NoteResult?
 ) {
-    val noteName = getMidiNoteName(midiNote)
+    val noteName = CalibraMusic.midiToNoteLabel(midiNote.toFloat())
 
     val backgroundColor = when {
         result != null && result.score >= 0.8f -> Color(0xFF4CAF50) // Green
@@ -466,7 +473,7 @@ private fun SingalongSection(
 }
 
 @Composable
-private fun ResultsSection(result: ExerciseEvalResult) {
+private fun ResultsSection(result: ExerciseResult) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -504,7 +511,7 @@ private fun ResultsSection(result: ExerciseEvalResult) {
 }
 
 @Composable
-private fun OverallScoreCard(result: ExerciseEvalResult) {
+private fun OverallScoreCard(result: ExerciseResult) {
     val backgroundColor = when {
         result.score >= 0.8f -> Color(0xFF4CAF50)
         result.score >= 0.6f -> Color(0xFFFF9800)
@@ -589,11 +596,4 @@ private fun formatTime(seconds: Float): String {
     val secs = totalSeconds % 60
     val hundredths = ((seconds - totalSeconds) * 100).toInt()
     return "%d:%02d.%02d".format(mins, secs, hundredths)
-}
-
-private fun getMidiNoteName(midi: Int): String {
-    val noteNames = listOf("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
-    val octave = (midi / 12) - 1
-    val note = midi % 12
-    return "${noteNames[note]}$octave"
 }

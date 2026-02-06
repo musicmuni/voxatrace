@@ -40,6 +40,7 @@ final class ContourCleanupViewModel: ObservableObject {
 
     private var recorder: SonixRecorder?
     private var collectedSamples: [Float] = []
+    private var collectedSampleRate: Int = 16000
 
     // MARK: - Lifecycle
 
@@ -139,18 +140,14 @@ final class ContourCleanupViewModel: ObservableObject {
         collectedSamples = []
         isRecording = true
 
+        // ADR-017: Collect at hardware rate; ContourExtractor handles resampling internally
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
-
                 await MainActor.run {
-                    collectedSamples.append(contentsOf: samples16k)
+                    collectedSamples.append(contentsOf: buffer.samples)
+                    collectedSampleRate = hwRate
                 }
             }
         }
@@ -177,7 +174,8 @@ final class ContourCleanupViewModel: ObservableObject {
                 .build()
 
             let extractor = CalibraPitch.createContourExtractor(config: extractorConfig)
-            let raw = extractor.extract(audio: collectedSamples, sampleRate: 16000)
+            // ADR-017: Pass collectedSampleRate; ContourExtractor handles resampling internally
+            let raw = extractor.extract(audio: collectedSamples, sampleRate: collectedSampleRate)
             extractor.release()
 
             let scoring = CalibraPitch.PostProcess.cleanup(raw, options: .scoring)

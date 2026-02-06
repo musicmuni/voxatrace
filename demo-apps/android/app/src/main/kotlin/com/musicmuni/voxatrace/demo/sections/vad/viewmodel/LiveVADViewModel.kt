@@ -12,11 +12,13 @@ import com.musicmuni.voxatrace.demo.sections.vad.model.VADConstants
 import com.musicmuni.voxatrace.demo.sections.vad.model.WaveformSample
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.sqrt
 
 /**
@@ -77,11 +79,6 @@ class LiveVADViewModel : ViewModel() {
                     val vad = CalibraVAD.create(VADModelProvider.singingRealtime())
                     val ratio = vad.getVADRatio(samples16k)
                 """.trimIndent()
-                VADBackend.SINGING -> """
-                    // Auto-loads bundled YAMNet models
-                    val vad = CalibraVAD.create(VADModelProvider.singing())
-                    val ratio = vad.getVADRatio(samples16k)
-                """.trimIndent()
             }
         }
 
@@ -125,7 +122,8 @@ class LiveVADViewModel : ViewModel() {
             recorder = SonixRecorder.create(recordPath, SonixRecorderConfig.VOICE)
 
             vad?.release()
-            vad = createVAD()
+            // Load VAD model off the main thread (YAMNet for singing backend is heavy)
+            vad = withContext(Dispatchers.Default) { createVAD() }
 
             resetStatistics()
 
@@ -206,7 +204,6 @@ class LiveVADViewModel : ViewModel() {
             VADBackend.GENERAL -> CalibraVAD.create(VADModelProvider.general)
             VADBackend.SPEECH -> CalibraVAD.create(VADModelProvider.speech())
             VADBackend.SINGING_REALTIME -> CalibraVAD.create(VADModelProvider.singingRealtime())
-            VADBackend.SINGING -> CalibraVAD.create(VADModelProvider.singing())
         }
     }
 

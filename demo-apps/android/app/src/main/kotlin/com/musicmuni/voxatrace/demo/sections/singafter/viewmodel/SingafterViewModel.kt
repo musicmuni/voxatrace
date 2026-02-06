@@ -26,9 +26,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
+import android.util.Log
 import java.io.FileOutputStream
 import java.util.UUID
 
@@ -283,7 +285,7 @@ class SingafterViewModel : ViewModel() {
 
             // Create Calibra segments for singafter
             val calibraSegments = pairs.mapIndexed { index, pair ->
-                Segment(
+                val segment = Segment(
                     index = index,
                     startSeconds = pair.teacherStartTime,
                     endSeconds = pair.studentEndTime,
@@ -291,6 +293,10 @@ class SingafterViewModel : ViewModel() {
                     studentStartSeconds = pair.studentStartTime,
                     studentEndSeconds = pair.studentEndTime
                 )
+                Log.d("SINGAFTER-DEBUG", "Segment $index: start=${segment.startSeconds}, end=${segment.endSeconds}, " +
+                    "studentStart=${segment.studentStartSeconds}, studentEnd=${segment.studentEndSeconds}, " +
+                    "isSingafter=${segment.isSingafter}, effectiveStudentStart=${segment.effectiveStudentStart}")
+                segment
             }
 
             // Load pitch contour (optional optimization)
@@ -298,12 +304,7 @@ class SingafterViewModel : ViewModel() {
                 try {
                     val pitchContent = context.assets.open("$lessonName.pitchPP").bufferedReader().readText()
                     val pitchData = com.musicmuni.voxatrace.sonix.SonixParser.parsePitchString(pitchContent)
-                    if (pitchData != null) {
-                        PitchContour.fromArrays(
-                            times = pitchData.times,
-                            pitches = pitchData.pitchesHz
-                        )
-                    } else null
+                    pitchData?.let { PitchContour.fromPitchData(it) }
                 } catch (e: Exception) {
                     null // Pitch file is optional
                 }
@@ -418,7 +419,9 @@ private data class SingafterSegment(
     val id: Int,
     val type: String,
     val lyrics: String,
-    val startTime: Float,
-    val endTime: Float,
-    val relatedSeg: Int = -1
-)
+    @SerialName("time_stamp") val timeStamp: List<Float>,
+    @SerialName("related_seg") val relatedSeg: Int = -1
+) {
+    val startTime: Float get() = timeStamp.getOrElse(0) { 0f }
+    val endTime: Float get() = timeStamp.getOrElse(1) { 0f }
+}

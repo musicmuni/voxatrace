@@ -40,6 +40,7 @@ import com.musicmuni.voxatrace.demo.sections.melodyeval.view.MelodyEvalView
 import com.musicmuni.voxatrace.demo.sections.noteeval.view.NoteEvalView
 import com.musicmuni.voxatrace.VT
 import com.musicmuni.voxatrace.ai.AIModels
+import com.musicmuni.voxatrace.exceptions.VoxaTraceKilledException
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -61,20 +62,12 @@ class MainActivity : ComponentActivity() {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
 
-        // Show loading UI while initializing
-        setContent {
-            MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    InitializingScreen()
-                }
-            }
-        }
-
-        // Initialize VoxaTrace SDK using App Attestation (Play Integrity API).
-        // This verifies the app is running on a genuine device before granting access.
+        // ⚠️ DEMO ONLY - DO NOT USE IN PRODUCTION
+        // This uses direct API key initialization which embeds credentials in the app.
+        // For production apps, use one of these secure methods:
+        //   - VT.initialize(proxyEndpoint) - Recommended for apps with backend servers
+        //   - VT.initializeWithAttestation(apiKey) - For apps without backends (requires Play Store)
+        // See docs/client-proxy-setup.md and docs/client-attestation-guide.md
         //
         // === AIModels Preload Examples ===
         //
@@ -89,50 +82,22 @@ class MainActivity : ComponentActivity() {
         //
         // No preload (fully lazy, download on first use)
         // preload = AIModels.NONE
-        //
-        // Specific algorithm (power users)
-        // preload = setOf(AIModels.Pitch.Algorithms.SWIFT_F0)
-        //
-        // ALTERNATIVE: If you have a backend server, use proxy-based initialization:
-        // ```
-        // try {
-        //     VT.initialize(
-        //         proxyEndpoint = "https://your-server.com/api/voxatrace/register",
-        //         context = this,
-        //         debugLogging = BuildConfig.DEBUG,
-        //         preload = setOf(AIModels.Pitch.REALTIME, AIModels.VAD.SPEECH)
-        //     )
-        //     // SDK ready immediately - show main content
-        // } catch (e: VoxaTraceKilledException) {
-        //     // Handle license error
-        // }
-        // ```
-        // See docs/client-proxy-setup.md for proxy server implementation.
-
-        VT.initializeWithAttestation(
-            apiKey = BuildConfig.VOXATRACE_API_KEY,
-            context = this,
-            debugLogging = BuildConfig.DEBUG,
-            // Demo app preloads all models to showcase all features
-            preload = setOf(
-                AIModels.Pitch.REALTIME,    // For pitch detection demos
-                AIModels.VAD.SPEECH,        // For speech VAD demo
-                AIModels.VAD.SINGING        // For singing VAD demo
-            ),
-            callback = object : VT.Companion.InitCallback {
-                override fun onComplete(success: Boolean, error: String?) {
-                    runOnUiThread {
-                        if (success) {
-                            Napier.i("VoxaTrace SDK initialized successfully")
-                            showMainContent()
-                        } else {
-                            Napier.e("VoxaTrace initialization failed: $error")
-                            showErrorContent(error ?: "License validation failed")
-                        }
-                    }
-                }
-            }
-        )
+        try {
+            VT.initializeForServer(
+                apiKey = BuildConfig.VOXATRACE_API_KEY,
+                context = this,
+                debugLogging = BuildConfig.DEBUG,
+                preload = setOf(
+                    AIModels.Pitch.REALTIME,
+                    AIModels.VAD.SPEECH
+                )
+            )
+            Napier.i("VoxaTrace SDK initialized successfully")
+            showMainContent()
+        } catch (e: VoxaTraceKilledException) {
+            Napier.e("VoxaTrace initialization failed: ${e.message}")
+            showErrorContent(e.message ?: "License validation failed")
+        }
     }
 
     private fun showMainContent() {

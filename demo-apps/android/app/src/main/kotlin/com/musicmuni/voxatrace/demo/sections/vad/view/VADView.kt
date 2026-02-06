@@ -22,6 +22,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.musicmuni.voxatrace.calibra.model.VoiceActivityLevel
+import com.musicmuni.voxatrace.demo.components.OptionChip
 import com.musicmuni.voxatrace.demo.sections.vad.model.WaveformSample
 import com.musicmuni.voxatrace.demo.sections.vad.viewmodel.LiveVADViewModel
 
@@ -182,10 +183,10 @@ private fun BackendPicker(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             backends.forEachIndexed { index, info ->
-                FilterChip(
+                OptionChip(
                     selected = selectedIndex == index,
                     onClick = { onSelect(index) },
-                    label = { Text(info.name) }
+                    label = info.name
                 )
             }
         }

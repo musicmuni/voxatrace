@@ -85,13 +85,8 @@ final class BreathMonitorViewModel: ObservableObject {
             let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
-
-                let ratio = vad.getVADRatio(samples: samples16k)
+                // ADR-017: Pass sampleRate directly; CalibraVAD handles resampling internally
+                let ratio = vad.getVADRatio(samples: buffer.samples, sampleRate: hwRate)
                 if ratio < 0 { continue }
 
                 let currentTimeMs = Int64(Date().timeIntervalSince1970 * 1000)
@@ -131,14 +126,9 @@ final class BreathMonitorViewModel: ObservableObject {
                 return
             }
 
-            let samples16k = SonixResampler.resample(
-                samples: audioData.samples,
-                fromRate: Int(audioData.sampleRate),
-                toRate: 16000
-            )
-
+            // ADR-017: Pass original samples; ContourExtractor handles resampling internally
             let extractor = CalibraPitch.createContourExtractor()
-            let contour = extractor.extract(audio: samples16k, sampleRate: 16000)
+            let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
             extractor.release()
 
             let hasEnough = CalibraBreath.hasEnoughData(times: contour.times, pitchesHz: contour.pitchesHz)

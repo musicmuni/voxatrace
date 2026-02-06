@@ -48,6 +48,9 @@ final class MelodyEvalViewModel: ObservableObject {
     private var recorder: SonixRecorder?
     private var collectedAudio: [Float] = []
 
+    // Realtime pitch detection for student audio
+    private var pitchDetector: CalibraPitch.Detector?
+
     // Singalong
     private var referencePlayer: SonixPlayer?
     private var playerObserverTask: Task<Void, Never>?
@@ -57,6 +60,7 @@ final class MelodyEvalViewModel: ObservableObject {
     private var segmentEndTimeMs: Int64 = 0
     private var originalSampleRate: Int = 44100
     private var currentPlayerTimeMs: Int64 = 0
+    private var collectedSampleRate: Int = 16000
 
     // Original segment times (for player position tracking)
     private var originalSegmentTimes: [(start: Double, end: Double)] = []
@@ -136,11 +140,36 @@ final class MelodyEvalViewModel: ObservableObject {
             )
         }
 
+        // Load pre-computed pitch contour for reference (fast path optimization)
+        var pitchContour: PitchContour? = nil
+        if let pitchURL = Bundle.main.url(forResource: referenceName, withExtension: "pitchPP"),
+           let pitchContent = try? String(contentsOf: pitchURL),
+           let pitchData = SonixParser.parsePitchString(content: pitchContent) {
+            // Trim pitch contour to match the trimmed audio segment
+            var trimmedTimes: [Float] = []
+            var trimmedPitches: [Float] = []
+            for i in 0..<Int(pitchData.count) {
+                let time = Double(pitchData.times[i])
+                if time >= startTime && time <= endTime {
+                    trimmedTimes.append(Float(time - startTime))
+                    trimmedPitches.append(pitchData.pitchesHz[i])
+                }
+            }
+            if !trimmedTimes.isEmpty {
+                pitchContour = PitchContour.fromArrays(
+                    times: trimmedTimes,
+                    pitches: trimmedPitches,
+                    sampleRate: audioData.sampleRate
+                )
+            }
+        }
+
         reference = LessonMaterial.fromAudio(
             samples: trimmedSamples,
             sampleRate: audioData.sampleRate,
             segments: adjustedSegments,
-            keyHz: 196.0
+            keyHz: 196.0,
+            pitchContour: pitchContour
         )
 
         // Copy audio file to temp directory for playback
@@ -196,6 +225,11 @@ final class MelodyEvalViewModel: ObservableObject {
                 }
             }
 
+            // Create pitch detector for realtime student pitch detection
+            pitchDetector = CalibraPitch.createDetector(config: .balanced)
+            let recordingDurationSeconds = Float(segmentEndTimeMs - segmentStartTimeMs) / 1000.0
+            pitchDetector?.setContourMaxDuration(seconds: recordingDurationSeconds + 1.0)
+
             await MainActor.run {
                 isReady = true
                 isPreparing = false
@@ -216,6 +250,7 @@ final class MelodyEvalViewModel: ObservableObject {
         }
 
         collectedAudio = []
+        pitchDetector?.clearPitchContour()
         hasRecording = false
         result = nil
         recordingDuration = 0.0
@@ -234,6 +269,7 @@ final class MelodyEvalViewModel: ObservableObject {
         isSingalongActive = true
 
         // Start collecting audio
+        // ADR-017: Collect at hardware rate; LessonMaterial handles resampling internally
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
             var sampleCount = 0
@@ -241,21 +277,20 @@ final class MelodyEvalViewModel: ObservableObject {
             guard let recorder = recorder else { return }
 
             for await buffer in recorder.audioBuffers {
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
+                collectedAudio.append(contentsOf: buffer.samples)
+                collectedSampleRate = hwRate
+                sampleCount += buffer.samples.count
 
-                collectedAudio.append(contentsOf: samples16k)
-                sampleCount += samples16k.count
+                // Detect pitch for this buffer (realtime)
+                // Pitch points automatically accumulated in detector.livePitchContour
+                _ = pitchDetector?.detect(samples: buffer.samples, sampleRate: hwRate)
 
-                let sum = samples16k.reduce(0) { $0 + $1 * $1 }
-                let rms = sqrt(sum / Float(samples16k.count))
+                let sum = buffer.samples.reduce(0) { $0 + $1 * $1 }
+                let rms = sqrt(sum / Float(buffer.samples.count))
 
                 await MainActor.run {
                     recordingLevel = min(rms * 5, 1.0)
-                    recordingDuration = Float(sampleCount) / 16000.0
+                    recordingDuration = Float(sampleCount) / Float(hwRate)
                 }
             }
         }
@@ -308,11 +343,20 @@ final class MelodyEvalViewModel: ObservableObject {
         Task {
             let studentAudio = collectedAudio
 
+            // Use detector's accumulated pitch contour (fast path)
+            let studentContour: PitchContour? = {
+                guard let contour = pitchDetector?.livePitchContour.value,
+                      !contour.isEmpty else { return nil }
+                return contour
+            }()
+
+            // ADR-017: Pass collectedSampleRate; LessonMaterial handles resampling internally
             let studentMaterial = LessonMaterial.fromAudio(
                 samples: studentAudio,
-                sampleRate: 16000,
+                sampleRate: collectedSampleRate,
                 segments: [],
-                keyHz: reference.keyHz
+                keyHz: reference.keyHz,
+                pitchContour: studentContour
             )
 
             let extractor = CalibraPitch.createContourExtractor()
@@ -349,5 +393,8 @@ final class MelodyEvalViewModel: ObservableObject {
         timeObserverTask?.cancel()
         referencePlayer?.release()
         referencePlayer = nil
+
+        pitchDetector?.release()
+        pitchDetector = nil
     }
 }

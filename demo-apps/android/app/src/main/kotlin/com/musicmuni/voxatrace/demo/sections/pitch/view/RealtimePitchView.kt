@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.musicmuni.voxatrace.calibra.model.PitchPoint
+import com.musicmuni.voxatrace.demo.components.OptionChip
 import com.musicmuni.voxatrace.demo.sections.pitch.viewmodel.RealtimePitchViewModel
 import com.musicmuni.voxatrace.demo.sections.shared.PitchGraphView
 import kotlin.math.log2
@@ -191,10 +192,10 @@ private fun ConfigurationSection(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 viewModel.presets.forEachIndexed { index, info ->
-                    FilterChip(
+                    OptionChip(
                         selected = selectedPreset == index,
                         onClick = { viewModel.setSelectedPreset(index) },
-                        label = { Text(info.name) }
+                        label = info.name
                     )
                 }
             }

@@ -48,13 +48,6 @@ struct VADBackendInfo {
             description: "SwiftF0 pitch-based",
             guidance: "Best for: Karaoke, singing games, low-latency apps",
             latency: "~32ms"
-        ),
-        VADBackendInfo(
-            backend: .singing,
-            name: "Singing",
-            description: "Essentia YAMNet classifier",
-            guidance: "Best for: Music apps, vocal extraction, highest accuracy",
-            latency: "~960ms"
         )
     ]
 

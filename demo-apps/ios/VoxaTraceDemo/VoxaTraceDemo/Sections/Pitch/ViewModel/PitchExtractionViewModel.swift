@@ -72,7 +72,7 @@ final class PitchExtractionViewModel: ObservableObject {
                 .build()
 
             let extractor = CalibraPitch.createContourExtractor(config: extractorConfig)
-            let contour = extractor.extract(audio: audioData.samples, sampleRate: Int32(audioData.sampleRate))
+            let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
             extractor.release()
 
             let extractedPitches = contour.pitchesHz

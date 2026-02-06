@@ -49,7 +49,7 @@ final class BundleLessonRepository: LessonRepositoryProtocol, @unchecked Sendabl
 
         // 3. Parse segments
         let segments: [Segment] = transData.segments.enumerated().map { index, seg in
-            .create(
+            Segment.create(
                 index: index,
                 startSeconds: seg.startTime,
                 endSeconds: seg.endTime,
@@ -62,10 +62,7 @@ final class BundleLessonRepository: LessonRepositoryProtocol, @unchecked Sendabl
         if let pitchURL = Bundle.main.url(forResource: name, withExtension: "pitchPP"),
            let pitchContent = try? String(contentsOf: pitchURL),
            let pitchData = SonixParser.parsePitchString(content: pitchContent) {
-            pitchContour = PitchContour.fromArrays(
-                times: pitchData.times,
-                pitches: pitchData.pitchesHz
-            )
+pitchContour = pitchData.toContour()
         }
 
         // 5. Create LessonMaterial

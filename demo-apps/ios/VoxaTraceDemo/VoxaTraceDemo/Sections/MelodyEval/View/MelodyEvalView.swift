@@ -91,7 +91,9 @@ struct MelodyEvalView: View {
 
         let backgroundColor: Color = {
             if let score = score {
-                if score >= 0.8 {
+                if score < 0 {
+                    return .gray // Special case
+                } else if score >= 0.8 {
                     return .green
                 } else if score >= 0.6 {
                     return .orange
@@ -112,7 +114,7 @@ struct MelodyEvalView: View {
                 .font(.caption)
                 .fontWeight(.medium)
             if let score = score {
-                Text("\(Int(score * 100))%")
+                Text(score < -1.5 ? "No voice" : score < 0 ? "N/A" : "\(Int(score * 100))%")
                     .font(.system(size: 10))
             }
         }
@@ -235,7 +237,9 @@ struct MelodyEvalView: View {
 
     private func overallScoreCard(_ result: SingingResult) -> some View {
         let backgroundColor: Color = {
-            if result.overallScore >= 0.8 {
+            if result.overallScore < 0 {
+                return .gray // Special case
+            } else if result.overallScore >= 0.8 {
                 return .green
             } else if result.overallScore >= 0.6 {
                 return .orange
@@ -262,7 +266,7 @@ struct MelodyEvalView: View {
             Text("Overall Score")
                 .font(.caption)
                 .foregroundColor(.white.opacity(0.8))
-            Text("\(Int(result.overallScore * 100))%")
+            Text(result.overallScore >= 0 ? "\(Int(result.overallScore * 100))%" : "N/A")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
@@ -278,7 +282,9 @@ struct MelodyEvalView: View {
 
     private func segmentRow(index: Int, result: SegmentResult) -> some View {
         let backgroundColor: Color = {
-            if result.score >= 0.8 {
+            if result.score < 0 {
+                return .gray.opacity(0.2) // Special case
+            } else if result.score >= 0.8 {
                 return .green.opacity(0.2)
             } else if result.score >= 0.6 {
                 return .orange.opacity(0.2)
@@ -298,7 +304,7 @@ struct MelodyEvalView: View {
                 .foregroundColor(.secondary)
                 .lineLimit(1)
             Spacer()
-            Text("\(Int(result.score * 100))%")
+            Text(result.score < -1.5 ? "No voice" : result.score < 0 ? "N/A" : "\(Int(result.score * 100))%")
                 .font(.caption)
                 .fontWeight(.medium)
         }

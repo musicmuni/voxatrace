@@ -47,6 +47,7 @@ fun RecordingView(viewModel: RecordingViewModel = viewModel()) {
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val playbackTimeMs by viewModel.playbackTimeMs.collectAsStateWithLifecycle()
     val playbackDurationMs by viewModel.playbackDurationMs.collectAsStateWithLifecycle()
+    val hasRecordedFile by viewModel.hasRecordedFile.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -126,7 +127,7 @@ fun RecordingView(viewModel: RecordingViewModel = viewModel()) {
         }
 
         // Show saved file info and playback controls (match iOS: show when savedFilePath exists and not recording)
-        if (savedFilePath != null && !isRecording) {
+        if (savedFilePath != null && !isRecording && hasRecordedFile) {
             val file = File(savedFilePath!!)
             if (file.exists()) {
                 Text(
@@ -149,7 +150,7 @@ fun RecordingView(viewModel: RecordingViewModel = viewModel()) {
             ) {
                 Button(
                     onClick = { viewModel.playRecording() },
-                    enabled = !isRecording && !isPlaying && file.exists()
+                    enabled = !isRecording && !isPlaying
                 ) {
                     Text("Play")
                 }

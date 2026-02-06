@@ -73,6 +73,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.12")
     implementation("io.ktor:ktor-client-android:2.3.12")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("com.google.android.play:integrity:1.3.0")
 
     // Compose
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))

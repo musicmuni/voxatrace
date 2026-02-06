@@ -47,6 +47,13 @@ fun MelodyEvalView(
     val isReady by viewModel.isReady.collectAsState()
     val currentSegmentIndex by viewModel.currentSegmentIndex.collectAsState()
 
+    // Auto-load reference on first load
+    LaunchedEffect(Unit) {
+        if (!viewModel.referenceLoaded.value) {
+            viewModel.loadReference(context)
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             // Cleanup handled by ViewModel onCleared
@@ -69,10 +76,11 @@ fun MelodyEvalView(
         )
 
         if (!referenceLoaded) {
-            // Step 1: Load reference
+            // Loading reference (auto-loaded)
             LoadReferenceSection(
                 referenceName = viewModel.referenceName,
                 segmentNames = viewModel.segmentNames,
+                isPreparing = isPreparing,
                 onLoadReference = { viewModel.loadReference(context) }
             )
         } else {
@@ -112,13 +120,14 @@ fun MelodyEvalView(
 private fun LoadReferenceSection(
     referenceName: String,
     segmentNames: List<String>,
+    isPreparing: Boolean,
     onLoadReference: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Step 1: Load Reference",
+            text = "Loading Reference",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium
         )
@@ -148,8 +157,25 @@ private fun LoadReferenceSection(
             }
         }
 
-        Button(onClick = onLoadReference) {
-            Text("Load $referenceName")
+        if (isPreparing) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp
+                )
+                Text(
+                    text = "Loading...",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            Button(onClick = onLoadReference) {
+                Text("Load $referenceName")
+            }
         }
     }
 }
@@ -198,6 +224,7 @@ private fun SegmentChip(
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = when {
+            score != null && score < 0f -> Color.Gray // Special case
             score != null && score >= 0.8f -> Color(0xFF4CAF50) // Green
             score != null && score >= 0.6f -> Color(0xFFFF9800) // Orange
             score != null -> Color(0xFFF44336) // Red
@@ -225,7 +252,11 @@ private fun SegmentChip(
             )
             if (score != null) {
                 Text(
-                    text = "${(score * 100).toInt()}%",
+                    text = when {
+                        score < -1.5f -> "No voice"
+                        score < 0f -> "N/A"
+                        else -> "${(score * 100).toInt()}%"
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     color = textColor.copy(alpha = 0.9f),
                     fontSize = 10.sp
@@ -427,6 +458,7 @@ private fun ResultsSection(
 @Composable
 private fun OverallScoreCard(result: SingingResult) {
     val backgroundColor = when {
+        result.overallScore < 0f -> Color.Gray // Special case
         result.overallScore >= 0.8f -> Color(0xFF4CAF50)
         result.overallScore >= 0.6f -> Color(0xFFFF9800)
         else -> Color(0xFFF44336)
@@ -457,7 +489,7 @@ private fun OverallScoreCard(result: SingingResult) {
                 color = Color.White.copy(alpha = 0.8f)
             )
             Text(
-                text = "${(result.overallScore * 100).toInt()}%",
+                text = if (result.overallScore >= 0f) "${(result.overallScore * 100).toInt()}%" else "N/A",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -478,6 +510,7 @@ private fun SegmentRow(
     score: Float
 ) {
     val backgroundColor = when {
+        score < 0f -> Color.Gray.copy(alpha = 0.2f) // Special case
         score >= 0.8f -> Color(0xFF4CAF50).copy(alpha = 0.2f)
         score >= 0.6f -> Color(0xFFFF9800).copy(alpha = 0.2f)
         else -> Color(0xFFF44336).copy(alpha = 0.2f)
@@ -513,7 +546,11 @@ private fun SegmentRow(
                 )
             }
             Text(
-                text = "${(score * 100).toInt()}%",
+                text = when {
+                    score < -1.5f -> "No voice"
+                    score < 0f -> "N/A"
+                    else -> "${(score * 100).toInt()}%"
+                },
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium
             )

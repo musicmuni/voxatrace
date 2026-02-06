@@ -80,6 +80,10 @@ class RecordingViewModel : ViewModel() {
     private val _playbackDurationMs = MutableStateFlow(0L)
     val playbackDurationMs: StateFlow<Long> = _playbackDurationMs.asStateFlow()
 
+    // Track when a recorded file is ready for playback
+    private val _hasRecordedFile = MutableStateFlow(false)
+    val hasRecordedFile: StateFlow<Boolean> = _hasRecordedFile.asStateFlow()
+
     // MARK: - Computed Properties
 
     val formats = listOf("m4a", "mp3")
@@ -101,6 +105,7 @@ class RecordingViewModel : ViewModel() {
     fun startRecording(context: Context) {
         viewModelScope.launch {
             _status.value = "Starting..."
+            _hasRecordedFile.value = false
 
             val outputDir = context.filesDir.absolutePath
             val timestamp = System.currentTimeMillis()
@@ -119,6 +124,8 @@ class RecordingViewModel : ViewModel() {
                 }
                 .onRecordingStopped { path ->
                     Napier.d("Recording saved to: $path")
+                    _hasRecordedFile.value = true
+                    _status.value = "Saved"
                 }
                 .onError { error ->
                     Napier.e("Recording error: $error")
@@ -142,7 +149,7 @@ class RecordingViewModel : ViewModel() {
         recorder?.stop()
         _isRecording.value = false
         _audioLevel.value = 0f
-        _status.value = "Saved"
+        _status.value = "Saving..."
     }
 
     fun playRecording() {

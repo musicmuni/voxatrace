@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.musicmuni.voxatrace.demo.components.OptionChip
 import com.musicmuni.voxatrace.demo.sections.pitch.viewmodel.PitchExtractionViewModel
 import com.musicmuni.voxatrace.demo.sections.shared.PitchGraphView
 
@@ -154,10 +155,10 @@ private fun ConfigurationCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 viewModel.presets.forEachIndexed { index, info ->
-                    FilterChip(
+                    OptionChip(
                         selected = selectedPreset == index,
                         onClick = { viewModel.setSelectedPreset(index) },
-                        label = { Text(info.name) },
+                        label = info.name,
                         enabled = !isExtracting
                     )
                 }
@@ -217,10 +218,10 @@ private fun ConfigurationCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 viewModel.cleanupPresets.forEachIndexed { index, info ->
-                    FilterChip(
+                    OptionChip(
                         selected = selectedCleanup == index,
                         onClick = { viewModel.setSelectedCleanup(index) },
-                        label = { Text(info.name) },
+                        label = info.name,
                         enabled = !isExtracting
                     )
                 }

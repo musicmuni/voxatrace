@@ -4,7 +4,7 @@ import VoxaTrace
 /// Voice Activity Detection section using Calibra public API.
 ///
 /// Demonstrates:
-/// - All 4 VAD backends (SPEECH, GENERAL, SINGING_REALTIME, SINGING)
+/// - All VAD backends (SPEECH, GENERAL, SINGING_REALTIME)
 /// - Real-time waveform visualization with VAD overlay
 /// - Backend comparison with concurrent processing
 /// - Sensitivity/threshold configuration

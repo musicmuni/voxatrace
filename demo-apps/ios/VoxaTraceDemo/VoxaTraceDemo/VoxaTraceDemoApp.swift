@@ -7,24 +7,13 @@ struct VoxaTraceDemoApp: App {
     @State private var licenseError: String? = nil
 
     init() {
-        // Initialize VoxaTrace SDK using App Attestation (App Attest on iOS 14+).
-        // This verifies the app is running on a genuine device before granting access.
+        // ⚠️ DEMO ONLY - DO NOT USE IN PRODUCTION
+        // This uses direct API key initialization which embeds credentials in the app.
+        // For production apps, use one of these secure methods:
+        //   - VT.initialize(proxyEndpoint:) - Recommended for apps with backend servers
+        //   - VT.initializeWithAttestation(apiKey:) - For apps without backends (requires App Attest)
+        // See docs/client-proxy-setup.md and docs/client-attestation-guide.md
         //
-        // ALTERNATIVE: If you have a backend server, use proxy-based initialization:
-        // ```
-        // do {
-        //     try VT.initialize(
-        //         proxyEndpoint: "https://your-server.com/api/voxatrace/register",
-        //         debugLogging: true,
-        //         preload: [AIModels.Pitch.realtime, AIModels.VAD.speech]
-        //     )
-        //     // SDK ready immediately
-        // } catch let error as VoxaTraceKilledException {
-        //     // Handle license error
-        // }
-        // ```
-        // See docs/client-proxy-setup.md for proxy server implementation.
-
         // === AIModels Preload Examples ===
         //
         // Default: Just pitch model (most apps)
@@ -38,26 +27,22 @@ struct VoxaTraceDemoApp: App {
         //
         // No preload (fully lazy, download on first use)
         // preload: AIModels.none
-        //
-        // Specific algorithm (power users)
-        // preload: [AIModels.Pitch.Algorithms.swiftF0]
 
-        // For demo app: preload all models to showcase all features
-        VT.initializeWithAttestation(
-            apiKey: Config.apiKey,
-            debugLogging: true,
-            preload: AIModels.all
-        ) { success, error in
-            DispatchQueue.main.async {
-                if success {
-                    Log.i(.general, "VoxaTrace SDK initialized")
-                    self.isInitialized = true
-                } else {
-                    let errorMessage = error ?? "License validation failed"
-                    Log.e(.general, "License validation failed: \(errorMessage)")
-                    self.licenseError = errorMessage
-                }
-            }
+        do {
+            try VT.initializeForServer(
+                apiKey: Config.apiKey,
+                debugLogging: true,
+                preload: AIModels.all
+            )
+            Log.i(.general, "VoxaTrace SDK initialized")
+            _isInitialized = State(initialValue: true)
+        } catch let error as VoxaTraceKilledException {
+            let errorMessage = error.message ?? "License validation failed"
+            Log.e(.general, "License validation failed: \(errorMessage)")
+            _licenseError = State(initialValue: errorMessage)
+        } catch {
+            Log.e(.general, "Unexpected error: \(error)")
+            _licenseError = State(initialValue: "Unexpected error: \(error.localizedDescription)")
         }
     }
 

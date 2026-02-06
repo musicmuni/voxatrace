@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.calibra.CalibraMelodyEval
 import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
+import com.musicmuni.voxatrace.calibra.model.PitchContour
+import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.calibra.model.Segment
 import com.musicmuni.voxatrace.calibra.model.SingingResult
 import com.musicmuni.voxatrace.sonix.AudioMode
@@ -20,6 +22,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -74,7 +77,7 @@ class MelodyEvalViewModel : ViewModel() {
     private val _result = MutableStateFlow<SingingResult?>(null)
     val result: StateFlow<SingingResult?> = _result.asStateFlow()
 
-    private val _status = MutableStateFlow("Tap 'Load Reference' to begin")
+    private val _status = MutableStateFlow("Loading reference...")
     val status: StateFlow<String> = _status.asStateFlow()
 
     private val _isPreparing = MutableStateFlow(false)
@@ -97,6 +100,9 @@ class MelodyEvalViewModel : ViewModel() {
     private var recorder: SonixRecorder? = null
     private var collectedAudio = mutableListOf<Float>()
     private var recordingJob: Job? = null
+
+    // Realtime pitch detection for student audio
+    private var pitchDetector: CalibraPitch.Detector? = null
 
     // Singalong
     private var referencePlayer: SonixPlayer? = null
@@ -187,11 +193,41 @@ class MelodyEvalViewModel : ViewModel() {
                     )
                 }
 
+                // Load pre-computed pitch contour for reference (fast path optimization)
+                val pitchContour: PitchContour? = withContext(Dispatchers.IO) {
+                    try {
+                        val pitchContent = context.assets.open("$referenceName.pitchPP").bufferedReader().readText()
+                        val pitchData = SonixParser.parsePitchString(pitchContent)
+                        if (pitchData != null) {
+                            // Trim pitch contour to match the trimmed audio segment
+                            val trimmedTimes = mutableListOf<Float>()
+                            val trimmedPitches = mutableListOf<Float>()
+                            for (i in 0 until pitchData.count) {
+                                val time = pitchData.times[i]
+                                if (time >= startTime && time <= endTime) {
+                                    trimmedTimes.add((time - startTime).toFloat())
+                                    trimmedPitches.add(pitchData.pitchesHz[i])
+                                }
+                            }
+                            if (trimmedTimes.isNotEmpty()) {
+                                PitchContour.fromArrays(
+                                    times = trimmedTimes.toFloatArray(),
+                                    pitches = trimmedPitches.toFloatArray(),
+                                    sampleRate = audioData.sampleRate
+                                )
+                            } else null
+                        } else null
+                    } catch (e: Exception) {
+                        null // Pitch file is optional
+                    }
+                }
+
                 reference = LessonMaterial.fromAudio(
                     samples = trimmedSamples,
                     sampleRate = audioData.sampleRate,
                     segments = adjustedSegments,
-                    keyHz = 196.0f
+                    keyHz = 196.0f,
+                    pitchContour = pitchContour
                 )
 
                 _referenceLoaded.value = true
@@ -251,6 +287,12 @@ class MelodyEvalViewModel : ViewModel() {
                 }
             }
 
+            // Create pitch detector for realtime student pitch detection
+            val detectorConfig = PitchDetectorConfig.BALANCED
+            pitchDetector = CalibraPitch.createDetector(detectorConfig)
+            val recordingDurationSeconds = (segmentEndTimeMs - segmentStartTimeMs) / 1000f
+            pitchDetector?.setContourMaxDuration(recordingDurationSeconds + 1f)
+
             _isReady.value = true
             _isPreparing.value = false
             _status.value = "Ready! Tap 'Start Singalong' to sing along."
@@ -267,6 +309,7 @@ class MelodyEvalViewModel : ViewModel() {
         }
 
         collectedAudio.clear()
+        pitchDetector?.reset()  // Reset both sample accumulator AND pitch contour
         _hasRecording.value = false
         _result.value = null
         _recordingDuration.value = 0f
@@ -283,33 +326,39 @@ class MelodyEvalViewModel : ViewModel() {
 
         _isSingalongActive.value = true
 
-        // Start collecting audio
+        // Start recorder
+        recorder?.start()
+
+        // Start collecting audio - player starts only when collection begins
+        // This prevents race condition where player starts before audio collection is ready
         recordingJob = viewModelScope.launch {
             // VOICE preset records at 16kHz (ADR-017)
             var sampleCount = 0
 
-            recorder?.start()
+            recorder?.audioBuffers
+                ?.onStart {
+                    // Collection is starting - NOW safe to start player
+                    referencePlayer?.seek(segmentStartTimeMs)
+                    referencePlayer?.play()
+                }
+                ?.collect { buffer ->
+                    val samples = buffer.samples
 
-            recorder?.audioBuffers?.collect { buffer ->
-                val samples = buffer.samples
+                    collectedAudio.addAll(samples.toList())
+                    sampleCount += samples.size
 
-                collectedAudio.addAll(samples.toList())
-                sampleCount += samples.size
+                    // Calculate RMS for level meter
+                    val sum = samples.fold(0f) { acc, s -> acc + s * s }
+                    val rms = sqrt(sum / samples.size)
 
-                // Calculate RMS for level meter
-                val sum = samples.fold(0f) { acc, s -> acc + s * s }
-                val rms = sqrt(sum / samples.size)
+                    // Detect pitch for this buffer (realtime)
+                    // Pitch points automatically accumulated in detector.livePitchContour
+                    pitchDetector?.detect(samples, 16000)
 
-                _recordingLevel.value = (rms * 5).coerceAtMost(1f)
-                _recordingDuration.value = sampleCount / 16000f
-            }
+                    _recordingLevel.value = (rms * 5).coerceAtMost(1f)
+                    _recordingDuration.value = sampleCount / 16000f
+                }
         }
-
-        // Seek to the start of the first segment and play
-        referencePlayer?.seek(segmentStartTimeMs)
-
-        // Start player
-        referencePlayer?.play()
     }
 
     private fun updateCurrentSegment(currentTimeSec: Double) {
@@ -354,11 +403,15 @@ class MelodyEvalViewModel : ViewModel() {
         viewModelScope.launch {
             val studentAudio = collectedAudio.toFloatArray()
 
+            // Use live pitch contour from detector (now has proper hop size)
+            val studentContour = pitchDetector?.livePitchContour?.value
+
             val studentMaterial = LessonMaterial.fromAudio(
                 samples = studentAudio,
                 sampleRate = 16000,
                 segments = emptyList(),
-                keyHz = ref.keyHz
+                keyHz = ref.keyHz,
+                pitchContour = studentContour
             )
 
             val extractor = CalibraPitch.createContourExtractor()
@@ -404,5 +457,6 @@ class MelodyEvalViewModel : ViewModel() {
         recorder?.stop()
         recorder?.release()
         referencePlayer?.release()
+        pitchDetector?.release()
     }
 }

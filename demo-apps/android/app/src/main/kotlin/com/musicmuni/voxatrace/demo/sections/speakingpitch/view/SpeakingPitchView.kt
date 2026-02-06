@@ -20,7 +20,6 @@ import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
-import com.musicmuni.voxatrace.sonix.SonixResampler
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -215,16 +214,9 @@ fun SpeakingPitchView() {
                     return@launch
                 }
 
-                val samples16k = withContext(Dispatchers.IO) {
-                    SonixResampler.resample(
-                        samples = audioData.samples,
-                        fromRate = audioData.sampleRate,
-                        toRate = 16000
-                    )
-                }
-
+                // ADR-017: Pass sampleRate directly; CalibraSpeakingPitch handles resampling internally
                 val detectedHz = withContext(Dispatchers.Default) {
-                    CalibraSpeakingPitch.detectFromAudio(samples16k)
+                    CalibraSpeakingPitch.detectFromAudio(audioData.samples, audioData.sampleRate)
                 }
 
                 if (detectedHz > 0) {
@@ -593,12 +585,7 @@ private fun ApiInfoCard() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "- SonixResampler.resample() - Resample to 16kHz",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "- CalibraSpeakingPitch.detectFromAudio() - Detect speaking pitch",
+                text = "- CalibraSpeakingPitch.detectFromAudio() - Detect speaking pitch (resamples internally)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -104,9 +104,6 @@ final class BackendComparisonViewModel: ObservableObject {
         case .singingRealtime:
             // Auto-loads bundled SwiftF0 model
             return CalibraVAD.create(.singingRealtime())
-        case .singing:
-            // Auto-loads bundled YAMNet models
-            return CalibraVAD.create(.singing())
         default:
             return CalibraVAD.create(.general)
         }
@@ -161,23 +158,18 @@ final class BackendComparisonViewModel: ObservableObject {
         isRecording = true
         resetStatistics()
 
+        // ADR-017: Pass sampleRate directly; CalibraVAD handles resampling internally
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
 
             for await buffer in recorder.audioBuffers {
-                let samples16k = SonixResampler.resample(
-                    samples: buffer.samples,
-                    fromRate: hwRate,
-                    toRate: 16000
-                )
-
                 let startLeft = CFAbsoluteTimeGetCurrent()
-                let ratioLeft = vadLeft.getVADRatio(samples: samples16k)
+                let ratioLeft = vadLeft.getVADRatio(samples: buffer.samples, sampleRate: hwRate)
                 let endLeft = CFAbsoluteTimeGetCurrent()
                 let latencyLeft = Int((endLeft - startLeft) * 1000)
 
                 let startRight = CFAbsoluteTimeGetCurrent()
-                let ratioRight = vadRight.getVADRatio(samples: samples16k)
+                let ratioRight = vadRight.getVADRatio(samples: buffer.samples, sampleRate: hwRate)
                 let endRight = CFAbsoluteTimeGetCurrent()
                 let latencyRight = Int((endRight - startRight) * 1000)
 
@@ -185,7 +177,7 @@ final class BackendComparisonViewModel: ObservableObject {
                     continue
                 }
 
-                let amplitude = calculateRMS(samples: samples16k)
+                let amplitude = calculateRMS(samples: buffer.samples)
 
                 await MainActor.run {
                     if ratioLeft >= 0 {

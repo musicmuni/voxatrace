@@ -3,7 +3,13 @@ package com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.musicmuni.voxatrace.calibra.CalibraMusic
+import com.musicmuni.voxatrace.calibra.CalibraNoteEval
 import com.musicmuni.voxatrace.calibra.CalibraPitch
+import com.musicmuni.voxatrace.calibra.ExercisePattern
+import com.musicmuni.voxatrace.calibra.ExerciseResult
+import com.musicmuni.voxatrace.calibra.NoteResult
+import com.musicmuni.voxatrace.calibra.model.NoteEvalPreset
 import com.musicmuni.voxatrace.sonix.AudioMode
 import com.musicmuni.voxatrace.sonix.SonixMidiSynthesizer
 import com.musicmuni.voxatrace.sonix.SonixPlayer
@@ -20,9 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.abs
-import kotlin.math.log2
-import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
@@ -33,40 +36,6 @@ data class ExerciseInfo(
     val midiNotes: List<Int>,
     val keyMidi: Int
 )
-
-/**
- * Result for a single note evaluation.
- */
-data class NoteEvalResult(
-    val noteIndex: Int,
-    val expectedHz: Float,
-    val score: Float
-) {
-    val scorePercent: Int get() = (score * 100).toInt()
-    val isPassing: Boolean get() = score >= 0.5f
-}
-
-/**
- * Overall exercise evaluation result.
- */
-data class ExerciseEvalResult(
-    val score: Float,
-    val noteResults: List<NoteEvalResult>
-) {
-    val scorePercent: Int get() = (score * 100).toInt()
-    val noteCount: Int get() = noteResults.size
-    val passingNotes: Int get() = noteResults.count { it.isPassing }
-    val passingRatio: Float get() = if (noteCount == 0) 0f else passingNotes.toFloat() / noteCount
-}
-
-/**
- * Difficulty preset for note evaluation.
- */
-enum class DifficultyPreset(val toleranceCents: Float) {
-    LENIENT(100f),   // 1 semitone tolerance
-    BALANCED(50f),   // Half semitone tolerance
-    STRICT(25f)      // Quarter semitone tolerance
-}
 
 /**
  * ViewModel for note/exercise evaluation using CalibraNoteEval with singalong mode.
@@ -108,8 +77,8 @@ class NoteEvalViewModel : ViewModel() {
     private val _isEvaluating = MutableStateFlow(false)
     val isEvaluating: StateFlow<Boolean> = _isEvaluating.asStateFlow()
 
-    private val _result = MutableStateFlow<ExerciseEvalResult?>(null)
-    val result: StateFlow<ExerciseEvalResult?> = _result.asStateFlow()
+    private val _result = MutableStateFlow<ExerciseResult?>(null)
+    val result: StateFlow<ExerciseResult?> = _result.asStateFlow()
 
     private val _status = MutableStateFlow("Select an exercise and tap Singalong")
     val status: StateFlow<String> = _status.asStateFlow()
@@ -122,8 +91,8 @@ class NoteEvalViewModel : ViewModel() {
     val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
 
     // Evaluation settings
-    private val _selectedPreset = MutableStateFlow(DifficultyPreset.BALANCED)
-    val selectedPreset: StateFlow<DifficultyPreset> = _selectedPreset.asStateFlow()
+    private val _selectedPreset = MutableStateFlow(NoteEvalPreset.BALANCED)
+    val selectedPreset: StateFlow<NoteEvalPreset> = _selectedPreset.asStateFlow()
 
     private val _noteDurationMs = MutableStateFlow(1000)
     val noteDurationMs: StateFlow<Int> = _noteDurationMs.asStateFlow()
@@ -158,6 +127,7 @@ class NoteEvalViewModel : ViewModel() {
     private var recorder: SonixRecorder? = null
     private var collectedAudio = mutableListOf<Float>()
     private var recordingJob: Job? = null
+    private var recordingSampleRate: Int = 16000
 
     // Singalong
     private var referencePlayer: SonixPlayer? = null
@@ -180,7 +150,7 @@ class NoteEvalViewModel : ViewModel() {
     }
 
     /** Update the evaluation preset */
-    fun setPreset(preset: DifficultyPreset) {
+    fun setPreset(preset: NoteEvalPreset) {
         _selectedPreset.value = preset
     }
 
@@ -250,12 +220,15 @@ class NoteEvalViewModel : ViewModel() {
 
         _isSingalongActive.value = true
 
+        // Start recorder first to get actual sample rate
+        recorder?.start()
+
+        // Capture actual sample rate (SDK handles resampling internally per ADR-017)
+        recordingSampleRate = recorder?.actualSampleRate ?: 16000
+
         // Start collecting audio
         recordingJob = viewModelScope.launch {
-            // VOICE preset records at 16kHz (ADR-017)
             var sampleCount = 0
-
-            recorder?.start()
 
             recorder?.audioBuffers?.collect { buffer ->
                 val samples = buffer.samples
@@ -268,20 +241,22 @@ class NoteEvalViewModel : ViewModel() {
                 val rms = sqrt(sum / samples.size)
 
                 _recordingLevel.value = (rms * 5).coerceAtMost(1f)
-                _recordingDuration.value = sampleCount / 16000f
+                _recordingDuration.value = sampleCount / recordingSampleRate.toFloat()
             }
         }
 
-        // Start recorder and player together
+        // Start player
         referencePlayer?.play()
     }
 
     /** Stop singalong session and auto-evaluate */
     fun stopSingalong() {
+        if (!_isSingalongActive.value) return  // Guard against double-calls
+        _isSingalongActive.value = false  // Set FIRST to prevent observer re-trigger
+
         recordingJob?.cancel()
         recorder?.stop()
         referencePlayer?.stop()
-        _isSingalongActive.value = false
 
         if (collectedAudio.isNotEmpty()) {
             _hasRecording.value = true
@@ -376,58 +351,36 @@ class NoteEvalViewModel : ViewModel() {
 
         viewModelScope.launch {
             val midiNotes = currentMidiNotes
+            val keyMidi = currentKeyMidi
             val duration = _noteDurationMs.value
             val preset = _selectedPreset.value
 
             val studentAudio = collectedAudio.toFloatArray()
+            val sampleRate = recordingSampleRate
 
-            // Extract pitch contour from student audio
+            // SDK handles resampling internally (ADR-017)
             val extractor = CalibraPitch.createContourExtractor()
             val studentContour = withContext(Dispatchers.Default) {
-                extractor.extract(studentAudio, 16000)
+                extractor.extract(studentAudio, sampleRate)
             }
             extractor.release()
 
-            // Calculate per-note scores
-            val noteResults = mutableListOf<NoteEvalResult>()
-            val samplesPerNote = (duration / 10) // 10ms per pitch sample
+            // Create exercise pattern from MIDI notes
+            val pattern = ExercisePattern.fromMidiNotes(
+                midiNotes = midiNotes,
+                noteDurationMs = duration
+            )
 
-            for ((noteIndex, midi) in midiNotes.withIndex()) {
-                val expectedHz = midiToHz(midi)
-                val startSample = noteIndex * samplesPerNote
-                val endSample = minOf((noteIndex + 1) * samplesPerNote, studentContour.samples.size)
+            // Get reference key frequency
+            val keyHz = CalibraMusic.midiToHz(keyMidi.toFloat())
 
-                // Get pitch samples for this note window
-                val noteSamples = if (startSample < studentContour.samples.size) {
-                    studentContour.samples.subList(startSample, endSample)
-                } else {
-                    emptyList()
-                }
-
-                // Calculate score based on pitch accuracy
-                val singingPitches = noteSamples.filter { it.isSinging }.map { it.pitch }
-                val score = if (singingPitches.isNotEmpty()) {
-                    // Calculate how many pitches are within tolerance
-                    val matchingPitches = singingPitches.count { pitchHz ->
-                        val cents = 1200 * log2(pitchHz / expectedHz)
-                        abs(cents) <= preset.toleranceCents
-                    }
-                    matchingPitches.toFloat() / singingPitches.size
-                } else {
-                    0f
-                }
-
-                noteResults.add(NoteEvalResult(noteIndex, expectedHz, score))
-            }
-
-            // Calculate overall score
-            val overallScore = if (noteResults.isNotEmpty()) {
-                noteResults.map { it.score }.average().toFloat()
-            } else {
-                0f
-            }
-
-            val evalResult = ExerciseEvalResult(overallScore, noteResults)
+            // Evaluate using CalibraNoteEval
+            val evalResult = CalibraNoteEval.evaluate(
+                pattern = pattern,
+                student = studentContour,
+                referenceKeyHz = keyHz,
+                preset = preset
+            )
 
             _result.value = evalResult
             _isEvaluating.value = false
@@ -435,14 +388,8 @@ class NoteEvalViewModel : ViewModel() {
         }
     }
 
-    fun noteResult(index: Int): NoteEvalResult? {
-        return _result.value?.noteResults?.getOrNull(index)
-    }
-
-    // MARK: - Utility Methods
-
-    private fun midiToHz(midi: Int): Float {
-        return 440f * 2.0.pow((midi - 69).toDouble() / 12.0).toFloat()
+    fun noteResult(index: Int): NoteResult? {
+        return _result.value?.noteResults?.firstOrNull { it.noteIndex == index }
     }
 
     private fun copyAssetToFile(context: Context, assetName: String): File {

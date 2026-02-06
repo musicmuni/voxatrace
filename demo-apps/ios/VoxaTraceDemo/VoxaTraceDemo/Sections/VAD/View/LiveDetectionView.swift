@@ -1,13 +1,12 @@
 import SwiftUI
 import VoxaTrace
 
-/// Real-time voice activity detection view with all 4 backends.
+/// Real-time voice activity detection view with all VAD backends.
 ///
 /// Showcases:
 /// - SPEECH (Silero neural network)
 /// - GENERAL (RMS-based, no model)
 /// - SINGING_REALTIME (SwiftF0 pitch-based)
-/// - SINGING (Essentia YAMNet classifier)
 struct LiveDetectionView: View {
     @StateObject private var viewModel = LiveVADViewModel()
 

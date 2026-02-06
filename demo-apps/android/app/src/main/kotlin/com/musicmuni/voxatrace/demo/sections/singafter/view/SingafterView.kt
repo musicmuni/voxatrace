@@ -3,11 +3,7 @@ package com.musicmuni.voxatrace.demo.sections.singafter.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -65,9 +61,7 @@ fun SingafterView(viewModel: SingafterViewModel = viewModel()) {
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Header
@@ -709,22 +703,33 @@ private fun SummaryView(
             fontWeight = FontWeight.SemiBold
         )
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.height(200.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(phrasePairs.size) { index ->
-                val result = completedResults[index]?.lastOrNull()
-                if (result != null) {
-                    PhraseResultCard(
-                        phraseIndex = index,
-                        lyrics = phrasePairs[index].lyrics,
-                        result = result
-                    )
-                } else {
-                    NotPracticedCard(index = index)
+            phrasePairs.chunked(2).forEachIndexed { rowIndex, rowPairs ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    rowPairs.forEachIndexed { colIndex, _ ->
+                        val index = rowIndex * 2 + colIndex
+                        val result = completedResults[index]?.lastOrNull()
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (result != null) {
+                                PhraseResultCard(
+                                    phraseIndex = index,
+                                    lyrics = phrasePairs[index].lyrics,
+                                    result = result
+                                )
+                            } else {
+                                NotPracticedCard(index = index)
+                            }
+                        }
+                    }
+                    // Fill empty slot in last row if odd number of items
+                    if (rowPairs.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }

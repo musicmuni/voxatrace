@@ -148,7 +148,6 @@ class BackendComparisonViewModel : ViewModel() {
             VADBackend.GENERAL -> CalibraVAD.create(VADModelProvider.general)
             VADBackend.SPEECH -> CalibraVAD.create(VADModelProvider.speech())
             VADBackend.SINGING_REALTIME -> CalibraVAD.create(VADModelProvider.singingRealtime())
-            VADBackend.SINGING -> CalibraVAD.create(VADModelProvider.singing())
         }
     }
 
