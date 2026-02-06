@@ -84,12 +84,10 @@ class PitchDetectorViewModel: ObservableObject {
 
     func start() async {
         // Create recorder with voice settings
-        recorder = SonixRecorder.companion.createTemporary(
-            config: SonixRecorderConfig.companion.VOICE
-        )
+        recorder = SonixRecorder.createTemporary(config: .voice)
 
         // Create pitch detector
-        detector = CalibraPitch.companion.createDetector()
+        detector = CalibraPitch.createDetector()
 
         // Start recording
         recorder?.start()
@@ -102,8 +100,8 @@ class PitchDetectorViewModel: ObservableObject {
             for await buffer in recorder.audioBuffersStream() {
                 guard !Task.isCancelled else { break }
 
-                let samples = buffer.toFloatArray()
-                guard let point = detector?.detect(samples: samples, sampleRate: Int32(buffer.sampleRate)) else {
+                let samples = buffer.samples
+                guard let point = detector?.detect(samples: samples, sampleRate: Int(buffer.sampleRate)) else {
                     continue
                 }
 
@@ -276,10 +274,8 @@ class PitchDetectorViewController: UIViewController {
     }
 
     private func startPitchDetection() async {
-        recorder = SonixRecorder.companion.createTemporary(
-            config: SonixRecorderConfig.companion.VOICE
-        )
-        detector = CalibraPitch.companion.createDetector()
+        recorder = SonixRecorder.createTemporary(config: .voice)
+        detector = CalibraPitch.createDetector()
 
         recorder?.start()
 
@@ -289,8 +285,8 @@ class PitchDetectorViewController: UIViewController {
             for await buffer in recorder.audioBuffersStream() {
                 guard !Task.isCancelled else { break }
 
-                let samples = buffer.toFloatArray()
-                guard let point = detector?.detect(samples: samples, sampleRate: Int32(buffer.sampleRate)) else {
+                let samples = buffer.samples
+                guard let point = detector?.detect(samples: samples, sampleRate: Int(buffer.sampleRate)) else {
                     continue
                 }
 

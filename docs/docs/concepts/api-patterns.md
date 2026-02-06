@@ -289,8 +289,8 @@ SonixPlayer.create(...)
 ```
 
 ```swift
-// Swift
-SonixPlayer.companion.create(...)
+// Swift (extensions hide .companion)
+SonixPlayer.create(source: "song.mp3")
 ```
 
 ### Named Parameters

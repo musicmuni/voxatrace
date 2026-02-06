@@ -53,8 +53,8 @@ session.closeSession()
 
 ```swift
 // 1. Create detector and session
-let detector = CalibraPitch.companion.createDetector()
-let session = CalibraLiveEval.companion.create(
+let detector = CalibraPitch.createDetector()
+let session = CalibraLiveEval.create(
     reference: lessonMaterial,
     detector: detector
 )
@@ -67,7 +67,7 @@ session.startPracticingSegment(index: 0)
 
 // 4. Feed audio
 for await buffer in recorder.audioBuffersStream() {
-    session.feedAudioSamples(samples: buffer.toFloatArray(), sampleRate: buffer.sampleRate)
+    session.feedAudioSamples(buffer.samples, sampleRate: Int(buffer.sampleRate))
 }
 
 // 5. Get result

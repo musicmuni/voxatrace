@@ -35,7 +35,7 @@ player.release()
 ### Swift
 
 ```swift
-let player = try await SonixPlayer.companion.create(source: "path/to/song.mp3")
+let player = try await SonixPlayer.create(source: "path/to/song.mp3")
 player.play()
 
 // Later...
@@ -67,7 +67,7 @@ val player = SonixPlayer.create(assetPath)
 
 ```swift
 if let url = Bundle.main.url(forResource: "song", withExtension: "mp3") {
-    let player = try await SonixPlayer.companion.create(source: url.path)
+    let player = try await SonixPlayer.create(source: url.path)
 }
 ```
 

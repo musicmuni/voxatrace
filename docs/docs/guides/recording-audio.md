@@ -37,7 +37,7 @@ recorder.release()
 ### Swift
 
 ```swift
-let recorder = SonixRecorder.companion.create(outputPath: "/path/to/output.m4a")
+let recorder = SonixRecorder.create(outputPath: "/path/to/output.m4a")
 recorder.start()
 
 // Record for a while...

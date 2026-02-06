@@ -40,11 +40,11 @@ detector.close()
 ### Swift
 
 ```swift
-let detector = CalibraPitch.companion.createDetector()
+let detector = CalibraPitch.createDetector()
 
 for await buffer in recorder.audioBuffersStream() {
-    let samples = buffer.toFloatArray()
-    let point = detector.detect(samples: samples, sampleRate: buffer.sampleRate)
+    let samples = buffer.samples
+    let point = detector.detect(samples: samples, sampleRate: Int(buffer.sampleRate))
 
     if point.pitch > 0 {
         print("Pitch: \(point.pitch) Hz, Confidence: \(point.confidence)")

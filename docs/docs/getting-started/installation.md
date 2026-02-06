@@ -116,7 +116,7 @@ import VoxaTrace
 
 // If this compiles, you're set!
 func test() async throws {
-    let player = try await SonixPlayer.companion.create(source: "test.mp3")
+    let player = try await SonixPlayer.create(source: "test.mp3")
     print("VoxaTrace installed!")
 }
 ```
