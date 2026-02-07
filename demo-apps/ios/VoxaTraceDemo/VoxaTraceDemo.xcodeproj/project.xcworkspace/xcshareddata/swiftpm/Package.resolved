@@ -1,0 +1,15 @@
+{
+  "originHash" : "ac344a9b709fd2f00d278a31ce6424a9e15b076b44c18490d2001c821f94e133",
+  "pins" : [
+    {
+      "identity" : "voxatrace",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musicmuni/voxatrace",
+      "state" : {
+        "revision" : "eff17e67eacede22bdc1145f14adfc8951019148",
+        "version" : "0.9.1"
+      }
+    }
+  ],
+  "version" : 3
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CalibraNoteEval</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<script type="text/javascript" src="../../../images/back-to-docs.js" async="async"></script>
+<link href="../../../images/logo.png">
+<link href="../../../images/favicon.png">
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+0.9.1        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.calibra/CalibraNoteEval///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra</a><span class="delimiter">/</span><span class="current">CalibraNoteEval</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Calibra</span><wbr></wbr><span>Note</span><wbr></wbr><span><span>Eval</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">CalibraNoteEval</a></div><p class="paragraph">Offline note/exercise evaluation for scales, arpeggios, and svara patterns.</p><h2 class="">What is Note Evaluation?</h2><p class="paragraph">Note evaluation scores how accurately a student performs <strong>individual notes</strong> in a sequence. Unlike melody evaluation (which compares complete phrases), note evaluation scores each note separately.</p><p class="paragraph">Use it for:</p><ul><li><p class="paragraph"><strong>Scale practice</strong>: Sa Re Ga Ma Pa... with per-note feedback</p></li><li><p class="paragraph"><strong>Arpeggio exercises</strong>: Broken chord practice</p></li><li><p class="paragraph"><strong>Interval training</strong>: Jumping between specific notes</p></li><li><p class="paragraph"><strong>Svara patterns</strong>: Indian classical music exercises</p></li></ul><h2 class="">When to Use</h2><div class="table--container"><table><thead><tr><th>Scenario</th><th>Use This?</th><th>Why</th></tr></thead><tbody><tr><td>Evaluate scales/exercises</td><td>Yes</td><td>Per-note scoring</td></tr><tr><td>Evaluate complete songs</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@614109a9 lang-kotlin">CalibraMelodyEval</code></td></tr><tr><td>Real-time scoring</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@614109a9 lang-kotlin">CalibraLiveEval</code></td></tr><tr><td>Just detect pitch</td><td>No</td><td>Use <code class="org.jetbrains.dokka.pages.commenttable@614109a9 lang-kotlin">CalibraPitch</code></td></tr></tbody></table></div><h2 class="">Quick Start</h2><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val pattern = ExercisePattern(<br>    noteFrequencies = listOf(261.63f, 293.66f, 329.63f),  // C4, D4, E4<br>    noteDurations = listOf(500, 500, 500),  // 500ms each<br>    notesPerLoop = 3<br>)<br><br>val studentContour = pitchExtractor.extract(studentAudio, 16000)<br>val result = CalibraNoteEval.evaluate(pattern, studentContour, referenceKeyHz = 261.63f)<br><br>println(&quot;Score: ${result.scorePercent}%&quot;)<br>result.noteResults.forEach { note -&gt;<br>    println(&quot;Note ${note.noteIndex}: ${note.scorePercent}%&quot;)<br>}</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">Swift</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">let pattern = ExercisePattern(<br>    noteFrequencies: [261.63, 293.66, 329.63],  // C4, D4, E4<br>    noteDurations: [500, 500, 500],<br>    notesPerLoop: 3<br>)<br><br>let studentContour = pitchExtractor.extract(audio: studentAudio, sampleRate: 16000)<br>let result = CalibraNoteEval.evaluate(<br>    pattern: pattern,<br>    student: studentContour,<br>    referenceKeyHz: 261.63<br>)<br><br>print(&quot;Score: \(result.scorePercent)%&quot;)<br>for note in result.noteResults {<br>    print(&quot;Note \(note.noteIndex): \(note.scorePercent)%&quot;)<br>}</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Key Transposition</h2><p class="paragraph">When students sing in a different key than the reference:</p><h3 class="">Kotlin</h3><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val result = CalibraNoteEval.evaluate(<br>    pattern = pattern,<br>    student = studentContour,<br>    referenceKeyHz = 261.63f,  // Reference in C<br>    studentKeyHz = 277.18f,    // Student sings in C#<br>    leewaySamples = 100        // Allow timing flexibility<br>)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Platform Notes</h2><h3 class="">iOS</h3><ul><li><p class="paragraph">Audio must be 16kHz mono; use SonixDecoder/SonixResampler to convert</p></li><li><p class="paragraph">Use <code class="lang-kotlin">@ShouldRefineInSwift</code> methods with provided Swift extensions</p></li></ul><h3 class="">Android</h3><ul><li><p class="paragraph">Audio must be 16kHz mono; use SonixDecoder/SonixResampler to convert</p></li><li><p class="paragraph">Works with any pitch contour from CalibraPitch</p></li></ul><h2 class="">Common Pitfalls</h2><ol><li><p class="paragraph"><strong>Wrong audio sample rate</strong>: Audio must be 16kHz; use SonixResampler if needed</p></li><li><p class="paragraph"><strong>Mismatched note count</strong>: Pattern and student must have same number of notes</p></li><li><p class="paragraph"><strong>Forgetting key transposition</strong>: Set studentKeyHz if student sings in different key</p></li></ol><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-melody-eval/index.html"><span>Calibra</span><wbr></wbr><span>Melody</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For complete melody/song evaluation</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-live-eval/index.html"><span>Calibra</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For real-time evaluation during singing</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-exercise-pattern/index.html"><span>Exercise</span><wbr></wbr><span><span>Pattern</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For defining note patterns</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-exercise-result/index.html"><span>Exercise</span><wbr></wbr><span><span>Result</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For understanding evaluation results</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-157645487%2FFunctions%2F-1201622999" anchor-label="evaluate" id="-157645487%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="evaluate.html"><span><span>evaluate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-157645487%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="evaluate.html"><span class="token function">evaluate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pattern<span class="token operator">: </span><a href="../-exercise-pattern/index.html">ExercisePattern</a><span class="token punctuation">, </span></span><span class="parameter ">student<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-pitch-contour/index.html">PitchContour</a><span class="token punctuation">, </span></span><span class="parameter ">referenceKeyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">studentKeyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-note-eval-config/index.html">NoteEvalConfig</a><span class="token operator"> = </span>NoteEvalConfig.DEFAULT</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-exercise-result/index.html">ExerciseResult</a></div><div class="brief "><p class="paragraph">Evaluate with configuration object.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="evaluate.html"><span class="token function">evaluate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pattern<span class="token operator">: </span><a href="../-exercise-pattern/index.html">ExercisePattern</a><span class="token punctuation">, </span></span><span class="parameter ">student<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-pitch-contour/index.html">PitchContour</a><span class="token punctuation">, </span></span><span class="parameter ">referenceKeyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">studentKeyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">preset<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-note-eval-preset/index.html">NoteEvalPreset</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-exercise-result/index.html">ExerciseResult</a></div><div class="brief "><p class="paragraph">Evaluate with preset.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="evaluate.html"><span class="token function">evaluate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pattern<span class="token operator">: </span><a href="../-exercise-pattern/index.html">ExercisePattern</a><span class="token punctuation">, </span></span><span class="parameter ">student<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-pitch-contour/index.html">PitchContour</a><span class="token punctuation">, </span></span><span class="parameter ">referenceKeyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">studentKeyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">scoreType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">leewaySamples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-exercise-result/index.html">ExerciseResult</a></div><div class="brief "><p class="paragraph">Evaluate a note/exercise performance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

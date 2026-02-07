@@ -107,7 +107,7 @@ class PitchDetectorViewModel: ObservableObject {
 
                 await MainActor.run {
                     if point.pitch > 0 {
-                        self.note = pitchToNote(point.pitch)
+                        self.note = CalibraMusic.hzToNoteLabel(point.pitch)
                         self.frequency = point.pitch
                         self.confidence = point.confidence
                     } else {
@@ -129,15 +129,6 @@ class PitchDetectorViewModel: ObservableObject {
         detector?.close()
         detector = nil
         isRecording = false
-    }
-
-    private func pitchToNote(_ frequency: Float) -> String {
-        let noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-        let a4: Float = 440.0
-        let semitones = 12 * log2(frequency / a4) + 69
-        let noteIndex = (Int(semitones) % 12 + 12) % 12
-        let octave = Int(semitones) / 12 - 1
-        return "\(noteNames[noteIndex])\(octave)"
     }
 
     deinit {
@@ -162,7 +153,7 @@ The app is:
 
 1. Recording audio buffers from the microphone (~50ms chunks)
 2. Running pitch detection on each buffer
-3. Converting frequency to musical note name
+3. Converting frequency to musical note name using `CalibraMusic.hzToNoteLabel()`
 4. Showing confidence (how certain the detection is)
 
 **Troubleshooting:**
@@ -292,7 +283,7 @@ class PitchDetectorViewController: UIViewController {
 
                 await MainActor.run {
                     if point.pitch > 0 {
-                        self.noteLabel.text = self.pitchToNote(point.pitch)
+                        self.noteLabel.text = CalibraMusic.hzToNoteLabel(point.pitch)
                         self.frequencyLabel.text = "\(Int(point.pitch)) Hz"
                         self.confidenceBar.progress = point.confidence
                     } else {
@@ -310,15 +301,6 @@ class PitchDetectorViewController: UIViewController {
         recorder?.stop()
         recorder?.release()
         detector?.close()
-    }
-
-    private func pitchToNote(_ frequency: Float) -> String {
-        let noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-        let a4: Float = 440.0
-        let semitones = 12 * log2(frequency / a4) + 69
-        let noteIndex = (Int(semitones) % 12 + 12) % 12
-        let octave = Int(semitones) / 12 - 1
-        return "\(noteNames[noteIndex])\(octave)"
     }
 }
 ```

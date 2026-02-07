@@ -95,6 +95,28 @@ Add microphone usage description for recording:
 |-----------|-----------------|---------|--------|
 | 0.9.x     | API 24 (7.0)    | iOS 14  | 1.9+   |
 
+## Authentication
+
+VoxaTrace requires initialization with valid credentials before any SDK APIs can be used. Authentication works via an **API key**, a **proxy**, or **platform attestation**. The quickest way to get started is with your API key directly:
+
+### Kotlin
+
+```kotlin
+// In Application.onCreate() or before using any VoxaTrace API
+VT.initializeForServer(apiKey = "sk_live_your_key_here")
+```
+
+### Swift
+
+```swift
+// In AppDelegate or App init
+VT.initializeForServer(apiKey: "sk_live_your_key_here")
+```
+
+:::tip
+For production mobile apps, use **Proxy** or **App Attestation** instead of embedding API keys directly. See the [Authentication guide](../guides/authentication) for all three methods, proxy server setup, and security best practices.
+:::
+
 ## Verifying Installation
 
 ### Kotlin
@@ -123,5 +145,6 @@ func test() async throws {
 
 ## Next Steps
 
+- [Authentication](../guides/authentication) - Set up secure authentication for production
 - [Android Quickstart](./android-quickstart) - Build your first Android app
 - [iOS Quickstart](./ios-quickstart) - Build your first iOS app

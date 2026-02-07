@@ -1,0 +1,350 @@
+/* MusicMuni Design System for Dokka */
+
+/* === Back to Docs Link === */
+.back-to-docs {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin-right: 8px;
+    color: var(--mm-text-secondary) !important;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-right: 1px solid var(--mm-border);
+    white-space: nowrap;
+}
+
+.back-to-docs:hover {
+    color: var(--mm-primary) !important;
+}
+
+/* === Library Logo === */
+.library-logo {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Hide default Kotlin logo */
+.library-name--logo,
+.navigation .library-name--link > svg,
+.library-name--link::before {
+    display: none !important;
+}
+
+/* Import fonts to match Docusaurus */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Nunito+Sans:wght@400;600&display=swap');
+
+/* === Color Variables === */
+:root {
+    /* Override Dokka's Kotlin logo with our favicon */
+    --dokka-logo-image-url: url('../images/favicon.png');
+
+    /* Primary brand */
+    --mm-primary: #FFC800;
+    --mm-primary-dark: #e6b400;
+
+    /* Background (dark theme) */
+    --mm-bg-base: #0F0E16;
+    --mm-bg-surface: #1A1827;
+    --mm-bg-elevated: #252336;
+    --mm-bg-code: #1E1C2D;
+
+    /* Text */
+    --mm-text-primary: rgba(255, 255, 255, 0.87);
+    --mm-text-secondary: rgba(255, 255, 255, 0.6);
+    --mm-text-disabled: rgba(255, 255, 255, 0.38);
+
+    /* Borders */
+    --mm-border: rgba(255, 255, 255, 0.12);
+    --mm-border-hover: rgba(255, 255, 255, 0.2);
+
+    /* Secondary colors */
+    --mm-secondary-purple: #39389F;
+    --mm-secondary-green: #75C88E;
+    --mm-secondary-pink: #DB7989;
+}
+
+/* === Force Dark Theme === */
+:root,
+:root.theme-dark,
+[data-theme="dark"] {
+    /* Navigation */
+    --color-background: var(--mm-bg-base) !important;
+    --color-dark-background: var(--mm-bg-surface) !important;
+
+    /* Text */
+    --default-font-color: var(--mm-text-primary) !important;
+    --default-dark-font-color: var(--mm-text-secondary) !important;
+    --breadcrumb-font-color: var(--mm-text-secondary) !important;
+
+    /* Links */
+    --hover-link-color: var(--mm-primary) !important;
+    --active-link-color: var(--mm-primary) !important;
+    --active-tab-border-color: var(--mm-primary) !important;
+
+    /* Code */
+    --code-background: var(--mm-bg-code) !important;
+
+    /* Borders */
+    --border-color: var(--mm-border) !important;
+}
+
+/* === Typography === */
+body {
+    font-family: 'Nunito Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+    background-color: var(--mm-bg-base) !important;
+    color: var(--mm-text-primary) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.library-name,
+.toc-title,
+.main-subheading {
+    font-family: 'Lexend', system-ui, -apple-system, sans-serif !important;
+    font-weight: 600 !important;
+}
+
+/* === Navigation Sidebar === */
+.navigation-wrapper {
+    background-color: var(--mm-bg-surface) !important;
+    border-right: 1px solid var(--mm-border) !important;
+}
+
+.library-name {
+    color: var(--mm-text-primary) !important;
+    padding: 16px !important;
+    font-size: 1.25rem !important;
+}
+
+.sideMenuPart > .overview {
+    border-radius: 4px !important;
+    margin: 2px 8px !important;
+}
+
+.sideMenuPart > .overview > a {
+    color: var(--mm-text-secondary) !important;
+    padding: 8px 12px !important;
+}
+
+.sideMenuPart > .overview > a.selected,
+.sideMenuPart > .overview:hover > a {
+    background-color: var(--mm-bg-elevated) !important;
+    color: var(--mm-primary) !important;
+}
+
+/* Expand/collapse icons */
+.sideMenuPart > .overview > span.navButton {
+    color: var(--mm-text-disabled) !important;
+}
+
+/* === Top Navigation Bar === */
+.navigation--inner {
+    background-color: var(--mm-bg-surface) !important;
+    border-bottom: 1px solid var(--mm-border) !important;
+}
+
+/* === Search Bar === */
+#searchBar {
+    background-color: var(--mm-bg-elevated) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 8px !important;
+    color: var(--mm-text-primary) !important;
+}
+
+#searchBar::placeholder {
+    color: var(--mm-text-disabled) !important;
+}
+
+#searchBar:focus,
+#searchBar:focus-within {
+    border-color: var(--mm-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(255, 200, 0, 0.2) !important;
+}
+
+/* Search results dropdown */
+.popup-wrapper {
+    background-color: var(--mm-bg-surface) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.filtered-list > li:hover {
+    background-color: var(--mm-bg-elevated) !important;
+}
+
+/* === Main Content Area === */
+.main-content {
+    background-color: var(--mm-bg-base) !important;
+}
+
+.page-content {
+    background-color: var(--mm-bg-base) !important;
+    padding: 24px 32px !important;
+}
+
+/* === Breadcrumbs === */
+.breadcrumbs {
+    color: var(--mm-text-secondary) !important;
+}
+
+.breadcrumbs a {
+    color: var(--mm-text-secondary) !important;
+}
+
+.breadcrumbs a:hover {
+    color: var(--mm-primary) !important;
+}
+
+/* === Code Blocks === */
+pre, code {
+    background-color: var(--mm-bg-code) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 8px !important;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+}
+
+.sample-container {
+    background-color: var(--mm-bg-code) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 8px !important;
+    margin: 16px 0 !important;
+}
+
+/* Inline code */
+p code, li code, td code {
+    background-color: var(--mm-bg-elevated) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 0.9em !important;
+}
+
+/* === Function/Property Signatures === */
+.symbol {
+    background-color: var(--mm-bg-elevated) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 6px !important;
+    padding: 12px 16px !important;
+    margin: 8px 0 !important;
+}
+
+.symbol:hover {
+    border-color: var(--mm-border-hover) !important;
+}
+
+/* Keyword highlighting */
+.keyword {
+    color: var(--mm-secondary-purple) !important;
+}
+
+/* Type highlighting */
+.identifier {
+    color: var(--mm-secondary-green) !important;
+}
+
+/* === Tables === */
+table {
+    background-color: var(--mm-bg-surface) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+th {
+    background-color: var(--mm-bg-elevated) !important;
+    color: var(--mm-text-primary) !important;
+    font-weight: 600 !important;
+    padding: 12px 16px !important;
+}
+
+td {
+    border-top: 1px solid var(--mm-border) !important;
+    padding: 10px 16px !important;
+}
+
+tr:hover td {
+    background-color: var(--mm-bg-elevated) !important;
+}
+
+/* === Tabs === */
+.tabs-section-body {
+    border: 1px solid var(--mm-border) !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+    background-color: var(--mm-bg-surface) !important;
+}
+
+.tabs-section .section-tab {
+    background-color: var(--mm-bg-surface) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-bottom: none !important;
+    border-radius: 8px 8px 0 0 !important;
+    color: var(--mm-text-secondary) !important;
+    padding: 8px 16px !important;
+}
+
+.tabs-section .section-tab:hover,
+.tabs-section .section-tab[data-active="true"] {
+    border-bottom-color: var(--mm-primary) !important;
+    color: var(--mm-primary) !important;
+}
+
+/* === Footer === */
+.footer {
+    background-color: var(--mm-bg-surface) !important;
+    border-top: 1px solid var(--mm-border) !important;
+    color: var(--mm-text-secondary) !important;
+    padding: 16px !important;
+}
+
+/* === Platform Tags === */
+.platform-tag {
+    background-color: var(--mm-bg-elevated) !important;
+    border: 1px solid var(--mm-border) !important;
+    border-radius: 4px !important;
+    color: var(--mm-text-secondary) !important;
+    font-size: 0.75rem !important;
+    padding: 2px 8px !important;
+}
+
+/* === Deprecation/Warning Notices === */
+.deprecation-content {
+    background-color: rgba(219, 121, 137, 0.1) !important;
+    border-left: 4px solid var(--mm-secondary-pink) !important;
+    border-radius: 0 8px 8px 0 !important;
+    padding: 12px 16px !important;
+}
+
+/* === Scrollbars (WebKit) === */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--mm-bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--mm-border-hover);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mm-text-disabled);
+}
+
+/* === Mobile Responsive === */
+@media (max-width: 768px) {
+    .navigation-wrapper {
+        border-right: none !important;
+        border-bottom: 1px solid var(--mm-border) !important;
+    }
+
+    .page-content {
+        padding: 16px !important;
+    }
+}

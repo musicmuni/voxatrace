@@ -145,6 +145,19 @@ synth.noteOff(channel = 0, note = 60)
 
 ## Next Steps
 
-- [Playing Audio Guide](../guides/playing-audio) — SonixPlayer details
-- [Recording Audio Guide](../guides/recording-audio) — SonixRecorder details
-- [Karaoke App Recipe](../cookbook/karaoke-app) — Full example with mixing
+### API Reference
+
+- [SonixPlayer](./player) — Audio playback with pitch shifting and tempo control
+- [SonixRecorder](./recorder) — Record audio to M4A, MP3, or WAV
+- [SonixMixer](./mixer) — Multi-track mixing with per-track volume
+- [SonixMetronome](./metronome) — Programmable click track
+- [SonixDecoder](./decoder) — Decode audio files to raw PCM
+- [SonixEncoder](./encoder) — Encode PCM to compressed formats
+- [SonixResampler](./resampler) — Sample rate conversion
+- [SonixMidiSynthesizer](./midi-synthesizer) — MIDI to audio synthesis
+- [SonixLessonSynthesizer](./lesson-synthesizer) — Lesson audio from svara sequences
+- [Utilities](./utilities) — Parser, frames, and error types
+
+### Guides
+
+- [Playing Audio Guide](../guides/playing-audio) — In-depth SonixPlayer guide
