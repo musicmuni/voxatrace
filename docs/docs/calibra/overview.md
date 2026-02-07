@@ -126,6 +126,22 @@ session.start()
 
 ## Next Steps
 
+### API Reference
+
+- [CalibraPitch](./pitch) — Real-time and batch pitch detection
+- [CalibraVAD](./vad) — Voice activity detection
+- [CalibraVocalRange](./vocal-range) — Vocal range detection with guided sessions
+- [CalibraLiveEval](./live-eval) — Live singing evaluation with scoring
+- [CalibraMelodyEval](./melody-eval) — Evaluate recorded melodies against reference
+- [CalibraNoteEval](./note-eval) — Evaluate individual note accuracy
+- [CalibraMusic](./music) — Musical pitch conversions (Hz, MIDI, note labels, cents)
+- [CalibraBreath](./breath) — Breath capacity and control analysis
+- [CalibraSpeakingPitch](./speaking-pitch) — Speaking pitch detection
+- [CalibraEffects](./effects) — Real-time vocal effects chain (noise gate, compressor, reverb)
+- [Utilities](./utilities) — Shared model types, error types, and configuration classes
+
+### Guides
+
 - [Pitch Detection Concepts](../concepts/pitch-detection) — How pitch detection works
 - [Voice Activity Concepts](../concepts/voice-activity) — VAD backends explained
 - [Detecting Pitch Guide](../guides/detecting-pitch) — Implementation details
