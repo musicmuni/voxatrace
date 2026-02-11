@@ -2,6 +2,7 @@
 # IDE / Editor Directories
 # ==========================
 .idea/
+.claude/
 *.iml
 *.ipr
 *.iws

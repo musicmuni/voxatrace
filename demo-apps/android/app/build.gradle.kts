@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
@@ -48,23 +47,22 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs += listOf("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
     }
 }
 
-dependencies {
-    // VoxaTrace SDK - Public release (Maven Central)
-    implementation("com.musicmuni:voxatrace:0.9.1")
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        freeCompilerArgs.addAll("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+    }
+}
 
-    // VoxaTrace SDK - Local AAR (uncomment below and comment above for local testing)
-    // implementation(files("libs/voxatrace.aar"))
+dependencies {
+    // VoxaTrace SDK (mavenLocal() is checked first for pre-release testing)
+    implementation("com.musicmuni:voxatrace:0.9.2")
 
     // Required by Sonix
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
