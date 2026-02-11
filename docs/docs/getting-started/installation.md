@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.musicmuni:voxatrace:0.9.1")
+    implementation("com.musicmuni:voxatrace:0.9.2")
 }
 ```
 
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.musicmuni:voxatrace:0.9.1'
+    implementation 'com.musicmuni:voxatrace:0.9.2'
 }
 ```
 
@@ -59,7 +59,7 @@ Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.1")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.2")
 ]
 ```
 
