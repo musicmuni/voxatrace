@@ -279,7 +279,7 @@ The top-level result returned by `evaluate`.
 #### Swift-Only Extensions
 
 ```swift
-// Iterate segments in order (converts KotlinInt keys to Swift Int)
+// Iterate segments in order
 for (index, attempts) in result.sortedSegmentResults {
     print("Segment \(index): \(attempts.last!.scorePercent)%")
 }

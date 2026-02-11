@@ -70,8 +70,8 @@ val vad = CalibraVAD.create(VADModelProvider.SingingRealtime { ModelLoader.loadS
 ```
 
 ```swift
-let vad = CalibraVAD.create(.speech { ModelLoader.shared.loadSpeechVAD() })
-let vad = CalibraVAD.create(.singingRealtime { ModelLoader.shared.loadSingingRealtimeVAD() })
+let vad = CalibraVAD.create(.speech { ModelLoader.loadSpeechVAD() })
+let vad = CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
 ```
 
 ### With Config + Model Provider

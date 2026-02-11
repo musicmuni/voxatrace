@@ -70,7 +70,7 @@ let config = PitchDetectorConfig.Builder()
     .enableProcessing()
     .build()
 
-let detector = CalibraPitch.createDetector(config: config, modelProvider: { ModelLoader.shared.loadSwiftF0() })
+let detector = CalibraPitch.createDetector(config: config, modelProvider: { ModelLoader.loadSwiftF0() })
 ```
 
 ### Config Properties
@@ -252,7 +252,7 @@ extractor.release()
 ```swift
 let extractor = CalibraPitch.createContourExtractor(
     config: .scoring,
-    modelProvider: { ModelLoader.shared.loadSwiftF0() }
+    modelProvider: { ModelLoader.loadSwiftF0() }
 )
 let contour = extractor.extract(audio: audioSamples, sampleRate: 44100)
 print("Duration: \(contour.duration)s, Voiced: \(Int(contour.voicedRatio * 100))%")
@@ -288,7 +288,7 @@ let config = ContourExtractorConfig.Builder()
     .voiceType(.carnaticMale)
     .build()
 
-let extractor = CalibraPitch.createContourExtractor(config: config, modelProvider: { ModelLoader.shared.loadSwiftF0() })
+let extractor = CalibraPitch.createContourExtractor(config: config, modelProvider: { ModelLoader.loadSwiftF0() })
 ```
 
 ### Contour Cleanup Presets

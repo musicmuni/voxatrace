@@ -141,8 +141,8 @@ let segment = Segment.create(
 | `startSeconds` | `Float` | `Float` | `Double` (via extension) | Reference audio start time in seconds |
 | `endSeconds` | `Float` | `Float` | `Double` (via extension) | Reference audio end time in seconds |
 | `lyrics` | `String` | `String` | `String` | Text/lyrics for this segment |
-| `studentStartSeconds` | `Float?` | `Float?` | `KotlinFloat?` | When student recording starts (null = same as startSeconds) |
-| `studentEndSeconds` | `Float?` | `Float?` | `KotlinFloat?` | When student recording ends (null = same as endSeconds) |
+| `studentStartSeconds` | `Float?` | `Float?` | `Float?` | When student recording starts (null = same as startSeconds) |
+| `studentEndSeconds` | `Float?` | `Float?` | `Float?` | When student recording ends (null = same as endSeconds) |
 | `duration` | `Float` | `Float` | `Double` (via extension) | Duration of the segment in seconds |
 | `isSingafter` | `Boolean` | `Boolean` | `Bool` | True if student starts after reference |
 | `effectiveStudentStart` | `Float` | `Float` | `Double` (via extension) | Effective student start time (falls back to segment start) |

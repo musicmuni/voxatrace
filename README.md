@@ -80,7 +80,7 @@ detector.close()
 ### Swift
 
 ```swift
-let detector = CalibraPitch.companion.createDetector()
+let detector = CalibraPitch.createDetector()
 let point = detector.detect(samples: audioSamples, sampleRate: 16000)
 print("\(point.pitch) Hz @ \(Int(point.confidence * 100))% confidence")
 detector.close()
