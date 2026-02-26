@@ -104,7 +104,7 @@ detector.close()
 
 ## Documentation
 
-**[musicmuni.github.io/voxatrace](https://musicmuni.github.io/voxatrace/)**
+**[voxatrace.ai](https://voxatrace.ai)**
 
 ## License
 

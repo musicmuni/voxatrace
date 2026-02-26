@@ -12,9 +12,9 @@ const config: Config = {
     v4: true,
   },
 
-  // GitHub Pages URL
-  url: 'https://musicmuni.github.io',
-  baseUrl: '/voxatrace/',
+  // Custom domain
+  url: 'https://voxatrace.ai',
+  baseUrl: '/',
   organizationName: 'musicmuni',
   projectName: 'voxatrace',
   trailingSlash: false,
@@ -76,7 +76,7 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'pathname:///voxatrace/api/index.html',
+          href: 'pathname:///api/index.html',
           position: 'left',
           label: 'API Reference',
           target: '_self',
@@ -100,7 +100,7 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              href: 'pathname:///voxatrace/api/index.html',
+              href: 'pathname:///api/index.html',
             },
           ],
         },
