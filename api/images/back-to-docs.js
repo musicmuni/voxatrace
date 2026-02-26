@@ -1,7 +1,7 @@
 // Inject "Back to Docs" link and logo into Dokka header
 (function() {
-    // Use absolute path for images (works with /voxatrace/ baseUrl)
-    const IMAGES_PATH = '/voxatrace/api/images/';
+    // Use absolute path for images
+    const IMAGES_PATH = '/api/images/';
 
     function injectElements() {
         if (document.querySelector('.back-to-docs')) return; // Already injected
@@ -11,7 +11,7 @@
 
         // Inject back link
         const backLink = document.createElement('a');
-        backLink.href = '/voxatrace/';
+        backLink.href = '/';
         backLink.className = 'back-to-docs';
         backLink.textContent = '← Docs';
         backLink.title = 'Back to Documentation';
