@@ -5,9 +5,12 @@ import VoxaTrace
 ///
 /// Demonstrates:
 /// - SonixDecoder.decode() for extracting raw PCM from audio files
-/// - SonixEncoder.encode() for encoding raw PCM to compressed formats
+/// - SonixEncoder.encode() for encoding raw PCM to compressed formats (M4A, MP3, WAV)
 /// - SonixEncoder.isFormatAvailable() for checking platform support
-/// - Full decode -> re-encode pipeline (format conversion)
+/// - SonixAudioUtils.normalize() for peak normalization
+/// - SonixAudioUtils.mix() for offline audio mixing
+/// - SonixToneGenerator.generate() for waveform synthesis
+/// - Full decode -> normalize -> mix -> re-encode pipeline
 struct DecodingView: View {
     @State private var status = "Ready"
     @State private var isProcessing = false
@@ -20,8 +23,9 @@ struct DecodingView: View {
     // Check format availability - uses Swift extension for clean API
     private var mp3Available: Bool { SonixEncoder.isFormatAvailable(format: "mp3") }
     private var m4aAvailable: Bool { SonixEncoder.isFormatAvailable(format: "m4a") }
+    private var wavAvailable: Bool { SonixEncoder.isFormatAvailable(format: "wav") }
 
-    private let formats = ["m4a", "mp3"]
+    private let formats = ["m4a", "mp3", "wav"]
     private let bitrates: [Int32] = [64, 128, 192, 256]
 
     var body: some View {
@@ -34,7 +38,7 @@ struct DecodingView: View {
                 .foregroundColor(.secondary)
 
             // Format availability info
-            Text("Formats: M4A \(m4aAvailable ? "✓" : "✗") | MP3 \(mp3Available ? "✓" : "✗")")
+            Text("Formats: M4A \(m4aAvailable ? "✓" : "✗") | MP3 \(mp3Available ? "✓" : "✗") | WAV \(wavAvailable ? "✓" : "✗")")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -61,8 +65,31 @@ struct DecodingView: View {
                 .cornerRadius(8)
             }
 
-            // Encoding section - only show if we have decoded data
+            // Audio processing section - only show if we have decoded data
             if decodedData != nil {
+                Divider()
+                    .padding(.vertical, 8)
+
+                Text("Process:")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                HStack(spacing: 8) {
+                    Button("Normalize") {
+                        normalizeAudio()
+                    }
+                    .disabled(isProcessing)
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+
+                    Button("Mix with 440Hz tone") {
+                        mixWithTone()
+                    }
+                    .disabled(isProcessing)
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+
                 Divider()
                     .padding(.vertical, 8)
 
@@ -73,17 +100,25 @@ struct DecodingView: View {
                 // Format selection
                 HStack(spacing: 8) {
                     ForEach(formats, id: \.self) { format in
-                        let available = format == "mp3" ? mp3Available : m4aAvailable
+                        let available: Bool = {
+                            switch format {
+                            case "mp3": return mp3Available
+                            case "wav": return wavAvailable
+                            default: return m4aAvailable
+                            }
+                        }()
                         formatButton(format: format, available: available)
                     }
                 }
 
-                // Bitrate options
-                HStack(spacing: 8) {
-                    Text("Bitrate:")
-                        .font(.caption)
-                    ForEach(bitrates, id: \.self) { bitrate in
-                        bitrateButton(bitrate: bitrate)
+                // Bitrate options (not applicable for WAV)
+                if selectedEncodeFormat != "wav" {
+                    HStack(spacing: 8) {
+                        Text("Bitrate:")
+                            .font(.caption)
+                        ForEach(bitrates, id: \.self) { bitrate in
+                            bitrateButton(bitrate: bitrate)
+                        }
                     }
                 }
 
@@ -215,6 +250,66 @@ struct DecodingView: View {
             } else {
                 status = "Encoding failed"
             }
+
+            isProcessing = false
+        }
+    }
+
+    private func normalizeAudio() {
+        guard let data = decodedData else { return }
+
+        Task {
+            isProcessing = true
+            status = "Normalizing..."
+
+            let normalized = SonixAudioUtils.normalize(audio: data)
+            decodedData = normalized
+            decodedInfo = DecodedAudioInfo(
+                sampleRate: normalized.sampleRate,
+                channels: normalized.numChannels,
+                durationMs: normalized.durationMilliSecs,
+                dataSize: Int(normalized.audioData.size)
+            )
+            encodedFile = nil
+            status = "Normalized (peak amplitude → 1.0)"
+
+            isProcessing = false
+        }
+    }
+
+    private func mixWithTone() {
+        guard let data = decodedData else { return }
+
+        Task {
+            isProcessing = true
+            status = "Generating 440Hz tone and mixing..."
+
+            // Generate a 440Hz sine tone matching the decoded audio's duration
+            let toneDurationMs = min(Int32(data.durationMilliSecs), 2000)
+            let tone = SonixToneGenerator.generate(
+                frequencyHz: 440.0,
+                durationMs: toneDurationMs,
+                waveType: .sine,
+                amplitude: 0.8,
+                sampleRate: Int32(data.sampleRate)
+            )
+
+            // Mix: original at full volume, tone at 0.3
+            let mixed = SonixAudioUtils.mix(
+                audioList: [data, tone],
+                gains: [1.0, 0.3],
+                targetSampleRate: Int32(data.sampleRate)
+            )
+
+            decodedData = mixed
+            decodedInfo = DecodedAudioInfo(
+                sampleRate: mixed.sampleRate,
+                channels: mixed.numChannels,
+                durationMs: mixed.durationMilliSecs,
+                dataSize: Int(mixed.audioData.size)
+            )
+            encodedFile = nil
+            status = "Mixed with 440Hz tone (gain: 0.3)"
 
             isProcessing = false
         }

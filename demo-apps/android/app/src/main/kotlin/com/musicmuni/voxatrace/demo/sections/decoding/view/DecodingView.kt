@@ -7,9 +7,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.musicmuni.voxatrace.sonix.SonixAudioUtils
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixEncoder
+import com.musicmuni.voxatrace.sonix.SonixToneGenerator
 import com.musicmuni.voxatrace.sonix.model.AudioRawData
+import com.musicmuni.voxatrace.sonix.model.WaveType
 import com.musicmuni.voxatrace.demo.components.OptionChip
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +26,11 @@ import java.io.FileOutputStream
  *
  * Demonstrates:
  * - SonixDecoder.decode() for extracting raw PCM from audio files
- * - SonixEncoder.encode() for encoding raw PCM to compressed formats
+ * - SonixEncoder.encode() for encoding raw PCM to M4A, MP3, or WAV
  * - SonixEncoder.isFormatAvailable() for checking platform support
+ * - SonixAudioUtils.normalize() for peak normalization
+ * - SonixAudioUtils.mix() for offline audio mixing
+ * - SonixToneGenerator.generate() for waveform synthesis
  */
 @Composable
 fun DecodingView() {
@@ -42,6 +48,7 @@ fun DecodingView() {
     // Check format availability
     val mp3Available = remember { SonixEncoder.isFormatAvailable("mp3") }
     val m4aAvailable = remember { SonixEncoder.isFormatAvailable("m4a") }
+    val wavAvailable = remember { SonixEncoder.isFormatAvailable("wav") }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -56,7 +63,7 @@ fun DecodingView() {
 
         // Format availability info
         Text(
-            text = "Formats: M4A ${if (m4aAvailable) "available" else "unavailable"} | MP3 ${if (mp3Available) "available" else "unavailable"}",
+            text = "Formats: M4A ${if (m4aAvailable) "available" else "unavailable"} | MP3 ${if (mp3Available) "available" else "unavailable"} | WAV ${if (wavAvailable) "available" else "unavailable"}",
             style = MaterialTheme.typography.bodySmall
         )
 
@@ -116,8 +123,86 @@ fun DecodingView() {
             }
         }
 
-        // Encoding section - only show if we have decoded data
+        // Processing & encoding section - only show if we have decoded data
         decodedData?.let { data ->
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            Text("Process:", style = MaterialTheme.typography.titleSmall)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            isProcessing = true
+                            status = "Normalizing..."
+                            try {
+                                val normalized = SonixAudioUtils.normalize(data)
+                                decodedData = normalized
+                                decodedInfo = DecodedAudioInfo(
+                                    sampleRate = normalized.sampleRate,
+                                    channels = normalized.numChannels,
+                                    durationMs = normalized.durationMilliSecs.toLong(),
+                                    dataSize = normalized.audioData.size
+                                )
+                                encodedFile = null
+                                status = "Normalized (peak amplitude → 1.0)"
+                            } catch (e: Exception) {
+                                Napier.e("Normalize failed", e)
+                                status = "Error: ${e.message}"
+                            } finally {
+                                isProcessing = false
+                            }
+                        }
+                    },
+                    enabled = !isProcessing
+                ) {
+                    Text("Normalize")
+                }
+
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            isProcessing = true
+                            status = "Generating 440Hz tone and mixing..."
+                            try {
+                                val toneDurationMs = minOf(data.durationMilliSecs, 2000)
+                                val tone = SonixToneGenerator.generate(
+                                    frequencyHz = 440f,
+                                    durationMs = toneDurationMs,
+                                    waveType = WaveType.SINE,
+                                    amplitude = 0.8f,
+                                    sampleRate = data.sampleRate
+                                )
+                                val mixed = SonixAudioUtils.mix(
+                                    audioList = listOf(data, tone),
+                                    gains = floatArrayOf(1.0f, 0.3f),
+                                    targetSampleRate = data.sampleRate
+                                )
+                                decodedData = mixed
+                                decodedInfo = DecodedAudioInfo(
+                                    sampleRate = mixed.sampleRate,
+                                    channels = mixed.numChannels,
+                                    durationMs = mixed.durationMilliSecs.toLong(),
+                                    dataSize = mixed.audioData.size
+                                )
+                                encodedFile = null
+                                status = "Mixed with 440Hz tone (gain: 0.3)"
+                            } catch (e: Exception) {
+                                Napier.e("Mix failed", e)
+                                status = "Error: ${e.message}"
+                            } finally {
+                                isProcessing = false
+                            }
+                        }
+                    },
+                    enabled = !isProcessing
+                ) {
+                    Text("Mix with 440Hz tone")
+                }
+            }
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text("Re-encode to:", style = MaterialTheme.typography.titleSmall)
@@ -127,8 +212,12 @@ fun DecodingView() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("m4a", "mp3").forEach { format ->
-                    val available = if (format == "mp3") mp3Available else m4aAvailable
+                listOf("m4a", "mp3", "wav").forEach { format ->
+                    val available = when (format) {
+                        "mp3" -> mp3Available
+                        "wav" -> wavAvailable
+                        else -> m4aAvailable
+                    }
                     OptionChip(
                         selected = selectedEncodeFormat == format,
                         onClick = { selectedEncodeFormat = format },
@@ -138,19 +227,21 @@ fun DecodingView() {
                 }
             }
 
-            // Bitrate options
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text("Bitrate:", style = MaterialTheme.typography.bodySmall)
-                listOf(64, 128, 192, 256).forEach { bitrate ->
-                    OptionChip(
-                        selected = selectedBitrate == bitrate,
-                        onClick = { selectedBitrate = bitrate },
-                        label = "${bitrate}k",
-                        enabled = !isProcessing
-                    )
+            // Bitrate options (not applicable for WAV)
+            if (selectedEncodeFormat != "wav") {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("Bitrate:", style = MaterialTheme.typography.bodySmall)
+                    listOf(64, 128, 192, 256).forEach { bitrate ->
+                        OptionChip(
+                            selected = selectedBitrate == bitrate,
+                            onClick = { selectedBitrate = bitrate },
+                            label = "${bitrate}k",
+                            enabled = !isProcessing
+                        )
+                    }
                 }
             }
 
