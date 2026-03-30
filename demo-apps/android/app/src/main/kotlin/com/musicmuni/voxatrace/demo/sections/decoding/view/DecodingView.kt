@@ -7,9 +7,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.musicmuni.voxatrace.sonix.AudioMode
 import com.musicmuni.voxatrace.sonix.SonixAudioUtils
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixEncoder
+import com.musicmuni.voxatrace.sonix.SonixPlayer
+import com.musicmuni.voxatrace.sonix.SonixPlayerConfig
 import com.musicmuni.voxatrace.sonix.SonixToneGenerator
 import com.musicmuni.voxatrace.sonix.model.AudioRawData
 import com.musicmuni.voxatrace.sonix.model.WaveType
@@ -44,6 +47,15 @@ fun DecodingView() {
     var encodedFile by remember { mutableStateOf<File?>(null) }
     var selectedEncodeFormat by remember { mutableStateOf("m4a") }
     var selectedBitrate by remember { mutableIntStateOf(128) }
+    var player by remember { mutableStateOf<SonixPlayer?>(null) }
+    var isPlaying by remember { mutableStateOf(false) }
+
+    // Clean up player when leaving the screen
+    DisposableEffect(Unit) {
+        onDispose {
+            player?.release()
+        }
+    }
 
     // Check format availability
     val mp3Available = remember { SonixEncoder.isFormatAvailable("mp3") }
@@ -284,7 +296,7 @@ fun DecodingView() {
                 Text("Encode to ${selectedEncodeFormat.uppercase()}")
             }
 
-            // Show encoded file info
+            // Show encoded file info and play button
             encodedFile?.let { file ->
                 if (file.exists()) {
                     Card(
@@ -299,6 +311,45 @@ fun DecodingView() {
                             InfoRow("Size", "${file.length() / 1024} KB")
                             InfoRow("Compression", "${(decodedInfo?.dataSize?.div(file.length().toInt()) ?: 0)}x")
                         }
+                    }
+
+                    // Play/Stop button
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                if (isPlaying) {
+                                    player?.stop()
+                                    isPlaying = false
+                                    status = "Stopped"
+                                } else {
+                                    try {
+                                        // Release previous player
+                                        player?.release()
+                                        val config = SonixPlayerConfig.Builder()
+                                            .onComplete {
+                                                isPlaying = false
+                                                status = "Playback complete"
+                                            }
+                                            .build()
+                                        val newPlayer = SonixPlayer.create(
+                                            source = file.absolutePath,
+                                            config = config,
+                                            audioSession = AudioMode.PLAYBACK
+                                        )
+                                        player = newPlayer
+                                        newPlayer.play()
+                                        isPlaying = true
+                                        status = "Playing ${file.name}..."
+                                    } catch (e: Exception) {
+                                        Napier.e("Playback failed", e)
+                                        status = "Playback error: ${e.message}"
+                                    }
+                                }
+                            }
+                        },
+                        enabled = !isProcessing
+                    ) {
+                        Text(if (isPlaying) "Stop" else "Play")
                     }
                 }
             }

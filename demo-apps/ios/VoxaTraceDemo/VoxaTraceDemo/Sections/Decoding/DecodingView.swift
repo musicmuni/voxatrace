@@ -19,6 +19,8 @@ struct DecodingView: View {
     @State private var encodedFile: URL?
     @State private var selectedEncodeFormat = "m4a"
     @State private var selectedBitrate: Int32 = 128
+    @State private var player: SonixPlayer?
+    @State private var isPlaying = false
 
     // Check format availability - uses Swift extension for clean API
     private var mp3Available: Bool { SonixEncoder.isFormatAvailable(format: "mp3") }
@@ -129,7 +131,7 @@ struct DecodingView: View {
                 .disabled(isProcessing || !SonixEncoder.isFormatAvailable(format: selectedEncodeFormat))
                 .buttonStyle(.borderedProminent)
 
-                // Show encoded file info
+                // Show encoded file info and play button
                 if let file = encodedFile {
                     if let attrs = try? FileManager.default.attributesOfItem(atPath: file.path),
                        let fileSize = attrs[.size] as? Int64 {
@@ -147,9 +149,19 @@ struct DecodingView: View {
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
+
+                        Button(isPlaying ? "Stop" : "Play") {
+                            playEncodedFile(file)
+                        }
+                        .disabled(isProcessing)
+                        .buttonStyle(.borderedProminent)
                     }
                 }
             }
+        }
+        .onDisappear {
+            player?.release()
+            player = nil
         }
     }
 
@@ -252,6 +264,39 @@ struct DecodingView: View {
             }
 
             isProcessing = false
+        }
+    }
+
+    private func playEncodedFile(_ file: URL) {
+        if isPlaying {
+            player?.stop()
+            isPlaying = false
+            status = "Stopped"
+            return
+        }
+
+        Task {
+            do {
+                // Release previous player
+                player?.release()
+                let config = SonixPlayerConfig.Builder()
+                    .onComplete { [self] in
+                        isPlaying = false
+                        status = "Playback complete"
+                    }
+                    .build()
+                let newPlayer = try await SonixPlayer.create(
+                    source: file.path,
+                    config: config,
+                    audioSession: .playback
+                )
+                player = newPlayer
+                newPlayer.play()
+                isPlaying = true
+                status = "Playing \(file.lastPathComponent)..."
+            } catch {
+                status = "Playback error: \(error.localizedDescription)"
+            }
         }
     }
 
