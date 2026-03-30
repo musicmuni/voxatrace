@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # SonixEncoder
 
-Encode raw PCM audio to compressed formats (M4A/AAC or MP3) for storage and sharing.
+Encode raw PCM audio to file formats (M4A/AAC, MP3, or WAV) for storage and sharing.
 
 ## Quick Start
 
@@ -42,7 +42,7 @@ if let rawData = SonixDecoder.decode(path: "input.wav", targetSampleRate: nil) {
 SonixEncoder.encode(
     data = audioRawData,
     outputPath = "/path/to/output.m4a",
-    format = "m4a",         // "m4a" (default) or "mp3"
+    format = "m4a",         // "m4a" (default), "mp3", or "wav"
     bitrateKbps = 128       // default: 128
 )
 ```
@@ -135,6 +135,7 @@ if (SonixEncoder.isFormatAvailable("mp3")) {
 |--------|--------|---------|----------|
 | M4A/AAC | `"m4a"` or `"aac"` | Best | Default choice, native hardware encoding |
 | MP3 | `"mp3"` | Good | Universal compatibility |
+| WAV | `"wav"` | Lossless | Uncompressed, no quality loss |
 
 ## Bitrate Guide
 

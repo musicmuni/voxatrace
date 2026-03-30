@@ -7,8 +7,9 @@ sidebar_position: 1
 Sonix is the audio engine module of VoxaTrace, providing:
 
 - **Audio Playback** — Play audio files with pitch shifting and tempo control
-- **Recording** — Record audio to M4A or MP3 formats
+- **Recording** — Record audio to M4A, MP3, or WAV formats
 - **Multi-track Mixing** — Mix multiple audio tracks with individual controls
+- **Audio Utilities** — Concatenation, normalization, offline mixing, and tone generation
 - **Metronome** — Programmable metronome with visual feedback
 - **MIDI Synthesis** — Play MIDI notes using SoundFont instruments
 
@@ -152,7 +153,9 @@ synth.noteOff(channel = 0, note = 60)
 - [SonixMixer](./mixer) — Multi-track mixing with per-track volume
 - [SonixMetronome](./metronome) — Programmable click track
 - [SonixDecoder](./decoder) — Decode audio files to raw PCM
-- [SonixEncoder](./encoder) — Encode PCM to compressed formats
+- [SonixEncoder](./encoder) — Encode PCM to M4A, MP3, or WAV
+- [SonixAudioUtils](./audio-utils) — Concatenation, normalization, offline mixing
+- [SonixToneGenerator](./tone-generator) — Generate sine, square, sawtooth, and triangle waveforms
 - [SonixResampler](./resampler) — Sample rate conversion
 - [SonixMidiSynthesizer](./midi-synthesizer) — MIDI to audio synthesis
 - [SonixLessonSynthesizer](./lesson-synthesizer) — Lesson audio from svara sequences
