@@ -2,30 +2,16 @@ import Foundation
 import Combine
 import VoxaTrace
 
-/// ViewModel for Pitch Analysis - histogram and tonal segment labeling.
-///
-/// ## VoxaTrace Integration
-/// ```swift
-/// // 1. Decode audio and extract contour
-/// let audioData = SonixDecoder.decode(path: filePath)
-/// let extractor = PitchDetection.createContourExtractor()
-/// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
-/// extractor.release()
-///
-/// // 2. Compute histogram
-/// let histogram = PitchAnalysis.computeHistogram(contour: contour, tonicHz: 261.63)
-///
-/// // 3. Label tonal segments
-/// let segments = PitchAnalysis.labelByMeanPitch(contour: contour, tonicHz: 261.63,
-///     intervals: MusicTheory.eqTemperedIntervalsCents.map { Float($0) })
-/// ```
+private let MAX_SEGMENTS_DISPLAY = 50
+
+/// ViewModel for Pitch Analysis — folded histogram and tonal segment labeling.
 @MainActor
 final class PitchAnalysisViewModel: ObservableObject {
 
     // MARK: - Published State
 
     @Published private(set) var isAnalyzing = false
-    @Published private(set) var histogramBinCenters: [Float] = []
+    @Published private(set) var histogramBins: [Float] = []
     @Published private(set) var histogramValues: [Float] = []
     @Published private(set) var tonalSegments: [TonalSegmentUi] = []
 
@@ -36,15 +22,13 @@ final class PitchAnalysisViewModel: ObservableObject {
         let label: String
         let startTime: Float
         let endTime: Float
-
-        var duration: Float { endTime - startTime }
     }
 
     // MARK: - Actions
 
     func analyzeOffline() {
         isAnalyzing = true
-        histogramBinCenters = []
+        histogramBins = []
         histogramValues = []
         tonalSegments = []
 
@@ -55,41 +39,44 @@ final class PitchAnalysisViewModel: ObservableObject {
                 return
             }
 
-            // Extract pitch contour
             let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
             extractor.release()
 
-            let tonicHz: Float = 261.63
+            let tonicHz: Float = 146.83
 
-            // Compute histogram
-            let histogram = PitchAnalysis.computeHistogram(contour: contour, tonicHz: tonicHz)
+            // Folded histogram: 240 bins across one octave (5-cent resolution)
+            let config = HistogramConfig.Builder()
+                .foldOctaves(true)
+                .numBins(240)
+                .build()
+            let histogram = PitchAnalysis.computeHistogram(contour: contour, tonicHz: tonicHz, config: config)
 
-            // Label tonal segments
+            // Label by mean pitch, then merge consecutive same-label segments
             let intervals = MusicTheory.eqTemperedIntervalsCents.map { Float($0) }
-            let segments = PitchAnalysis.labelByMeanPitch(
+            let rawSegments = PitchAnalysis.labelByMeanPitch(
                 contour: contour,
                 tonicHz: tonicHz,
                 targetIntervalsCents: intervals
             )
 
-            var bins: [Float] = []
-            var vals: [Float] = []
-            var segs: [TonalSegmentUi] = []
+            let bins = histogram.binCenters
+            let vals = histogram.values
 
-            bins = histogram.binCenters
-            vals = histogram.values
-
-            segs = segments.map { seg in
-                TonalSegmentUi(
-                    label: seg.label ?? "?",
-                    startTime: seg.startSeconds,
-                    endTime: seg.endSeconds
-                )
+            // Merge consecutive segments with same label
+            var merged: [TonalSegmentUi] = []
+            for seg in rawSegments {
+                let label = seg.label ?? "?"
+                if let last = merged.last, last.label == label {
+                    merged[merged.count - 1] = TonalSegmentUi(label: label, startTime: last.startTime, endTime: seg.endSeconds)
+                } else {
+                    merged.append(TonalSegmentUi(label: label, startTime: seg.startSeconds, endTime: seg.endSeconds))
+                }
             }
+            let segs = Array(merged.prefix(MAX_SEGMENTS_DISPLAY))
 
             await MainActor.run {
-                histogramBinCenters = bins
+                histogramBins = bins
                 histogramValues = vals
                 tonalSegments = segs
                 isAnalyzing = false

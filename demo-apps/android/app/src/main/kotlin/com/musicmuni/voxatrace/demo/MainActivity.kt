@@ -43,6 +43,7 @@ import com.musicmuni.voxatrace.demo.sections.agility.view.AgilityView
 import com.musicmuni.voxatrace.demo.sections.songmatching.view.SongMatchingView
 import com.musicmuni.voxatrace.demo.sections.voiceprofile.view.VoiceProfileView
 import com.musicmuni.voxatrace.demo.sections.pitchanalysis.view.PitchAnalysisView
+import com.musicmuni.voxatrace.demo.sections.effects.view.EffectsView
 import com.musicmuni.voxatrace.VT
 import com.musicmuni.voxatrace.ai.AIModels
 import com.musicmuni.voxatrace.exceptions.VoxaTraceKilledException
@@ -168,8 +169,14 @@ fun InitializingScreen() {
 sealed class Screen {
     data object Home : Screen()
     data object Sonix : Screen()
+    data object Tona : Screen()
+    data object Accura : Screen()
+    data object Tessera : Screen()
     data object Calibra : Screen()
     data class SonixFeature(val name: String) : Screen()
+    data class TonaFeature(val name: String) : Screen()
+    data class AccuraFeature(val name: String) : Screen()
+    data class TesseraFeature(val name: String) : Screen()
     data class CalibraFeature(val name: String) : Screen()
 }
 
@@ -180,55 +187,106 @@ fun VoxaTraceDemoApp() {
     when (val screen = currentScreen) {
         Screen.Home -> HomeScreen(
             onSonixClick = { currentScreen = Screen.Sonix },
+            onTonaClick = { currentScreen = Screen.Tona },
+            onAccuraClick = { currentScreen = Screen.Accura },
+            onTesseraClick = { currentScreen = Screen.Tessera },
             onCalibraClick = { currentScreen = Screen.Calibra }
         )
         Screen.Sonix -> SonixScreen(
             onBack = { currentScreen = Screen.Home },
             onFeatureClick = { feature -> currentScreen = Screen.SonixFeature(feature) }
         )
+        Screen.Tona -> ModuleScreen(
+            title = "Tona",
+            features = tonaFeatures,
+            onBack = { currentScreen = Screen.Home },
+            onFeatureClick = { feature -> currentScreen = Screen.TonaFeature(feature) }
+        )
+        Screen.Accura -> ModuleScreen(
+            title = "Accura",
+            features = accuraFeatures,
+            onBack = { currentScreen = Screen.Home },
+            onFeatureClick = { feature -> currentScreen = Screen.AccuraFeature(feature) }
+        )
+        Screen.Tessera -> ModuleScreen(
+            title = "Tessera",
+            features = tesseraFeatures,
+            onBack = { currentScreen = Screen.Home },
+            onFeatureClick = { feature -> currentScreen = Screen.TesseraFeature(feature) }
+        )
         Screen.Calibra -> CalibraScreen(
             onBack = { currentScreen = Screen.Home },
             onFeatureClick = { feature -> currentScreen = Screen.CalibraFeature(feature) }
         )
-        is Screen.SonixFeature -> SonixFeatureScreen(
-            feature = screen.name,
-            onBack = { currentScreen = Screen.Sonix }
-        )
-        is Screen.CalibraFeature -> CalibraFeatureScreen(
-            feature = screen.name,
-            onBack = { currentScreen = Screen.Calibra }
-        )
+        is Screen.SonixFeature -> FeatureScreen(screen.name, { currentScreen = Screen.Sonix })
+        is Screen.TonaFeature -> FeatureScreen(screen.name, { currentScreen = Screen.Tona })
+        is Screen.AccuraFeature -> FeatureScreen(screen.name, { currentScreen = Screen.Accura })
+        is Screen.TesseraFeature -> FeatureScreen(screen.name, { currentScreen = Screen.Tessera })
+        is Screen.CalibraFeature -> FeatureScreen(screen.name, { currentScreen = Screen.Calibra })
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onSonixClick: () -> Unit, onCalibraClick: () -> Unit) {
+fun HomeScreen(
+    onSonixClick: () -> Unit,
+    onTonaClick: () -> Unit,
+    onAccuraClick: () -> Unit,
+    onTesseraClick: () -> Unit,
+    onCalibraClick: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("VoxaTrace Demo") })
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            CategoryCard(
-                title = "Sonix",
-                subtitle = "Audio Transport",
-                description = "Playback, Recording, MIDI, Metronome, Multi-Track",
-                onClick = onSonixClick
-            )
-
-            CategoryCard(
-                title = "Calibra",
-                subtitle = "Audio Analysis",
-                description = "Pitch Detection, Voice Analysis, Singing Evaluation",
-                onClick = onCalibraClick
-            )
+            item {
+                CategoryCard(
+                    title = "Sonix",
+                    subtitle = "Audio Transport",
+                    description = "Playback, Recording, MIDI, Metronome, Multi-Track",
+                    onClick = onSonixClick
+                )
+            }
+            item {
+                CategoryCard(
+                    title = "Tona",
+                    subtitle = "Pitch Detection & Processing",
+                    description = "Realtime Detection, Contour Extraction, Cleanup, Analysis",
+                    onClick = onTonaClick
+                )
+            }
+            item {
+                CategoryCard(
+                    title = "Accura",
+                    subtitle = "Intonation Analysis",
+                    description = "Pitch accuracy scoring (Equal Temperament / Just Intonation)",
+                    onClick = onAccuraClick
+                )
+            }
+            item {
+                CategoryCard(
+                    title = "Tessera",
+                    subtitle = "Voice Metrics",
+                    description = "Breath, Agility, Range, Speaking Pitch, Voice Profile",
+                    onClick = onTesseraClick
+                )
+            }
+            item {
+                CategoryCard(
+                    title = "Calibra",
+                    subtitle = "Singing Evaluation",
+                    description = "Singalong, Singafter, Melody Eval, Note Eval, VAD, Effects",
+                    onClick = onCalibraClick
+                )
+            }
         }
     }
 }
@@ -327,16 +385,8 @@ fun CalibraScreen(onBack: () -> Unit, onFeatureClick: (String) -> Unit) {
     BackHandler(onBack = onBack)
 
     val analysisFeatures = listOf(
-        FeatureItem("Pitch", "Pitch detection & processing"),
-        FeatureItem("Pitch Analysis", "Histogram & tonal segments"),
         FeatureItem("VAD", "Voice activity detection"),
-        FeatureItem("Breath Monitor", "Breath duration tracking"),
-        FeatureItem("Vocal Range", "Detect vocal range"),
-        FeatureItem("Vocal Agility", "Agility scoring"),
-        FeatureItem("Intonation", "Pitch accuracy (EQ/JI)"),
-        FeatureItem("Song Matching", "Range-based song matching"),
-        FeatureItem("Voice Profile", "Multi-metric dashboard"),
-        FeatureItem("Speaking Pitch", "Speaking pitch (shruti)")
+        FeatureItem("Effects", "Audio effects processing")
     )
 
     val realtimeEvalFeatures = listOf(
@@ -449,19 +499,40 @@ fun FeatureCard(title: String, description: String, onClick: () -> Unit) {
     }
 }
 
+// Feature lists per module
+
+val tonaFeatures = listOf(
+    FeatureItem("Pitch", "Pitch detection & processing"),
+    FeatureItem("Pitch Analysis", "Histogram & tonal segments")
+)
+
+val accuraFeatures = listOf(
+    FeatureItem("Intonation", "Pitch accuracy (EQ/JI)")
+)
+
+val tesseraFeatures = listOf(
+    FeatureItem("Breath Monitor", "Breath capacity & control"),
+    FeatureItem("Vocal Agility", "Agility scoring"),
+    FeatureItem("Vocal Range", "Detect vocal range"),
+    FeatureItem("Song Matching", "Range-based song matching"),
+    FeatureItem("Speaking Pitch", "Natural speaking pitch"),
+    FeatureItem("Voice Profile", "Multi-metric dashboard")
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SonixFeatureScreen(
-    feature: String,
-    onBack: () -> Unit
+fun ModuleScreen(
+    title: String,
+    features: List<FeatureItem>,
+    onBack: () -> Unit,
+    onFeatureClick: (String) -> Unit
 ) {
-    // Handle system back gesture
     BackHandler(onBack = onBack)
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(feature) },
+                title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -470,23 +541,19 @@ fun SonixFeatureScreen(
             )
         }
     ) { padding ->
-        Box(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            SectionCard {
-                when (feature) {
-                    "Playback" -> PlaybackView()
-                    "Recording" -> RecordingView()
-                    "Multi-Track" -> MultiTrackView()
-                    "Metronome" -> MetronomeView()
-                    "MIDI Synthesis" -> MIDIView()
-                    "Decoding" -> DecodingView()
-                    "Parser" -> ParserView()
-                    else -> Text("Unknown feature: $feature")
-                }
+            items(features) { feature ->
+                FeatureCard(
+                    title = feature.name,
+                    description = feature.description,
+                    onClick = { onFeatureClick(feature.name) }
+                )
             }
         }
     }
@@ -494,8 +561,7 @@ fun SonixFeatureScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalibraFeatureScreen(feature: String, onBack: () -> Unit) {
-    // Handle system back gesture
+fun FeatureScreen(feature: String, onBack: () -> Unit) {
     BackHandler(onBack = onBack)
 
     Scaffold(
@@ -518,16 +584,29 @@ fun CalibraFeatureScreen(feature: String, onBack: () -> Unit) {
         ) {
             SectionCard {
                 when (feature) {
+                    // Sonix
+                    "Playback" -> PlaybackView()
+                    "Recording" -> RecordingView()
+                    "Multi-Track" -> MultiTrackView()
+                    "Metronome" -> MetronomeView()
+                    "MIDI Synthesis" -> MIDIView()
+                    "Decoding" -> DecodingView()
+                    "Parser" -> ParserView()
+                    // Tona
                     "Pitch" -> PitchView()
                     "Pitch Analysis" -> PitchAnalysisView()
-                    "VAD" -> VADView()
-                    "Breath Monitor" -> BreathMonitorView()
-                    "Vocal Range" -> VocalRangeView()
-                    "Vocal Agility" -> AgilityView()
+                    // Accura
                     "Intonation" -> IntonationView()
+                    // Tessera
+                    "Breath Monitor" -> BreathMonitorView()
+                    "Vocal Agility" -> AgilityView()
+                    "Vocal Range" -> VocalRangeView()
                     "Song Matching" -> SongMatchingView()
-                    "Voice Profile" -> VoiceProfileView()
                     "Speaking Pitch" -> SpeakingPitchView()
+                    "Voice Profile" -> VoiceProfileView()
+                    // Calibra
+                    "VAD" -> VADView()
+                    "Effects" -> EffectsView()
                     "Singalong" -> SingalongView()
                     "Singafter" -> SingafterView()
                     "Melody Eval" -> MelodyEvalView()

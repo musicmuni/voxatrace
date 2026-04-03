@@ -9,14 +9,14 @@ struct PitchAnalysisView: View {
             Text("Pitch Analysis")
                 .font(.headline)
 
-            Text("Pitch histogram and tonal segment labeling")
+            Text("Folded pitch histogram (one octave, 240 bins) and tonal segments")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
             Button("Analyze Alankaar Voice") {
                 viewModel.analyzeOffline()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
             .disabled(viewModel.isAnalyzing)
 
             if viewModel.isAnalyzing {
@@ -24,8 +24,8 @@ struct PitchAnalysisView: View {
                     .frame(maxWidth: .infinity)
             }
 
-            if !viewModel.histogramValues.isEmpty {
-                histogramCard
+            if !viewModel.histogramBins.isEmpty {
+                histogramChart
             }
 
             if !viewModel.tonalSegments.isEmpty {
@@ -36,108 +36,96 @@ struct PitchAnalysisView: View {
         }
     }
 
-    // MARK: - Histogram Card
-
-    private var histogramCard: some View {
-        let maxValue = viewModel.histogramValues.max() ?? 1
+    private var histogramChart: some View {
+        let noteNames = ["S", "r", "R", "g", "G", "M", "m", "P", "d", "D", "n", "N"]
+        let maxVal = viewModel.histogramValues.max() ?? 1
 
         return VStack(alignment: .leading, spacing: 8) {
-            Text("Pitch Histogram")
+            Text("Pitch Histogram (folded, 1 octave)")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
-            ForEach(Array(viewModel.histogramValues.enumerated()), id: \.offset) { index, value in
-                if value > 0 && index < viewModel.histogramBinCenters.count {
-                    HStack(spacing: 8) {
-                        Text(String(format: "%.0f", viewModel.histogramBinCenters[index]))
-                            .font(.caption)
-                            .frame(width: 40, alignment: .trailing)
+            GeometryReader { geometry in
+                let chartWidth = geometry.size.width - 28
+                let chartHeight = geometry.size.height - 30
+                let barCount = CGFloat(viewModel.histogramValues.count)
+                let barWidth = chartWidth / barCount
 
-                        GeometryReader { geometry in
+                ZStack(alignment: .bottomLeading) {
+                    // Bars
+                    HStack(spacing: 0) {
+                        ForEach(0..<viewModel.histogramValues.count, id: \.self) { i in
+                            let value = viewModel.histogramValues[i]
+                            let height = maxVal > 0 ? CGFloat(value / maxVal) * chartHeight : 0
+
                             Rectangle()
                                 .fill(Color.blue)
-                                .frame(width: geometry.size.width * CGFloat(value / maxValue))
-                                .cornerRadius(2)
+                                .frame(width: max(barWidth, 0.5), height: max(height, 0))
+                                .frame(maxHeight: .infinity, alignment: .bottom)
                         }
-                        .frame(height: 12)
+                    }
+                    .padding(.leading, 20)
+                    .padding(.bottom, 20)
+
+                    // Note labels
+                    ForEach(0..<noteNames.count, id: \.self) { noteIdx in
+                        let x = 20 + CGFloat(noteIdx) * chartWidth / 12.0
+                        Text(noteNames[noteIdx])
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                            .position(x: x, y: geometry.size.height - 6)
                     }
                 }
             }
+            .frame(height: 200)
         }
         .padding(12)
         .background(Color(.secondarySystemBackground))
         .cornerRadius(8)
     }
 
-    // MARK: - Tonal Segments Card
-
     private var tonalSegmentsCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Tonal Segments")
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Sung Notes (\(viewModel.tonalSegments.count))")
                 .font(.subheadline)
                 .fontWeight(.semibold)
 
-            // Header row
             HStack {
-                Text("Label")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Start")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Duration")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text("Note").font(.caption).fontWeight(.medium).frame(maxWidth: .infinity, alignment: .leading)
+                Text("Start").font(.caption).fontWeight(.medium).frame(maxWidth: .infinity, alignment: .leading)
+                Text("Duration").font(.caption).fontWeight(.medium).frame(maxWidth: .infinity, alignment: .leading)
             }
 
             ForEach(viewModel.tonalSegments) { segment in
                 HStack {
-                    Text(segment.label)
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text(String(format: "%.2f s", segment.startTime))
-                        .font(.caption)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text(String(format: "%.2f s", segment.duration))
-                        .font(.caption)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(segment.label).font(.caption2).fontWeight(.medium).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(String(format: "%.2f s", segment.startTime)).font(.caption2).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(String(format: "%.2f s", segment.endTime - segment.startTime)).font(.caption2).frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+
+            Text("Also see: PitchAnalysis.fitLinearSegments() for pitch slope analysis")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .italic()
         }
         .padding(12)
         .background(Color(.secondarySystemBackground))
         .cornerRadius(8)
     }
-
-    // MARK: - API Info Card
 
     private var apiInfoCard: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("APIs Demonstrated:")
                 .font(.caption)
                 .fontWeight(.medium)
-
-            Text("PitchAnalysis.computeHistogram() - pitch distribution")
+            Text("PitchAnalysis.computeHistogram(config: FOLDED, numBins: 240)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
-
-            Text("PitchAnalysis.labelByMeanPitch() - tonal segment labeling")
+            Text("PitchAnalysis.labelByMeanPitch() - note labeling (merged)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
-
-            Text("PitchAnalysis.estimateTuningOffset() - tuning estimation")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-
             Text("PitchDetection.createContourExtractor() - pitch extraction")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-
-            Text("SonixDecoder.decode() - audio file loading")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }
@@ -147,7 +135,6 @@ struct PitchAnalysisView: View {
     }
 }
 
-/// Backward compatibility alias.
 typealias PitchAnalysisSection = PitchAnalysisView
 
 #Preview {

@@ -83,7 +83,7 @@ class IntonationViewModel : ViewModel() {
                 val eqAnalysis = withContext(Dispatchers.IO) {
                     Accura.analyzePitching(
                         contour,
-                        tonicHz = 261.63f,
+                        tonicHz = 146.83f,
                         intonationSystem = IntonationSystem.EQ,
                         noteLabelTradition = NoteLabelTradition.CARNATIC
                     )
@@ -98,7 +98,7 @@ class IntonationViewModel : ViewModel() {
                 val jiAnalysis = withContext(Dispatchers.IO) {
                     Accura.analyzePitching(
                         contour,
-                        tonicHz = 261.63f,
+                        tonicHz = 146.83f,
                         intonationSystem = IntonationSystem.JI,
                         noteLabelTradition = NoteLabelTradition.CARNATIC
                     )

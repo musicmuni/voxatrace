@@ -15,8 +15,8 @@ import VoxaTrace
 /// extractor.release()
 ///
 /// // 3. Analyze intonation against EQ and JI
-/// let eqResult = Accura.analyzePitching(contour: contour, tonicHz: 261.63, intonationSystem: .eq)
-/// let jiResult = Accura.analyzePitching(contour: contour, tonicHz: 261.63, intonationSystem: .ji)
+/// let eqResult = Accura.analyzePitching(contour: contour, tonicHz: 146.83, intonationSystem: .eq)
+/// let jiResult = Accura.analyzePitching(contour: contour, tonicHz: 146.83, intonationSystem: .ji)
 ///
 /// // 4. Calculate scores
 /// let eqScore = Accura.calculateScore(result: eqResult)
@@ -54,7 +54,7 @@ final class IntonationViewModel: ObservableObject {
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
             extractor.release()
 
-            let tonicHz: Float = 261.63
+            let tonicHz: Float = 146.83
 
             // Analyze against Equal Temperament
             let eq = Accura.analyzePitching(

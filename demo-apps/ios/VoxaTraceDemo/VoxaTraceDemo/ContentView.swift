@@ -6,9 +6,11 @@ import VoxaTrace
 
 enum NavigationDestination: Hashable {
     case sonix
+    case tona
+    case accura
+    case tessera
     case calibra
-    case sonixFeature(String)
-    case calibraFeature(String)
+    case feature(String)
 }
 
 // MARK: - Content View (Navigation Router)
@@ -24,26 +26,45 @@ struct ContentView: View {
             .navigationDestination(for: NavigationDestination.self) { dest in
                 switch dest {
                 case .sonix:
-                    SonixMenuView(onSelect: { feature in
-                        path.append(.sonixFeature(feature))
-                    })
+                    SonixMenuView(onSelect: { path.append(.feature($0)) })
+                case .tona:
+                    ModuleMenuView(title: "Tona", features: tonaFeatures, onSelect: { path.append(.feature($0)) })
+                case .accura:
+                    ModuleMenuView(title: "Accura", features: accuraFeatures, onSelect: { path.append(.feature($0)) })
+                case .tessera:
+                    ModuleMenuView(title: "Tessera", features: tesseraFeatures, onSelect: { path.append(.feature($0)) })
                 case .calibra:
-                    CalibraMenuView(onSelect: { feature in
-                        path.append(.calibraFeature(feature))
-                    })
-                case .sonixFeature(let name):
-                    SonixDetailView(featureName: name)
-                case .calibraFeature(let name):
-                    CalibraDetailView(featureName: name)
+                    CalibraMenuView(onSelect: { path.append(.feature($0)) })
+                case .feature(let name):
+                    FeatureDetailView(featureName: name)
                 }
             }
         }
         .onAppear {
-            // Audio session is now auto-configured when creating Sonix factories
             AVAudioSession.sharedInstance().requestRecordPermission { _ in }
         }
     }
 }
+
+// MARK: - Feature Lists
+
+private let tonaFeatures: [(String, String, String)] = [
+    ("Pitch", "waveform", "Pitch detection & processing"),
+    ("Pitch Analysis", "chart.bar", "Histogram & tonal segments"),
+]
+
+private let accuraFeatures: [(String, String, String)] = [
+    ("Intonation", "tuningfork", "Pitch accuracy (EQ/JI)"),
+]
+
+private let tesseraFeatures: [(String, String, String)] = [
+    ("Breath Monitor", "lungs.fill", "Breath capacity & control"),
+    ("Vocal Agility", "hare", "Agility scoring"),
+    ("Vocal Range", "arrow.up.and.down", "Detect your vocal range"),
+    ("Song Matching", "music.note.list", "Range-based song matching"),
+    ("Speaking Pitch", "tuningfork", "Natural speaking pitch"),
+    ("Voice Profile", "person.crop.circle", "Multi-metric dashboard"),
+]
 
 // MARK: - Home View
 
@@ -64,9 +85,36 @@ struct HomeView: View {
 
                 CategoryCard(
                     icon: "waveform",
+                    title: "Tona",
+                    subtitle: "Pitch Detection & Processing",
+                    description: "Realtime Detection, Contour Extraction, Cleanup, Analysis",
+                    color: .orange,
+                    onTap: { onSelect(.tona) }
+                )
+
+                CategoryCard(
+                    icon: "tuningfork",
+                    title: "Accura",
+                    subtitle: "Intonation Analysis",
+                    description: "Pitch accuracy scoring (Equal Temperament / Just Intonation)",
+                    color: .green,
+                    onTap: { onSelect(.accura) }
+                )
+
+                CategoryCard(
+                    icon: "person.wave.2",
+                    title: "Tessera",
+                    subtitle: "Voice Metrics",
+                    description: "Breath, Agility, Range, Speaking Pitch, Voice Profile",
+                    color: .teal,
+                    onTap: { onSelect(.tessera) }
+                )
+
+                CategoryCard(
+                    icon: "music.note",
                     title: "Calibra",
-                    subtitle: "Audio Analysis",
-                    description: "Pitch Detection, Voice Analysis, Singing Evaluation",
+                    subtitle: "Singing Evaluation",
+                    description: "Singalong, Singafter, Melody Eval, Note Eval, VAD, Effects",
                     color: .purple,
                     onTap: { onSelect(.calibra) }
                 )
@@ -100,20 +148,17 @@ struct CategoryCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.title2)
-                        .fontWeight(.semibold)
+                        .fontWeight(.bold)
                         .foregroundColor(.primary)
                     Text(subtitle)
                         .font(.subheadline)
                         .foregroundColor(color)
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
-
-                Text(description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
             }
             .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color(.secondarySystemBackground))
             .cornerRadius(16)
         }
@@ -152,22 +197,37 @@ struct SonixMenuView: View {
     }
 }
 
+// MARK: - Generic Module Menu View (Tona, Accura, Tessera)
+
+struct ModuleMenuView: View {
+    let title: String
+    let features: [(String, String, String)]
+    let onSelect: (String) -> Void
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(features, id: \.0) { feature in
+                    Button {
+                        onSelect(feature.0)
+                    } label: {
+                        FeatureRow(icon: feature.1, title: feature.0, description: feature.2)
+                    }
+                }
+            }
+        }
+        .navigationTitle(title)
+    }
+}
+
 // MARK: - Calibra Menu View
 
 struct CalibraMenuView: View {
     let onSelect: (String) -> Void
 
     private let analysisFeatures = [
-        ("Pitch", "waveform", "Pitch detection & processing"),
-        ("Pitch Analysis", "chart.bar", "Histogram & tonal segments"),
         ("VAD", "mic.fill", "Voice activity detection"),
-        ("Breath Monitor", "lungs.fill", "Measure breath duration"),
-        ("Vocal Range", "arrow.up.and.down", "Detect your vocal range"),
-        ("Vocal Agility", "hare", "Agility scoring"),
-        ("Intonation", "tuningfork", "Pitch accuracy (EQ/JI)"),
-        ("Song Matching", "music.note.list", "Range-based song matching"),
-        ("Voice Profile", "person.crop.circle", "Multi-metric dashboard"),
-        ("Speaking Pitch", "tuningfork", "Speaking pitch (shruti)"),
+        ("Effects", "slider.horizontal.3", "Audio effects processing"),
     ]
 
     private let realtimeEvalFeatures = [
@@ -246,9 +306,9 @@ struct FeatureRow: View {
     }
 }
 
-// MARK: - Sonix Detail View
+// MARK: - Unified Feature Detail View
 
-struct SonixDetailView: View {
+struct FeatureDetailView: View {
     let featureName: String
 
     var body: some View {
@@ -263,6 +323,7 @@ struct SonixDetailView: View {
     @ViewBuilder
     private var sectionContent: some View {
         switch featureName {
+        // Sonix
         case "Playback":
             PlaybackView()
         case "Recording":
@@ -277,49 +338,32 @@ struct SonixDetailView: View {
             DecodingView()
         case "Parser":
             ParserView()
-        default:
-            Text("Unknown Sonix section: \(featureName)")
-        }
-    }
-}
-
-// MARK: - Calibra Detail View
-
-struct CalibraDetailView: View {
-    let featureName: String
-
-    var body: some View {
-        ScrollView {
-            sectionContent
-                .padding()
-        }
-        .navigationTitle(featureName)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    @ViewBuilder
-    private var sectionContent: some View {
-        switch featureName {
+        // Tona
         case "Pitch":
             PitchSection()
         case "Pitch Analysis":
             PitchAnalysisView()
-        case "VAD":
-            VADSection()
-        case "Breath Monitor":
-            BreathMonitorView()
-        case "Vocal Range":
-            VocalRangeView()
-        case "Vocal Agility":
-            AgilityView()
+        // Accura
         case "Intonation":
             IntonationView()
+        // Tessera
+        case "Breath Monitor":
+            BreathMonitorView()
+        case "Vocal Agility":
+            AgilityView()
+        case "Vocal Range":
+            VocalRangeView()
         case "Song Matching":
             SongMatchingView()
-        case "Voice Profile":
-            VoiceProfileView()
         case "Speaking Pitch":
             SpeakingPitchView()
+        case "Voice Profile":
+            VoiceProfileView()
+        // Calibra
+        case "VAD":
+            VADSection()
+        case "Effects":
+            EffectsView()
         case "Singalong Live":
             SingalongSection()
         case "Singafter Live":
@@ -329,7 +373,7 @@ struct CalibraDetailView: View {
         case "Note Eval":
             NoteEvalView()
         default:
-            Text("Unknown Calibra section: \(featureName)")
+            Text("Unknown section: \(featureName)")
         }
     }
 }
