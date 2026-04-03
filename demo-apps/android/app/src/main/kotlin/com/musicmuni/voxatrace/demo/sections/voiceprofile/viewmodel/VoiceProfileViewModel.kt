@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.tessera.Tessera
+import com.musicmuni.voxatrace.tessera.model.BreathConfig
 import com.musicmuni.voxatrace.tessera.model.TesseraMetric
 import com.musicmuni.voxatrace.tona.PitchDetection
 import io.github.aakira.napier.Napier
@@ -85,11 +86,11 @@ class VoiceProfileViewModel : ViewModel() {
 
                 // Batch analysis via Tessera.analyze()
                 val result = withContext(Dispatchers.IO) {
-                    Tessera.analyze(contour)
+                    Tessera.analyze(contour, breathConfig = BreathConfig.PRACTICE)
                 }
 
                 result.breath?.let { breath ->
-                    _breathCapacity.value = breath.capacity
+                    _breathCapacity.value = breath.capacity ?: 0f
                     _breathControl.value = breath.controlScore
                 }
 

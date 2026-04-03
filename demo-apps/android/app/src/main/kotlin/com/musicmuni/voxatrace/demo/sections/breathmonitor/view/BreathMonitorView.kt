@@ -17,29 +17,27 @@ import com.musicmuni.voxatrace.demo.sections.breathmonitor.viewmodel.BreathMonit
 import com.musicmuni.voxatrace.demo.sections.breathmonitor.viewmodel.BreathMonitorViewModel
 
 /**
- * Breath Monitor View - Duration tracking with VAD and silence inertia.
+ * Breath Monitor View.
+ *
+ * Real-time: voice/silence indicator while recording.
+ * On stop: analyzes recording for breath capacity and control.
  */
 @Composable
 fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
     val context = LocalContext.current
 
-    // Load best score on first composition
-    LaunchedEffect(Unit) {
-        viewModel.loadBestScore(context)
-    }
-
-    val monitoringState by viewModel.monitoringState.collectAsStateWithLifecycle()
-    val elapsedSeconds by viewModel.elapsedSeconds.collectAsStateWithLifecycle()
-    val bestScore by viewModel.bestScore.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val isVoiceDetected by viewModel.isVoiceDetected.collectAsStateWithLifecycle()
     val recordingLevel by viewModel.recordingLevel.collectAsStateWithLifecycle()
-    val status by viewModel.status.collectAsStateWithLifecycle()
+
+    // Live results
+    val breathCapacity by viewModel.breathCapacity.collectAsStateWithLifecycle()
+    val controlScore by viewModel.controlScore.collectAsStateWithLifecycle()
 
     // Offline analysis state
     val offlineControlScore by viewModel.offlineControlScore.collectAsStateWithLifecycle()
     val offlineBreathCapacity by viewModel.offlineBreathCapacity.collectAsStateWithLifecycle()
     val offlineVoicedTime by viewModel.offlineVoicedTime.collectAsStateWithLifecycle()
-    val offlineHasEnoughData by viewModel.offlineHasEnoughData.collectAsStateWithLifecycle()
     val isAnalyzingOffline by viewModel.isAnalyzingOffline.collectAsStateWithLifecycle()
 
     Column(
@@ -52,62 +50,41 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
         )
 
         Text(
-            text = status,
+            text = "Sing naturally — tap Stop when done to analyze breath capacity and control",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        // Main timer display
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = when (monitoringState) {
-                    BreathMonitorState.SINGING -> if (isVoiceDetected) Color(0xFF4CAF50) else Color(0xFFFF9800)
-                    BreathMonitorState.COMPLETE -> MaterialTheme.colorScheme.primaryContainer
-                    else -> MaterialTheme.colorScheme.surfaceVariant
-                }
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = BreathMonitorViewModel.formatTime(elapsedSeconds),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = when (monitoringState) {
-                        BreathMonitorState.SINGING -> Color.White
-                        else -> MaterialTheme.colorScheme.onSurface
-                    }
+        // Voice/silence indicator card
+        if (state == BreathMonitorState.RECORDING) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isVoiceDetected) Color(0xFF4CAF50) else Color(0xFFFF9800)
                 )
-
-                if (monitoringState == BreathMonitorState.SINGING) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(12.dp)
-                                .background(
-                                    if (isVoiceDetected) Color.White else Color.White.copy(alpha = 0.5f),
-                                    CircleShape
-                                )
-                        )
-                        Text(
-                            text = if (isVoiceDetected) "Voice detected" else "Silence...",
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                    }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .background(Color.White, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = if (isVoiceDetected) "Voice" else "Silence",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White
+                    )
                 }
             }
-        }
 
-        // Level meter
-        if (monitoringState != BreathMonitorState.IDLE) {
+            // Level meter
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -124,25 +101,34 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
             }
         }
 
-        // Best score display
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Best: ", style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    text = BreathMonitorViewModel.formatTime(bestScore),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+        // Analyzing state
+        if (state == BreathMonitorState.ANALYZING) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
-            }
-            if (bestScore > 0) {
-                TextButton(onClick = { viewModel.resetBestScore(context) }) {
-                    Text("Reset")
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text("Analyzing breath...", style = MaterialTheme.typography.bodyMedium)
                 }
             }
+        }
+
+        // Results
+        if (state == BreathMonitorState.COMPLETE && controlScore != null) {
+            ResultCard(
+                breathCapacity = breathCapacity,
+                controlScore = controlScore!!
+            )
         }
 
         // Control buttons
@@ -150,26 +136,18 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            when (monitoringState) {
+            when (state) {
                 BreathMonitorState.IDLE -> {
                     Button(
-                        onClick = { viewModel.startMonitoring(context) },
+                        onClick = { viewModel.startRecording(context) },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text("Start")
                     }
                 }
-                BreathMonitorState.COMPLETE -> {
+                BreathMonitorState.RECORDING -> {
                     Button(
-                        onClick = { viewModel.startMonitoring(context) },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Try Again")
-                    }
-                }
-                else -> {
-                    Button(
-                        onClick = { viewModel.stopMonitoring() },
+                        onClick = { viewModel.stopRecording() },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error
@@ -177,6 +155,22 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
                     ) {
                         Text("Stop")
                     }
+                }
+                BreathMonitorState.COMPLETE -> {
+                    Button(
+                        onClick = { viewModel.startRecording(context) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Record Again")
+                    }
+                    OutlinedButton(
+                        onClick = { viewModel.reset() }
+                    ) {
+                        Text("Reset")
+                    }
+                }
+                BreathMonitorState.ANALYZING -> {
+                    // No buttons while analyzing
                 }
             }
         }
@@ -190,9 +184,59 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
             offlineBreathCapacity = offlineBreathCapacity,
             offlineControlScore = offlineControlScore,
             offlineVoicedTime = offlineVoicedTime,
-            offlineHasEnoughData = offlineHasEnoughData,
             isAnalyzingOffline = isAnalyzingOffline
         )
+    }
+}
+
+@Composable
+private fun ResultCard(
+    breathCapacity: Float?,
+    controlScore: Float
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Capacity",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = if (breathCapacity != null) BreathMonitorViewModel.formatTime(breathCapacity) else "—",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Control",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "%.0f%%".format(controlScore * 100),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = when {
+                        controlScore >= 0.7f -> Color(0xFF4CAF50)
+                        controlScore >= 0.4f -> Color(0xFFFF9800)
+                        else -> MaterialTheme.colorScheme.error
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -203,7 +247,6 @@ private fun OfflineAnalysisSection(
     offlineBreathCapacity: Float,
     offlineControlScore: Float,
     offlineVoicedTime: Float,
-    offlineHasEnoughData: Boolean,
     isAnalyzingOffline: Boolean
 ) {
     Column(
@@ -237,88 +280,73 @@ private fun OfflineAnalysisSection(
         }
 
         if (offlineVoicedTime > 0) {
-            OfflineResultCard(
-                breathCapacity = offlineBreathCapacity,
-                controlScore = offlineControlScore,
-                voicedTime = offlineVoicedTime,
-                hasEnoughData = offlineHasEnoughData
-            )
-        }
-
-        ApiInfoCard()
-    }
-}
-
-@Composable
-private fun OfflineResultCard(
-    breathCapacity: Float,
-    controlScore: Float,
-    voicedTime: Float,
-    hasEnoughData: Boolean
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "Offline Result",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Row(
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Text(
-                        text = "Breath Capacity",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Offline Result",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
                     )
-                    Text(
-                        text = BreathMonitorViewModel.formatTime(breathCapacity),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Control",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "%.0f%%".format(controlScore * 100),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = when {
-                            controlScore >= 0.7f -> Color(0xFF4CAF50)
-                            controlScore >= 0.4f -> Color(0xFFFF9800)
-                            else -> MaterialTheme.colorScheme.error
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                text = "Capacity",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = BreathMonitorViewModel.formatTime(offlineBreathCapacity),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
-                    )
-                }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Voiced Time",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = BreathMonitorViewModel.formatTime(voicedTime),
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "Control",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "%.0f%%".format(offlineControlScore * 100),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = when {
+                                    offlineControlScore >= 0.7f -> Color(0xFF4CAF50)
+                                    offlineControlScore >= 0.4f -> Color(0xFFFF9800)
+                                    else -> MaterialTheme.colorScheme.error
+                                }
+                            )
+                        }
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "Voiced Time",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = BreathMonitorViewModel.formatTime(offlineVoicedTime),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        }
+                    }
                 }
             }
         }
+
+        ApiInfoCard()
     }
 }
 
@@ -345,17 +373,12 @@ private fun ApiInfoCard() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
+                text = "Offline: TesseraBreath.computeScore(config: .PRACTICE) - capacity + control",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
                 text = "Offline: PitchDetection.createContourExtractor() - pitch extraction",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "Offline: TesseraBreath.computeScore() - capacity + control",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "Offline: SonixDecoder.decode() - audio file loading",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

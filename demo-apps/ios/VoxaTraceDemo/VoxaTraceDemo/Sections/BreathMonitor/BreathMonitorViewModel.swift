@@ -140,8 +140,8 @@ final class BreathMonitorViewModel: ObservableObject {
 
             if hasEnough {
                 // Compute breath metrics via tessera (replaces CalibraBreath)
-                let score = TesseraBreath.computeScore(contour: contour)
-                capacity = score.capacity
+                let score = TesseraBreath.computeScore(contour: contour, config: .practice)
+                capacity = score.capacity ?? 0
                 controlScore = score.controlScore
 
                 // Voiced time from contour

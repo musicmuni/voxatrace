@@ -55,7 +55,7 @@ final class VoiceProfileViewModel: ObservableObject {
             extractor.release()
 
             // Batch analysis via Tessera.analyze()
-            let result = Tessera.analyze(contour: contour)
+            let result = Tessera.analyze(contour: contour, breathConfig: .practice)
 
             var cap: Float = 0
             var ctrl: Float = 0
@@ -65,7 +65,7 @@ final class VoiceProfileViewModel: ObservableObject {
             var octaves: Float = 0
 
             if let breath = result.breath {
-                cap = breath.capacity
+                cap = breath.capacity ?? 0
                 ctrl = breath.controlScore
             }
             if let agility = result.agility {

@@ -9,6 +9,7 @@ import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
 import com.musicmuni.voxatrace.tessera.TesseraBreath
+import com.musicmuni.voxatrace.tessera.model.BreathConfig
 import com.musicmuni.voxatrace.tona.PitchDetection
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
@@ -21,36 +22,30 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
-private const val PREFS_NAME = "breath_monitor_prefs"
-private const val KEY_BEST_SCORE = "best_score"
-private const val SILENCE_GRACE_MS = 500L
-
 enum class BreathMonitorState {
     IDLE,
-    WAITING_FOR_VOICE,
-    SINGING,
+    RECORDING,
+    ANALYZING,
     COMPLETE
 }
 
 /**
- * ViewModel for Breath Monitor - duration tracking with VAD and silence inertia.
+ * ViewModel for Breath Monitor.
+ *
+ * Real-time: records audio with VAD voice/silence indicator.
+ * On stop: analyzes recording for breath capacity and control.
  *
  * APIs demonstrated:
  * - CalibraVAD (singingRealtime) for real-time voice detection
- * - TesseraBreath.computeScore() for offline breath capacity + control scoring
+ * - TesseraBreath.computeScore() for breath capacity + control scoring
  * - PitchDetection.createContourExtractor() for pitch extraction
+ * - SonixDecoder.decode() for audio file loading
  */
 class BreathMonitorViewModel : ViewModel() {
 
-    // Published state
-    private val _monitoringState = MutableStateFlow(BreathMonitorState.IDLE)
-    val monitoringState: StateFlow<BreathMonitorState> = _monitoringState.asStateFlow()
-
-    private val _elapsedSeconds = MutableStateFlow(0f)
-    val elapsedSeconds: StateFlow<Float> = _elapsedSeconds.asStateFlow()
-
-    private val _bestScore = MutableStateFlow(0f)
-    val bestScore: StateFlow<Float> = _bestScore.asStateFlow()
+    // State
+    private val _state = MutableStateFlow(BreathMonitorState.IDLE)
+    val state: StateFlow<BreathMonitorState> = _state.asStateFlow()
 
     private val _isVoiceDetected = MutableStateFlow(false)
     val isVoiceDetected: StateFlow<Boolean> = _isVoiceDetected.asStateFlow()
@@ -58,10 +53,14 @@ class BreathMonitorViewModel : ViewModel() {
     private val _recordingLevel = MutableStateFlow(0f)
     val recordingLevel: StateFlow<Float> = _recordingLevel.asStateFlow()
 
-    private val _status = MutableStateFlow("Hold a note as long as you can!")
-    val status: StateFlow<String> = _status.asStateFlow()
+    // Results (populated after analysis)
+    private val _breathCapacity = MutableStateFlow<Float?>(null)
+    val breathCapacity: StateFlow<Float?> = _breathCapacity.asStateFlow()
 
-    // Offline analysis state
+    private val _controlScore = MutableStateFlow<Float?>(null)
+    val controlScore: StateFlow<Float?> = _controlScore.asStateFlow()
+
+    // Offline analysis state (bundled audio)
     private val _offlineBreathCapacity = MutableStateFlow(0f)
     val offlineBreathCapacity: StateFlow<Float> = _offlineBreathCapacity.asStateFlow()
 
@@ -71,136 +70,113 @@ class BreathMonitorViewModel : ViewModel() {
     private val _offlineVoicedTime = MutableStateFlow(0f)
     val offlineVoicedTime: StateFlow<Float> = _offlineVoicedTime.asStateFlow()
 
-    private val _offlineHasEnoughData = MutableStateFlow(false)
-    val offlineHasEnoughData: StateFlow<Boolean> = _offlineHasEnoughData.asStateFlow()
-
     private val _isAnalyzingOffline = MutableStateFlow(false)
     val isAnalyzingOffline: StateFlow<Boolean> = _isAnalyzingOffline.asStateFlow()
 
-    // Private state
+    // Private
     private var recorder: SonixRecorder? = null
     private var vad: CalibraVAD? = null
-    private var startTimeMs: Long = 0L
-    private var lastVoiceTimeMs: Long = 0L
+    private var recordPath: String? = null
     private var recordingJob: Job? = null
     private var levelJob: Job? = null
 
-    // Actions
-
-    fun loadBestScore(context: Context) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        _bestScore.value = prefs.getFloat(KEY_BEST_SCORE, 0f)
-    }
-
-    fun startMonitoring(context: Context) {
+    fun startRecording(context: Context) {
         viewModelScope.launch {
-            // Reset state
-            _elapsedSeconds.value = 0f
+            // Reset
             _isVoiceDetected.value = false
-            _monitoringState.value = BreathMonitorState.WAITING_FOR_VOICE
-            _status.value = "Start singing when ready..."
+            _breathCapacity.value = null
+            _controlScore.value = null
+            _state.value = BreathMonitorState.RECORDING
 
             // Create audio resources
-            val recordPath = "${context.cacheDir}/breath_monitor.m4a"
+            recordPath = "${context.cacheDir}/breath_monitor.m4a"
             recorder?.release()
-            recorder = SonixRecorder.create(recordPath, SonixRecorderConfig.VOICE)
+            recorder = SonixRecorder.create(recordPath!!, SonixRecorderConfig.VOICE)
 
             vad?.release()
             vad = CalibraVAD.create(VADModelProvider.singingRealtime())
 
-            // Start recording
             recorder?.start()
 
-            // Collect level for meter
+            // Level meter
             levelJob = launch {
                 recorder?.level?.collect { level ->
                     _recordingLevel.value = level
                 }
             }
 
-            // Main detection loop using VAD (matching iOS pattern)
+            // VAD indicator (voice/silence feedback only, no auto-stop)
             recordingJob = launch {
                 recorder?.audioBuffers?.collect { buffer ->
-                    if (_monitoringState.value == BreathMonitorState.IDLE ||
-                        _monitoringState.value == BreathMonitorState.COMPLETE
-                    ) {
-                        return@collect
-                    }
+                    if (_state.value != BreathMonitorState.RECORDING) return@collect
 
                     val currentVad = vad ?: return@collect
-
-                    // ADR-017: VOICE preset records at 16kHz; CalibraVAD handles resampling internally
                     val ratio = currentVad.getVADRatio(buffer.samples, 16000)
-                    if (ratio < 0) return@collect
-
-                    val hasVoice = ratio > 0.5f
-                    val currentTimeMs = System.currentTimeMillis()
-
-                    when (_monitoringState.value) {
-                        BreathMonitorState.WAITING_FOR_VOICE -> {
-                            if (hasVoice) {
-                                _monitoringState.value = BreathMonitorState.SINGING
-                                startTimeMs = currentTimeMs
-                                lastVoiceTimeMs = currentTimeMs
-                                _isVoiceDetected.value = true
-                                _status.value = "Keep going!"
-                            }
-                        }
-                        BreathMonitorState.SINGING -> {
-                            if (hasVoice) {
-                                lastVoiceTimeMs = currentTimeMs
-                                _isVoiceDetected.value = true
-                            } else {
-                                _isVoiceDetected.value = false
-                                val silenceDuration = currentTimeMs - lastVoiceTimeMs
-
-                                if (silenceDuration > SILENCE_GRACE_MS) {
-                                    _monitoringState.value = BreathMonitorState.COMPLETE
-                                    _elapsedSeconds.value = (lastVoiceTimeMs - startTimeMs) / 1000f
-
-                                    if (_elapsedSeconds.value > _bestScore.value) {
-                                        _bestScore.value = _elapsedSeconds.value
-                                        saveBestScore(context, _bestScore.value)
-                                        _status.value = "New record! ${formatTime(_elapsedSeconds.value)}"
-                                    } else {
-                                        _status.value = "Good try! ${formatTime(_elapsedSeconds.value)}"
-                                    }
-
-                                    recorder?.stop()
-                                }
-                            }
-                        }
-                        else -> {}
-                    }
-
-                    if (_monitoringState.value == BreathMonitorState.SINGING) {
-                        _elapsedSeconds.value = (currentTimeMs - startTimeMs) / 1000f
+                    if (ratio >= 0) {
+                        _isVoiceDetected.value = ratio > 0.5f
                     }
                 }
             }
         }
     }
 
-    fun stopMonitoring() {
+    fun stopRecording() {
         viewModelScope.launch {
             recordingJob?.cancel()
             levelJob?.cancel()
             recorder?.stop()
+
+            val path = recordPath
+            if (path != null) {
+                _state.value = BreathMonitorState.ANALYZING
+                analyzeRecording(path)
+            } else {
+                _state.value = BreathMonitorState.IDLE
+            }
+
             recorder?.release()
             recorder = null
-            vad?.reset()
-            _monitoringState.value = BreathMonitorState.IDLE
-            _status.value = "Hold a note as long as you can!"
+            vad?.release()
+            vad = null
         }
     }
 
+    private suspend fun analyzeRecording(path: String) {
+        try {
+            val audioData = withContext(Dispatchers.IO) { SonixDecoder.decode(path) }
+            if (audioData != null) {
+                val extractor = PitchDetection.createContourExtractor()
+                val contour = withContext(Dispatchers.IO) {
+                    extractor.extract(audioData.samples, audioData.sampleRate)
+                }
+                extractor.release()
+
+                if (contour.size >= 2) {
+                    val score = TesseraBreath.computeScore(contour, BreathConfig.PRACTICE)
+                    _breathCapacity.value = score.capacity
+                    _controlScore.value = score.controlScore
+                }
+            }
+        } catch (e: Exception) {
+            Napier.e("Recording analysis failed", e)
+        }
+        _state.value = BreathMonitorState.COMPLETE
+    }
+
+    fun reset() {
+        _state.value = BreathMonitorState.IDLE
+        _breathCapacity.value = null
+        _controlScore.value = null
+        _isVoiceDetected.value = false
+    }
+
+    // Offline analysis of bundled audio
     fun analyzeOffline(context: Context) {
         viewModelScope.launch {
             _isAnalyzingOffline.value = true
             _offlineBreathCapacity.value = 0f
             _offlineControlScore.value = 0f
             _offlineVoicedTime.value = 0f
-            _offlineHasEnoughData.value = false
 
             try {
                 val audioFile = withContext(Dispatchers.IO) {
@@ -217,21 +193,17 @@ class BreathMonitorViewModel : ViewModel() {
                     return@launch
                 }
 
-                // Extract pitch contour via tona (replaces CalibraPitch.createContourExtractor)
                 val extractor = PitchDetection.createContourExtractor()
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
                 extractor.release()
 
-                // Compute breath metrics via tessera (replaces CalibraBreath)
-                val hasEnough = contour.size >= 2
-                if (hasEnough) {
-                    val score = TesseraBreath.computeScore(contour)
-                    _offlineBreathCapacity.value = score.capacity
+                if (contour.size >= 2) {
+                    val score = TesseraBreath.computeScore(contour, BreathConfig.PRACTICE)
+                    _offlineBreathCapacity.value = score.capacity ?: 0f
                     _offlineControlScore.value = score.controlScore
 
-                    // Voiced time from contour
                     val pitches = contour.pitchesHz
                     val times = contour.times
                     if (times.size >= 2) {
@@ -240,8 +212,6 @@ class BreathMonitorViewModel : ViewModel() {
                         _offlineVoicedTime.value = voicedCount / sr
                     }
                 }
-                _offlineHasEnoughData.value = hasEnough
-
             } catch (e: Exception) {
                 Napier.e("Offline analysis failed", e)
             } finally {
@@ -260,16 +230,6 @@ class BreathMonitorViewModel : ViewModel() {
             }
         }
         return file
-    }
-
-    fun resetBestScore(context: Context) {
-        _bestScore.value = 0f
-        saveBestScore(context, 0f)
-    }
-
-    private fun saveBestScore(context: Context, score: Float) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putFloat(KEY_BEST_SCORE, score).apply()
     }
 
     override fun onCleared() {
