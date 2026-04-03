@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import VoxaTrace
 
 /// ViewModel for Pitch Analysis - histogram and tonal segment labeling.
@@ -9,7 +10,7 @@ import VoxaTrace
 /// let audioData = SonixDecoder.decode(path: filePath)
 /// let extractor = PitchDetection.createContourExtractor()
 /// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
-/// extractor.close()
+/// extractor.release()
 ///
 /// // 2. Compute histogram
 /// let histogram = PitchAnalysis.computeHistogram(contour: contour, tonicHz: 261.63)
@@ -57,7 +58,7 @@ final class PitchAnalysisViewModel: ObservableObject {
             // Extract pitch contour
             let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.close()
+            extractor.release()
 
             let tonicHz: Float = 261.63
 
@@ -69,26 +70,22 @@ final class PitchAnalysisViewModel: ObservableObject {
             let segments = PitchAnalysis.labelByMeanPitch(
                 contour: contour,
                 tonicHz: tonicHz,
-                intervals: intervals
+                targetIntervalsCents: intervals
             )
 
             var bins: [Float] = []
             var vals: [Float] = []
             var segs: [TonalSegmentUi] = []
 
-            if let histogram = histogram {
-                bins = Array(histogram.binCenters)
-                vals = Array(histogram.values)
-            }
+            bins = histogram.binCenters
+            vals = histogram.values
 
-            if let segments = segments {
-                segs = segments.map { seg in
-                    TonalSegmentUi(
-                        label: seg.label,
-                        startTime: seg.startTime,
-                        endTime: seg.endTime
-                    )
-                }
+            segs = segments.map { seg in
+                TonalSegmentUi(
+                    label: seg.label ?? "?",
+                    startTime: seg.startSeconds,
+                    endTime: seg.endSeconds
+                )
             }
 
             await MainActor.run {

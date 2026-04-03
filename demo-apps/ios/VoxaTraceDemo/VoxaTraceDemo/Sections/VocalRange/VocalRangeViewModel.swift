@@ -127,7 +127,7 @@ final class VocalRangeViewModel: ObservableObject {
         audioTask = Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
             for await buffer in recorder.audioBuffers {
-                newSession.addAudio(samples: buffer.samples, sampleRate: hwRate)
+                newSession.addAudio(samples: buffer.samples, sampleRate: Int32(hwRate))
             }
         }
     }

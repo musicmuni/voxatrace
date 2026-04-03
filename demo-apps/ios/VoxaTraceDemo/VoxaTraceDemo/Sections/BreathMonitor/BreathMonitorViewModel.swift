@@ -130,7 +130,7 @@ final class BreathMonitorViewModel: ObservableObject {
             // Extract pitch contour via tona (replaces CalibraPitch.createContourExtractor)
             let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.close()
+            extractor.release()
 
             let hasEnough = contour.size >= 2
 

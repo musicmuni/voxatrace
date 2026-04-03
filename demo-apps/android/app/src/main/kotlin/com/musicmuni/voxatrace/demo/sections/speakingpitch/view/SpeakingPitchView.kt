@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.sp
 import com.musicmuni.voxatrace.calibra.CalibraMusic
 import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.CalibraSpeakingPitch
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig

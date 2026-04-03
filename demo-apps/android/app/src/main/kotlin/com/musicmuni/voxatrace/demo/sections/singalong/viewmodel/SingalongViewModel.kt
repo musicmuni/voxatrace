@@ -6,14 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.calibra.CalibraLiveEval
 import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.calibra.model.PracticePhase
 import com.musicmuni.voxatrace.calibra.model.Segment
 import com.musicmuni.voxatrace.calibra.model.SegmentResult
 import com.musicmuni.voxatrace.demo.sections.singalong.model.LessonData
 import com.musicmuni.voxatrace.demo.sections.singalong.model.SessionPreset
 import com.musicmuni.voxatrace.demo.sections.singalong.model.SingalongUIState
-import com.musicmuni.voxatrace.calibra.model.PitchContour
+import com.musicmuni.voxatrace.tona.model.PitchContour
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixPlayerConfig

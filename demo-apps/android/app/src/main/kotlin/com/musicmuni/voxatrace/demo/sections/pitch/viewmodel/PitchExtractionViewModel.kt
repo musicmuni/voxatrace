@@ -142,7 +142,7 @@ class PitchExtractionViewModel : ViewModel() {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
 
-                extractor.close()
+                extractor.release()
 
                 // Calculate statistics
                 val pitchesHz = result.pitchesHz

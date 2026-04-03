@@ -77,7 +77,7 @@ class IntonationViewModel : ViewModel() {
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
-                extractor.close()
+                extractor.release()
 
                 // Analyze against Equal Temperament
                 val eqAnalysis = withContext(Dispatchers.IO) {

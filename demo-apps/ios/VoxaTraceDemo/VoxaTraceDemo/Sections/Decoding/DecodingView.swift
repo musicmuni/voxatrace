@@ -334,9 +334,9 @@ struct DecodingView: View {
             let tone = SonixToneGenerator.generate(
                 frequencyHz: 440.0,
                 durationMs: toneDurationMs,
+                sampleRate: Int32(data.sampleRate),
                 waveType: .sine,
-                amplitude: 0.8,
-                sampleRate: Int32(data.sampleRate)
+                amplitude: 0.8
             )
 
             // Mix: original at full volume, tone at 0.3

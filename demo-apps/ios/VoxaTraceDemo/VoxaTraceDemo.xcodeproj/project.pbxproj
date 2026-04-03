@@ -123,7 +123,7 @@
 			mainGroup = 9FC698612EF2CEA400FE73BF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F1A2B3C42F26700100000001 /* XCRemoteSwiftPackageReference "voxatrace" */,
+				F1A2B3C42F26700100000001 /* XCLocalSwiftPackageReference "voxatrace" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9FC6986B2EF2CEA400FE73BF /* Products */;
@@ -386,20 +386,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F1A2B3C42F26700100000001 /* XCRemoteSwiftPackageReference "voxatrace" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/musicmuni/voxatrace";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.1;
-			};
+		F1A2B3C42F26700100000001 /* XCLocalSwiftPackageReference "voxatrace" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../";
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		F1A2B3C42F26700100000002 /* VoxaTrace */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1A2B3C42F26700100000001 /* XCRemoteSwiftPackageReference "voxatrace" */;
+			package = F1A2B3C42F26700100000001 /* XCLocalSwiftPackageReference "voxatrace" */;
 			productName = VoxaTrace;
 		};
 /* End XCSwiftPackageProductDependency section */

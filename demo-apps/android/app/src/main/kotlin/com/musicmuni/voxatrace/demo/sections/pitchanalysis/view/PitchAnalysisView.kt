@@ -71,7 +71,7 @@ fun PitchAnalysisView() {
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
-                extractor.close()
+                extractor.release()
 
                 val tonicHz = 261.63f
 
@@ -97,9 +97,9 @@ fun PitchAnalysisView() {
                 if (segments != null) {
                     tonalSegments = segments.map { seg ->
                         TonalSegmentUi(
-                            label = seg.label,
-                            startTime = seg.startTime,
-                            endTime = seg.endTime
+                            label = seg.label ?: "?",
+                            startTime = seg.startSeconds,
+                            endTime = seg.endSeconds
                         )
                     }
                 }

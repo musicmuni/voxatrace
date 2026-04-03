@@ -76,7 +76,7 @@ fun AgilityView() {
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
-                extractor.close()
+                extractor.release()
 
                 // Compute agility contour (intermediate) and score
                 val ac = withContext(Dispatchers.Default) {

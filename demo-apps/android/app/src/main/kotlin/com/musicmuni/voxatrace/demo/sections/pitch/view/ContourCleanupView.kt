@@ -248,9 +248,9 @@ private fun DisplayTogglesSection(
 
 @Composable
 private fun GraphSection(
-    rawContour: com.musicmuni.voxatrace.calibra.model.PitchContour?,
-    scoringContour: com.musicmuni.voxatrace.calibra.model.PitchContour?,
-    displayContour: com.musicmuni.voxatrace.calibra.model.PitchContour?,
+    rawContour: com.musicmuni.voxatrace.tona.model.PitchContour?,
+    scoringContour: com.musicmuni.voxatrace.tona.model.PitchContour?,
+    displayContour: com.musicmuni.voxatrace.tona.model.PitchContour?,
     showRaw: Boolean,
     showScoring: Boolean,
     showDisplay: Boolean
@@ -297,9 +297,9 @@ private fun GraphSection(
 @Composable
 private fun StatisticsSection(
     viewModel: ContourCleanupViewModel,
-    rawContour: com.musicmuni.voxatrace.calibra.model.PitchContour?,
-    scoringContour: com.musicmuni.voxatrace.calibra.model.PitchContour?,
-    displayContour: com.musicmuni.voxatrace.calibra.model.PitchContour?
+    rawContour: com.musicmuni.voxatrace.tona.model.PitchContour?,
+    scoringContour: com.musicmuni.voxatrace.tona.model.PitchContour?,
+    displayContour: com.musicmuni.voxatrace.tona.model.PitchContour?
 ) {
     val rawStats = remember(rawContour) { viewModel.contourStats(rawContour) }
     val scoringStats = remember(scoringContour) { viewModel.contourStats(scoringContour) }

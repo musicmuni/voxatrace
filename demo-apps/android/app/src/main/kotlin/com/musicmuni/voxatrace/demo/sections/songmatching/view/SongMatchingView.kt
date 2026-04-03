@@ -81,14 +81,14 @@ fun SongMatchingView() {
                 val singerContour = withContext(Dispatchers.Default) {
                     val extractor = PitchDetection.createContourExtractor()
                     val contour = extractor.extract(singerAudio.samples, singerAudio.sampleRate)
-                    extractor.close()
+                    extractor.release()
                     contour
                 }
 
                 val songContour = withContext(Dispatchers.Default) {
                     val extractor = PitchDetection.createContourExtractor()
                     val contour = extractor.extract(songAudio.samples, songAudio.sampleRate)
-                    extractor.close()
+                    extractor.release()
                     contour
                 }
 

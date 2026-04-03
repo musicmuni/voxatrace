@@ -73,7 +73,7 @@ final class PitchExtractionViewModel: ObservableObject {
 
             let extractor = PitchDetection.createContourExtractor(config: extractorConfig)
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.close()
+            extractor.release()
 
             let extractedPitches = contour.pitchesHz
             let extractedTimes = contour.times

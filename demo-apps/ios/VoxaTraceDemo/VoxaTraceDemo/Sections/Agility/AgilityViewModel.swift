@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import VoxaTrace
 
 /// ViewModel for vocal agility analysis using TesseraAgility.
@@ -11,7 +12,7 @@ import VoxaTrace
 /// // 2. Extract pitch contour
 /// let extractor = PitchDetection.createContourExtractor()
 /// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
-/// extractor.close()
+/// extractor.release()
 ///
 /// // 3. Compute agility contour and score
 /// let ac = TesseraAgility.computeContour(contour: contour)
@@ -47,7 +48,7 @@ final class AgilityViewModel: ObservableObject {
             // Extract pitch contour
             let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.close()
+            extractor.release()
 
             // Compute agility contour (intermediate) and score
             let ac = TesseraAgility.computeContour(contour: contour)

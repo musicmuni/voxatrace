@@ -95,7 +95,7 @@ extension StrictnessInfo {
 
 /// Contour cleanup preset configuration.
 struct CleanupPresetInfo {
-    let cleanup: ContourCleanup
+    let cleanup: PitchProcessingConfig
     let name: String
     let description: String
 }

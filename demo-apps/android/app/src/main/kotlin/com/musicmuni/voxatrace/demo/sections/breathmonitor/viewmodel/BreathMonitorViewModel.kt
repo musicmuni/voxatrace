@@ -222,7 +222,7 @@ class BreathMonitorViewModel : ViewModel() {
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
-                extractor.close()
+                extractor.release()
 
                 // Compute breath metrics via tessera (replaces CalibraBreath)
                 val hasEnough = contour.size >= 2

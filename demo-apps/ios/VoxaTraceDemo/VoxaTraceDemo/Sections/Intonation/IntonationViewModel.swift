@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import VoxaTrace
 
 /// ViewModel for intonation analysis using Accura.
@@ -11,7 +12,7 @@ import VoxaTrace
 /// // 2. Extract pitch contour
 /// let extractor = PitchDetection.createContourExtractor()
 /// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
-/// extractor.close()
+/// extractor.release()
 ///
 /// // 3. Analyze intonation against EQ and JI
 /// let eqResult = Accura.analyzePitching(contour: contour, tonicHz: 261.63, intonationSystem: .eq)
@@ -51,7 +52,7 @@ final class IntonationViewModel: ObservableObject {
             // Extract pitch contour
             let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.close()
+            extractor.release()
 
             let tonicHz: Float = 261.63
 

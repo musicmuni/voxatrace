@@ -176,7 +176,7 @@ final class ContourCleanupViewModel: ObservableObject {
             let extractor = PitchDetection.createContourExtractor(config: extractorConfig)
             // ADR-017: Pass collectedSampleRate; ContourExtractor handles resampling internally
             let raw = extractor.extract(audio: collectedSamples, sampleRate: collectedSampleRate)
-            extractor.close()
+            extractor.release()
 
             let scoring = PitchProcessing.process(contour: raw, config: .scoring)
             let display = PitchProcessing.process(contour: raw, config: .display)

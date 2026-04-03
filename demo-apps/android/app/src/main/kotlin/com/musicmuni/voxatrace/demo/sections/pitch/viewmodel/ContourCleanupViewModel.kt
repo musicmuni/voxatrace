@@ -204,7 +204,7 @@ class ContourCleanupViewModel : ViewModel() {
 
                 val extractor = PitchDetection.createContourExtractor(extractorConfig)
                 val raw = extractor.extract(collectedSamples.toFloatArray(), 16000)
-                extractor.close()
+                extractor.release()
 
                 val scoring = PitchProcessing.process(raw, PitchProcessingConfig.SCORING)
                 val display = PitchProcessing.process(raw, PitchProcessingConfig.DISPLAY)

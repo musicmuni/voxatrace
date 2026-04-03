@@ -1,4 +1,5 @@
 import SwiftUI
+import VoxaTrace
 
 /// Intonation analysis view demonstrating Accura for pitch accuracy measurement.
 struct IntonationView: View {

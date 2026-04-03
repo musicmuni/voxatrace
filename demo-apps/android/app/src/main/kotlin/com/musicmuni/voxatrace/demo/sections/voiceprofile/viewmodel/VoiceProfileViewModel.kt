@@ -81,31 +81,26 @@ class VoiceProfileViewModel : ViewModel() {
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
-                extractor.close()
+                extractor.release()
 
                 // Batch analysis via Tessera.analyze()
                 val result = withContext(Dispatchers.IO) {
                     Tessera.analyze(contour)
                 }
 
-                if (result != null) {
-                    val breath = result.breath
-                    if (breath != null) {
-                        _breathCapacity.value = breath.capacity
-                        _breathControl.value = breath.controlScore
-                    }
+                result.breath?.let { breath ->
+                    _breathCapacity.value = breath.capacity
+                    _breathControl.value = breath.controlScore
+                }
 
-                    val agility = result.agility
-                    if (agility != null) {
-                        _agilityScore.value = agility.score
-                    }
+                result.agility?.let { agility ->
+                    _agilityScore.value = agility.scores.firstOrNull() ?: 0f
+                }
 
-                    val range = result.vocalRange
-                    if (range != null) {
-                        _vocalRangeLow.value = range.low.noteLabel
-                        _vocalRangeHigh.value = range.high.noteLabel
-                        _vocalRangeOctaves.value = range.octaves
-                    }
+                result.vocalRange?.let { vocalRange ->
+                    _vocalRangeLow.value = vocalRange.range.lower.noteLabel
+                    _vocalRangeHigh.value = vocalRange.range.upper.noteLabel
+                    _vocalRangeOctaves.value = vocalRange.range.octaves
                 }
 
             } catch (e: Exception) {

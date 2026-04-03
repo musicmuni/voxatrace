@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import VoxaTrace
 
 /// ViewModel for Voice Profile - multi-metric batch analysis via Tessera.analyze().
@@ -11,7 +12,7 @@ import VoxaTrace
 /// // 2. Extract pitch contour
 /// let extractor = PitchDetection.createContourExtractor()
 /// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
-/// extractor.close()
+/// extractor.release()
 ///
 /// // 3. Batch analysis
 /// let result = Tessera.analyze(contour: contour)
@@ -51,7 +52,7 @@ final class VoiceProfileViewModel: ObservableObject {
             // Extract pitch contour
             let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.close()
+            extractor.release()
 
             // Batch analysis via Tessera.analyze()
             let result = Tessera.analyze(contour: contour)
@@ -63,19 +64,17 @@ final class VoiceProfileViewModel: ObservableObject {
             var high = ""
             var octaves: Float = 0
 
-            if let result = result {
-                if let breath = result.breath {
-                    cap = breath.capacity
-                    ctrl = breath.controlScore
-                }
-                if let agility = result.agility {
-                    agil = agility.score
-                }
-                if let range = result.vocalRange {
-                    low = range.low.noteLabel
-                    high = range.high.noteLabel
-                    octaves = range.octaves
-                }
+            if let breath = result.breath {
+                cap = breath.capacity
+                ctrl = breath.controlScore
+            }
+            if let agility = result.agility {
+                agil = agility.scores.first?.floatValue ?? 0
+            }
+            if let vocalRange = result.vocalRange {
+                low = vocalRange.range.lower.noteLabel
+                high = vocalRange.range.upper.noteLabel
+                octaves = vocalRange.range.octaves
             }
 
             await MainActor.run {

@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import VoxaTrace
 
 /// ViewModel for song matching using TesseraRange search vectors.
@@ -12,7 +13,7 @@ import VoxaTrace
 /// // 2. Extract pitch contours
 /// let extractor = PitchDetection.createContourExtractor()
 /// let singerContour = extractor.extract(audio: singerData.samples, sampleRate: singerData.sampleRate)
-/// extractor.close()
+/// extractor.release()
 ///
 /// // 3. Compute search vectors
 /// let singerVec = TesseraRange.computeSearchVector(contour: singerContour, normalize: false)
@@ -69,11 +70,11 @@ final class SongMatchingViewModel: ObservableObject {
             // 2. Extract pitch contours
             let singerExtractor = PitchDetection.createContourExtractor()
             let singerContour = singerExtractor.extract(audio: singerAudio.samples, sampleRate: singerAudio.sampleRate)
-            singerExtractor.close()
+            singerExtractor.release()
 
             let songExtractor = PitchDetection.createContourExtractor()
             let songContour = songExtractor.extract(audio: songAudio.samples, sampleRate: songAudio.sampleRate)
-            songExtractor.close()
+            songExtractor.release()
 
             // 3. Compute search vectors
             // Extension returns native [Float] (converts from KotlinFloatArray)
