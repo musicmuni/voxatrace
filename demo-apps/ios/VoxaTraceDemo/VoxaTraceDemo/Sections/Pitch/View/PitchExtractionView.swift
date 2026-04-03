@@ -155,7 +155,7 @@ struct PitchExtractionView: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("• CalibraPitch.createContourExtractor(config: .scoring)")
+            Text("• PitchDetection.createContourExtractor(config: .scoring)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 

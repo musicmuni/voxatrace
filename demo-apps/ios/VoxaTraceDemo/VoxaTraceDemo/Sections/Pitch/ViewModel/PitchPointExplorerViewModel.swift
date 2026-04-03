@@ -7,7 +7,7 @@ import VoxaTrace
 /// ## VoxaTrace Integration (~10 lines)
 /// ```swift
 /// // 1. Create detector
-/// let detector = CalibraPitch.createDetector(config: config)
+/// let detector = PitchDetection.createDetector(config: config)
 ///
 /// // 2. Detect pitch
 /// let result = detector.detect(samples: buffer.samples, sampleRate: hwRate)
@@ -24,7 +24,7 @@ final class PitchPointExplorerViewModel: ObservableObject {
             if isRecording {
                 stopRecording()
             }
-            detector?.release()
+            detector?.close()
             detector = nil
         }
     }
@@ -41,7 +41,7 @@ final class PitchPointExplorerViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private var detector: CalibraPitch.Detector?
+    private var detector: PitchDetector?
     private var recorder: SonixRecorder?
 
     // MARK: - Lifecycle
@@ -83,7 +83,7 @@ final class PitchPointExplorerViewModel: ObservableObject {
             .algorithm(algorithm)
             .build()
 
-        detector = CalibraPitch.createDetector(config: detectorConfig)
+        detector = PitchDetection.createDetector(config: detectorConfig)
 
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("pitch_explorer_temp.m4a").path
@@ -95,7 +95,7 @@ final class PitchPointExplorerViewModel: ObservableObject {
         recorder?.release()
         recorder = nil
 
-        detector?.release()
+        detector?.close()
         detector = nil
     }
 

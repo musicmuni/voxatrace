@@ -3,12 +3,13 @@ package com.musicmuni.voxatrace.demo.sections.breathmonitor.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraBreath
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.calibra.CalibraVAD
+import com.musicmuni.voxatrace.calibra.model.VADModelProvider
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
+import com.musicmuni.voxatrace.tessera.TesseraBreath
+import com.musicmuni.voxatrace.tona.PitchDetection
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,7 +23,6 @@ import java.io.FileOutputStream
 
 private const val PREFS_NAME = "breath_monitor_prefs"
 private const val KEY_BEST_SCORE = "best_score"
-private const val RMS_THRESHOLD = 0.01f
 private const val SILENCE_GRACE_MS = 500L
 
 enum class BreathMonitorState {
@@ -34,6 +34,11 @@ enum class BreathMonitorState {
 
 /**
  * ViewModel for Breath Monitor - duration tracking with VAD and silence inertia.
+ *
+ * APIs demonstrated:
+ * - CalibraVAD (singingRealtime) for real-time voice detection
+ * - TesseraBreath.computeScore() for offline breath capacity + control scoring
+ * - PitchDetection.createContourExtractor() for pitch extraction
  */
 class BreathMonitorViewModel : ViewModel() {
 
@@ -60,6 +65,9 @@ class BreathMonitorViewModel : ViewModel() {
     private val _offlineBreathCapacity = MutableStateFlow(0f)
     val offlineBreathCapacity: StateFlow<Float> = _offlineBreathCapacity.asStateFlow()
 
+    private val _offlineControlScore = MutableStateFlow(0f)
+    val offlineControlScore: StateFlow<Float> = _offlineControlScore.asStateFlow()
+
     private val _offlineVoicedTime = MutableStateFlow(0f)
     val offlineVoicedTime: StateFlow<Float> = _offlineVoicedTime.asStateFlow()
 
@@ -71,7 +79,7 @@ class BreathMonitorViewModel : ViewModel() {
 
     // Private state
     private var recorder: SonixRecorder? = null
-    private var detector: CalibraPitch.Detector? = null
+    private var vad: CalibraVAD? = null
     private var startTimeMs: Long = 0L
     private var lastVoiceTimeMs: Long = 0L
     private var recordingJob: Job? = null
@@ -97,8 +105,8 @@ class BreathMonitorViewModel : ViewModel() {
             recorder?.release()
             recorder = SonixRecorder.create(recordPath, SonixRecorderConfig.VOICE)
 
-            detector?.release()
-            detector = CalibraPitch.createDetector(PitchDetectorConfig.BALANCED)
+            vad?.release()
+            vad = CalibraVAD.create(VADModelProvider.singingRealtime())
 
             // Start recording
             recorder?.start()
@@ -110,7 +118,7 @@ class BreathMonitorViewModel : ViewModel() {
                 }
             }
 
-            // Main detection loop
+            // Main detection loop using VAD (matching iOS pattern)
             recordingJob = launch {
                 recorder?.audioBuffers?.collect { buffer ->
                     if (_monitoringState.value == BreathMonitorState.IDLE ||
@@ -119,17 +127,13 @@ class BreathMonitorViewModel : ViewModel() {
                         return@collect
                     }
 
-                    val det = detector ?: return@collect
+                    val currentVad = vad ?: return@collect
 
-                    // VOICE preset records at 16kHz; CalibraPitch handles resampling internally (ADR-017)
-                    val samples = buffer.samples
+                    // ADR-017: VOICE preset records at 16kHz; CalibraVAD handles resampling internally
+                    val ratio = currentVad.getVADRatio(buffer.samples, 16000)
+                    if (ratio < 0) return@collect
 
-                    // Detect pitch using high-level API
-                    val result = det.detect(samples, 16000)
-                    val pitch = result.pitch
-
-                    // Voice is detected if pitch is valid and level is above threshold
-                    val hasVoice = pitch > 0 && _recordingLevel.value > RMS_THRESHOLD
+                    val hasVoice = ratio > 0.5f
                     val currentTimeMs = System.currentTimeMillis()
 
                     when (_monitoringState.value) {
@@ -154,7 +158,6 @@ class BreathMonitorViewModel : ViewModel() {
                                     _monitoringState.value = BreathMonitorState.COMPLETE
                                     _elapsedSeconds.value = (lastVoiceTimeMs - startTimeMs) / 1000f
 
-                                    // Update best score if needed
                                     if (_elapsedSeconds.value > _bestScore.value) {
                                         _bestScore.value = _elapsedSeconds.value
                                         saveBestScore(context, _bestScore.value)
@@ -170,7 +173,6 @@ class BreathMonitorViewModel : ViewModel() {
                         else -> {}
                     }
 
-                    // Update elapsed time during singing
                     if (_monitoringState.value == BreathMonitorState.SINGING) {
                         _elapsedSeconds.value = (currentTimeMs - startTimeMs) / 1000f
                     }
@@ -186,6 +188,7 @@ class BreathMonitorViewModel : ViewModel() {
             recorder?.stop()
             recorder?.release()
             recorder = null
+            vad?.reset()
             _monitoringState.value = BreathMonitorState.IDLE
             _status.value = "Hold a note as long as you can!"
         }
@@ -195,11 +198,11 @@ class BreathMonitorViewModel : ViewModel() {
         viewModelScope.launch {
             _isAnalyzingOffline.value = true
             _offlineBreathCapacity.value = 0f
+            _offlineControlScore.value = 0f
             _offlineVoicedTime.value = 0f
             _offlineHasEnoughData.value = false
 
             try {
-                // Copy asset to file and decode
                 val audioFile = withContext(Dispatchers.IO) {
                     copyAssetToFile(context, "Alankaar 01_voice.m4a")
                 }
@@ -214,24 +217,31 @@ class BreathMonitorViewModel : ViewModel() {
                     return@launch
                 }
 
-                // Extract pitch contour - ContourExtractor handles resampling internally (ADR-017)
-                val extractor = CalibraPitch.createContourExtractor()
+                // Extract pitch contour via tona (replaces CalibraPitch.createContourExtractor)
+                val extractor = PitchDetection.createContourExtractor()
                 val contour = withContext(Dispatchers.IO) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
-                extractor.release()
+                extractor.close()
 
-                val times = contour.toTimesArray()
-                val pitches = contour.toPitchesArray()
+                // Compute breath metrics via tessera (replaces CalibraBreath)
+                val hasEnough = contour.size >= 2
+                if (hasEnough) {
+                    val score = TesseraBreath.computeScore(contour)
+                    _offlineBreathCapacity.value = score.capacity
+                    _offlineControlScore.value = score.controlScore
 
-                // Compute breath metrics
-                val hasEnough = CalibraBreath.hasEnoughData(times, pitches)
-                val capacity = if (hasEnough) CalibraBreath.computeCapacity(times, pitches) else 0f
-                val voicedTime = CalibraBreath.getCumulativeVoicedTime(times, pitches)
-
+                    // Voiced time from contour
+                    val pitches = contour.pitchesHz
+                    val times = contour.times
+                    if (times.size >= 2) {
+                        val sr = 1f / (times[1] - times[0])
+                        val voicedCount = pitches.count { it > 0f }
+                        _offlineVoicedTime.value = voicedCount / sr
+                    }
+                }
                 _offlineHasEnoughData.value = hasEnough
-                _offlineBreathCapacity.value = capacity
-                _offlineVoicedTime.value = voicedTime
+
             } catch (e: Exception) {
                 Napier.e("Offline analysis failed", e)
             } finally {
@@ -267,7 +277,7 @@ class BreathMonitorViewModel : ViewModel() {
         recordingJob?.cancel()
         levelJob?.cancel()
         recorder?.release()
-        detector?.release()
+        vad?.release()
     }
 
     companion object {

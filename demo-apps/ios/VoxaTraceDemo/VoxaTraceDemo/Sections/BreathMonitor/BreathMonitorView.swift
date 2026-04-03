@@ -172,6 +172,20 @@ struct BreathMonitorView: View {
                 Spacer()
 
                 VStack(alignment: .center) {
+                    Text("Control")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(String(format: "%.0f%%", viewModel.offlineControlScore * 100))
+                        .font(.title2)
+                        .foregroundColor(
+                            viewModel.offlineControlScore >= 0.7 ? .green :
+                            viewModel.offlineControlScore >= 0.4 ? .orange : .red
+                        )
+                }
+
+                Spacer()
+
+                VStack(alignment: .center) {
                     Text("Voiced Time")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -202,23 +216,19 @@ struct BreathMonitorView: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("- SonixDecoder.decode() - Load audio from file")
+            Text("Real-time: CalibraVAD (singingRealtime) for voice detection")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("- CalibraPitch.createContourExtractor() - Extract pitch contour")
+            Text("Offline: PitchDetection.createContourExtractor() - pitch extraction")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("- CalibraBreath.hasEnoughData() - Check data sufficiency")
+            Text("Offline: TesseraBreath.computeScore() - capacity + control")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("- CalibraBreath.computeCapacity() - Compute breath capacity")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-
-            Text("- CalibraBreath.getCumulativeVoicedTime() - Get voiced time")
+            Text("Offline: SonixDecoder.decode() - audio file loading")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

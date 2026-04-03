@@ -3,11 +3,12 @@ package com.musicmuni.voxatrace.demo.sections.pitch.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.ContourExtractorConfig
-import com.musicmuni.voxatrace.calibra.model.ContourCleanup
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchContour
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.PitchProcessing
+import com.musicmuni.voxatrace.tona.model.ContourExtractorConfig
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchContour
+import com.musicmuni.voxatrace.tona.model.PitchProcessingConfig
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchAlgorithmInfo
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
@@ -23,12 +24,12 @@ import kotlinx.coroutines.launch
  * ## VoxaTrace Integration
  * ```kotlin
  * // 1. Extract raw contour
- * val extractor = CalibraPitch.createContourExtractor(config)
+ * val extractor = PitchDetection.createContourExtractor(config)
  * val raw = extractor.extract(samples, 16000)
  *
- * // 2. Apply cleanup presets
- * val scoring = CalibraPitch.PostProcess.cleanup(raw, ContourCleanup.SCORING)
- * val display = CalibraPitch.PostProcess.cleanup(raw, ContourCleanup.DISPLAY)
+ * // 2. Apply processing presets
+ * val scoring = PitchProcessing.process(raw, PitchProcessingConfig.SCORING)
+ * val display = PitchProcessing.process(raw, PitchProcessingConfig.DISPLAY)
  * ```
  */
 class ContourCleanupViewModel : ViewModel() {
@@ -196,17 +197,17 @@ class ContourCleanupViewModel : ViewModel() {
 
                 val extractorConfig = ContourExtractorConfig.Builder()
                     .algorithm(algorithm)
-                    .pitchPreset(com.musicmuni.voxatrace.calibra.model.PitchPreset.BALANCED)
-                    .cleanup(ContourCleanup.RAW)
+                    .pitchPreset(com.musicmuni.voxatrace.tona.model.PitchPreset.BALANCED)
+                    .cleanup(PitchProcessingConfig.RAW)
                     .hopMs(10)
                     .build()
 
-                val extractor = CalibraPitch.createContourExtractor(extractorConfig)
+                val extractor = PitchDetection.createContourExtractor(extractorConfig)
                 val raw = extractor.extract(collectedSamples.toFloatArray(), 16000)
-                extractor.release()
+                extractor.close()
 
-                val scoring = CalibraPitch.PostProcess.cleanup(raw, ContourCleanup.SCORING)
-                val display = CalibraPitch.PostProcess.cleanup(raw, ContourCleanup.DISPLAY)
+                val scoring = PitchProcessing.process(raw, PitchProcessingConfig.SCORING)
+                val display = PitchProcessing.process(raw, PitchProcessingConfig.DISPLAY)
 
                 _rawContour.value = raw
                 _scoringContour.value = scoring

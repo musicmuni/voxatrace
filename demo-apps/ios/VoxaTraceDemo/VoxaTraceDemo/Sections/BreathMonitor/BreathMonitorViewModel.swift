@@ -15,19 +15,18 @@ enum BreathMonitorState {
 
 /// ViewModel for breath monitoring using CalibraVAD.
 ///
-/// ## VoxaTrace Integration (~20 lines)
+/// ## VoxaTrace Integration
 /// ```swift
-/// // 1. Create VAD
+/// // 1. Real-time voice detection via CalibraVAD
 /// vad = CalibraVAD.create(.singingRealtime { ModelLoader.loadSingingRealtimeVAD() })
-///
-/// // 2. Process audio buffers
-/// let ratio = vad.getVADRatio(samples: samples16k)
+/// let ratio = vad.getVADRatio(samples: samples, sampleRate: hwRate)
 /// let hasVoice = ratio > 0.5
 ///
-/// // 3. Offline analysis with CalibraBreath
-/// let extractor = CalibraPitch.createContourExtractor()
-/// let contour = extractor.extract(audio: samples16k, sampleRate: 16000)
-/// let capacity = CalibraBreath.computeCapacity(times: contour.times, pitchesHz: contour.pitchesHz)
+/// // 2. Offline analysis via tessera + tona
+/// let extractor = PitchDetection.createContourExtractor()
+/// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
+/// let score = TesseraBreath.computeScore(contour: contour)
+/// // score.capacity, score.controlScore
 /// ```
 @MainActor
 final class BreathMonitorViewModel: ObservableObject {
@@ -43,6 +42,7 @@ final class BreathMonitorViewModel: ObservableObject {
 
     // Offline analysis state
     @Published private(set) var offlineBreathCapacity: Float = 0.0
+    @Published private(set) var offlineControlScore: Float = 0.0
     @Published private(set) var offlineVoicedTime: Float = 0.0
     @Published private(set) var offlineHasEnoughData = false
     @Published private(set) var isAnalyzingOffline = false
@@ -116,6 +116,7 @@ final class BreathMonitorViewModel: ObservableObject {
     func analyzeOffline() {
         isAnalyzingOffline = true
         offlineBreathCapacity = 0
+        offlineControlScore = 0
         offlineVoicedTime = 0
         offlineHasEnoughData = false
 
@@ -126,18 +127,37 @@ final class BreathMonitorViewModel: ObservableObject {
                 return
             }
 
-            // ADR-017: Pass original samples; ContourExtractor handles resampling internally
-            let extractor = CalibraPitch.createContourExtractor()
+            // Extract pitch contour via tona (replaces CalibraPitch.createContourExtractor)
+            let extractor = PitchDetection.createContourExtractor()
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.release()
+            extractor.close()
 
-            let hasEnough = CalibraBreath.hasEnoughData(times: contour.times, pitchesHz: contour.pitchesHz)
-            let capacity = hasEnough ? CalibraBreath.computeCapacity(times: contour.times, pitchesHz: contour.pitchesHz) : 0
-            let voicedTime = CalibraBreath.getCumulativeVoicedTime(times: contour.times, pitchesHz: contour.pitchesHz)
+            let hasEnough = contour.size >= 2
+
+            var capacity: Float = 0
+            var controlScore: Float = 0
+            var voicedTime: Float = 0
+
+            if hasEnough {
+                // Compute breath metrics via tessera (replaces CalibraBreath)
+                let score = TesseraBreath.computeScore(contour: contour)
+                capacity = score.capacity
+                controlScore = score.controlScore
+
+                // Voiced time from contour
+                let pitches = contour.pitchesHz
+                let times = contour.times
+                if times.count >= 2 {
+                    let sr = 1.0 / (times[1] - times[0])
+                    let voicedCount = pitches.filter { $0 > 0 }.count
+                    voicedTime = Float(voicedCount) / Float(sr)
+                }
+            }
 
             await MainActor.run {
                 offlineHasEnoughData = hasEnough
                 offlineBreathCapacity = capacity
+                offlineControlScore = controlScore
                 offlineVoicedTime = voicedTime
                 isAnalyzingOffline = false
             }

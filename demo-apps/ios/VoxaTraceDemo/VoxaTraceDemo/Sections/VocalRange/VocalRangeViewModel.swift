@@ -2,26 +2,22 @@ import Foundation
 import Combine
 import VoxaTrace
 
-/// ViewModel for vocal range detection using VocalRangeSession.
+/// ViewModel for vocal range detection using TesseraRangeSession.
 ///
-/// ## VoxaTrace Integration (~20 lines)
+/// ## VoxaTrace Integration
 /// ```swift
-/// // 1. Create pitch detector
+/// // 1. Create session (detector created internally from config)
 /// let detectorConfig = PitchDetectorConfig.Builder().algorithm(.yin).enableProcessing().build()
-/// let detector = CalibraPitch.createDetector(config: detectorConfig)
+/// let session = TesseraRangeSession.create(detectorConfig: detectorConfig)
 ///
-/// // 2. Create session
-/// let config = VocalRangeSessionConfig.custom(countdownSeconds: 3)
-/// let session = VocalRangeSession.create(config: config, detector: detector)
-///
-/// // 3. Observe state via AsyncSequence
+/// // 2. Observe state via AsyncSequence
 /// for await state in session.state { /* update UI */ }
 ///
-/// // 4. Control session
+/// // 3. Control session
 /// session.start() / session.cancel() / session.confirmNote()
 ///
-/// // 5. Feed audio
-/// session.addAudio(samples: samples16k)
+/// // 4. Feed audio
+/// session.addAudio(samples: samples, sampleRate: hwRate)
 /// ```
 @MainActor
 final class VocalRangeViewModel: ObservableObject {
@@ -38,7 +34,7 @@ final class VocalRangeViewModel: ObservableObject {
     @Published private(set) var bestHighNote: DetectedNote? = nil
     @Published private(set) var lowNote: DetectedNote? = nil
     @Published private(set) var highNote: DetectedNote? = nil
-    @Published private(set) var result: VocalRangeResult? = nil
+    @Published private(set) var result: VocalRangeSessionResult? = nil
     @Published private(set) var error: String? = nil
 
     // MARK: - Computed Properties
@@ -68,7 +64,7 @@ final class VocalRangeViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private var session: VocalRangeSession?
+    private var session: TesseraRangeSession?
     private var recorder: SonixRecorder?
     private var audioTask: Task<Void, Never>?
     private var observerTask: Task<Void, Never>?
@@ -83,16 +79,14 @@ final class VocalRangeViewModel: ObservableObject {
     // MARK: - Actions
 
     func start() {
-        // Create detector
+        // Create detector config
         let detectorConfig = PitchDetectorConfig.Builder()
             .algorithm(.yin)
             .enableProcessing()
             .build()
-        let detector = CalibraPitch.createDetector(config: detectorConfig)
 
-        // Create session
-        let config = VocalRangeSessionConfig.custom(countdownSeconds: 3)
-        let newSession = VocalRangeSession.create(config: config, detector: detector)
+        // TesseraRangeSession creates its own detector internally from config
+        let newSession = TesseraRangeSession.create(detectorConfig: detectorConfig)
         session = newSession
 
         // Create recorder

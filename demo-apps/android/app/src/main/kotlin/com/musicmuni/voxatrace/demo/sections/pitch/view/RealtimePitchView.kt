@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.musicmuni.voxatrace.calibra.model.PitchPoint
+import com.musicmuni.voxatrace.tona.model.PitchPoint
 import com.musicmuni.voxatrace.demo.components.OptionChip
 import com.musicmuni.voxatrace.demo.sections.pitch.viewmodel.RealtimePitchViewModel
 import com.musicmuni.voxatrace.demo.sections.shared.PitchGraphView
@@ -592,12 +592,13 @@ private fun ApiInfoCard() {
             )
             Text(
                 text = """
-                    val detector = CalibraPitch.DetectorBuilder()
+                    val config = PitchDetectorConfig.Builder()
                         .algorithm(PitchAlgorithm.YIN)
                         .preset(PitchPreset.BALANCED)
                         .voiceType(VoiceType.Auto)
                         .build()
-                    val point = detector.detect(samples16k)
+                    val detector = PitchDetection.createDetector(config)
+                    val point = detector.detect(samples, 16000)
                 """.trimIndent(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

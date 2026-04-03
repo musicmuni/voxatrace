@@ -18,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.musicmuni.voxatrace.calibra.model.PitchPoint
+import com.musicmuni.voxatrace.tona.model.PitchPoint
 import com.musicmuni.voxatrace.demo.sections.pitch.viewmodel.PitchPointExplorerViewModel
 
 /**

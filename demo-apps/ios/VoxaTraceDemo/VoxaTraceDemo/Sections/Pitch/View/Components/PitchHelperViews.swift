@@ -168,7 +168,7 @@ struct ScrollingPitchContourView: View {
         var labels: [(Float, String)] = []
         var midi: Float = minMidi
         while midi <= maxMidi {
-            labels.append((midi, CalibraMusic.midiToNoteLabel(midi)))
+            labels.append((midi, MusicTheory.midiToNoteLabel(midi)))
             midi += 2  // Every whole tone
         }
         return labels
@@ -241,7 +241,7 @@ struct ScrollingPitchContourView: View {
                 if x < leftMargin { continue }
 
                 // Check if voiced (valid pitch)
-                let midi = CalibraMusic.hzToMidi(pitchHz)
+                let midi = MusicTheory.hzToMidi(pitchHz)
                 let isVoiced = pitchHz > 0 && midi > 0 && !midi.isNaN
 
                 if isVoiced {
@@ -266,7 +266,7 @@ struct ScrollingPitchContourView: View {
 
             // Draw current pitch indicator (dot at center)
             if let lastPitch = pitchHistory.last {
-                let midi = CalibraMusic.hzToMidi(lastPitch)
+                let midi = MusicTheory.hzToMidi(lastPitch)
                 let isVoiced = lastPitch > 0 && midi > 0 && !midi.isNaN
 
                 if isVoiced {

@@ -3,10 +3,10 @@ package com.musicmuni.voxatrace.demo.sections.pitch.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.ContourExtractorConfig
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchContour
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.model.ContourExtractorConfig
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchContour
 import com.musicmuni.voxatrace.demo.sections.pitch.model.CleanupPresetInfo
 import com.musicmuni.voxatrace.demo.sections.pitch.model.ExtractionPresetInfo
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchAlgorithmInfo
@@ -135,14 +135,14 @@ class PitchExtractionViewModel : ViewModel() {
                     .sampleRate(audioData.sampleRate)
                     .build()
 
-                val extractor = CalibraPitch.createContourExtractor(extractorConfig)
+                val extractor = PitchDetection.createContourExtractor(extractorConfig)
 
                 // Extract contour
                 val result = withContext(Dispatchers.Default) {
                     extractor.extract(audioData.samples, audioData.sampleRate)
                 }
 
-                extractor.release()
+                extractor.close()
 
                 // Calculate statistics
                 val pitchesHz = result.pitchesHz

@@ -1,12 +1,12 @@
 package com.musicmuni.voxatrace.demo.sections.pitch.model
 
-import com.musicmuni.voxatrace.calibra.model.ContourCleanup
-import com.musicmuni.voxatrace.calibra.model.DetectionStrictness
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
-import com.musicmuni.voxatrace.calibra.model.PitchPreset
-import com.musicmuni.voxatrace.calibra.model.QuietHandling
-import com.musicmuni.voxatrace.calibra.model.VoiceType
+import com.musicmuni.voxatrace.tona.model.PitchProcessingConfig as ContourCleanup
+import com.musicmuni.voxatrace.tona.model.DetectionStrictness
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.tona.model.PitchPreset
+import com.musicmuni.voxatrace.tona.model.QuietHandling
+import com.musicmuni.voxatrace.tona.model.VoiceType
 
 /**
  * Information about pitch algorithms.

@@ -1,7 +1,7 @@
 import SwiftUI
 import VoxaTrace
 
-/// Vocal range detection view demonstrating VocalRangeSession API.
+/// Vocal range detection view demonstrating TesseraRangeSession API.
 struct VocalRangeView: View {
     @StateObject private var viewModel = VocalRangeViewModel()
 
@@ -140,7 +140,7 @@ struct VocalRangeView: View {
         .cornerRadius(10)
     }
 
-    private func resultsCard(result: VocalRangeResult) -> some View {
+    private func resultsCard(result: VocalRangeSessionResult) -> some View {
         VStack(spacing: 12) {
             HStack {
                 VStack(alignment: .leading) {

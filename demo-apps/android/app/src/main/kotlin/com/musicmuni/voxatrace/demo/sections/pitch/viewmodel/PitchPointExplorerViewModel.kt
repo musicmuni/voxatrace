@@ -3,10 +3,11 @@ package com.musicmuni.voxatrace.demo.sections.pitch.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
-import com.musicmuni.voxatrace.calibra.model.PitchPoint
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.detection.PitchDetector
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.tona.model.PitchPoint
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchAlgorithmInfo
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
  * ## VoxaTrace Integration
  * ```kotlin
  * // 1. Create detector
- * val detector = CalibraPitch.createDetector(config)
+ * val detector = PitchDetection.createDetector(config)
  *
  * // 2. Detect pitch
  * val result = detector.detect(samples, sampleRate)
@@ -50,7 +51,7 @@ class PitchPointExplorerViewModel : ViewModel() {
     val algorithms = PitchAlgorithmInfo.all
 
     // Private state
-    private var detector: CalibraPitch.Detector? = null
+    private var detector: PitchDetector? = null
     private var recorder: SonixRecorder? = null
     private var recordingJob: Job? = null
 
@@ -60,7 +61,7 @@ class PitchPointExplorerViewModel : ViewModel() {
         if (_isRecording.value) {
             stopRecording()
         }
-        detector?.release()
+        detector?.close()
         detector = null
         _selectedAlgorithm.value = index
     }
@@ -98,7 +99,7 @@ class PitchPointExplorerViewModel : ViewModel() {
                 .algorithm(algorithm)
                 .build()
 
-            detector = CalibraPitch.createDetector(detectorConfig)
+            detector = PitchDetection.createDetector(detectorConfig)
         }
 
         if (recorder == null) {
@@ -112,7 +113,7 @@ class PitchPointExplorerViewModel : ViewModel() {
         recorder?.release()
         recorder = null
 
-        detector?.release()
+        detector?.close()
         detector = null
     }
 
@@ -128,7 +129,7 @@ class PitchPointExplorerViewModel : ViewModel() {
 
         recordingJob = viewModelScope.launch {
             rec.audioBuffers.collect { buffer ->
-                // VOICE preset records at 16kHz; CalibraPitch handles resampling internally (ADR-017)
+                // VOICE preset records at 16kHz; PitchDetector handles resampling internally (ADR-017)
                 val samples = buffer.samples
 
                 val result = det.detect(samples, 16000)

@@ -390,7 +390,7 @@ private fun ApiInfoCard() {
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = "• CalibraPitch.createContourExtractor(config: .scoring)",
+                text = "• PitchDetection.createContourExtractor(config: .scoring)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

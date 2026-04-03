@@ -242,7 +242,7 @@ struct RealtimePitchView: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("• CalibraPitch.createDetector(config: .balanced)")
+            Text("• PitchDetection.createDetector(config: .balanced)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 

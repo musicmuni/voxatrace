@@ -12,14 +12,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.VocalRangePhase
-import com.musicmuni.voxatrace.calibra.VocalRangeSession
-import com.musicmuni.voxatrace.calibra.VocalRangeState
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
+import com.musicmuni.voxatrace.tessera.TesseraRangeSession
+import com.musicmuni.voxatrace.tessera.model.VocalRangePhase
+import com.musicmuni.voxatrace.tessera.model.VocalRangeState
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import kotlinx.coroutines.launch
 
 /**
@@ -30,7 +29,7 @@ fun VocalRangeView() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var session by remember { mutableStateOf<VocalRangeSession?>(null) }
+    var session by remember { mutableStateOf<TesseraRangeSession?>(null) }
     var recorder by remember { mutableStateOf<SonixRecorder?>(null) }
     val state by session?.state?.collectAsState() ?: remember { mutableStateOf(VocalRangeState()) }
 
@@ -39,16 +38,16 @@ fun VocalRangeView() {
             .algorithm(PitchAlgorithm.YIN)
             .enableProcessing()
             .build()
-        val detector = CalibraPitch.createDetector(detectorConfig)
 
-        session = VocalRangeSession.create(detector = detector)
+        // TesseraRangeSession creates its own detector internally from config
+        session = TesseraRangeSession.create(detectorConfig = detectorConfig)
         recorder = SonixRecorder.create("${context.cacheDir}/range_temp.m4a", SonixRecorderConfig.VOICE)
 
         session?.start()
         recorder?.start()
 
         scope.launch {
-            // VOICE preset records at 16kHz; VocalRangeSession handles resampling internally (ADR-017)
+            // VOICE preset records at 16kHz; TesseraRangeSession handles resampling internally (ADR-017)
             recorder?.audioBuffers?.collect { buffer ->
                 session?.addAudio(buffer.samples, 16000)
             }

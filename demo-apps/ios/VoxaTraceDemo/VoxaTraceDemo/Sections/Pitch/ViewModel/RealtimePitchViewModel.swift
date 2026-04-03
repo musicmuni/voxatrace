@@ -11,7 +11,7 @@ import VoxaTrace
 ///     .algorithm(.swiftF0)
 ///     .voiceType(.auto)
 ///     .build()
-/// detector = CalibraPitch.createDetector(config: config)
+/// detector = PitchDetection.createDetector(config: config)
 ///
 /// // 2. Process audio buffers
 /// let result = detector.detect(samples: buffer.samples, sampleRate: hwRate)
@@ -59,7 +59,7 @@ final class RealtimePitchViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private var detector: CalibraPitch.Detector?
+    private var detector: PitchDetector?
     private var recorder: SonixRecorder?
     private var recordingTask: Task<Void, Never>?
 
@@ -90,7 +90,7 @@ final class RealtimePitchViewModel: ObservableObject {
     // MARK: - Private Methods
 
     private func recreateDetector() {
-        detector?.release()
+        detector?.close()
 
         let algorithm = algorithms[selectedAlgorithm].algorithm
         let detectorConfig = PitchDetectorConfig.Builder()
@@ -101,7 +101,7 @@ final class RealtimePitchViewModel: ObservableObject {
             .strictness(strictnesses[selectedStrictness].strictness)
             .build()
 
-        detector = CalibraPitch.createDetector(config: detectorConfig)
+        detector = PitchDetection.createDetector(config: detectorConfig)
     }
 
     private func recreateDetectorIfRecording() {
@@ -132,7 +132,7 @@ final class RealtimePitchViewModel: ObservableObject {
         recorder?.release()
         recorder = nil
 
-        detector?.release()
+        detector?.close()
         detector = nil
     }
 

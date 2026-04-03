@@ -7,12 +7,12 @@ import VoxaTrace
 /// ## VoxaTrace Integration (~15 lines)
 /// ```swift
 /// // 1. Extract raw contour
-/// let extractor = CalibraPitch.createContourExtractor(config: config)
+/// let extractor = PitchDetection.createContourExtractor(config: config)
 /// let raw = extractor.extract(audio: samples, sampleRate: 16000)
 ///
 /// // 2. Apply cleanup presets
-/// let scoring = CalibraPitch.PostProcess.cleanup(raw, options: .scoring)
-/// let display = CalibraPitch.PostProcess.cleanup(raw, options: .display)
+/// let scoring = PitchProcessing.process(contour: raw, config: .scoring)
+/// let display = PitchProcessing.process(contour: raw, config: .display)
 /// ```
 @MainActor
 final class ContourCleanupViewModel: ObservableObject {
@@ -173,13 +173,13 @@ final class ContourCleanupViewModel: ObservableObject {
                 .hopMs(10)
                 .build()
 
-            let extractor = CalibraPitch.createContourExtractor(config: extractorConfig)
+            let extractor = PitchDetection.createContourExtractor(config: extractorConfig)
             // ADR-017: Pass collectedSampleRate; ContourExtractor handles resampling internally
             let raw = extractor.extract(audio: collectedSamples, sampleRate: collectedSampleRate)
-            extractor.release()
+            extractor.close()
 
-            let scoring = CalibraPitch.PostProcess.cleanup(raw, options: .scoring)
-            let display = CalibraPitch.PostProcess.cleanup(raw, options: .display)
+            let scoring = PitchProcessing.process(contour: raw, config: .scoring)
+            let display = PitchProcessing.process(contour: raw, config: .display)
 
             await MainActor.run {
                 rawContour = raw

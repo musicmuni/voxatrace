@@ -434,22 +434,22 @@ private fun ApiInfoSection() {
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = "• CalibraPitch.PostProcess.cleanup(contour, options: .scoring)",
+                text = "• PitchProcessing.process(contour, PitchProcessingConfig.SCORING)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "• ContourCleanup.RAW, .SCORING, .DISPLAY",
+                text = "• PitchProcessingConfig: RAW, SCORING, DISPLAY",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "• CalibraPitch.PostProcess.fixOctaveErrors(contour)",
+                text = "• PitchProcessing.correctOctaveErrors(pitchesHz)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "• CalibraPitch.PostProcess.removeBlips(contour, minDurationMs:)",
+                text = "• PitchProcessing.removeBlips(pitchesHz, minDurationMs:)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

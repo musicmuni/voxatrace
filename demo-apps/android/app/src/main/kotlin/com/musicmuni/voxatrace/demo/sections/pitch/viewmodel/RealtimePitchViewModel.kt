@@ -3,10 +3,11 @@ package com.musicmuni.voxatrace.demo.sections.pitch.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.model.PitchAlgorithm
-import com.musicmuni.voxatrace.calibra.model.PitchDetectorConfig
-import com.musicmuni.voxatrace.calibra.model.PitchPoint
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.detection.PitchDetector
+import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
+import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
+import com.musicmuni.voxatrace.tona.model.PitchPoint
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchAlgorithmInfo
 import com.musicmuni.voxatrace.demo.sections.pitch.model.PitchPresetInfo
 import com.musicmuni.voxatrace.demo.sections.pitch.model.QuietHandlingInfo
@@ -73,7 +74,7 @@ class RealtimePitchViewModel : ViewModel() {
     val maxHistoryPoints = 200
 
     // Private state
-    private var detector: CalibraPitch.Detector? = null
+    private var detector: PitchDetector? = null
     private var recorder: SonixRecorder? = null
     private var recordingJob: Job? = null
 
@@ -116,7 +117,7 @@ class RealtimePitchViewModel : ViewModel() {
 
     private fun recreateDetectorIfRecording() {
         if (_isRecording.value) {
-            detector?.release()
+            detector?.close()
             detector = createDetector()
         }
     }
@@ -127,7 +128,7 @@ class RealtimePitchViewModel : ViewModel() {
             recorder?.release()
             recorder = SonixRecorder.create(recordPath, SonixRecorderConfig.VOICE)
 
-            detector?.release()
+            detector?.close()
             detector = createDetector()
             detector?.reset()
 
@@ -199,7 +200,7 @@ class RealtimePitchViewModel : ViewModel() {
         _showGraph.value = false
     }
 
-    private fun createDetector(): CalibraPitch.Detector {
+    private fun createDetector(): PitchDetector {
         val algorithm = if (_selectedAlgorithm.value == 0) PitchAlgorithm.YIN else PitchAlgorithm.SWIFT_F0
         val voiceType = voiceTypes[_selectedVoiceType.value].voiceType
         val quietHandling = quietHandlings[_selectedQuietHandling.value].handling
@@ -212,13 +213,13 @@ class RealtimePitchViewModel : ViewModel() {
             .strictness(strictness)
             .build()
 
-        return CalibraPitch.createDetector(detectorConfig)
+        return PitchDetection.createDetector(detectorConfig)
     }
 
     override fun onCleared() {
         super.onCleared()
         recordingJob?.cancel()
         recorder?.release()
-        detector?.release()
+        detector?.close()
     }
 }

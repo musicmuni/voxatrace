@@ -177,19 +177,19 @@ struct ContourCleanupView: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("• CalibraPitch.PostProcess.cleanup(contour, options: .scoring)")
+            Text("• PitchProcessing.process(contour, config: .scoring)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• ContourCleanup.raw, .scoring, .display")
+            Text("• PitchProcessingConfig: .raw, .scoring, .display")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• CalibraPitch.PostProcess.fixOctaveErrors(contour)")
+            Text("• PitchProcessing.correctOctaveErrors(pitchesHz)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• CalibraPitch.PostProcess.removeBlips(contour, minDurationMs:)")
+            Text("• PitchProcessing.removeBlips(pitchesHz, minDurationMs:)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

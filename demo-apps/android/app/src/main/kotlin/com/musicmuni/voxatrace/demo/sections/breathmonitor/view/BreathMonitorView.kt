@@ -36,6 +36,7 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     // Offline analysis state
+    val offlineControlScore by viewModel.offlineControlScore.collectAsStateWithLifecycle()
     val offlineBreathCapacity by viewModel.offlineBreathCapacity.collectAsStateWithLifecycle()
     val offlineVoicedTime by viewModel.offlineVoicedTime.collectAsStateWithLifecycle()
     val offlineHasEnoughData by viewModel.offlineHasEnoughData.collectAsStateWithLifecycle()
@@ -187,6 +188,7 @@ fun BreathMonitorView(viewModel: BreathMonitorViewModel = viewModel()) {
             viewModel = viewModel,
             context = context,
             offlineBreathCapacity = offlineBreathCapacity,
+            offlineControlScore = offlineControlScore,
             offlineVoicedTime = offlineVoicedTime,
             offlineHasEnoughData = offlineHasEnoughData,
             isAnalyzingOffline = isAnalyzingOffline
@@ -199,6 +201,7 @@ private fun OfflineAnalysisSection(
     viewModel: BreathMonitorViewModel,
     context: android.content.Context,
     offlineBreathCapacity: Float,
+    offlineControlScore: Float,
     offlineVoicedTime: Float,
     offlineHasEnoughData: Boolean,
     isAnalyzingOffline: Boolean
@@ -236,6 +239,7 @@ private fun OfflineAnalysisSection(
         if (offlineVoicedTime > 0) {
             OfflineResultCard(
                 breathCapacity = offlineBreathCapacity,
+                controlScore = offlineControlScore,
                 voicedTime = offlineVoicedTime,
                 hasEnoughData = offlineHasEnoughData
             )
@@ -248,6 +252,7 @@ private fun OfflineAnalysisSection(
 @Composable
 private fun OfflineResultCard(
     breathCapacity: Float,
+    controlScore: Float,
     voicedTime: Float,
     hasEnoughData: Boolean
 ) {
@@ -286,6 +291,23 @@ private fun OfflineResultCard(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
+                        text = "Control",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "%.0f%%".format(controlScore * 100),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = when {
+                            controlScore >= 0.7f -> Color(0xFF4CAF50)
+                            controlScore >= 0.4f -> Color(0xFFFF9800)
+                            else -> MaterialTheme.colorScheme.error
+                        }
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
                         text = "Voiced Time",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -293,19 +315,6 @@ private fun OfflineResultCard(
                     Text(
                         text = BreathMonitorViewModel.formatTime(voicedTime),
                         style = MaterialTheme.typography.titleLarge
-                    )
-                }
-
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "Enough Data",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = if (hasEnoughData) "Yes" else "No",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = if (hasEnoughData) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -331,27 +340,22 @@ private fun ApiInfoCard() {
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = "- SonixDecoder.decode() - Load audio from file",
+                text = "Real-time: CalibraVAD (singingRealtime) for voice detection",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "- CalibraPitch.createContourExtractor() - Extract pitch contour",
+                text = "Offline: PitchDetection.createContourExtractor() - pitch extraction",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "- CalibraBreath.hasEnoughData() - Check data sufficiency",
+                text = "Offline: TesseraBreath.computeScore() - capacity + control",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "- CalibraBreath.computeCapacity() - Compute breath capacity",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "- CalibraBreath.getCumulativeVoicedTime() - Get voiced time",
+                text = "Offline: SonixDecoder.decode() - audio file loading",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

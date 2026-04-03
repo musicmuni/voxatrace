@@ -13,7 +13,7 @@ import VoxaTrace
 ///     .cleanup(.scoring)
 ///     .hopMs(10)
 ///     .build()
-/// let extractor = CalibraPitch.createContourExtractor(config: config)
+/// let extractor = PitchDetection.createContourExtractor(config: config)
 ///
 /// // 2. Extract pitch contour
 /// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
@@ -71,9 +71,9 @@ final class PitchExtractionViewModel: ObservableObject {
                 .hopMs(Int32(hopMs))
                 .build()
 
-            let extractor = CalibraPitch.createContourExtractor(config: extractorConfig)
+            let extractor = PitchDetection.createContourExtractor(config: extractorConfig)
             let contour = extractor.extract(audio: audioData.samples, sampleRate: audioData.sampleRate)
-            extractor.release()
+            extractor.close()
 
             let extractedPitches = contour.pitchesHz
             let extractedTimes = contour.times
