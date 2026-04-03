@@ -159,9 +159,14 @@ struct CalibraMenuView: View {
 
     private let analysisFeatures = [
         ("Pitch", "waveform", "Pitch detection & processing"),
+        ("Pitch Analysis", "chart.bar", "Histogram & tonal segments"),
         ("VAD", "mic.fill", "Voice activity detection"),
         ("Breath Monitor", "lungs.fill", "Measure breath duration"),
         ("Vocal Range", "arrow.up.and.down", "Detect your vocal range"),
+        ("Vocal Agility", "hare", "Agility scoring"),
+        ("Intonation", "tuningfork", "Pitch accuracy (EQ/JI)"),
+        ("Song Matching", "music.note.list", "Range-based song matching"),
+        ("Voice Profile", "person.crop.circle", "Multi-metric dashboard"),
         ("Speaking Pitch", "tuningfork", "Speaking pitch (shruti)"),
     ]
 
@@ -297,12 +302,22 @@ struct CalibraDetailView: View {
         switch featureName {
         case "Pitch":
             PitchSection()
+        case "Pitch Analysis":
+            PitchAnalysisView()
         case "VAD":
             VADSection()
         case "Breath Monitor":
             BreathMonitorView()
         case "Vocal Range":
             VocalRangeView()
+        case "Vocal Agility":
+            AgilityView()
+        case "Intonation":
+            IntonationView()
+        case "Song Matching":
+            SongMatchingView()
+        case "Voice Profile":
+            VoiceProfileView()
         case "Speaking Pitch":
             SpeakingPitchView()
         case "Singalong Live":

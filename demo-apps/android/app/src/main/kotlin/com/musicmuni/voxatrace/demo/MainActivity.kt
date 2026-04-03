@@ -38,6 +38,11 @@ import com.musicmuni.voxatrace.demo.sections.singalong.view.SingalongView
 import com.musicmuni.voxatrace.demo.sections.singafter.view.SingafterView
 import com.musicmuni.voxatrace.demo.sections.melodyeval.view.MelodyEvalView
 import com.musicmuni.voxatrace.demo.sections.noteeval.view.NoteEvalView
+import com.musicmuni.voxatrace.demo.sections.intonation.view.IntonationView
+import com.musicmuni.voxatrace.demo.sections.agility.view.AgilityView
+import com.musicmuni.voxatrace.demo.sections.songmatching.view.SongMatchingView
+import com.musicmuni.voxatrace.demo.sections.voiceprofile.view.VoiceProfileView
+import com.musicmuni.voxatrace.demo.sections.pitchanalysis.view.PitchAnalysisView
 import com.musicmuni.voxatrace.VT
 import com.musicmuni.voxatrace.ai.AIModels
 import com.musicmuni.voxatrace.exceptions.VoxaTraceKilledException
@@ -323,9 +328,14 @@ fun CalibraScreen(onBack: () -> Unit, onFeatureClick: (String) -> Unit) {
 
     val analysisFeatures = listOf(
         FeatureItem("Pitch", "Pitch detection & processing"),
+        FeatureItem("Pitch Analysis", "Histogram & tonal segments"),
         FeatureItem("VAD", "Voice activity detection"),
         FeatureItem("Breath Monitor", "Breath duration tracking"),
         FeatureItem("Vocal Range", "Detect vocal range"),
+        FeatureItem("Vocal Agility", "Agility scoring"),
+        FeatureItem("Intonation", "Pitch accuracy (EQ/JI)"),
+        FeatureItem("Song Matching", "Range-based song matching"),
+        FeatureItem("Voice Profile", "Multi-metric dashboard"),
         FeatureItem("Speaking Pitch", "Speaking pitch (shruti)")
     )
 
@@ -509,9 +519,14 @@ fun CalibraFeatureScreen(feature: String, onBack: () -> Unit) {
             SectionCard {
                 when (feature) {
                     "Pitch" -> PitchView()
+                    "Pitch Analysis" -> PitchAnalysisView()
                     "VAD" -> VADView()
                     "Breath Monitor" -> BreathMonitorView()
                     "Vocal Range" -> VocalRangeView()
+                    "Vocal Agility" -> AgilityView()
+                    "Intonation" -> IntonationView()
+                    "Song Matching" -> SongMatchingView()
+                    "Voice Profile" -> VoiceProfileView()
                     "Speaking Pitch" -> SpeakingPitchView()
                     "Singalong" -> SingalongView()
                     "Singafter" -> SingafterView()
