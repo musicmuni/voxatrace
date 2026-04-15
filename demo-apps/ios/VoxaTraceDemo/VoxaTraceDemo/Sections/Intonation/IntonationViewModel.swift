@@ -18,9 +18,9 @@ import VoxaTrace
 /// let eqResult = Accura.analyzePitching(contour: contour, tonicHz: 146.83, intonationSystem: .eq)
 /// let jiResult = Accura.analyzePitching(contour: contour, tonicHz: 146.83, intonationSystem: .ji)
 ///
-/// // 4. Calculate scores
-/// let eqScore = Accura.calculateScore(result: eqResult)
-/// let jiScore = Accura.calculateScore(result: jiResult)
+/// // 4. Calculate scores (only when analysis succeeded — ADR-022)
+/// let eqScore = eqResult.error == nil ? Accura.calculateScore(result: eqResult) : nil
+/// let jiScore = jiResult.error == nil ? Accura.calculateScore(result: jiResult) : nil
 /// ```
 @MainActor
 final class IntonationViewModel: ObservableObject {
@@ -72,9 +72,9 @@ final class IntonationViewModel: ObservableObject {
                 noteLabelTradition: .carnatic
             )
 
-            // Calculate scores
-            let eqSc = eq.flatMap { Accura.calculateScore(result: $0) }
-            let jiSc = ji.flatMap { Accura.calculateScore(result: $0) }
+            // Calculate scores (only when analysis succeeded — ADR-022)
+            let eqSc = eq.error == nil ? Accura.calculateScore(result: eq) : nil
+            let jiSc = ji.error == nil ? Accura.calculateScore(result: ji) : nil
 
             await MainActor.run {
                 eqResult = eq

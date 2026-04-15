@@ -90,7 +90,7 @@ class IntonationViewModel : ViewModel() {
                 }
                 _eqResult.value = eqAnalysis
 
-                if (eqAnalysis != null) {
+                if (eqAnalysis.error == null) {
                     _eqScore.value = Accura.calculateScore(eqAnalysis)
                 }
 
@@ -105,7 +105,7 @@ class IntonationViewModel : ViewModel() {
                 }
                 _jiResult.value = jiAnalysis
 
-                if (jiAnalysis != null) {
+                if (jiAnalysis.error == null) {
                     _jiScore.value = Accura.calculateScore(jiAnalysis)
                 }
 
