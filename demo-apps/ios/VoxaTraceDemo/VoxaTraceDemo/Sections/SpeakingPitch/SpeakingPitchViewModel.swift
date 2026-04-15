@@ -21,19 +21,19 @@ enum Gender {
     case female
 }
 
-/// ViewModel for speaking pitch detection using CalibraSpeakingPitch.
+/// ViewModel for speaking pitch detection using TesseraSpeakingPitch.
 ///
 /// ## VoxaTrace Integration (~15 lines)
 /// ```swift
 /// // 1. Create pitch detector
 /// let config = PitchDetectorConfig.Builder().algorithm(.yin).build()
-/// pitch = CalibraPitch.createDetector(config: config)
+/// pitch = PitchDetection.createDetector(config: config)
 ///
 /// // 2. Get amplitude for voice detection
 /// let rms = pitch.getAmplitude(samples: samples16k, sampleRate: 16000)
 ///
 /// // 3. Detect speaking pitch from collected audio
-/// let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: samples)
+/// let pitchHz = TesseraSpeakingPitch.detectFromAudio(audioMono: samples)
 /// ```
 @MainActor
 final class SpeakingPitchViewModel: ObservableObject {
@@ -57,7 +57,7 @@ final class SpeakingPitchViewModel: ObservableObject {
     // MARK: - Private
 
     private var recorder: SonixRecorder?
-    private var pitch: CalibraPitch.Detector?
+    private var pitch: PitchDetector?
     private var collectedChunks: [Float] = []
     private var collectedSampleRate: Int = 16000
 
@@ -84,7 +84,7 @@ final class SpeakingPitchViewModel: ObservableObject {
         status = "Say something..."
 
         // Collect audio buffers
-        // ADR-017: Pass sampleRate directly; CalibraPitch handles resampling internally
+        // ADR-017: Pass sampleRate directly; PitchDetector handles resampling internally
         Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
 
@@ -135,8 +135,8 @@ final class SpeakingPitchViewModel: ObservableObject {
                 return
             }
 
-            // ADR-017: Pass original samples; CalibraSpeakingPitch handles resampling internally
-            let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: audioData.samples, sampleRate: audioData.sampleRate)
+            // ADR-017: Pass original samples; TesseraSpeakingPitch handles resampling internally
+            let pitchHz = TesseraSpeakingPitch.detectFromAudio(audioMono: audioData.samples, sampleRate: audioData.sampleRate)
 
             await MainActor.run {
                 if pitchHz > 0 {
@@ -157,7 +157,7 @@ final class SpeakingPitchViewModel: ObservableObject {
         let config = PitchDetectorConfig.Builder()
             .algorithm(.yin)
             .build()
-        pitch = CalibraPitch.createDetector(config: config)
+        pitch = PitchDetection.createDetector(config: config)
 
         let tempPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("speaking_pitch_temp.m4a").path
@@ -201,8 +201,8 @@ final class SpeakingPitchViewModel: ObservableObject {
         }
 
         let allSamples = collectedChunks
-        // ADR-017: Pass sampleRate; CalibraSpeakingPitch handles resampling internally
-        let pitchHz = CalibraSpeakingPitch.detectFromAudio(audioMono: allSamples, sampleRate: collectedSampleRate)
+        // ADR-017: Pass sampleRate; TesseraSpeakingPitch handles resampling internally
+        let pitchHz = TesseraSpeakingPitch.detectFromAudio(audioMono: allSamples, sampleRate: collectedSampleRate)
 
         if pitchHz > 0 {
             detectedPitchHz = pitchHz

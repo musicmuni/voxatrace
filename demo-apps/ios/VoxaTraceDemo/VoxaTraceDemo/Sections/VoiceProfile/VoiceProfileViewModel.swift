@@ -69,7 +69,7 @@ final class VoiceProfileViewModel: ObservableObject {
                 ctrl = breath.controlScore
             }
             if let agility = result.agility {
-                agil = agility.scores.first?.floatValue ?? 0
+                agil = agility.scores.first ?? 0
             }
             if let vocalRange = result.vocalRange {
                 low = vocalRange.range.lower.noteLabel

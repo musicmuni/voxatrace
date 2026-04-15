@@ -181,7 +181,7 @@ final class SingafterViewModel: ObservableObject {
         }
 
         // 3. Create CalibraLiveEval session
-        let detector = CalibraPitch.createDetector(config: .balanced)
+        let detector = PitchDetection.createDetector(config: .balanced)
         session = CalibraLiveEval.create(
             reference: lessonData.reference,
             session: selectedPreset.config,

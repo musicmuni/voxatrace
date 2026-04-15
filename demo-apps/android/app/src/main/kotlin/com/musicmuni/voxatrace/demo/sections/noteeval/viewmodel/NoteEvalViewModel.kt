@@ -3,10 +3,10 @@ package com.musicmuni.voxatrace.demo.sections.noteeval.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraMusic
 import com.musicmuni.voxatrace.calibra.CalibraNoteEval
-import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.ExercisePattern
+import com.musicmuni.voxatrace.common.MusicTheory
+import com.musicmuni.voxatrace.tona.PitchDetection
 import com.musicmuni.voxatrace.calibra.ExerciseResult
 import com.musicmuni.voxatrace.calibra.NoteResult
 import com.musicmuni.voxatrace.calibra.model.NoteEvalPreset
@@ -51,7 +51,7 @@ data class ExerciseInfo(
  * recorder = SonixRecorder.create(outputPath, config, audioSession = AudioMode.PLAY_AND_RECORD)
  *
  * // 3. Extract pitch and evaluate
- * val extractor = CalibraPitch.createContourExtractor()
+ * val extractor = PitchDetection.createContourExtractor()
  * val contour = extractor.extract(audio = studentAudio, sampleRate = 16000)
  * ```
  */
@@ -359,7 +359,7 @@ class NoteEvalViewModel : ViewModel() {
             val sampleRate = recordingSampleRate
 
             // SDK handles resampling internally (ADR-017)
-            val extractor = CalibraPitch.createContourExtractor()
+            val extractor = PitchDetection.createContourExtractor()
             val studentContour = withContext(Dispatchers.Default) {
                 extractor.extract(studentAudio, sampleRate)
             }
@@ -372,7 +372,7 @@ class NoteEvalViewModel : ViewModel() {
             )
 
             // Get reference key frequency
-            val keyHz = CalibraMusic.midiToHz(keyMidi.toFloat())
+            val keyHz = MusicTheory.midiToHz(keyMidi.toFloat())
 
             // Evaluate using CalibraNoteEval
             val evalResult = CalibraNoteEval.evaluate(

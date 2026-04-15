@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.musicmuni.voxatrace.calibra.CalibraMusic
+import com.musicmuni.voxatrace.common.MusicTheory
 import com.musicmuni.voxatrace.calibra.ExerciseResult
 import com.musicmuni.voxatrace.calibra.NoteResult
 import com.musicmuni.voxatrace.calibra.model.NoteEvalPreset
@@ -291,7 +291,7 @@ private fun NoteChip(
     midiNote: Int,
     result: NoteResult?
 ) {
-    val noteName = CalibraMusic.midiToNoteLabel(midiNote.toFloat())
+    val noteName = MusicTheory.midiToNoteLabel(midiNote.toFloat())
 
     val backgroundColor = when {
         result != null && result.score >= 0.8f -> Color(0xFF4CAF50) // Green

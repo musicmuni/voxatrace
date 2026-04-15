@@ -12,9 +12,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.musicmuni.voxatrace.calibra.CalibraMusic
-import com.musicmuni.voxatrace.calibra.CalibraPitch
-import com.musicmuni.voxatrace.calibra.CalibraSpeakingPitch
+import com.musicmuni.voxatrace.common.MusicTheory
+import com.musicmuni.voxatrace.tessera.TesseraSpeakingPitch
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.detection.PitchDetector
 import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
 import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.sonix.SonixDecoder
@@ -58,7 +59,7 @@ data class SpeakingPitchResult(
 /**
  * Speaking Pitch & Gender Detector View.
  *
- * Uses CalibraSpeakingPitch.detectFromAudio() - a stateless one-shot detection.
+ * Uses TesseraSpeakingPitch.detectFromAudio() - a stateless one-shot detection.
  * Automatically detects when user starts speaking, counts down, then analyzes.
  */
 @Composable
@@ -67,7 +68,7 @@ fun SpeakingPitchView() {
     val scope = rememberCoroutineScope()
 
     var recorder by remember { mutableStateOf<SonixRecorder?>(null) }
-    var pitchDetector by remember { mutableStateOf<CalibraPitch.Detector?>(null) }
+    var pitchDetector by remember { mutableStateOf<PitchDetector?>(null) }
     var recordingJob by remember { mutableStateOf<Job?>(null) }
     var countdownJob by remember { mutableStateOf<Job?>(null) }
     var collectedAudio by remember { mutableStateOf(mutableListOf<Float>()) }
@@ -98,11 +99,11 @@ fun SpeakingPitchView() {
         scope.launch {
             val audioArray = collectedAudio.toFloatArray()
             val detectedHz = withContext(Dispatchers.Default) {
-                CalibraSpeakingPitch.detectFromAudio(audioArray)
+                TesseraSpeakingPitch.detectFromAudio(audioArray)
             }
 
             if (detectedHz > 0) {
-                val noteLabel = CalibraMusic.hzToNoteLabel(detectedHz)
+                val noteLabel = MusicTheory.hzToNoteLabel(detectedHz)
                 val gender = if (detectedHz >= FEMALE_THRESHOLD_HZ) Gender.FEMALE else Gender.MALE
                 result = SpeakingPitchResult(
                     frequencyHz = detectedHz,
@@ -139,7 +140,7 @@ fun SpeakingPitchView() {
             val config = PitchDetectorConfig.Builder()
                 .algorithm(PitchAlgorithm.YIN)
                 .build()
-            pitchDetector = CalibraPitch.createDetector(config)
+            pitchDetector = PitchDetection.createDetector(config)
         }
 
         // Reset state
@@ -154,7 +155,7 @@ fun SpeakingPitchView() {
 
         recordingJob = scope.launch {
             recorder?.audioBuffers?.collect { buffer ->
-                // VOICE preset records at 16kHz; CalibraPitch handles resampling internally (ADR-017)
+                // VOICE preset records at 16kHz; PitchDetector handles resampling internally (ADR-017)
                 val samples = buffer.samples
                 val calculatedRms = pitchDetector?.getAmplitude(samples, 16000) ?: 0f
                 currentLevel = calculatedRms
@@ -214,13 +215,13 @@ fun SpeakingPitchView() {
                     return@launch
                 }
 
-                // ADR-017: Pass sampleRate directly; CalibraSpeakingPitch handles resampling internally
+                // ADR-017: Pass sampleRate directly; TesseraSpeakingPitch handles resampling internally
                 val detectedHz = withContext(Dispatchers.Default) {
-                    CalibraSpeakingPitch.detectFromAudio(audioData.samples, audioData.sampleRate)
+                    TesseraSpeakingPitch.detectFromAudio(audioData.samples, audioData.sampleRate)
                 }
 
                 if (detectedHz > 0) {
-                    val noteLabel = CalibraMusic.hzToNoteLabel(detectedHz)
+                    val noteLabel = MusicTheory.hzToNoteLabel(detectedHz)
                     val gender = if (detectedHz >= FEMALE_THRESHOLD_HZ) Gender.FEMALE else Gender.MALE
                     offlineResult = SpeakingPitchResult(
                         frequencyHz = detectedHz,
@@ -585,7 +586,7 @@ private fun ApiInfoCard() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "- CalibraSpeakingPitch.detectFromAudio() - Detect speaking pitch (resamples internally)",
+                text = "- TesseraSpeakingPitch.detectFromAudio() - Detect speaking pitch (resamples internally)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

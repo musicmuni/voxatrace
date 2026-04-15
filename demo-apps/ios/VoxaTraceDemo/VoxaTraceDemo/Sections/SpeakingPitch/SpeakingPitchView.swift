@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Speaking pitch detection view demonstrating CalibraSpeakingPitch API.
+/// Speaking pitch detection view demonstrating TesseraSpeakingPitch API.
 struct SpeakingPitchView: View {
     @StateObject private var viewModel = SpeakingPitchViewModel()
 
@@ -236,7 +236,7 @@ struct SpeakingPitchView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("- CalibraSpeakingPitch.detectFromAudio() - Detect speaking pitch")
+            Text("- TesseraSpeakingPitch.detectFromAudio() - Detect speaking pitch")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

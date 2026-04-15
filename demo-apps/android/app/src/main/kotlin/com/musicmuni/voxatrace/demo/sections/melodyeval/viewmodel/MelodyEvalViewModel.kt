@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.calibra.CalibraMelodyEval
-import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.detection.PitchDetector
 import com.musicmuni.voxatrace.tona.model.PitchContour
 import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.calibra.model.Segment
@@ -45,7 +46,7 @@ import kotlin.math.sqrt
  * recorder = SonixRecorder.create(outputPath, config, audioSession = AudioMode.PLAY_AND_RECORD)
  *
  * // 3. Evaluate
- * val extractor = CalibraPitch.createContourExtractor()
+ * val extractor = PitchDetection.createContourExtractor()
  * val result = CalibraMelodyEval.evaluate(reference, studentMaterial, extractor)
  * ```
  */
@@ -102,7 +103,7 @@ class MelodyEvalViewModel : ViewModel() {
     private var recordingJob: Job? = null
 
     // Realtime pitch detection for student audio
-    private var pitchDetector: CalibraPitch.Detector? = null
+    private var pitchDetector: PitchDetector? = null
 
     // Singalong
     private var referencePlayer: SonixPlayer? = null
@@ -289,7 +290,7 @@ class MelodyEvalViewModel : ViewModel() {
 
             // Create pitch detector for realtime student pitch detection
             val detectorConfig = PitchDetectorConfig.BALANCED
-            pitchDetector = CalibraPitch.createDetector(detectorConfig)
+            pitchDetector = PitchDetection.createDetector(detectorConfig)
             val recordingDurationSeconds = (segmentEndTimeMs - segmentStartTimeMs) / 1000f
             pitchDetector?.setContourMaxDuration(recordingDurationSeconds + 1f)
 
@@ -414,7 +415,7 @@ class MelodyEvalViewModel : ViewModel() {
                 pitchContour = studentContour
             )
 
-            val extractor = CalibraPitch.createContourExtractor()
+            val extractor = PitchDetection.createContourExtractor()
 
             val evalResult = withContext(Dispatchers.Default) {
                 CalibraMelodyEval.evaluate(

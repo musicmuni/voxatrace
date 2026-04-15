@@ -16,7 +16,7 @@ import VoxaTrace
 /// recorder = SonixRecorder.create(outputPath: path, config: .voice, audioSession: .playAndRecord)
 ///
 /// // 3. Evaluate
-/// let extractor = CalibraPitch.createContourExtractor()
+/// let extractor = PitchDetection.createContourExtractor()
 /// let result = CalibraMelodyEval.evaluate(reference: reference, student: studentMaterial, contourExtractor: extractor)
 /// ```
 @MainActor
@@ -49,7 +49,7 @@ final class MelodyEvalViewModel: ObservableObject {
     private var collectedAudio: [Float] = []
 
     // Realtime pitch detection for student audio
-    private var pitchDetector: CalibraPitch.Detector?
+    private var pitchDetector: PitchDetector?
 
     // Singalong
     private var referencePlayer: SonixPlayer?
@@ -226,7 +226,7 @@ final class MelodyEvalViewModel: ObservableObject {
             }
 
             // Create pitch detector for realtime student pitch detection
-            pitchDetector = CalibraPitch.createDetector(config: .balanced)
+            pitchDetector = PitchDetection.createDetector(config: .balanced)
             let recordingDurationSeconds = Float(segmentEndTimeMs - segmentStartTimeMs) / 1000.0
             pitchDetector?.setContourMaxDuration(seconds: recordingDurationSeconds + 1.0)
 
@@ -359,7 +359,7 @@ final class MelodyEvalViewModel: ObservableObject {
                 pitchContour: studentContour
             )
 
-            let extractor = CalibraPitch.createContourExtractor()
+            let extractor = PitchDetection.createContourExtractor()
 
             let evalResult = CalibraMelodyEval.evaluate(
                 reference: reference,

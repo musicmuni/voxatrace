@@ -117,7 +117,7 @@ struct NoteEvalView: View {
     }
 
     private func noteChip(index: Int, midiNote: Int, result: NoteResult?) -> some View {
-        let noteName = CalibraMusic.midiToNoteLabel(Float(midiNote))
+        let noteName = MusicTheory.midiToNoteLabel(Float(midiNote))
 
         let backgroundColor: Color = {
             guard let result = result else {

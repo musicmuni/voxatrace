@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.calibra.CalibraLiveEval
-import com.musicmuni.voxatrace.calibra.CalibraPitch
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
+import com.musicmuni.voxatrace.tona.PitchDetection
 import com.musicmuni.voxatrace.calibra.model.PracticePhase
 import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.tona.model.PitchContour
@@ -320,7 +320,7 @@ class SingafterViewModel : ViewModel() {
             )
 
             // Create pitch detector
-            val detector = CalibraPitch.createDetector(PitchDetectorConfig.BALANCED)
+            val detector = PitchDetection.createDetector(PitchDetectorConfig.BALANCED)
 
             // Create live evaluation session
             session = CalibraLiveEval.create(

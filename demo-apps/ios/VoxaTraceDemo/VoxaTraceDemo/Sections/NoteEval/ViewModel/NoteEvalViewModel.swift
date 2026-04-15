@@ -15,7 +15,7 @@ import VoxaTrace
 /// recorder = SonixRecorder.create(outputPath: path, config: .voice, audioSession: .playAndRecord)
 ///
 /// // 3. Extract pitch and evaluate
-/// let extractor = CalibraPitch.createContourExtractor()
+/// let extractor = PitchDetection.createContourExtractor()
 /// let contour = extractor.extract(audio: studentAudio, sampleRate: 16000)
 /// let result = CalibraNoteEval.evaluate(pattern:, student:, referenceKeyHz:, ...)
 /// ```
@@ -351,7 +351,7 @@ final class NoteEvalViewModel: ObservableObject {
             print("[NoteEval] 🔊 Audio to extract: \(studentAudio.count) samples @ \(sampleRate)Hz = \(String(format: "%.2f", Float(studentAudio.count) / Float(sampleRate)))s")
 
             // SDK handles resampling internally (ADR-017)
-            let extractor = CalibraPitch.createContourExtractor()
+            let extractor = PitchDetection.createContourExtractor()
             let studentContour = extractor.extract(audio: studentAudio, sampleRate: sampleRate)
             extractor.release()
 
@@ -382,7 +382,7 @@ final class NoteEvalViewModel: ObservableObject {
                 print("[NoteEval] ⚠️ NO VOICED SAMPLES DETECTED!")
             }
 
-            let keyHz = CalibraMusic.midiToHz(Float(keyMidi))
+            let keyHz = MusicTheory.midiToHz(Float(keyMidi))
             print("[NoteEval] 🎹 Reference key: midi=\(keyMidi), hz=\(String(format: "%.2f", keyHz))Hz")
 
             let evalResult = CalibraNoteEval.evaluate(

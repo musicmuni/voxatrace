@@ -56,7 +56,7 @@ final class AgilityViewModel: ObservableObject {
 
             let rMax = ac.rms.max() ?? 0
             let oMax = ac.rmsOsc.max() ?? 0
-            let s = score.scores.first?.floatValue ?? 0
+            let s = score.scores.first ?? 0
 
             await MainActor.run {
                 agilityScore = s

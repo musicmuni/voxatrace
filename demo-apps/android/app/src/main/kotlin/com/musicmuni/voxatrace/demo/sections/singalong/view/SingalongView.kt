@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.musicmuni.voxatrace.calibra.CalibraMusic
+import com.musicmuni.voxatrace.common.MusicTheory
 import com.musicmuni.voxatrace.calibra.model.SegmentResult
 import com.musicmuni.voxatrace.demo.sections.shared.ContourData
 import com.musicmuni.voxatrace.demo.sections.shared.PitchGraphView
@@ -192,7 +192,7 @@ private fun PracticeView(
             PitchFeedbackCard(
                 pitch = currentPitch,
                 progress = segmentProgress,
-                noteName = if (currentPitch > 0) CalibraMusic.midiToNoteLabel(CalibraMusic.hzToMidi(currentPitch)) else "-"
+                noteName = if (currentPitch > 0) MusicTheory.midiToNoteLabel(MusicTheory.hzToMidi(currentPitch)) else "-"
             )
         }
 

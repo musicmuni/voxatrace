@@ -22,7 +22,7 @@ import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import kotlinx.coroutines.launch
 
 /**
- * Vocal Range Detector using VocalRangeSession API.
+ * Vocal Range Detector using TesseraRangeSession API.
  */
 @Composable
 fun VocalRangeView() {

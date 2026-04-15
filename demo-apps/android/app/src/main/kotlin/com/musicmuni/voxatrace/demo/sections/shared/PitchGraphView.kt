@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.musicmuni.voxatrace.calibra.CalibraMusic
+import com.musicmuni.voxatrace.common.MusicTheory
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -53,7 +53,7 @@ private fun segmentPitchContour(
         val midiNote: Float = if (inputIsMidi) {
             pitch
         } else {
-            CalibraMusic.hzToMidi(pitch)
+            MusicTheory.hzToMidi(pitch)
         }
 
         // Skip invalid pitches (unvoiced sentinel is -1 for MIDI, <= 0 for Hz)
@@ -241,7 +241,7 @@ private fun PitchGraphContent(
             ) {
                 yTicks.reversed().forEach { midi ->
                     Text(
-                        text = CalibraMusic.midiToNoteLabel(midi),
+                        text = MusicTheory.midiToNoteLabel(midi),
                         style = MaterialTheme.typography.labelSmall,
                         fontSize = 8.sp,
                         color = onSurfaceColor

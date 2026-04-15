@@ -32,7 +32,7 @@ private func segmentPitchContour(
             midiNote = pitch
         } else {
             // Input is Hz - convert to MIDI
-            midiNote = CalibraMusic.hzToMidi(pitch)
+            midiNote = MusicTheory.hzToMidi(pitch)
         }
 
         // Skip invalid pitches (unvoiced sentinel is -1 for MIDI, <= 0 for Hz)
@@ -191,7 +191,7 @@ struct PitchGraphView: View {
                     AxisTick()
                     AxisValueLabel {
                         if let midi = value.as(Float.self) {
-                            Text(CalibraMusic.midiToNoteLabel(midi))
+                            Text(MusicTheory.midiToNoteLabel(midi))
                                 .font(.caption2)
                         }
                     }
