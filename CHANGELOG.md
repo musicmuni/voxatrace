@@ -13,10 +13,6 @@ retuned based on field use. Callers upgrading from 0.9.x should read the
 
 ### Breaking changes
 
-- **SDK initialization is now required.** Every public factory and utility
-  method throws `VoxaTraceNotInitializedException` if `VT.initialize(...)`
-  has not completed successfully. Call `VT.initialize` before touching any
-  SDK surface.
 - **`VT.initialize(...)` signature gains `proxyAuthProvider`.** A callback
   for supplying auth headers when registering with a proxy. Existing callers
   can pass `null` to preserve current behavior.
