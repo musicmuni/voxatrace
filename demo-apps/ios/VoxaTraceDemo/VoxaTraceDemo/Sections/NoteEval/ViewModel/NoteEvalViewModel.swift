@@ -357,7 +357,7 @@ final class NoteEvalViewModel: ObservableObject {
 
             // Log pitch extraction results
             let pitchSamples = studentContour.samples
-            let voicedSamples = pitchSamples.filter { $0.isVoiced }
+            let voicedSamples = pitchSamples.filter { $0.isSinging }
             print("[NoteEval] 🎵 Pitch extraction: totalSamples=\(pitchSamples.count), voicedSamples=\(voicedSamples.count)")
 
             if !voicedSamples.isEmpty {
