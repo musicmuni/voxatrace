@@ -5,6 +5,68 @@ All notable changes to VoxaTrace will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-04-25
+
+Patch release. Audio timing fixes (mostly Android) and one MediaMuxer
+crash fix. All changes are backward-compatible with 1.0.0.
+
+### Fixed
+
+- **Mic↔player audible-time alignment.** Pitch contour timestamps now
+  reflect the player's audible time corresponding to the wall moment
+  each audio buffer was captured at the mic, derived from the OS audio
+  engine's hardware clock at both ends (`AudioTrack.getTimestamp` on
+  Android, `AVAudioPlayerNode.lastRenderTime` + `playerTimeForNodeTime`
+  on iOS). Replaces fragile player-currentTime polling and sample-counter
+  extrapolation that could drift on pause / seek / tempo-shift transitions.
+- **Android: `nowMonotonicNanos` clock domain.** Now uses
+  `System.nanoTime()` (CLOCK_MONOTONIC) instead of
+  `SystemClock.elapsedRealtimeNanos` (CLOCK_BOOTTIME). Subtracting the
+  former from `AudioTimestamp.nanoTime` was producing days of apparent
+  lag on devices with accumulated deep-sleep time.
+- **Android: `AudioRecord` buffer vs. read-chunk size.** Buffer
+  allocation and per-`read()` chunk size are now decoupled. Previously,
+  a device whose `AudioRecord.getMinBufferSize()` exceeded the requested
+  `bufferSizeMs` (e.g. Samsung A/M/S returns 40 ms vs Pixel 6's 20 ms)
+  silently clamped the read cadence to the device floor. Read cadence
+  now matches `bufferSizeMs` regardless of hardware floor.
+- **Android: `MediaMuxer` double-free SIGABRT.** `AndroidAudioEncoder`'s
+  `finalize()` and `release()` paths could race on the muxer reference
+  during stop, releasing the native object twice
+  (`decStrong() called on 0x... too many times`). Both paths now use a
+  swap-and-null pattern; only one frees.
+- **Android: stale `_currentTime` after seek.** A cancelled `AudioTrack`
+  playback coroutine could publish a stale post-seek timestamp because
+  `track.write()` is not a suspension point. Downstream live evaluation
+  observed a forward jump as a spurious segment completion, wedging the
+  evaluator silently. The loop now checks `isActive` before publishing.
+- **Recorder: input latency compensated at the source.**
+  `AudioBuffer.timestamp` is now `deliveryMs - inputLatencyMs` on
+  Android and subtracts `AVAudioSession.inputLatency` on iOS; consumers
+  no longer need to subtract `SonixRecorder.inputLatencyMs` themselves.
+  `SonixRecorder.inputLatencyMs` remains public as a diagnostic surface,
+  parallel to `SonixPlayer.outputLatencyMs`.
+
+### Added
+
+- **`SonixPlayer.audibleTimeMsAtWallNanos(wallNanos)`** — given a
+  monotonic-nanos wall moment, returns the player's audible time at
+  that moment. Returns `-1L` when the player isn't running yet.
+- **`CalibraLiveEval.feedAudioSamples(samples, sampleRate,
+  captureTimestampNanos = 0L)`** — optional capture-timestamp parameter
+  for hardware-clock-aligned anchoring. Existing callers passing only
+  `(samples, sampleRate)` continue to work; the anchor falls back to
+  the session clock.
+
+### Changed
+
+- **`AudioBuffer.timestamp` semantics.** Now: absolute monotonic
+  nanoseconds at the moment the LAST sample in the buffer was captured
+  at the mic, with input latency already accounted for. Previously: raw
+  wall-clock elapsed since recording started. Consumers that subtracted
+  `SonixRecorder.inputLatencyMs` themselves should remove that
+  correction.
+
 ## [1.0.0] - 2026-04-13
 
 First stable release. The public API has been hardened and several defaults
