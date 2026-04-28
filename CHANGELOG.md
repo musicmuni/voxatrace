@@ -5,6 +5,19 @@ All notable changes to VoxaTrace will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **`MusicTheory.deriveUserShruti(nspHz, rangeLowHz, rangeHighHz, rangeThresholdSemitones)`.**
+  Computes the user's practice shruti from their NSP and most-recent vocal
+  range, applying the policy from Musicmuni research synthesis (§B7).
+  Returns `UserShrutiDerivation { targetHz, source }` where `source ∈
+  {NSP_NO_RANGE, NSP_NARROW_RANGE, VOCAL_RANGE}`. Below 18 st of measured
+  range, falls back to NSP; at or above, applies `Sa = max(rangeLow + 7,
+  nspMidi − 2)` clipped to `[rangeHigh − 17, rangeHigh − 12]`. Caller maps
+  `targetHz` to a shruti id in their shruti map.
+
 ## [1.0.1] - 2026-04-25
 
 Patch release. Audio timing fixes (mostly Android) and one MediaMuxer
