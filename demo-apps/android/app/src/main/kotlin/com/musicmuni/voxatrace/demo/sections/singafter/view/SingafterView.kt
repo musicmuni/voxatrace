@@ -22,8 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.musicmuni.voxatrace.common.MusicTheory
+import com.musicmuni.voxatrace.calibra.model.PerformanceLevel
 import com.musicmuni.voxatrace.calibra.model.PracticePhase
+import com.musicmuni.voxatrace.calibra.model.ResultAggregation
 import com.musicmuni.voxatrace.calibra.model.SegmentResult
+import com.musicmuni.voxatrace.calibra.model.SingingResult
 import com.musicmuni.voxatrace.demo.sections.shared.ContourData
 import com.musicmuni.voxatrace.demo.sections.shared.PitchGraphView
 import com.musicmuni.voxatrace.demo.sections.singafter.model.SingafterUIState
@@ -648,14 +651,19 @@ private fun PresetPicker(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SummaryView(
     phrasePairs: List<com.musicmuni.voxatrace.demo.sections.singafter.model.PhrasePair>,
     completedResults: Map<Int, List<SegmentResult>>,
     onPracticeAgain: () -> Unit
 ) {
-    val scores = completedResults.values.mapNotNull { it.lastOrNull()?.score }
-    val overallScore = if (scores.isNotEmpty()) scores.average().toFloat() else 0f
+    var selectedAggregation by remember { mutableStateOf(ResultAggregation.LATEST) }
+
+    val perPairScores = completedResults.values
+        .mapNotNull { aggregateResult(it, selectedAggregation)?.score }
+
+    val overallScore = SingingResult.calculateOverallScore(completedResults, selectedAggregation)
     val scoreColor = when {
         overallScore >= 0.8f -> Color(0xFF4CAF50)
         overallScore >= 0.6f -> Color(0xFFFF9800)
@@ -688,11 +696,17 @@ private fun SummaryView(
                 color = scoreColor
             )
             Text(
-                text = getPerformanceLevel(overallScore),
+                text = PerformanceLevel.fromScore(overallScore).displayName,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+
+        // Score mode picker
+        AggregationPicker(
+            selected = selectedAggregation,
+            onSelect = { selectedAggregation = it }
+        )
 
         HorizontalDivider()
 
@@ -713,7 +727,7 @@ private fun SummaryView(
                 ) {
                     rowPairs.forEachIndexed { colIndex, _ ->
                         val index = rowIndex * 2 + colIndex
-                        val result = completedResults[index]?.lastOrNull()
+                        val result = completedResults[index]?.let { aggregateResult(it, selectedAggregation) }
                         Box(modifier = Modifier.weight(1f)) {
                             if (result != null) {
                                 PhraseResultCard(
@@ -740,7 +754,7 @@ private fun SummaryView(
         StatisticsView(
             practicedCount = completedResults.size,
             totalCount = phrasePairs.size,
-            scores = scores
+            scores = perPairScores
         )
 
         // Practice again
@@ -750,6 +764,54 @@ private fun SummaryView(
         ) {
             Text("Practice Again")
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AggregationPicker(
+    selected: ResultAggregation,
+    onSelect: (ResultAggregation) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = "Score Mode",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            ResultAggregation.entries.forEachIndexed { index, mode ->
+                SegmentedButton(
+                    selected = selected == mode,
+                    onClick = { onSelect(mode) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = ResultAggregation.entries.size
+                    )
+                ) {
+                    Text(mode.displayName)
+                }
+            }
+        }
+    }
+}
+
+private val ResultAggregation.displayName: String
+    get() = when (this) {
+        ResultAggregation.LATEST -> "Latest"
+        ResultAggregation.BEST -> "Best"
+        ResultAggregation.AVERAGE -> "Average"
+    }
+
+private fun aggregateResult(
+    results: List<SegmentResult>,
+    mode: ResultAggregation
+): SegmentResult? {
+    if (results.isEmpty()) return null
+    return when (mode) {
+        ResultAggregation.LATEST -> results.last()
+        ResultAggregation.BEST -> results.maxByOrNull { it.score }
+        ResultAggregation.AVERAGE -> results.last()
     }
 }
 
@@ -791,7 +853,7 @@ private fun PhraseResultCard(
             maxLines = 1
         )
         Text(
-            text = getPerformanceLevel(result.score),
+            text = PerformanceLevel.fromScore(result.score).displayName,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -871,10 +933,3 @@ private fun StatItem(label: String, value: String) {
     }
 }
 
-private fun getPerformanceLevel(score: Float): String = when {
-    score >= 0.9f -> "Excellent"
-    score >= 0.8f -> "Great"
-    score >= 0.7f -> "Good"
-    score >= 0.6f -> "Fair"
-    else -> "Needs Practice"
-}

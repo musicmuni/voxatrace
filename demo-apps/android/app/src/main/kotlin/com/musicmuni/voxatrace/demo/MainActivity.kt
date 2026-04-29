@@ -93,10 +93,7 @@ class MainActivity : ComponentActivity() {
                 apiKey = BuildConfig.VOXATRACE_API_KEY,
                 context = this,
                 debugLogging = BuildConfig.DEBUG,
-                preload = setOf(
-                    AIModels.Pitch.REALTIME,
-                    AIModels.VAD.SPEECH
-                )
+                preload = AIModels.ALL
             )
             Napier.i("VoxaTrace SDK initialized successfully")
             showMainContent()
