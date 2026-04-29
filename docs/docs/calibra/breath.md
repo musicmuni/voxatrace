@@ -2,10 +2,10 @@
 sidebar_position: 9
 ---
 
-# CalibraBreath (deprecated)
+# CalibraBreath (removed in 2.0.0)
 
-:::warning Moved
-`CalibraBreath` has moved to the **`tessera`** module. The class on the calibra side is a `@Deprecated` shell that delegates to [`TesseraBreath`](../tessera/breath) and will be removed in a future release.
+:::danger Removed — migration required
+`CalibraBreath` was **removed** in 2.0.0. There is no source-compat shell. The new contract operates on a `tona.model.PitchContour` instead of parallel `(times, pitchesHz)` arrays, and the canonical return type is **`BreathScore { capacity: Float?, controlScore: Float }`** — `capacity` is now nullable rather than the legacy `-1f` failure sentinel. 1.x callers must migrate before they will compile against 2.0.
 :::
 
 The new API operates on `tona.model.PitchContour` instead of parallel `times` / `pitchesHz` arrays, and the canonical return type is the **nullable-capacity** `BreathScore`, not the legacy `BreathMetrics` (which used `-1f` as a failure sentinel).

@@ -2,10 +2,10 @@
 sidebar_position: 4
 ---
 
-# CalibraVocalRange (deprecated)
+# CalibraVocalRange (removed in 2.0.0)
 
-:::warning Moved
-Vocal range detection has moved to the **`tessera`** module. Both `CalibraVocalRange` and the old `VocalRangeSession` (in `calibra`) are `@Deprecated` shells that delegate to the new facades and will be removed in a future release.
+:::danger Removed — migration required
+Both `CalibraVocalRange` and the old `VocalRangeSession` (in `calibra`) were **removed** in 2.0.0. There is no source-compat shell. Vocal range detection now lives in the **`tessera`** module. 1.x callers must migrate imports before they will compile against 2.0.
 :::
 
 There are now two distinct facades for two distinct workflows:

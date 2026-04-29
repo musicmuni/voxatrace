@@ -2,10 +2,10 @@
 sidebar_position: 10
 ---
 
-# CalibraSpeakingPitch (deprecated)
+# CalibraSpeakingPitch (removed in 2.0.0)
 
-:::warning Moved
-`CalibraSpeakingPitch` has moved to the **`tessera`** module. The class on the calibra side is a `@Deprecated` shell that delegates to [`TesseraSpeakingPitch`](../tessera/speaking-pitch) and will be removed in a future release.
+:::danger Removed — migration required
+`CalibraSpeakingPitch` was **removed** in 2.0.0. There is no source-compat shell. The replacement is [`TesseraSpeakingPitch`](../tessera/speaking-pitch) — note the failure sentinel changed from `-1` to `0`. 1.x callers must migrate before they will compile against 2.0.
 :::
 
 ## Where to find each piece

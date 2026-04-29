@@ -2,10 +2,10 @@
 sidebar_position: 2
 ---
 
-# CalibraPitch (deprecated)
+# CalibraPitch (removed in 2.0.0)
 
-:::warning Moved
-`CalibraPitch` has moved to the **`tona`** module as part of the 2.0.0 reorganization. The class on the calibra side is a `@Deprecated` shell that delegates to the new facades and will be removed in a future release.
+:::danger Removed — migration required
+`CalibraPitch` was **removed** in 2.0.0. There is no source-compat shell. 1.x callers must migrate imports and (for some methods) call shapes to the new tona facades below before they will compile against 2.0.
 :::
 
 ## Where to find each piece

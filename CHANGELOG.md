@@ -11,13 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 Major release. Reorganises the SDK into five public modules (`sonix`,
 `tona`, `tessera`, `accura`, `calibra`) plus a shared `common` utility
-namespace, and introduces `Accura` as a new top-level facade for
-intonation scoring. Existing 1.x consumers continue to compile against
-the deprecated `Calibra*` shells; new code should target the permanent
-homes documented below.
+namespace, introduces `Accura` as a new top-level facade for intonation
+scoring, and **removes** the legacy `Calibra*` API surface that was
+deprecated in the 2.0 prep cycle. **1.x consumers must update imports
+and call shapes; there is no source-compat shell.**
 
 ### Breaking changes
 
+- **Legacy 1.x facades removed.** `CalibraPitch`, `CalibraBreath`,
+  `CalibraVocalRange`, `VocalRangeSession`, `CalibraSpeakingPitch`,
+  `CalibraMusic`, plus the typealiases under `calibra.model.*`
+  (`PitchPoint`, `PitchContour`, `PitchDetectorConfig`, `PitchAlgorithm`,
+  `PitchPreset`, `VoiceType`, `QuietHandling`, `DetectionStrictness`,
+  `PitchProcessorConfig`, `ContourCleanup`, `ContourExtractorConfig`,
+  `SwiftF0Config`/`PitchConstants` internal, `VocalPitch`,
+  `DetectedNote`, `VocalRange`, `VocalRangeConfig`, `RangeStats`,
+  `VocalRangePhase`, `VocalRangeState`, `VocalRangeResult`,
+  `VocalRangeSessionConfig`) are gone. Migration table and code
+  examples below.
 - **`Accura.analyzePitching` and `Accura.calculateScore` failure
   semantics (ADR-022).** `analyzePitching` is now non-null and returns
   `IntonationAnalysisResult` with an `error: String?` field for
@@ -28,6 +39,29 @@ homes documented below.
   `result.error == null` and a non-empty `result.swaras` — passing an
   inconclusive result throws. Pre-2.0 callers that null-checked the
   outer result must migrate to checking `result.error`.
+- **`PitchPoint.isVoiced` removed.** The deprecated alias for
+  `isSinging` is gone. Use `point.isSinging` or `point.pitch > 0`.
+- **Singer-side call shapes that changed alongside the renames:**
+  - `CalibraBreath.computeCapacity(times, pitchesHz): Float` (returned
+    `-1f` on failure) → `TesseraBreath.computeScore(contour:
+    PitchContour).capacity: Float?` (null on failure). Build the contour
+    via `PitchContour.fromArrays(times, pitches)`.
+  - `CalibraSpeakingPitch.detectFromAudio(...)` returned `-1` on failure
+    → `TesseraSpeakingPitch.detectFromAudio(...)` returns `0` on failure.
+  - `CalibraPitch.PostProcess.cleanup(contour, ContourCleanup.SCORING)`
+    → `PitchProcessing.process(contour, PitchProcessingConfig.SCORING)`.
+    There is no `ContourCleanup` enum — the cleanup field on
+    `ContourExtractorConfig` is typed as `PitchProcessingConfig` with
+    presets `RAW`, `SCORING`, `DISPLAY`.
+  - `CalibraPitch.PostProcess.rejectOutliers(...)` renamed to
+    `PitchProcessing.removeBlips(...)`.
+  - `CalibraVocalRange` was streaming (`addAudio` + `getRange`) →
+    `TesseraRange.computeVocalRange(contour)` (batch) or
+    `TesseraRangeSession` (guided streaming with observable state).
+  - `CalibraBreath.computeMetrics(...)` 9-array signature has no
+    direct equivalent. Use `TesseraBreath.compare(refContour,
+    studentContour)` for the comparison score and
+    `TesseraBreath.computeScore(...).capacity` for capacity.
 
 ### Added
 
@@ -90,22 +124,22 @@ homes documented below.
   defaults to 80 Hz – 1000 Hz (was previously documented as 50–2000).
   SwiftF0 model range remains 46.875 Hz – 2093.75 Hz.
 
-### Deprecated
+### Removed (migration table)
 
-The following shells are retained for source compatibility and delegate
-to the new facades; they will be removed in 3.0.0.
-
-| Deprecated | Replacement |
-|------------|-------------|
-| `CalibraPitch.createDetector` / `createContourExtractor` | `tona.PitchDetection.createDetector` / `createContourExtractor` |
-| `CalibraPitch.PostProcess.*` | `tona.PitchProcessing.*` |
-| `CalibraPitch.Detector` (nested type) | `tona.detection.PitchDetector` |
-| `ContourExtractorConfig` (in `calibra`) | `tona.model.ContourExtractorConfig` (typealias retained) |
-| `CalibraBreath.*` | `tessera.TesseraBreath.*` (new contract on `PitchContour` instead of parallel arrays; `BreathScore.capacity` is nullable rather than `-1f` sentinel) |
-| `CalibraVocalRange` | `tessera.TesseraRange.computeVocalRange` (batch) |
-| `VocalRangeSession` (in `calibra`) | `tessera.TesseraRangeSession` |
-| `CalibraSpeakingPitch.*` | `tessera.TesseraSpeakingPitch.*` (failure sentinel is `0`, not `-1`) |
-| `CalibraMusic.*` | `common.MusicTheory.*` |
+| Removed (1.x) | Replacement (2.0) |
+|---------------|-------------------|
+| `com.musicmuni.voxatrace.calibra.CalibraPitch` (`createDetector`, `createContourExtractor`) | `com.musicmuni.voxatrace.tona.PitchDetection.createDetector` / `createContourExtractor` |
+| `CalibraPitch.PostProcess.*` | `com.musicmuni.voxatrace.tona.PitchProcessing.*` |
+| `CalibraPitch.Detector` (nested type) | `com.musicmuni.voxatrace.tona.detection.PitchDetector` (interface) |
+| `com.musicmuni.voxatrace.calibra.ContourExtractorConfig` | `com.musicmuni.voxatrace.tona.model.ContourExtractorConfig` |
+| `com.musicmuni.voxatrace.calibra.CalibraBreath.*` | `com.musicmuni.voxatrace.tessera.TesseraBreath.*` |
+| `com.musicmuni.voxatrace.calibra.CalibraVocalRange` | `com.musicmuni.voxatrace.tessera.TesseraRange.computeVocalRange` (batch) |
+| `com.musicmuni.voxatrace.calibra.VocalRangeSession` | `com.musicmuni.voxatrace.tessera.TesseraRangeSession` |
+| `com.musicmuni.voxatrace.calibra.CalibraSpeakingPitch.*` | `com.musicmuni.voxatrace.tessera.TesseraSpeakingPitch.*` |
+| `com.musicmuni.voxatrace.calibra.CalibraMusic.*` | `com.musicmuni.voxatrace.common.MusicTheory.*` |
+| `calibra.model.{PitchPoint, PitchContour, PitchDetectorConfig, …}` | `tona.model.*` (full list under "Breaking changes" above) |
+| `calibra.model.{VocalPitch, DetectedNote, VocalRange, VocalRangeConfig, RangeStats, VocalRangePhase, VocalRangeState, VocalRangeResult, VocalRangeSessionConfig}` | `tessera.model.*` |
+| `tona.model.PitchPoint.isVoiced` (deprecated alias for `isSinging`) | `point.isSinging` or `point.pitch > 0` |
 
 Permanent calibra facades are unchanged: `CalibraLiveEval`,
 `CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`, `CalibraEffects`.

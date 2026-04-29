@@ -2,10 +2,10 @@
 sidebar_position: 8
 ---
 
-# CalibraMusic (deprecated)
+# CalibraMusic (removed in 2.0.0)
 
-:::warning Moved
-`CalibraMusic` has moved to the **`common`** module as `MusicTheory`. The class on the calibra side is a `@Deprecated` shell that delegates to [`MusicTheory`](../common/music-theory) and will be removed in a future release.
+:::danger Removed — migration required
+`CalibraMusic` was **removed** in 2.0.0. There is no source-compat shell. The replacement is [`MusicTheory`](../common/music-theory) in the `common` module. 1.x callers must migrate imports before they will compile against 2.0.
 :::
 
 The new facade adds shruti-related helpers that did not exist on `CalibraMusic`:
