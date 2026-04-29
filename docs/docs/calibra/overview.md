@@ -15,13 +15,13 @@ Calibra is the **singing-evaluation** module of VoxaTrace. It scores a singer's 
 | [`CalibraEffects`](./effects) | Real-time vocal effects chain (noise gate, compressor, reverb) |
 | [Utilities](./utilities) | Shared model types (Segment, SessionConfig, SegmentResult, …) |
 
-Calibra **consumes** but does not own:
-- Pitch detection — moved to [`tona.PitchDetection`](../tona/pitch-detection) (formerly `CalibraPitch`).
-- Voice metrics — moved to [`tessera`](../tessera/overview) (formerly `CalibraBreath`, `CalibraVocalRange`, `CalibraSpeakingPitch`).
-- Music theory — moved to [`common.MusicTheory`](../common/music-theory) (formerly `CalibraMusic`).
-- Intonation analysis & scoring — moved to [`accura.Accura`](../accura/intonation) (new public facade in 2.0.0).
+Calibra **consumes** but does not own (1.x → 2.0):
+- Pitch detection — [`tona.PitchDetection`](../tona/pitch-detection) (1.x: `CalibraPitch`).
+- Voice metrics — [`tessera`](../tessera/overview) (1.x: `CalibraBreath`, `CalibraVocalRange`, `CalibraSpeakingPitch`; new in 2.0: `TesseraAgility`, multi-metric `Tessera.analyze` / `TesseraSession`, batch range + matching).
+- Music theory — [`common.MusicTheory`](../common/music-theory) (1.x: `CalibraMusic`; new in 2.0: `MusicTheory.deriveUserShruti`).
+- Intonation analysis & scoring — [`accura.Accura`](../accura/intonation). **New public facade in 2.0** — no 1.x equivalent.
 
-The deprecated facades on the calibra side (`CalibraPitch`, `CalibraBreath`, `CalibraVocalRange`, `VocalRangeSession`, `CalibraSpeakingPitch`, `CalibraMusic`) are thin source-compat shells that delegate to the new locations. They will be removed in a future release.
+The 1.x deprecation shells (`CalibraPitch`, `CalibraBreath`, `CalibraVocalRange`, `VocalRangeSession`, `CalibraSpeakingPitch`, `CalibraMusic`) were **removed** in 2.0.0 — there is no source-compat path. See [CHANGELOG](https://github.com/musicmuni/voxatrace/blob/main/CHANGELOG.md) for the migration table.
 
 ## Quick Start
 

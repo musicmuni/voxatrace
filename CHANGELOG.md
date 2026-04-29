@@ -9,39 +9,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [2.0.0]
 
-Major release. Reorganises the SDK into five public modules (`sonix`,
-`tona`, `tessera`, `accura`, `calibra`) plus a shared `common` utility
-namespace, introduces `Accura` as a new top-level facade for intonation
-scoring, and **removes** the legacy `Calibra*` API surface that was
-deprecated in the 2.0 prep cycle. **1.x consumers must update imports
-and call shapes; there is no source-compat shell.**
+Major release. **1.x had two public namespaces — `sonix` and `calibra`. 2.0.0
+introduces four new ones: `tona`, `tessera`, `accura`, and `common.MusicTheory`.**
+Existing calibra functionality that is fundamentally not about singing
+evaluation has been split out into its permanent home (pitch → tona,
+voice metrics → tessera, music theory → common); calibra retains only
+singing evaluation. The legacy 1.x surface (`CalibraPitch`,
+`CalibraBreath`, `CalibraVocalRange`, `VocalRangeSession`,
+`CalibraSpeakingPitch`, `CalibraMusic`) is **removed in this release**
+— there is no source-compat shell. 1.x consumers must update imports
+and call shapes per the migration table below.
+
+The four new namespaces also bring genuinely new public functionality
+that did not exist in any form in 1.x (see the **Added** section):
+the entire `Accura` facade, the entire `PitchAnalysis` facade,
+`TesseraAgility`, the multi-metric `Tessera.analyze` /
+`TesseraSession`, the batch-shape `TesseraRange.computeVocalRange` /
+`computeSearchVector` / `computeMatch`, and `MusicTheory.deriveUserShruti`.
 
 ### Breaking changes
 
 - **Legacy 1.x facades removed.** `CalibraPitch`, `CalibraBreath`,
   `CalibraVocalRange`, `VocalRangeSession`, `CalibraSpeakingPitch`,
-  `CalibraMusic`, plus the typealiases under `calibra.model.*`
+  `CalibraMusic`, plus the public types under `calibra.model.*`
   (`PitchPoint`, `PitchContour`, `PitchDetectorConfig`, `PitchAlgorithm`,
   `PitchPreset`, `VoiceType`, `QuietHandling`, `DetectionStrictness`,
   `PitchProcessorConfig`, `ContourCleanup`, `ContourExtractorConfig`,
-  `SwiftF0Config`/`PitchConstants` internal, `VocalPitch`,
-  `DetectedNote`, `VocalRange`, `VocalRangeConfig`, `RangeStats`,
-  `VocalRangePhase`, `VocalRangeState`, `VocalRangeResult`,
+  `VocalPitch`, `DetectedNote`, `VocalRange`, `VocalRangeConfig`,
+  `RangeStats`, `VocalRangePhase`, `VocalRangeState`, `VocalRangeResult`,
   `VocalRangeSessionConfig`) are gone. Migration table and code
   examples below.
-- **`Accura.analyzePitching` and `Accura.calculateScore` failure
-  semantics (ADR-022).** `analyzePitching` is now non-null and returns
-  `IntonationAnalysisResult` with an `error: String?` field for
-  domain-level inconclusive outcomes (e.g. fewer than three histogram
-  peaks); precondition violations (empty contour, `tonicHz <= 0`,
-  empty `scaleNoteNames`) throw `IllegalArgumentException` instead of
-  silently returning `null`. `calculateScore` requires
-  `result.error == null` and a non-empty `result.swaras` — passing an
-  inconclusive result throws. Pre-2.0 callers that null-checked the
-  outer result must migrate to checking `result.error`.
-- **`PitchPoint.isVoiced` removed.** The deprecated alias for
-  `isSinging` is gone. Use `point.isSinging` or `point.pitch > 0`.
-- **Singer-side call shapes that changed alongside the renames:**
+- **`PitchPoint.isVoiced` removed.** The 1.x alias for `isSinging` is
+  gone. Use `point.isSinging` or `point.pitch > 0`.
+- **Singer-side call shapes that changed alongside the renames** —
+  even after fixing imports, these functions take or return different
+  values than their 1.x predecessors:
   - `CalibraBreath.computeCapacity(times, pitchesHz): Float` (returned
     `-1f` on failure) → `TesseraBreath.computeScore(contour:
     PitchContour).capacity: Float?` (null on failure). Build the contour
@@ -83,11 +85,18 @@ and call shapes; there is no source-compat shell.**
   `TesseraRange` (batch range + 13-dim search vector + matching) and
   `TesseraRangeSession` (guided phase-driven flow with observable state),
   `TesseraSpeakingPitch` (median-F0 detection from speech).
-- **Intonation (`accura`).** `Accura.analyzePitching` returns per-swara
-  deviation against EQ (12-TET) or JI (just-intonation) target intervals
-  with optional global tuning-offset alignment;
-  `Accura.calculateScore` produces a 0–100 score with a piecewise-linear
-  grading scale and a small-sample outlier-robust adjustment.
+- **Intonation (`accura`).** New top-level facade — no 1.x equivalent.
+  `Accura.analyzePitching` returns per-swara deviation against EQ
+  (12-TET) or JI (just-intonation) target intervals with optional
+  global tuning-offset alignment; `Accura.calculateScore` produces a
+  0–100 score with a piecewise-linear grading scale and a small-sample
+  outlier-robust adjustment. Failure contract follows ADR-022 from
+  inception: precondition violations (empty contour, `tonicHz <= 0`,
+  empty `scaleNoteNames`) throw `IllegalArgumentException`;
+  domain-level inconclusive outcomes (e.g. fewer than three histogram
+  peaks) surface via the non-null `IntonationAnalysisResult.error`
+  field. `calculateScore` requires `result.error == null` and a
+  non-empty `result.swaras`.
 - **Music theory (`common`).** `MusicTheory` is the canonical home for
   pitch ↔ MIDI ↔ note-label ↔ cents conversions, 12-TET / Just Intonation
   interval generators, the chromatic / Carnatic / Hindustani note-name
@@ -139,7 +148,7 @@ and call shapes; there is no source-compat shell.**
 | `com.musicmuni.voxatrace.calibra.CalibraMusic.*` | `com.musicmuni.voxatrace.common.MusicTheory.*` |
 | `calibra.model.{PitchPoint, PitchContour, PitchDetectorConfig, …}` | `tona.model.*` (full list under "Breaking changes" above) |
 | `calibra.model.{VocalPitch, DetectedNote, VocalRange, VocalRangeConfig, RangeStats, VocalRangePhase, VocalRangeState, VocalRangeResult, VocalRangeSessionConfig}` | `tessera.model.*` |
-| `tona.model.PitchPoint.isVoiced` (deprecated alias for `isSinging`) | `point.isSinging` or `point.pitch > 0` |
+| `calibra.model.PitchPoint.isVoiced` (alias for `isSinging`) | `point.isSinging` or `point.pitch > 0` (the canonical `PitchPoint` itself moved to `tona.model`) |
 
 Permanent calibra facades are unchanged: `CalibraLiveEval`,
 `CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`, `CalibraEffects`.
