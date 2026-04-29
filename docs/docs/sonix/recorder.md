@@ -35,8 +35,8 @@ recorder.release()
 | Preset | Kotlin | Swift | Sample Rate | Channels | Bitrate |
 |--------|--------|-------|-------------|----------|---------|
 | Voice | `SonixRecorderConfig.VOICE` | `.voice` | 16 kHz | Mono | 64 kbps |
-| Standard | `SonixRecorderConfig.STANDARD` | `.standard` | 44.1 kHz | Stereo | 128 kbps |
-| High | `SonixRecorderConfig.HIGH` | `.high` | 48 kHz | Stereo | 256 kbps |
+| Standard | `SonixRecorderConfig.STANDARD` | `.standard` | 44.1 kHz | Mono | 128 kbps |
+| High | `SonixRecorderConfig.HIGH` | `.high` | 44.1 kHz | Stereo | 192 kbps |
 
 ### Builder
 
@@ -235,11 +235,12 @@ recorder.levelPublisher
 | `bufferPoolAvailable` | `Int` | Buffers available in pool |
 | `bufferPoolWasExhausted` | `Boolean` | Whether pool was ever exhausted |
 | `latestBuffer` | `AudioBuffer?` | Most recent audio buffer |
-| `synchronizedTimeMs` | `Long` | Playback-synchronized time |
+| `synchronizedTimeMs` | `Long` | Playback-synchronized time (falls back to recording duration when no sync provider is set) |
+| `inputLatencyMs` | `Long` | Input latency diagnostic (ms). 1.0.0+. **Already factored into `AudioBuffer.timestamp`** — do not subtract again. |
 
 ## Real-time Audio Access
 
-Access raw audio buffers for visualization or analysis:
+Access raw audio buffers for visualization, analysis, or hardware-clock timing alignment.
 
 ### Kotlin
 
@@ -247,6 +248,7 @@ Access raw audio buffers for visualization or analysis:
 recorder.audioBuffers.collect { buffer ->
     val samples = buffer.toFloatArray()
     pitchDetector.detect(samples, buffer.sampleRate)
+    // Pass buffer.timestamp to CalibraLiveEval.feedAudioSamples for player alignment
 }
 ```
 
@@ -257,6 +259,24 @@ for await samples in recorder.audioBuffers(resampledTo: 16000) {
     pitchDetector.detect(samples: samples, sampleRate: 16000)
 }
 ```
+
+## AudioBuffer
+
+The element type emitted by `audioBuffers` (and stored in `latestBuffer`).
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `data` | `ByteArray` | Raw 16-bit signed little-endian PCM bytes |
+| `timestamp` | `Long` | Absolute monotonic nanoseconds at the moment the **last** sample in the buffer was captured at the mic, with input latency already subtracted (1.0.1+). Same domain as `System.nanoTime()` on Android and `AVAudioTime.hostTime` (converted to ns) on iOS. |
+| `durationMs` | `Long` | Duration of the buffer in milliseconds |
+| `sampleRate` | `Int` | Sample rate of `data` (matches `actualSampleRate`) |
+| `samples` | `FloatArray` | Same audio as `data` decoded to floats in `[-1, 1]` |
+| `sampleCount` | `Int` | Number of audio frames |
+| `size` | `Int` | Size of `data` in bytes |
+
+Methods: `toFloatArray()` and `fillFloatSamples(out: FloatArray)`.
+
+`AudioBuffer.timestamp` is the canonical input timestamp for hardware-clock-aligned mic↔player correlation. Pass it to `CalibraLiveEval.feedAudioSamples(captureTimestampNanos = …)` or `SonixPlayer.audibleTimeMsAtWallNanos(...)`. Do **not** subtract `inputLatencyMs` from the timestamp — input latency is already accounted for. (See [audio latency concepts](../concepts/audio-latency).)
 
 ## Segment Recording
 

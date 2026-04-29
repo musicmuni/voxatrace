@@ -104,7 +104,7 @@ class KaraokeViewModel : ViewModel() {
         )
 
         // Create pitch detector
-        val detector = CalibraPitch.createDetector(
+        val detector = PitchDetection.createDetector(
             PitchDetectorConfig.Builder()
                 .algorithm(PitchAlgorithm.SWIFT_F0)
                 .enableProcessing()
@@ -170,11 +170,11 @@ class KaraokeViewModel : ViewModel() {
     }
 
     fun pause() {
-        session?.pause()
+        session?.pausePlayback()
     }
 
     fun resume() {
-        session?.resume()
+        session?.resumePlayback()
     }
 
     private fun handleSongEnd() {

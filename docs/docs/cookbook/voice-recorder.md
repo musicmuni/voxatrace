@@ -61,6 +61,8 @@ class VoiceRecorderViewModel : ViewModel() {
         _state.update { it.copy(selectedFormat = format) }
     }
 
+    private var pendingPath: String? = null
+
     fun startRecording(name: String) {
         val extension = when (_state.value.selectedFormat) {
             AudioFormat.M4A -> "m4a"
@@ -68,6 +70,7 @@ class VoiceRecorderViewModel : ViewModel() {
             AudioFormat.WAV -> "wav"
         }
         val path = "$recordingsDir/${name}_${System.currentTimeMillis()}.$extension"
+        pendingPath = path
 
         recorder = SonixRecorder.create(
             path,
@@ -91,12 +94,16 @@ class VoiceRecorderViewModel : ViewModel() {
     }
 
     fun stopRecording() {
+        // SonixRecorder doesn't expose outputPath as a property — observe the
+        // RecordingState.Finished from `recorder.state` to confirm the file is
+        // saved (or use the path you passed to create()). We track our own
+        // pendingPath above to avoid relying on private state.
         recorder?.stop()
         recorder?.release()
 
         val recording = Recording(
             name = "Recording ${_state.value.recordings.size + 1}",
-            path = recorder?.outputPath ?: "",
+            path = pendingPath ?: "",
             durationMs = _state.value.recordingDuration,
             format = _state.value.selectedFormat
         )
@@ -308,9 +315,9 @@ AudioFormat.WAV  // Uncompressed, large files, lossless
 ### Quality Presets
 
 ```kotlin
-SonixRecorderConfig.VOICE     // 16kHz mono - smallest files
-SonixRecorderConfig.STANDARD  // 44.1kHz stereo - balanced
-SonixRecorderConfig.HIGH      // 48kHz stereo - best quality
+SonixRecorderConfig.VOICE     // 16 kHz mono, 64 kbps  — smallest files
+SonixRecorderConfig.STANDARD  // 44.1 kHz mono, 128 kbps — balanced
+SonixRecorderConfig.HIGH      // 44.1 kHz stereo, 192 kbps — best quality
 ```
 
 ### Real-time Level Monitoring

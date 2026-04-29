@@ -62,7 +62,7 @@ kotlin {
 
 dependencies {
     // VoxaTrace SDK (mavenLocal() is checked first for pre-release testing)
-    implementation("com.musicmuni:voxatrace:1.0.0")
+    implementation("com.musicmuni:voxatrace:2.0.0")
 
     // Required by Sonix
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")

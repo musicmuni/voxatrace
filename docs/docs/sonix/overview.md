@@ -69,18 +69,15 @@ player.seek(30_000)   // Jump to 30 seconds
 | ------- | ----- |
 | Formats | M4A, MP3, WAV |
 | Pitch shifting | -12 to +12 semitones |
-| Tempo control | 0.5x to 2x speed |
-| Looping | Any region |
+| Tempo control | 0.25× to 4× |
 
 ### Recording
 
 ```kotlin
-val recorder = SonixRecorder.create(
-    SonixRecorderConfig.Builder()
-        .format(AudioFormat.MP3)
-        .outputPath("recording.mp3")
-        .build()
-)
+val config = SonixRecorderConfig.Builder()
+    .format(AudioFormat.MP3)
+    .build()
+val recorder = SonixRecorder.create("recording.mp3", config)
 recorder.start()
 // ... user sings ...
 recorder.stop()
@@ -88,61 +85,56 @@ recorder.stop()
 
 | Feature | Options |
 | ------- | ------- |
-| Output formats | M4A (AAC), MP3 |
-| Sample rates | 16kHz, 44.1kHz, 48kHz |
-| Echo cancellation | Built-in support |
+| Output formats | M4A (AAC), MP3, WAV |
+| Sample rates | 16 kHz (VOICE), 44.1 kHz mono (STANDARD), 44.1 kHz stereo (HIGH); custom via Builder |
 | Background recording | Supported |
+| Hardware-clock timing | `AudioBuffer.timestamp` is monotonic-nanos with input latency already subtracted (1.0.1+) |
+
+Echo cancellation is exposed via `Builder.echoCancellation(true)`. As of 1.0.0, AEC is not requested on Android (unsupported in practice on most devices); on iOS it depends on the configured audio mode.
 
 ### Multi-track Mixing
 
-Perfect for karaoke apps that need backing track + vocal guide + click track:
+For karaoke apps with backing track + vocal guide + click:
 
 ```kotlin
-val mixer = SonixMixer.create()
-mixer.loadTrack(0, "backing.mp3")
-mixer.loadTrack(1, "vocal_guide.mp3")
-mixer.setVolume(0, 0.8f)  // Backing at 80%
-mixer.setVolume(1, 0.3f)  // Guide quiet
+val mixer = SonixMixer.create(SonixMixerConfig.DEFAULT)
+mixer.addTrack("backing", "backing.mp3")
+mixer.addTrack("guide", "vocal_guide.mp3")
+mixer.setTrackVolume("backing", 0.8f)
+mixer.setTrackVolume("guide", 0.3f)
 mixer.play()
 ```
 
-| Feature | Specification |
-| ------- | ------------- |
-| Simultaneous tracks | Up to 8 |
-| Per-track controls | Volume, pan, solo, mute |
-| Synchronization | Sample-accurate |
+Tracks are keyed by **string name** (not int index). Per-track controls: volume (`setTrackVolume`, `fadeTrackVolume`), mute (`muteTrack`), solo (`soloTrack`).
 
 ### Metronome
 
 ```kotlin
-val metronome = SonixMetronome.create(bpm = 120)
-metronome.onBeat { beat, isAccent ->
-    // Update UI on each beat
-}
+val metronome = SonixMetronome.create(bpm = 120f)
+metronome.currentBeat.collect { beat -> updateUI(beat) }
 metronome.start()
 ```
 
 | Feature | Range |
 | ------- | ----- |
-| BPM | 40 – 240 |
-| Time signatures | Any |
-| Custom sounds | Supported |
+| BPM | 30 – 300 |
+| Beats per cycle | Any positive integer (set at build time) |
+| Custom sounds | Sama / beat sample paths via `SonixMetronomeConfig.Builder` |
 
 ### MIDI Synthesis
 
-Generate vocal guides or accompaniment from MIDI:
+Synthesize vocal guides or accompaniment from MIDI files / pitch files:
 
 ```kotlin
 val synth = SonixMidiSynthesizer.create("piano.sf2")
-synth.noteOn(channel = 0, note = 60, velocity = 100) // Middle C
-synth.noteOff(channel = 0, note = 60)
+val audio = synth.synthesizeMidi("song.mid", sampleRate = 44100)
 ```
 
 | Feature | Specification |
 | ------- | ------------- |
 | SoundFont support | .sf2 files |
-| Channels | 16 (MIDI standard) |
-| Events | Note on/off, program change, pitch bend |
+| Inputs | MIDI files, MidiNote lists, pitch files |
+| Output | `AudioRawData` (PCM) — synthesizer is stateless; no `noteOn`/`noteOff` event API |
 
 ## Next Steps
 

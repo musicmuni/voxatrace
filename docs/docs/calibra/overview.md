@@ -4,145 +4,98 @@ sidebar_position: 1
 
 # Calibra Overview
 
-Calibra is the audio analysis module of VoxaTrace, providing:
+Calibra is the **singing-evaluation** module of VoxaTrace. It scores a singer's performance against a reference, runs voice-activity detection, and applies real-time vocal effects.
 
-- **Pitch Detection** — Real-time fundamental frequency detection
-- **Voice Activity Detection** — Detect when someone is speaking or singing
-- **Vocal Range Detection** — Determine a singer's comfortable range
-- **Singing Evaluation** — Score singing accuracy against a reference
+| Facade | Purpose |
+|--------|---------|
+| [`CalibraLiveEval`](./live-eval) | Real-time singing evaluation against a reference (segment-aware, observable state) |
+| [`CalibraMelodyEval`](./melody-eval) | Offline melody scoring of a complete recording |
+| [`CalibraNoteEval`](./note-eval) | Per-note scoring for scales, arpeggios, svara patterns |
+| [`CalibraVAD`](./vad) | Voice activity detection (multiple backends) |
+| [`CalibraEffects`](./effects) | Real-time vocal effects chain (noise gate, compressor, reverb) |
+| [Utilities](./utilities) | Shared model types (Segment, SessionConfig, SegmentResult, …) |
 
-## Calibra in Action
+Calibra **consumes** but does not own:
+- Pitch detection — moved to [`tona.PitchDetection`](../tona/pitch-detection) (formerly `CalibraPitch`).
+- Voice metrics — moved to [`tessera`](../tessera/overview) (formerly `CalibraBreath`, `CalibraVocalRange`, `CalibraSpeakingPitch`).
+- Music theory — moved to [`common.MusicTheory`](../common/music-theory) (formerly `CalibraMusic`).
+- Intonation analysis & scoring — moved to [`accura.Accura`](../accura/intonation) (new public facade in 2.0.0).
 
-### Real-Time Pitch Feedback
+The deprecated facades on the calibra side (`CalibraPitch`, `CalibraBreath`, `CalibraVocalRange`, `VocalRangeSession`, `CalibraSpeakingPitch`, `CalibraMusic`) are thin source-compat shells that delegate to the new locations. They will be removed in a future release.
 
-```text
-User sings: "Hap-py birth-day to you"
+## Quick Start
 
-Timeline:     0.0s    0.5s    1.0s    1.5s    2.0s
-              ├───────┼───────┼───────┼───────┤
-Reference:    C4      C4      D4      C4      F4
-Detected:     C4      C4      D4      C#4     F4
-              ✓       ✓       ✓       ~       ✓
-
-Score: 4/5 notes matched = 80%
-```
-
-### Voice Activity Detection
-
-```text
-Audio input:  [noise][singing~~~~~][breath][singing~~~~~][noise]
-VAD output:   [  0  ][     1      ][  0   ][     1      ][  0  ]
-
-Action:       Skip    Process      Skip    Process       Skip
-```
-
-### Live Evaluation Flow
-
-```text
-                    ┌──────────────┐
-    Reference ───── │              │
-    Audio           │   Compare    │ ───── Score (0.0–1.0)
-                    │   Pitches    │
-    Student  ─────  │              │
-    Audio           └──────────────┘
-                          │
-                          ▼
-              ┌───────────────────────┐
-              │ Segment 1: 85%        │
-              │ Segment 2: 92%        │
-              │ Segment 3: 78%        │
-              │ ───────────────────── │
-              │ Overall: 85%          │
-              └───────────────────────┘
-```
-
-## Key Features
-
-### Pitch Detection
-
-- Real-time F0 detection with two algorithms (YIN and SwiftF0)
-- Works with singing and speech
-- Frequency range: 50Hz – 2000Hz
-- Low latency (~50ms)
+### Real-time scoring (CalibraLiveEval)
 
 ```kotlin
-val detector = CalibraPitch.createDetector()
-val point = detector.detect(samples, sampleRate = 16000)
-// point.pitch = 440.0, point.confidence = 0.92
-```
+val detector = PitchDetection.createDetector()
+val session = CalibraLiveEval.create(lessonMaterial, detector = detector)
 
-### Voice Activity Detection (VAD)
-
-Multiple detection backends for different use cases:
-
-| Backend | Best For | Latency |
-| ------- | -------- | ------- |
-| General (Energy) | Simple apps, low power | &lt;1ms |
-| Speech (Silero) | Voice assistants, transcription | ~5ms |
-| Singing (YAMNet) | Karaoke, singing detection | ~20ms |
-| SingingRealtime | Real-time singing apps | ~5ms |
-
-```kotlin
-val vad = CalibraVAD.create(VADConfig.SINGING)
-val result = vad.analyze(samples, sampleRate)
-// result.isSpeaking = true, result.level = Level.MODERATE
-```
-
-### Vocal Range Detection
-
-Guided range finding that detects a singer's comfortable range:
-
-```kotlin
-val session = VocalRangeSession.create()
-session.start()
-// Guide user through high and low notes
-val range = session.finish()
-// range.lowNote = 48 (C3), range.highNote = 72 (C5)
-```
-
-### Singing Evaluation
-
-Two evaluation modes:
-
-**Singalong Mode** — Evaluate while singing along with reference audio
-
-- Real-time pitch comparison
-- Note-by-note scoring
-- Immediate feedback
-
-**Singafter Mode** — Listen to phrase, then sing it back
-
-- Pitch and rhythm evaluation
-- Detailed per-phrase scoring
-- Great for ear training
-
-```kotlin
-val session = CalibraLiveEval.create(lessonMaterial, config)
+session.prepareSession()
 session.onSegmentComplete { result ->
-    println("Segment ${result.segmentIndex}: ${result.score}%")
+    println("Segment ${result.segment.index}: ${(result.score * 100).toInt()}%")
 }
-session.start()
+session.startPracticingSegment(0)
+
+recorder.audioBuffers.collect { buffer ->
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
+}
+
+session.closeSession()
 ```
 
-## Next Steps
+### Offline melody evaluation (CalibraMelodyEval)
 
-### API Reference
+```kotlin
+val extractor = PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)
+val result = CalibraMelodyEval.evaluate(reference, student, extractor)
+extractor.release()
+println("Overall: ${result.overallScorePercent}%")
+```
 
-- [CalibraPitch](./pitch) — Real-time and batch pitch detection
-- [CalibraVAD](./vad) — Voice activity detection
-- [CalibraVocalRange](./vocal-range) — Vocal range detection with guided sessions
-- [CalibraLiveEval](./live-eval) — Live singing evaluation with scoring
-- [CalibraMelodyEval](./melody-eval) — Evaluate recorded melodies against reference
-- [CalibraNoteEval](./note-eval) — Evaluate individual note accuracy
-- [CalibraMusic](./music) — Musical pitch conversions (Hz, MIDI, note labels, cents)
-- [CalibraBreath](./breath) — Breath capacity and control analysis
-- [CalibraSpeakingPitch](./speaking-pitch) — Speaking pitch detection
-- [CalibraEffects](./effects) — Real-time vocal effects chain (noise gate, compressor, reverb)
-- [Utilities](./utilities) — Shared model types, error types, and configuration classes
+### Voice activity detection (CalibraVAD)
 
-### Guides
+```kotlin
+val vad = CalibraVAD.create(VADModelProvider.General)
+val ratio = vad.getVADRatio(samples, sampleRate)
+if (ratio > 0.5f) println("Voice present")
+vad.release()
+```
 
-- [Pitch Detection Concepts](../concepts/pitch-detection) — How pitch detection works
-- [Voice Activity Concepts](../concepts/voice-activity) — VAD backends explained
-- [Detecting Pitch Guide](../guides/detecting-pitch) — Implementation details
-- [Live Evaluation Guide](../guides/live-evaluation) — Building scoring features
+### Real-time effects (CalibraEffects)
+
+```kotlin
+val effects = CalibraEffects.create(EffectsPreset.VOCAL_CHAIN)
+recorder.audioBuffers.collect { buffer ->
+    val samples = buffer.toFloatArray()
+    effects.process(samples)   // in-place; expects 16kHz mono
+}
+effects.release()
+```
+
+## Two evaluation modes (Live Eval)
+
+- **Singalong:** `IDLE → SINGING → EVALUATED`. Reference plays while the student sings; pitch is compared in real time.
+- **Singafter:** `IDLE → LISTENING → SINGING → EVALUATED`. Reference plays first, then the student sings the same phrase from memory.
+
+Mode is determined per-segment by `Segment.studentStartSeconds` (see [Utilities](./utilities)).
+
+## Failure semantics (ADR-022)
+
+| Kind | How it surfaces |
+|------|-----------------|
+| Caller bug (uninitialized SDK, invalid config) | Throws (`VoxaTraceNotInitializedException`, `IllegalArgumentException`) |
+| Domain inconclusive (e.g. evaluator failed to extract any student data for a segment) | `finishPracticingSegment` returns `null` |
+
+## See also
+
+- [Live Evaluation Concept](../concepts/live-evaluation)
+- [Voice Activity Concept](../concepts/voice-activity)
+- [Tona / PitchDetection](../tona/pitch-detection) — for pitch detection
+- [Tessera](../tessera/overview) — for voice metrics
+- [Accura](../accura/intonation) — for intonation scoring
+- [MusicTheory](../common/music-theory) — for music conversions

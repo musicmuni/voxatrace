@@ -28,6 +28,24 @@ Add microphone usage description:
 <string>We need microphone access to detect pitch from your voice.</string>
 ```
 
+## Step 1b: Initialize the SDK
+
+Call `VT.initialize…` once before any other VoxaTrace API. For production apps, prefer the proxy or attestation flows (see the [Authentication guide](../guides/authentication)).
+
+```swift
+import VoxaTrace
+
+@main
+struct PitchDetectorApp: App {
+    init() {
+        // Server-side / development form. For production mobile apps, use
+        // VT.initialize(proxyEndpoint: …) or VT.initializeWithAttestation(…).
+        try? VT.initializeForServer(apiKey: "sk_live_your_key_here")
+    }
+    var body: some Scene { WindowGroup { PitchDetectorView() } }
+}
+```
+
 ## Step 2: Create the Pitch Detector View
 
 ```swift
@@ -79,7 +97,7 @@ class PitchDetectorViewModel: ObservableObject {
     @Published var isRecording: Bool = false
 
     private var recorder: SonixRecorder?
-    private var detector: CalibraPitch.Detector?
+    private var detector: PitchDetector?
     private var task: Task<Void, Never>?
 
     func start() async {
@@ -87,7 +105,7 @@ class PitchDetectorViewModel: ObservableObject {
         recorder = SonixRecorder.createTemporary(config: .voice)
 
         // Create pitch detector
-        detector = CalibraPitch.createDetector()
+        detector = PitchDetection.createDetector()
 
         // Start recording
         recorder?.start()
@@ -107,7 +125,7 @@ class PitchDetectorViewModel: ObservableObject {
 
                 await MainActor.run {
                     if point.pitch > 0 {
-                        self.note = CalibraMusic.hzToNoteLabel(point.pitch)
+                        self.note = MusicTheory.hzToNoteLabel(point.pitch)
                         self.frequency = point.pitch
                         self.confidence = point.confidence
                     } else {
@@ -153,7 +171,7 @@ The app is:
 
 1. Recording audio buffers from the microphone (~50ms chunks)
 2. Running pitch detection on each buffer
-3. Converting frequency to musical note name using `CalibraMusic.hzToNoteLabel()`
+3. Converting frequency to musical note name using `MusicTheory.hzToNoteLabel()`
 4. Showing confidence (how certain the detection is)
 
 **Troubleshooting:**
@@ -218,7 +236,7 @@ class PitchDetectorViewController: UIViewController {
     private let confidenceBar = UIProgressView()
 
     private var recorder: SonixRecorder?
-    private var detector: CalibraPitch.Detector?
+    private var detector: PitchDetector?
     private var task: Task<Void, Never>?
 
     override func viewDidLoad() {
@@ -266,7 +284,7 @@ class PitchDetectorViewController: UIViewController {
 
     private func startPitchDetection() async {
         recorder = SonixRecorder.createTemporary(config: .voice)
-        detector = CalibraPitch.createDetector()
+        detector = PitchDetection.createDetector()
 
         recorder?.start()
 
@@ -283,7 +301,7 @@ class PitchDetectorViewController: UIViewController {
 
                 await MainActor.run {
                     if point.pitch > 0 {
-                        self.noteLabel.text = CalibraMusic.hzToNoteLabel(point.pitch)
+                        self.noteLabel.text = MusicTheory.hzToNoteLabel(point.pitch)
                         self.frequencyLabel.text = "\(Int(point.pitch)) Hz"
                         self.confidenceBar.progress = point.confidence
                     } else {

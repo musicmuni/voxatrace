@@ -12,7 +12,7 @@ Real-time singing evaluation session that scores a singer's performance by compa
 
 ```kotlin
 // 1. Create detector and session
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 val session = CalibraLiveEval.create(lessonMaterial, detector = detector)
 
 // 2. Prepare (loads reference, creates evaluator)
@@ -21,7 +21,11 @@ session.prepareSession()
 // 3. Start segment and feed audio
 session.startPracticingSegment(0)
 recorder.audioBuffers.collect { buffer ->
-    session.feedAudioSamples(buffer.toFloatArray(), sampleRate = 48000)
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,  // hardware-clock alignment (1.0.1+)
+    )
 }
 
 // 4. Get result
@@ -36,7 +40,7 @@ session.closeSession()
 
 ```swift
 // 1. Create detector and session
-let detector = CalibraPitch.createDetector()
+let detector = PitchDetection.createDetector()
 let session = CalibraLiveEval.create(
     reference: lessonMaterial,
     detector: detector
@@ -48,7 +52,11 @@ try await session.prepareSession()
 // 3. Start segment and feed audio
 session.startPracticingSegment(index: 0)
 for await buffer in recorder.audioBuffers {
-    session.feedAudioSamples(buffer.toFloatArray(), sampleRate: 48000)
+    session.feedAudioSamples(
+        samples: buffer.samples,
+        sampleRate: Int32(buffer.sampleRate),
+        captureTimestampNanos: buffer.timestamp
+    )
 }
 
 // 4. Get result
@@ -67,7 +75,7 @@ session.closeSession()
 | Score singing against reference in real time | Yes | Core use case |
 | Karaoke apps with segment scoring | Yes | Segment-based with auto-advance |
 | Music education with retry logic | Yes | Practice mode with score thresholds |
-| Just detect pitch (no scoring) | No | Use `CalibraPitch.createDetector()` |
+| Just detect pitch (no scoring) | No | Use `PitchDetection.createDetector()` |
 | Analyze pre-recorded audio (not live) | No | Use `CalibraMelodyEval` |
 | Voice activity detection only | No | Use `CalibraVAD` |
 
@@ -97,7 +105,7 @@ val config = SessionConfig.Builder()
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
     session = config,
-    detector = CalibraPitch.createDetector()
+    detector = PitchDetection.createDetector()
 )
 ```
 
@@ -114,7 +122,7 @@ let config = SessionConfig.Builder()
 let session = CalibraLiveEval.create(
     reference: lessonMaterial,
     session: config,
-    detector: CalibraPitch.createDetector()
+    detector: PitchDetection.createDetector()
 )
 ```
 
@@ -126,7 +134,7 @@ let session = CalibraLiveEval.create(
 | `scoreThreshold` | `Float` | `0` | Minimum score to auto-advance (0 = advances regardless of score) |
 | `maxAttempts` | `Int` | `0` | Maximum attempts before forced advance (0 = unlimited) |
 | `resultAggregation` | `ResultAggregation` | `LATEST` | How to aggregate multiple attempts (`LATEST`, `BEST`, `AVERAGE`) |
-| `hopSize` | `Int` | `160` | Hop size between frames in samples (160 = 10ms at 16kHz) |
+| `hopSize` | `Int` | `320` | Hop size between frames in samples (320 = 20 ms at 16 kHz, 2 frames per buffer per ADR-020) |
 | `autoPhaseTransition` | `Boolean` | `true` | Automatically transition LISTENING to SINGING in singafter mode |
 | `autoSegmentDetection` | `Boolean` | `true` | Automatically detect segment end from player time |
 
@@ -151,11 +159,11 @@ let session = CalibraLiveEval.create(
 
 ```kotlin
 val session = CalibraLiveEval.create(
-    reference = lessonMaterial,           // LessonMaterial (required)
-    session = SessionConfig.PRACTICE,     // SessionConfig (default: DEFAULT)
-    detector = CalibraPitch.createDetector(), // Detector (required)
-    player = player,                      // SonixPlayer? (optional)
-    recorder = recorder                   // SonixRecorder? (optional)
+    reference = lessonMaterial,                 // LessonMaterial (required)
+    session = SessionConfig.PRACTICE,           // SessionConfig (default: DEFAULT)
+    detector = PitchDetection.createDetector(), // PitchDetector (required)
+    player = player,                            // SonixPlayer? (optional)
+    recorder = recorder                         // SonixRecorder? (optional)
 )
 ```
 
@@ -165,7 +173,7 @@ val session = CalibraLiveEval.create(
 let session = CalibraLiveEval.create(
     reference: lessonMaterial,
     session: .practice,
-    detector: CalibraPitch.createDetector(),
+    detector: PitchDetection.createDetector(),
     player: player,
     recorder: recorder
 )
@@ -177,7 +185,7 @@ let session = CalibraLiveEval.create(
 |-----------|------|----------|-------------|
 | `reference` | `LessonMaterial` | Yes | Reference audio, segments, and key |
 | `session` | `SessionConfig` | No | Session configuration (default: `DEFAULT`) |
-| `detector` | `CalibraPitch.Detector` | Yes | Pitch detector. Session takes ownership and closes it. |
+| `detector` | `PitchDetector` (from `tona.detection`) | Yes | Pitch detector. Session takes ownership and closes it. |
 | `player` | `SonixPlayer?` | No | Audio player for convenience API. Caller manages lifecycle. |
 | `recorder` | `SonixRecorder?` | No | Audio recorder for convenience API. Caller manages lifecycle. |
 
@@ -190,7 +198,7 @@ Pass `player` and `recorder` handles; the session coordinates seeking, playback,
 ```kotlin
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
-    detector = CalibraPitch.createDetector(),
+    detector = PitchDetection.createDetector(),
     player = player,
     recorder = recorder
 )
@@ -206,12 +214,16 @@ Omit `player` and `recorder`; manually manage audio and feed samples directly.
 ```kotlin
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
-    detector = CalibraPitch.createDetector()
+    detector = PitchDetection.createDetector()
 )
 session.prepareSession()
 session.startPracticingSegment(0)
 recorder.audioBuffers.collect { buffer ->
-    session.feedAudioSamples(buffer.toFloatArray(), sampleRate = 48000)
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
 }
 val result = session.finishPracticingSegment()
 ```
@@ -312,36 +324,51 @@ session.beginSingingPhase()
 
 ### Feeding Audio
 
-The `feedAudioSamples` method accepts audio at **any sample rate** and resamples internally to 16kHz. This means you do not need to pre-process audio before passing it to the session.
+`feedAudioSamples` accepts audio at any sample rate and resamples to 16 kHz internally. Each call may emit **multiple** pitch points (1.0.0+). Pass `captureTimestampNanos` from `AudioBuffer.timestamp` for hardware-clock alignment with player audible time (1.0.1+); omit it (or pass `0L`) in offline / manual-feed contexts where no live recorder is involved — the anchor falls back to the session clock.
+
+```kotlin
+fun feedAudioSamples(
+    samples: FloatArray,
+    sampleRate: Int = 16000,
+    captureTimestampNanos: Long = 0L,
+)
+```
 
 #### Kotlin
 
 ```kotlin
-// Feed from recorder (any sample rate)
+// Live recorder — pass the buffer's hardware-clock capture timestamp
 recorder.audioBuffers.collect { buffer ->
-    session.feedAudioSamples(buffer.toFloatArray(), sampleRate = 48000)
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
 }
 
-// Default sample rate is 16000 if omitted
-session.feedAudioSamples(samples)
+// Offline / manual feed — fall back to the session clock
+session.feedAudioSamples(samples, sampleRate = 16000)
 ```
 
 #### Swift
 
 ```swift
-// Feed from recorder (any sample rate)
-session.feedAudioSamples(buffer, sampleRate: 48000)
-
-// Default sample rate is 16000 if omitted
-session.feedAudioSamples(buffer)
+for await buffer in recorder.audioBuffers {
+    session.feedAudioSamples(
+        samples: buffer.samples,
+        sampleRate: Int32(buffer.sampleRate),
+        captureTimestampNanos: buffer.timestamp
+    )
+}
 ```
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `samples` | `FloatArray` / `[Float]` | -- | Mono audio samples, normalized -1.0 to 1.0 |
+| `samples` | `FloatArray` / `[Float]` | — | Mono audio samples, normalized -1.0 to 1.0 |
 | `sampleRate` | `Int` | `16000` | Sample rate of the input audio in Hz |
+| `captureTimestampNanos` | `Long` | `0L` | Monotonic-nanos wall time at which the **last** sample in `samples` was captured at the mic. Used to map the buffer to player audible time via `SonixPlayer.audibleTimeMsAtWallNanos`. Pass `0L` (or omit) in offline contexts. |
 
-If the input sample rate differs from 16kHz, the session uses `SonixResampler` to convert the audio before processing. This is handled transparently on every call.
+If `captureTimestampNanos > 0` but the player isn't running yet, the call is a no-op for that buffer — subsequent buffers succeed once playback starts. See [audio latency concepts](../concepts/audio-latency) for details.
 
 ### Runtime Configuration
 
@@ -352,12 +379,18 @@ session.setStudentKeyHz(220.0f)
 // Enable or disable pitch processing (smoothing + octave correction)
 session.setPitchProcessingEnabled(true)
 val isEnabled: Boolean = session.pitchProcessingEnabled
+
+// Toggle auto-loop policy at runtime (1.0.0+).
+// true  = use the SessionConfig's retry/advance policy (retry low-scoring segments)
+// false = always advance regardless of score
+session.setAutoLoopEnabled(true)
+val autoLoopOn: Boolean = session.isAutoLoopEnabled
 ```
 
 ```swift
 session.setStudentKeyHz(keyHz: 220.0)
 session.setPitchProcessingEnabled(enabled: true)
-let isEnabled = session.pitchProcessingEnabled
+session.setAutoLoopEnabled(enabled: true)
 ```
 
 ### Query Methods
@@ -511,8 +544,8 @@ stateTask.cancel()
 | `activeSegment` | `StateFlow<ActiveSegmentState?>` | Active segment details, or null if not practicing |
 | `completedSegments` | `StateFlow<Map<Int, List<SegmentResult>>>` | Map of segment index to list of attempts |
 | `phase` | `StateFlow<PracticePhase>` | Current practice phase (IDLE, LISTENING, SINGING, EVALUATED) |
-| `livePitchContour` | `StateFlow<PitchContour>` | Accumulated pitch contour for scrolling visualization |
-| `livePitch` | `StateFlow<PitchPoint>` | Real-time pitch point (includes time and confidence) |
+| `livePitchContour` | `StateFlow<PitchContour>` | Accumulated pitch contour for scrolling visualization (preferred for trails) |
+| `livePitch` | `SharedFlow<PitchPoint>` | Per-emission pitch stream — every point is emitted (multi-emit per `feedAudioSamples` call). 1.0.0 changed this from `StateFlow` to `SharedFlow`; callers relying on `.value` must migrate to collection. Best for live tuner displays / telemetry. |
 | `currentTime` | `StateFlow<Float>` | Playback position in seconds |
 | `isPlaying` | `StateFlow<Boolean>` | Whether player is currently playing |
 | `isRecording` | `StateFlow<Boolean>` | Whether recording is active |
@@ -772,7 +805,7 @@ class SingalongViewModel : ViewModel() {
             session = CalibraLiveEval.create(
                 reference = reference,
                 session = config,
-                detector = CalibraPitch.createDetector(),
+                detector = PitchDetection.createDetector(),
                 player = player,
                 recorder = recorder
             )
@@ -830,7 +863,7 @@ class SingalongViewModel: ObservableObject {
     private var observerTasks: [Task<Void, Never>] = []
 
     func loadSession(reference: LessonMaterial) async {
-        let detector = CalibraPitch.createDetector()
+        let detector = PitchDetection.createDetector()
         let session = CalibraLiveEval.create(
             reference: reference,
             session: .practice,
@@ -878,7 +911,7 @@ class SingalongViewModel: ObservableObject {
 ```kotlin
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
-    detector = CalibraPitch.createDetector()
+    detector = PitchDetection.createDetector()
 )
 session.prepareSession()
 
@@ -916,6 +949,7 @@ let contourTask = session.observeLivePitchContour { contour in
 
 ## Next Steps
 
-- [CalibraPitch](./pitch) -- Pitch detection without scoring
-- [CalibraVAD](./vad) -- Voice activity detection
-- [CalibraVocalRange](./vocal-range) -- Detect a singer's vocal range
+- [PitchDetection](../tona/pitch-detection) — pitch detection without scoring
+- [CalibraVAD](./vad) — voice activity detection
+- [TesseraRange](../tessera/range) — detect a singer's vocal range
+- [Audio latency](../concepts/audio-latency) — `AudioBuffer.timestamp` + `audibleTimeMsAtWallNanos` background

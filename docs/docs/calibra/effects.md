@@ -338,6 +338,6 @@ if (effects.hasCompressor) {
 
 ## Next Steps
 
-- [CalibraPitch](./pitch) -- Real-time pitch detection
-- [CalibraVAD](./vad) -- Voice activity detection
-- [CalibraVocalRange](./vocal-range) -- Vocal range detection
+- [PitchDetection](../tona/pitch-detection) — real-time pitch detection
+- [CalibraVAD](./vad) — voice activity detection
+- [TesseraRange](../tessera/range) — vocal range detection

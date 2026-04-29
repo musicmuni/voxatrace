@@ -128,8 +128,14 @@ val effects = CalibraEffects.create(EffectsPreset.VOCAL_CHAIN)
 // Minimal processing for practice/learning
 val effects = CalibraEffects.create(EffectsPreset.PRACTICE)
 
-// Voice recording: gate + light compression
-val effects = CalibraEffects.create(EffectsPreset.VOICE)
+// Aggressive recording chain: heavy gate + heavy compression + subtle reverb
+val effects = CalibraEffects.create(EffectsPreset.RECORDING)
+```
+
+`EffectsPreset` values: `VOCAL_CHAIN`, `PRACTICE`, `RECORDING`, `DRY`, `WET`, `CLEAN`. There is no `EffectsPreset.VOICE`. For a voice-recording preset built from a `CalibraEffectsConfig` (gate + light compression), use `CalibraEffectsConfig.VOICE` instead — note that's a different type from `EffectsPreset`:
+
+```kotlin
+val effects = CalibraEffects.create(CalibraEffectsConfig.VOICE)
 ```
 
 ### Custom Chain
@@ -309,7 +315,7 @@ effects.setReverbMix(0.1f)  // Start low, increase gradually
 
 The compressor may be squashing too hard:
 - Raise threshold
-- Use `CompressorPreset.GENTLE`
+- Use `CompressorPreset.TRANSPARENT` (subtle 1.5:1 ratio that preserves dynamics)
 
 ## Next Steps
 

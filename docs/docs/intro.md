@@ -34,39 +34,45 @@ Eight years of R&D. Five million users in production. All running natively on An
 ## What You Get
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                         VoxaTrace                               │
-├──────────────────────────────┬──────────────────────────────────┤
-│           Sonix              │            Calibra               │
-│       (Audio Engine)         │      (Acoustic Analysis)         │
-├──────────────────────────────┼──────────────────────────────────┤
-│  • Multi-track playback (8)  │  • Pitch detection (YIN/SwiftF0) │
-│  • Recording (M4A/MP3)       │  • Voice activity detection      │
-│  • Pitch shifting ±12 semi   │  • Singing evaluation & scoring  │
-│  • Tempo control 0.5x–2x     │  • Vocal range detection         │
-│  • MIDI synthesis (SoundFont)│  • Audio effects chain           │
-│  • Metronome with callbacks  │  • Octave error correction       │
-└──────────────────────────────┴──────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                              VoxaTrace                                 │
+├──────────────┬──────────────┬──────────────┬──────────────┬────────────┤
+│    Sonix     │     Tona     │   Tessera    │   Accura     │  Calibra   │
+│  Audio I/O   │    Pitch     │ Voice metrics│ Intonation   │  Singing   │
+│              │              │              │ scoring      │  eval      │
+├──────────────┼──────────────┼──────────────┼──────────────┼────────────┤
+│ • Player     │ • Detection  │ • Breath     │ • EQ / JI    │ • LiveEval │
+│ • Recorder   │ • Processing │ • Agility    │   per-swara  │ • MelodyEval│
+│ • Mixer      │ • Analysis   │ • Range      │   deviation  │ • NoteEval │
+│ • Encoder    │   (histogram │ • Speaking   │ • 0–100      │ • VAD      │
+│ • Decoder    │   transcr.)  │   pitch      │   scoring    │ • Effects  │
+│ • Metronome  │              │              │              │            │
+│ • MIDI synth │              │              │              │            │
+└──────────────┴──────────────┴──────────────┴──────────────┴────────────┘
+
+           Common: MusicTheory (Hz/MIDI/cents conversions, shruti alignment)
 ```
 
 ## Performance
 
 | Metric | Specification |
 | ------ | ------------- |
-| Pitch detection latency | ~50ms |
-| Frequency range | 50 Hz – 2000 Hz |
-| Confidence threshold | 0.0 – 1.0 (recommended > 0.7) |
-| Simultaneous tracks | Up to 8 synchronized |
-| Sample rates | Auto-resampling to 16kHz |
+| Pitch detection latency | ~64 ms (1024-sample window at 16 kHz, BALANCED) |
+| Default frequency range | 80 Hz – 1000 Hz (configurable per `VoiceType`) |
+| SwiftF0 model range | 46.875 Hz – 2093.75 Hz |
+| Confidence threshold | 0.0 – 1.0 (default 0.75 for BALANCED) |
+| Sample rates | Auto-resampling to 16 kHz internally (ADR-017) |
 | Minimum Android | API 24 (Android 7.0) |
-| Minimum iOS | iOS 14 |
+| Minimum iOS | iOS 15 |
 
 ## Hello, Pitch Detection
 
 ### Kotlin
 
 ```kotlin
-val detector = CalibraPitch.createDetector()
+VT.initializeForServer("sk_live_…")  // see Authentication guide for mobile init
+
+val detector = PitchDetection.createDetector()
 val point = detector.detect(audioSamples, sampleRate = 16000)
 println("${point.pitch} Hz @ ${(point.confidence * 100).toInt()}% confidence")
 detector.close()
@@ -75,7 +81,7 @@ detector.close()
 ### Swift
 
 ```swift
-let detector = CalibraPitch.createDetector()
+let detector = PitchDetection.createDetector()
 let point = detector.detect(samples: audioSamples, sampleRate: 16000)
 print("\(point.pitch) Hz @ \(Int(point.confidence * 100))% confidence")
 detector.close()
@@ -105,10 +111,10 @@ detector.close()
 
 ```kotlin
 // Tier 1: Just works
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 
 // Tier 2: Configurable
-val detector = CalibraPitch.createDetector(
+val detector = PitchDetection.createDetector(
     PitchDetectorConfig.Builder()
         .algorithm(PitchAlgorithm.SWIFT_F0)
         .build()
@@ -143,22 +149,26 @@ val config = PitchDetectorConfig.PRECISE.copy(confidenceThreshold = 0.6f)
 
 ### Module Deep Dives
 
-- [Calibra Overview](./calibra/overview) – Acoustic analysis features
-- [Sonix Overview](./sonix/overview) – Audio engine features
+- [Sonix](./sonix/overview) – Audio engine (player, recorder, mixer, encoder, decoder, …)
+- [Tona](./tona/overview) – Pitch detection / processing / analysis
+- [Tessera](./tessera/overview) – Voice metrics (breath, agility, range, speaking pitch)
+- [Accura](./accura/overview) – Intonation analysis and 0–100 scoring
+- [Calibra](./calibra/overview) – Singing evaluation (LiveEval / MelodyEval / NoteEval / VAD / Effects)
+- [Common: MusicTheory](./common/music-theory) – Pitch ↔ MIDI ↔ note ↔ cents conversions, shruti alignment
 
 ## Installation
 
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.musicmuni:voxatrace:0.9.2")
+    implementation("com.musicmuni:voxatrace:2.0.0")
 }
 ```
 
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.2")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "2.0.0")
 ]
 ```
 

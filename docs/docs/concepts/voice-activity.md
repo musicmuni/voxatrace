@@ -31,7 +31,7 @@ VAD analyzes audio and returns:
 
 ## Backends
 
-VoxaTrace offers four VAD backends optimized for different scenarios:
+VoxaTrace offers three public VAD backends optimized for different scenarios:
 
 ### General (Energy-based)
 
@@ -127,11 +127,12 @@ The `analyze()` method returns a `VADResult`:
 
 ```kotlin
 data class VADResult(
-    val ratio: Float,              // 0.0 to 1.0
-    val level: VoiceActivityLevel, // NONE, PARTIAL, FULL
-    val isVoiceDetected: Boolean,  // ratio > 0.3
-    val isFullActivity: Boolean    // ratio > 0.7
-)
+    val ratio: Float,                  // 0.0 to 1.0
+    val level: VoiceActivityLevel,     // NONE, PARTIAL, FULL
+) {
+    val isVoiceDetected: Boolean get() = ratio > 0.5f
+    val isFullActivity: Boolean get() = level == VoiceActivityLevel.FULL
+}
 ```
 
 Use the level for UI feedback:
@@ -160,7 +161,7 @@ val vad = CalibraVAD.create(config, VADModelProvider.Speech { ... })
 | Threshold | Behavior |
 |-----------|----------|
 | 0.2 | Very sensitive, catches faint voice |
-| 0.4 | Balanced (default for Speech) |
+| 0.5 | Balanced (default for `VADConfig.SPEECH`) |
 | 0.6 | Strict, requires clear voice |
 | 0.8 | Very strict, only loud/clear voice |
 

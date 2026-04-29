@@ -1,10 +1,11 @@
 import SwiftUI
 
-/// Pitch detection and processing demos using Calibra public API.
+/// Pitch detection and processing demos using Tona public API
+/// (PitchDetection / PitchProcessing / PitchAnalysis).
 ///
 /// Demonstrates:
 /// - Real-time pitch detection with tiered builder API (YIN + SwiftF0)
-/// - Batch pitch extraction with ContourCleanup presets
+/// - Batch pitch extraction with PitchProcessingConfig cleanup presets
 /// - Cleanup comparison (RAW vs SCORING vs DISPLAY)
 /// - PitchPoint computed properties explorer
 struct PitchView: View {

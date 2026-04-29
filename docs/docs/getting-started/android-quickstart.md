@@ -68,7 +68,9 @@ class MainActivity : AppCompatActivity() {
 ## Step 2: Create the Pitch Detector
 
 ```kotlin
-import com.musicmuni.voxatrace.calibra.CalibraPitch
+import com.musicmuni.voxatrace.VT
+import com.musicmuni.voxatrace.tona.PitchDetection
+import com.musicmuni.voxatrace.tona.detection.PitchDetector
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
 import kotlinx.coroutines.*
@@ -76,16 +78,21 @@ import kotlinx.coroutines.flow.collect
 
 class MainActivity : AppCompatActivity() {
     private var recorder: SonixRecorder? = null
-    private var detector: CalibraPitch.Detector? = null
+    private var detector: PitchDetector? = null
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private fun startPitchDetection() {
+        // Initialize the SDK once before any other VoxaTrace API call.
+        // For production mobile apps, prefer VT.initialize(proxyEndpoint = ...)
+        // or VT.initializeWithAttestation(...) — see the Authentication guide.
+        VT.initializeForServer(apiKey = "sk_live_your_key_here", context = applicationContext)
+
         scope.launch {
             // Create recorder with default voice settings
             recorder = SonixRecorder.createTemporary(SonixRecorderConfig.VOICE)
 
             // Create pitch detector with default settings
-            detector = CalibraPitch.createDetector()
+            detector = PitchDetection.createDetector()
 
             // Start recording
             recorder?.start()
@@ -219,11 +226,11 @@ fun PitchDetectorScreen() {
 
     DisposableEffect(Unit) {
         var recorder: SonixRecorder? = null
-        var detector: CalibraPitch.Detector? = null
+        var detector: PitchDetector? = null
 
         scope.launch {
             recorder = SonixRecorder.createTemporary(SonixRecorderConfig.VOICE)
-            detector = CalibraPitch.createDetector()
+            detector = PitchDetection.createDetector()
             recorder?.start()
 
             recorder?.audioBuffers?.collect { buffer ->

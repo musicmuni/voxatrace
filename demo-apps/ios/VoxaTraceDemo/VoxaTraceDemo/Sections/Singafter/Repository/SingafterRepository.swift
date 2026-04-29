@@ -87,7 +87,7 @@ final class BundleSingafterRepository: SingafterRepositoryProtocol, @unchecked S
         if let pitchURL = Bundle.main.url(forResource: name, withExtension: "pitchPP"),
            let pitchContent = try? String(contentsOf: pitchURL),
            let pitchData = SonixParser.parsePitchString(content: pitchContent) {
-pitchContour = pitchData.toContour()
+            pitchContour = pitchData.toContour()
         }
 
         // 6. Create LessonMaterial

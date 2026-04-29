@@ -245,9 +245,3 @@ final class BackendComparisonViewModel: ObservableObject {
         }
     }
 }
-
-import SwiftUI
-
-extension BackendComparisonViewModel {
-    // SwiftUI Color helper that needs to be in an extension with SwiftUI import
-}

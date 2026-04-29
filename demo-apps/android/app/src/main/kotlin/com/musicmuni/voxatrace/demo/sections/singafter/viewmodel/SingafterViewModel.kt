@@ -30,7 +30,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
-import android.util.Log
+import io.github.aakira.napier.Napier
 import java.io.FileOutputStream
 import java.util.UUID
 
@@ -293,9 +293,12 @@ class SingafterViewModel : ViewModel() {
                     studentStartSeconds = pair.studentStartTime,
                     studentEndSeconds = pair.studentEndTime
                 )
-                Log.d("SINGAFTER-DEBUG", "Segment $index: start=${segment.startSeconds}, end=${segment.endSeconds}, " +
-                    "studentStart=${segment.studentStartSeconds}, studentEnd=${segment.studentEndSeconds}, " +
-                    "isSingafter=${segment.isSingafter}, effectiveStudentStart=${segment.effectiveStudentStart}")
+                Napier.d(
+                    tag = "SINGAFTER",
+                    message = "Segment $index: start=${segment.startSeconds}, end=${segment.endSeconds}, " +
+                        "studentStart=${segment.studentStartSeconds}, studentEnd=${segment.studentEndSeconds}, " +
+                        "isSingafter=${segment.isSingafter}, effectiveStudentStart=${segment.effectiveStudentStart}"
+                )
                 segment
             }
 

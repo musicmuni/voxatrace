@@ -1,7 +1,7 @@
 package com.musicmuni.voxatrace.demo.sections.pitch.model
 
-import com.musicmuni.voxatrace.tona.model.PitchProcessingConfig as ContourCleanup
 import com.musicmuni.voxatrace.tona.model.DetectionStrictness
+import com.musicmuni.voxatrace.tona.model.PitchProcessingConfig
 import com.musicmuni.voxatrace.tona.model.PitchAlgorithm
 import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
 import com.musicmuni.voxatrace.tona.model.PitchPreset
@@ -112,18 +112,18 @@ data class StrictnessInfo(
 }
 
 /**
- * Information about contour cleanup presets.
+ * Information about pitch-processing cleanup presets.
  */
 data class CleanupPresetInfo(
-    val cleanup: ContourCleanup,
+    val cleanup: PitchProcessingConfig,
     val name: String,
     val description: String
 ) {
     companion object {
         val all = listOf(
-            CleanupPresetInfo(ContourCleanup.RAW, "RAW", "No post-processing"),
-            CleanupPresetInfo(ContourCleanup.SCORING, "SCORING", "Octave + boundary + blip fix"),
-            CleanupPresetInfo(ContourCleanup.DISPLAY, "DISPLAY", "Scoring + smoothing")
+            CleanupPresetInfo(PitchProcessingConfig.RAW, "RAW", "No post-processing"),
+            CleanupPresetInfo(PitchProcessingConfig.SCORING, "SCORING", "Octave + boundary + blip fix"),
+            CleanupPresetInfo(PitchProcessingConfig.DISPLAY, "DISPLAY", "Scoring + smoothing")
         )
     }
 }

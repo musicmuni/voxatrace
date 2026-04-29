@@ -7,16 +7,134 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0]
+
+Major release. Reorganises the SDK into five public modules (`sonix`,
+`tona`, `tessera`, `accura`, `calibra`) plus a shared `common` utility
+namespace, and introduces `Accura` as a new top-level facade for
+intonation scoring. Existing 1.x consumers continue to compile against
+the deprecated `Calibra*` shells; new code should target the permanent
+homes documented below.
+
+### Breaking changes
+
+- **`Accura.analyzePitching` and `Accura.calculateScore` failure
+  semantics (ADR-022).** `analyzePitching` is now non-null and returns
+  `IntonationAnalysisResult` with an `error: String?` field for
+  domain-level inconclusive outcomes (e.g. fewer than three histogram
+  peaks); precondition violations (empty contour, `tonicHz <= 0`,
+  empty `scaleNoteNames`) throw `IllegalArgumentException` instead of
+  silently returning `null`. `calculateScore` requires
+  `result.error == null` and a non-empty `result.swaras` — passing an
+  inconclusive result throws. Pre-2.0 callers that null-checked the
+  outer result must migrate to checking `result.error`.
+
 ### Added
 
+#### New public facades
+
+- **Pitch (`tona`).** `PitchDetection`, `PitchProcessing`, and
+  `PitchAnalysis`. `PitchDetection` produces realtime `PitchDetector`
+  instances and batch `PitchContourExtractor` instances; `PitchProcessing`
+  exposes the full batch cleanup pipeline (octave correction → blip
+  removal → smoothing) plus 14 individual array-level operations
+  (`smooth`, `medianFilter`, `iqrFilter`, `dbscanFilter`, `removeBlips`,
+  `interpolateSilence`, masking, segmentation, resampling); `PitchAnalysis`
+  covers histograms, tuning estimation, quantization, mean-pitch
+  labelling, and piecewise linear segment fitting.
+- **Voice metrics (`tessera`).** `Tessera.analyze` (multi-metric batch),
+  `TesseraSession` (multi-metric streaming, 10-minute cap),
+  `TesseraBreath` (capacity / control / reference comparison),
+  `TesseraAgility` (10-stage pipeline + 0–1 score),
+  `TesseraRange` (batch range + 13-dim search vector + matching) and
+  `TesseraRangeSession` (guided phase-driven flow with observable state),
+  `TesseraSpeakingPitch` (median-F0 detection from speech).
+- **Intonation (`accura`).** `Accura.analyzePitching` returns per-swara
+  deviation against EQ (12-TET) or JI (just-intonation) target intervals
+  with optional global tuning-offset alignment;
+  `Accura.calculateScore` produces a 0–100 score with a piecewise-linear
+  grading scale and a small-sample outlier-robust adjustment.
+- **Music theory (`common`).** `MusicTheory` is the canonical home for
+  pitch ↔ MIDI ↔ note-label ↔ cents conversions, 12-TET / Just Intonation
+  interval generators, the chromatic / Carnatic / Hindustani note-name
+  constants, and shruti helpers.
+
+#### New / extended APIs on existing facades
+
+- **`MusicTheory.alignShruti(userShrutiHz, refKeyHz, maxFineTuneSemitones = 2f)`.**
+  Computes a student's practice shruti relative to the lesson key in
+  pitch-class space and returns `ShrutiAlignmentResult` with
+  `practiceShrutiHz`, `shiftSemitones`, and a list of
+  `ShrutiOption` values (5 by default) for picker UIs. Each option is
+  anchored at the octave nearest to the student's shruti.
 - **`MusicTheory.deriveUserShruti(nspHz, rangeLowHz, rangeHighHz, rangeThresholdSemitones)`.**
-  Computes the user's practice shruti from their NSP and most-recent vocal
-  range, applying the policy from Musicmuni research synthesis (§B7).
-  Returns `UserShrutiDerivation { targetHz, source }` where `source ∈
-  {NSP_NO_RANGE, NSP_NARROW_RANGE, VOCAL_RANGE}`. Below 18 st of measured
-  range, falls back to NSP; at or above, applies `Sa = max(rangeLow + 7,
-  nspMidi − 2)` clipped to `[rangeHigh − 17, rangeHigh − 12]`. Caller maps
-  `targetHz` to a shruti id in their shruti map.
+  Computes the user's practice shruti from their natural speaking pitch
+  (NSP) and most-recent vocal range, applying the policy from Musicmuni
+  research synthesis (§B7). Returns `UserShrutiDerivation { targetHz, source }`
+  where `source ∈ {NSP_NO_RANGE, NSP_NARROW_RANGE, VOCAL_RANGE}`. Below
+  18 st of measured range, falls back to NSP; at or above, applies
+  `Sa = max(rangeLow + 7, nspMidi − 2)` clipped to
+  `[rangeHigh − 17, rangeHigh − 12]`.
+- **`PitchDetector.feedContour(samples, sampleRate, anchorTime)` and
+  `PitchDetector.pitchAt(timeSeconds)`** are the canonical streaming
+  contour APIs. `feedContour` writes into `livePitchContour` /
+  `livePitch`, back-spread from the supplied anchor by the detector's
+  hop. `pitchAt` returns the closest contour point via binary search.
+- **`PitchDetector.clearPitchContourFrom(timeSeconds)`** for
+  segment-aware retry/seek-back: drops points at or after `timeSeconds`,
+  keeps earlier ones.
+
+### Changed
+
+- **Default frequency-detection range.** `PitchDetectorConfig.BALANCED`
+  defaults to 80 Hz – 1000 Hz (was previously documented as 50–2000).
+  SwiftF0 model range remains 46.875 Hz – 2093.75 Hz.
+
+### Deprecated
+
+The following shells are retained for source compatibility and delegate
+to the new facades; they will be removed in 3.0.0.
+
+| Deprecated | Replacement |
+|------------|-------------|
+| `CalibraPitch.createDetector` / `createContourExtractor` | `tona.PitchDetection.createDetector` / `createContourExtractor` |
+| `CalibraPitch.PostProcess.*` | `tona.PitchProcessing.*` |
+| `CalibraPitch.Detector` (nested type) | `tona.detection.PitchDetector` |
+| `ContourExtractorConfig` (in `calibra`) | `tona.model.ContourExtractorConfig` (typealias retained) |
+| `CalibraBreath.*` | `tessera.TesseraBreath.*` (new contract on `PitchContour` instead of parallel arrays; `BreathScore.capacity` is nullable rather than `-1f` sentinel) |
+| `CalibraVocalRange` | `tessera.TesseraRange.computeVocalRange` (batch) |
+| `VocalRangeSession` (in `calibra`) | `tessera.TesseraRangeSession` |
+| `CalibraSpeakingPitch.*` | `tessera.TesseraSpeakingPitch.*` (failure sentinel is `0`, not `-1`) |
+| `CalibraMusic.*` | `common.MusicTheory.*` |
+
+Permanent calibra facades are unchanged: `CalibraLiveEval`,
+`CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`, `CalibraEffects`.
+
+### Migration
+
+```kotlin
+// Before
+val detector = CalibraPitch.createDetector(PitchDetectorConfig.BALANCED)
+val cleaned = CalibraPitch.PostProcess.cleanup(contour, ContourCleanup.SCORING)
+val capacity = CalibraBreath.computeCapacity(times, pitchesHz)
+val midi = CalibraMusic.hzToMidi(440f)
+
+// After
+val detector = PitchDetection.createDetector(PitchDetectorConfig.BALANCED)
+val cleaned = PitchProcessing.process(contour, PitchProcessingConfig.SCORING)
+val score = TesseraBreath.computeScore(PitchContour.fromArrays(times, pitchesHz))
+val capacity = score.capacity   // null if too short to detect a phrase
+val midi = MusicTheory.hzToMidi(440f)
+```
+
+There is no `ContourCleanup` enum — the cleanup field on
+`ContourExtractorConfig` is typed as `PitchProcessingConfig` with presets
+`RAW`, `SCORING`, `DISPLAY`.
+
+`Accura` failure semantics (ADR-022): always inspect `result.error`
+before reading `result.swaras` or passing the result to
+`Accura.calculateScore`. Empty inputs throw rather than returning a
+wrapped failure.
 
 ## [1.0.1] - 2026-04-25
 

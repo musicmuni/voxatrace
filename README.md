@@ -30,16 +30,21 @@ Eight years of R&D. Five million users in production. All running natively on An
 ## What You Get
 
 ```
-┌──────────────────────────────┬──────────────────────────────────┐
-│           Sonix              │            Calibra               │
-│       (Audio Engine)         │      (Acoustic Analysis)         │
-├──────────────────────────────┼──────────────────────────────────┤
-│  • Multi-track playback (8)  │  • Pitch detection (YIN/SwiftF0) │
-│  • Recording (M4A/MP3)       │  • Voice activity detection      │
-│  • Pitch shifting ±12 semi   │  • Singing evaluation & scoring  │
-│  • Tempo control 0.5x–2x     │  • Vocal range detection         │
-│  • MIDI synthesis (SoundFont)│  • Audio effects chain           │
-└──────────────────────────────┴──────────────────────────────────┘
+┌──────────────┬──────────────┬──────────────┬──────────────┬────────────┐
+│    Sonix     │     Tona     │   Tessera    │    Accura    │  Calibra   │
+│  Audio I/O   │    Pitch     │ Voice metrics│ Intonation   │  Singing   │
+│              │              │              │ scoring      │  eval      │
+├──────────────┼──────────────┼──────────────┼──────────────┼────────────┤
+│ • Player     │ • Detection  │ • Breath     │ • EQ / JI    │ • LiveEval │
+│ • Recorder   │ • Processing │ • Agility    │   per-swara  │ • MelodyEv │
+│ • Mixer      │ • Analysis   │ • Range      │   deviation  │ • NoteEval │
+│ • Encoder    │   (histogram │ • Speaking   │ • 0–100      │ • VAD      │
+│ • Decoder    │   transcr.)  │   pitch      │   scoring    │ • Effects  │
+│ • Metronome  │              │              │              │            │
+│ • MIDI synth │              │              │              │            │
+└──────────────┴──────────────┴──────────────┴──────────────┴────────────┘
+
+           Common: MusicTheory (Hz/MIDI/cents conversions, shruti alignment)
 ```
 
 ## Installation
@@ -48,7 +53,7 @@ Eight years of R&D. Five million users in production. All running natively on An
 
 ```kotlin
 dependencies {
-    implementation("com.musicmuni:voxatrace:0.9.2")
+    implementation("com.musicmuni:voxatrace:2.0.0")
 }
 ```
 
@@ -56,7 +61,7 @@ dependencies {
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.2")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "2.0.0")
 ]
 ```
 
@@ -71,7 +76,8 @@ pod 'VoxaTrace', :podspec => 'https://raw.githubusercontent.com/musicmuni/voxatr
 ### Kotlin
 
 ```kotlin
-val detector = CalibraPitch.createDetector()
+VT.initializeForServer("sk_live_…")  // see docs for proxy / attestation flows on mobile
+val detector = PitchDetection.createDetector()
 val point = detector.detect(audioSamples, sampleRate = 16000)
 println("${point.pitch} Hz @ ${(point.confidence * 100).toInt()}% confidence")
 detector.close()
@@ -80,7 +86,7 @@ detector.close()
 ### Swift
 
 ```swift
-let detector = CalibraPitch.createDetector()
+let detector = PitchDetection.createDetector()
 let point = detector.detect(samples: audioSamples, sampleRate: 16000)
 print("\(point.pitch) Hz @ \(Int(point.confidence * 100))% confidence")
 detector.close()
@@ -96,11 +102,11 @@ detector.close()
 
 | Metric | Specification |
 | ------ | ------------- |
-| Pitch detection latency | ~50ms |
-| Frequency range | 50 Hz – 2000 Hz |
-| Simultaneous tracks | Up to 8 synchronized |
+| Pitch detection latency | ~64 ms (1024-sample window at 16 kHz, BALANCED) |
+| Default frequency range | 80 Hz – 1000 Hz (configurable per `VoiceType`) |
+| Sample rates | Auto-resampling to 16 kHz internally (ADR-017) |
 | Minimum Android | API 24 (Android 7.0) |
-| Minimum iOS | iOS 14 |
+| Minimum iOS | iOS 15 |
 
 ## Documentation
 

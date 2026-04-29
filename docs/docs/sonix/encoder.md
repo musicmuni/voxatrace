@@ -129,13 +129,17 @@ if (SonixEncoder.isFormatAvailable("mp3")) {
 }
 ```
 
+`isFormatAvailable` returns `true` for `"m4a"`, `"aac"`, `"mp3"`, and `"wav"` (1.0.0+); any other string returns `false`.
+
 ## Supported Formats
 
 | Format | String | Quality | Use Case |
 |--------|--------|---------|----------|
 | M4A/AAC | `"m4a"` or `"aac"` | Best | Default choice, native hardware encoding |
 | MP3 | `"mp3"` | Good | Universal compatibility |
-| WAV | `"wav"` | Lossless | Uncompressed, no quality loss |
+| WAV | `"wav"` (1.0.0+) | Lossless | Uncompressed, no quality loss; `bitrateKbps` is **ignored** |
+
+`encode` is a synchronous (blocking) call — for non-trivial outputs, invoke it from a background thread.
 
 ## Bitrate Guide
 

@@ -111,6 +111,31 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 |----------|------|-------------|
 | `segments` | `List<TransSegment>` | Transcription segments |
 
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `toNotesData()` | `NotesData` | Flatten all segments' notes into a single `NotesData` |
+
+#### TransSegment
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `Int` | Segment identifier from the JSON |
+| `type` | `String?` | Segment type. As of 1.0.0, the parser recognizes `"teacher_vocal"`, `"student_vocal"`, and `"commentary"`. `null` when the field is absent. |
+| `lyrics` | `String` | Lyrics for the segment |
+| `timeStamp` | `List<Double>` | Two-element segment time bounds (parsed from `time_stamp`) |
+| `trans` | `List<TransNote>` | Per-note transcription within the segment |
+| `startTime` | `Double` | First element of `timeStamp` |
+| `endTime` | `Double` | Last element of `timeStamp` |
+
+#### TransNote
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `tStart` | `Double` | Note start (seconds; parsed from `t_start`) |
+| `tEnd` | `Double` | Note end (seconds; parsed from `t_end`) |
+| `freqHz` | `Double` | Frequency in Hz |
+| `label` | `String` | Note label (svara name) |
+
 ## SonixFrames
 
 Convert between audio frame indices and time values. Useful for aligning analysis results with audio timestamps.
@@ -166,6 +191,10 @@ Error information reported by Sonix APIs via StateFlows. Used instead of throwin
 |----------|------|-------------|
 | `message` | `String` | Human-readable error description |
 | `cause` | `Throwable?` | Original exception (if available) |
+
+## Exceptions
+
+`SonixException` is a typed exception thrown for setup errors that cannot be modeled as state-flow errors (e.g., decoding a corrupt file). `SonixKilledException` is a typealias for `VoxaTraceKilledException` and is thrown by factory methods when licensing fails (see [Authentication](../guides/authentication)).
 
 ### Usage
 

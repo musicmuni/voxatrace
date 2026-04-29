@@ -24,7 +24,7 @@ A complete guide to real-time singing evaluation with CalibraLiveEval.
 
 ```kotlin
 // 1. Create detector and session
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
     detector = detector
@@ -36,9 +36,13 @@ session.prepareSession()
 // 3. Start segment
 session.startPracticingSegment(0)
 
-// 4. Feed audio
+// 4. Feed audio (pass buffer.timestamp for hardware-clock alignment, 1.0.1+)
 recorder.audioBuffers.collect { buffer ->
-    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
 }
 
 // 5. Get result
@@ -53,7 +57,7 @@ session.closeSession()
 
 ```swift
 // 1. Create detector and session
-let detector = CalibraPitch.createDetector()
+let detector = PitchDetection.createDetector()
 let session = CalibraLiveEval.create(
     reference: lessonMaterial,
     detector: detector
@@ -65,9 +69,13 @@ try await session.prepareSession()
 // 3. Start segment
 session.startPracticingSegment(index: 0)
 
-// 4. Feed audio
+// 4. Feed audio (pass buffer.timestamp for hardware-clock alignment, 1.0.1+)
 for await buffer in recorder.audioBuffersStream() {
-    session.feedAudioSamples(buffer.samples, sampleRate: Int(buffer.sampleRate))
+    session.feedAudioSamples(
+        samples: buffer.samples,
+        sampleRate: Int32(buffer.sampleRate),
+        captureTimestampNanos: buffer.timestamp
+    )
 }
 
 // 5. Get result
@@ -97,7 +105,11 @@ session.startPracticingSegment(0)
 // You manage recorder
 recorder.start()
 recorder.audioBuffers.collect { buffer ->
-    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
 }
 recorder.stop()
 
@@ -255,7 +267,7 @@ class PracticeViewModel : ViewModel() {
     val currentResult = MutableStateFlow<SegmentResult?>(null)
 
     suspend fun startSession(lesson: LessonMaterial, player: SonixPlayer, recorder: SonixRecorder) {
-        val detector = CalibraPitch.createDetector()
+        val detector = PitchDetection.createDetector()
 
         session = CalibraLiveEval.create(
             reference = lesson,

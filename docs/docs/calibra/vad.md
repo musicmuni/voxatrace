@@ -253,6 +253,6 @@ class VoiceDetectionViewModel : ViewModel() {
 
 ## Next Steps
 
-- [CalibraPitch](./pitch) — Detect what note is being sung (not just voice presence)
-- [CalibraLiveEval](./live-eval) — Live singing evaluation (uses VAD internally)
-- [CalibraVocalRange](./vocal-range) — Detect singer's comfortable range
+- [PitchDetection](../tona/pitch-detection) — detect what note is being sung (not just voice presence)
+- [CalibraLiveEval](./live-eval) — live singing evaluation (uses VAD internally)
+- [TesseraRange](../tessera/range) — detect singer's comfortable range

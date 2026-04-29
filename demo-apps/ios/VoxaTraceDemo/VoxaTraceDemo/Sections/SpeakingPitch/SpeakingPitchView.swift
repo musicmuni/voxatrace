@@ -228,15 +228,11 @@ struct SpeakingPitchView: View {
                 .font(.caption)
                 .fontWeight(.medium)
 
-            Text("- SonixDecoder.decode() - Load audio from file")
+            Text("- SonixDecoder.decode() — load audio from file (mono per ADR-017)")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("- SonixResampler.resample() - Resample to 16kHz")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-
-            Text("- TesseraSpeakingPitch.detectFromAudio() - Detect speaking pitch")
+            Text("- TesseraSpeakingPitch.detectFromAudio() — internal resampling per ADR-017")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

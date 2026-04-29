@@ -78,8 +78,10 @@ The decoded result contains:
 | `audioData` | `ByteArray` | Raw PCM bytes (16-bit signed, little-endian) |
 | `samples` | `FloatArray` / `[Float]` | Float samples in [-1.0, 1.0] range |
 | `sampleRate` | `Int` | Sample rate in Hz |
-| `numChannels` | `Int` | Number of channels (1 = mono, 2 = stereo) |
+| `numChannels` | `Int` | Number of channels in the **decoded output** (always `1` — see note below) |
 | `durationMilliSecs` | `Int` | Duration in milliseconds |
+
+`SonixDecoder.decode()` always returns mono (per ADR-017). Multi-channel inputs are downmixed to mono by averaging channels before any optional resampling. Apps that bypass `SonixDecoder` and feed audio directly to processing facades are responsible for mono conversion themselves.
 
 ## Supported Formats
 

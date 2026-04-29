@@ -360,7 +360,7 @@ class PracticeSession(
     private val results = mutableListOf<SegmentResult>()
 
     suspend fun start(player: SonixPlayer, recorder: SonixRecorder) {
-        val detector = CalibraPitch.createDetector()
+        val detector = PitchDetection.createDetector()
 
         session = CalibraLiveEval.create(
             reference = song.lessonMaterial,

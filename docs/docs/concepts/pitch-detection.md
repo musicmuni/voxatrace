@@ -63,12 +63,12 @@ A deep learning model trained on singing and speech data.
 
 ```kotlin
 // YIN - no dependencies, good for simple apps
-val detector = CalibraPitch.createDetector(
+val detector = PitchDetection.createDetector(
     PitchDetectorConfig.BALANCED
 )
 
 // SwiftF0 - better accuracy, requires model
-val detector = CalibraPitch.createDetector(
+val detector = PitchDetection.createDetector(
     PitchDetectorConfig.Builder()
         .algorithm(PitchAlgorithm.SWIFT_F0)
         .build(),
@@ -139,7 +139,7 @@ val config = PitchDetectorConfig.Builder()
     .build()
 
 // Or fix in post-processing
-val corrected = CalibraPitch.PostProcess.correctOctaveErrors(pitches)
+val corrected = PitchProcessing.correctOctaveErrors(pitches)
 ```
 
 ### Voiced vs. Unvoiced
@@ -164,7 +164,7 @@ if (point.pitch > 0) {
 For live audio streams - process one buffer at a time:
 
 ```kotlin
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 recorder.audioBuffers.collect { buffer ->
     val point = detector.detect(buffer.toFloatArray(), buffer.sampleRate)
     updateUI(point)
@@ -177,7 +177,7 @@ detector.close()
 For recorded audio files - process the entire file at once:
 
 ```kotlin
-val extractor = CalibraPitch.createContourExtractor(ContourExtractorConfig.SCORING)
+val extractor = PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)
 val contour = extractor.extract(audioSamples, sampleRate = 16000)
 // contour.samples contains all pitch points with timestamps
 extractor.release()
@@ -195,7 +195,7 @@ Human singing typically spans:
 | Alto | F3 (175 Hz) | F5 (698 Hz) |
 | Soprano | C4 (262 Hz) | C6 (1047 Hz) |
 
-VoxaTrace detects 50 Hz to 2000 Hz by default. Customize for your use case:
+The default `PitchDetectorConfig` covers 80–1000 Hz (BALANCED). The SwiftF0 model itself ranges 46.875–2093.75 Hz. Customize via `voiceType`:
 
 ```kotlin
 val config = PitchDetectorConfig.Builder()

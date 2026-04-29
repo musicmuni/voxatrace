@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.musicmuni:voxatrace:0.9.2")
+    implementation("com.musicmuni:voxatrace:2.0.0")
 }
 ```
 
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.musicmuni:voxatrace:0.9.2'
+    implementation 'com.musicmuni:voxatrace:2.0.0'
 }
 ```
 
@@ -59,7 +59,7 @@ Or add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "0.9.2")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "2.0.0")
 ]
 ```
 
@@ -93,7 +93,7 @@ Add microphone usage description for recording:
 
 | VoxaTrace | Android Min SDK | iOS Min | Kotlin |
 |-----------|-----------------|---------|--------|
-| 0.9.x     | API 24 (7.0)    | iOS 14  | 1.9+   |
+| 2.0.x     | API 24 (7.0)    | iOS 15  | 1.9+   |
 
 ## Authentication
 

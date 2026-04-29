@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Detecting Pitch
 
-A complete guide to pitch detection with CalibraPitch.
+A complete guide to pitch detection with `PitchDetection` (in `tona`). For the full type reference see [PitchDetection](../tona/pitch-detection) and [PitchProcessing](../tona/pitch-processing); this guide is task-oriented.
 
 ## What You'll Learn
 
@@ -23,7 +23,7 @@ A complete guide to pitch detection with CalibraPitch.
 ### Kotlin
 
 ```kotlin
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 
 recorder.audioBuffers.collect { buffer ->
     val samples = buffer.toFloatArray()
@@ -40,7 +40,7 @@ detector.close()
 ### Swift
 
 ```swift
-let detector = CalibraPitch.createDetector()
+let detector = PitchDetection.createDetector()
 
 for await buffer in recorder.audioBuffersStream() {
     let samples = buffer.samples
@@ -60,10 +60,10 @@ detector.close()
 
 ```kotlin
 // Create detector with defaults
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 
 // Or with preset
-val detector = CalibraPitch.createDetector(PitchDetectorConfig.BALANCED)
+val detector = PitchDetection.createDetector(PitchDetectorConfig.BALANCED)
 ```
 
 ### Processing Audio
@@ -111,7 +111,7 @@ if (point.confidence > 0.7f) {
 Classic DSP algorithm. No external dependencies.
 
 ```kotlin
-val detector = CalibraPitch.createDetector(
+val detector = PitchDetection.createDetector(
     PitchDetectorConfig.Builder()
         .algorithm(PitchAlgorithm.YIN)
         .build()
@@ -128,7 +128,7 @@ Best for:
 Deep learning model with better accuracy in noisy conditions.
 
 ```kotlin
-val detector = CalibraPitch.createDetector(
+val detector = PitchDetection.createDetector(
     PitchDetectorConfig.Builder()
         .algorithm(PitchAlgorithm.SWIFT_F0)
         .build(),
@@ -193,7 +193,7 @@ val config = PitchDetectorConfig.Builder()
 Extract complete pitch contours from recorded audio:
 
 ```kotlin
-val extractor = CalibraPitch.createContourExtractor(
+val extractor = PitchDetection.createContourExtractor(
     ContourExtractorConfig.SCORING,
     modelProvider = { ModelLoader.loadSwiftF0() }
 )
@@ -228,22 +228,27 @@ val config = ContourExtractorConfig.RAW
 val config = ContourExtractorConfig.Builder()
     .preset(ContourExtractorConfig.SCORING)
     .hopMs(10)  // 10ms between pitch samples
-    .cleanup(ContourCleanup.SCORING)
+    .cleanup(PitchProcessingConfig.SCORING)
     .build()
 ```
 
+The cleanup field on `ContourExtractorConfig` is typed as `PitchProcessingConfig`. Available presets: `PitchProcessingConfig.RAW`, `SCORING`, `DISPLAY`.
+
 ## Post-Processing
 
-Apply cleanup to existing contours:
+Apply cleanup to existing contours via [`PitchProcessing`](../tona/pitch-processing):
 
 ```kotlin
-// Apply preset cleanup
-val cleaned = CalibraPitch.PostProcess.cleanup(contour, ContourCleanup.SCORING)
+// Apply preset pipeline (octave correction → blip removal → smoothing)
+val cleaned = PitchProcessing.process(contour, PitchProcessingConfig.SCORING)
 
-// Individual operations
-val smoothed = CalibraPitch.PostProcess.smooth(contour)
-val octaveFixed = CalibraPitch.PostProcess.fixOctaveErrors(contour)
-val noBlips = CalibraPitch.PostProcess.removeBlips(contour, minDurationMs = 80f)
+// Or build a custom config
+val config = PitchProcessingConfig.Builder()
+    .fixOctaveErrors(true)
+    .removeSpuriousJumps(false)
+    .smoothingWindowSize(9)
+    .build()
+val cleaned = PitchProcessing.process(contour, config)
 ```
 
 ### Working with Arrays
@@ -252,12 +257,12 @@ val noBlips = CalibraPitch.PostProcess.removeBlips(contour, minDurationMs = 80f)
 val pitches = floatArrayOf(440f, 442f, 880f, 438f)  // Has octave error
 
 // Full processing
-val processed = CalibraPitch.PostProcess.process(pitches)
+val processed = PitchProcessing.process(pitches, PitchProcessingConfig.SCORING)
 
 // Individual operations
-val smoothed = CalibraPitch.PostProcess.smooth(pitches, windowSize = 5)
-val corrected = CalibraPitch.PostProcess.correctOctaveErrors(pitches)
-val filtered = CalibraPitch.PostProcess.medianFilter(pitches, kernelSize = 3)
+val smoothed = PitchProcessing.smooth(pitches, windowSize = 5)
+val corrected = PitchProcessing.correctOctaveErrors(pitches)
+val filtered = PitchProcessing.medianFilter(pitches, kernelSize = 3)
 ```
 
 ## Live Pitch Contour
@@ -318,7 +323,7 @@ data class NoteInfo(
 
 ```kotlin
 class TunerViewModel : ViewModel() {
-    private var detector: CalibraPitch.Detector? = null
+    private var detector: PitchDetector? = null
     private var recorder: SonixRecorder? = null
 
     val note = MutableStateFlow("--")
@@ -326,7 +331,7 @@ class TunerViewModel : ViewModel() {
     val centsOff = MutableStateFlow(0)
 
     fun start() {
-        detector = CalibraPitch.createDetector()
+        detector = PitchDetection.createDetector()
         recorder = SonixRecorder.createTemporary()
 
         recorder?.start()
@@ -400,7 +405,7 @@ class PitchGraphView : View {
 ### Wrong Octave
 
 - Enable processing: `.enableProcessing()`
-- Use post-processing: `PostProcess.correctOctaveErrors()`
+- Use post-processing: `PitchProcessing.correctOctaveErrors(pitches, OctaveCorrectionConfig.FULL)`
 - Try SwiftF0 algorithm (better octave handling)
 
 ### Noisy/Jumpy Readings

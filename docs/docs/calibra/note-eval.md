@@ -17,7 +17,9 @@ val pattern = ExercisePattern(
     notesPerLoop = 3
 )
 
-val studentContour = pitchExtractor.extract(studentAudio, 16000)
+val extractor = PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)
+val studentContour = extractor.extract(studentAudio, 16000)
+extractor.release()
 val result = CalibraNoteEval.evaluate(pattern, studentContour, referenceKeyHz = 261.63f)
 
 println("Score: ${result.scorePercent}%")
@@ -35,7 +37,9 @@ let pattern = ExercisePattern.create(
     notesPerLoop: 3
 )
 
-let studentContour = pitchExtractor.extract(audio: studentAudio, sampleRate: 16000)
+let extractor = PitchDetection.createContourExtractor(config: .scoring)
+let studentContour = extractor.extract(audio: studentAudio, sampleRate: 16000)
+extractor.release()
 let result = CalibraNoteEval.evaluate(
     pattern: pattern,
     student: studentContour,
@@ -55,7 +59,7 @@ for note in result.noteResults {
 | Evaluate scales/exercises | Yes | Per-note scoring |
 | Evaluate complete songs | No | Use `CalibraMelodyEval` |
 | Real-time scoring | No | Use `CalibraLiveEval` |
-| Just detect pitch | No | Use `CalibraPitch` |
+| Just detect pitch | No | Use `PitchDetection` |
 
 ## Configuration
 
@@ -523,7 +527,7 @@ if result.scorePercent >= 70 {
 
 ### Android
 - Audio must be 16kHz mono; use `SonixDecoder`/`SonixResampler` to convert
-- Works with any `PitchContour` from `CalibraPitch`
+- Works with any `PitchContour` from `PitchDetection`
 
 ## Common Pitfalls
 
@@ -534,5 +538,5 @@ if result.scorePercent >= 70 {
 
 ## Next Steps
 
-- [CalibraPitch](./pitch) -- Pitch detection for extracting `PitchContour`
+- [PitchDetection](../tona/pitch-detection) — pitch detection for extracting `PitchContour`
 - [Calibra Overview](./overview) -- Full overview of the Calibra analysis module

@@ -280,7 +280,7 @@ player.currentTimePublisher
 
 | StateFlow | Type | Description |
 |-----------|------|-------------|
-| `currentTime` | `StateFlow<Long>` | Playback position in milliseconds |
+| `currentTime` | `StateFlow<Long>` | DAC presentation time in ms (1.0.0+ — was write/decode offset before). Apps that previously offset `currentTime` manually should remove those corrections. |
 | `isPlaying` | `StateFlow<Boolean>` | Whether currently playing |
 | `error` | `StateFlow<SonixError?>` | Error state |
 
@@ -289,7 +289,25 @@ player.currentTimePublisher
 | Property | Type | Description |
 |----------|------|-------------|
 | `duration` | `Long` | Total duration in milliseconds |
+| `outputLatencyMs` | `Long` | Output latency diagnostic (ms). Android: extracted at runtime from `AudioTrack.getTimestamp` (returns 0 before playback starts). iOS: `AVAudioSession.outputLatency`. (1.0.0+) |
 | `asPlaybackInfoProvider` | `PlaybackInfoProvider` | For recording sync |
+
+### audibleTimeMsAtWallNanos
+
+```kotlin
+fun audibleTimeMsAtWallNanos(wallNanos: Long): Long
+```
+
+Given a monotonic-nanos wall moment (e.g. an `AudioBuffer.timestamp` from the recorder), returns the player's audible time at that moment. Returns `-1L` when the player isn't running yet. Used for hardware-clock alignment between mic and player without app-layer offset math (see [audio latency](../concepts/audio-latency)). 1.0.1+.
+
+```kotlin
+recorder.audioBuffers.collect { buffer ->
+    val anchorMs = player.audibleTimeMsAtWallNanos(buffer.timestamp)
+    if (anchorMs >= 0) {
+        // …correlate buffer with playback position
+    }
+}
+```
 
 ## Processing Tap
 

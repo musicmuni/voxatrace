@@ -21,13 +21,13 @@ Pitch. Timbre. Melody. Rhythm. Emotion. Vocal quality. These acoustic qualities 
 | Output | Text transcript | Pitch (Hz), confidence, vocal activity |
 | Focus | Words and language | How the voice sounds |
 | Use case | Dictation, commands | Singing, training, games |
-| Latency | 100ms–1s (cloud) | ~50ms (on-device) |
+| Latency | 100ms–1s (cloud) | ~64 ms (on-device, BALANCED) |
 
 ### On-Device, Real-Time
 
 No server calls. No network latency. No data leaving the device.
 
-- **~50ms latency** — fast enough for real-time feedback
+- **~64 ms latency** — fast enough for real-time feedback (BALANCED preset, 1024-sample window at 16 kHz)
 - **Works offline** — no internet required
 - **Privacy by design** — audio never leaves the device
 
@@ -43,13 +43,13 @@ Use as much complexity as you need:
 
 ```kotlin
 // Tier 1: Just works (80% of users)
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 
 // Tier 2: Discoverable options (15% of users)
-val detector = CalibraPitch.createDetector(
+val detector = PitchDetection.createDetector(
     PitchDetectorConfig.Builder()
         .algorithm(PitchAlgorithm.SWIFT_F0)
-        .voiceType(VoiceType.SOPRANO)
+        .voiceType(VoiceType.westernSoprano)
         .build()
 )
 

@@ -16,7 +16,7 @@ import com.musicmuni.voxatrace.demo.sections.pitch.viewmodel.PitchExtractionView
 import com.musicmuni.voxatrace.demo.sections.shared.PitchGraphView
 
 /**
- * Batch pitch extraction view with ContourCleanup presets.
+ * Batch pitch extraction view with PitchProcessingConfig cleanup presets.
  */
 @Composable
 fun PitchExtractionView(viewModel: PitchExtractionViewModel = viewModel()) {
@@ -390,17 +390,17 @@ private fun ApiInfoCard() {
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = "• PitchDetection.createContourExtractor(config: .scoring)",
+                text = "• PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "• extractor.extract(audio:sampleRate:) → PitchContour",
+                text = "• extractor.extract(samples, sampleRate) → PitchContour",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "• ContourCleanup: .raw, .scoring, .display",
+                text = "• PitchProcessingConfig: RAW, SCORING, DISPLAY",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

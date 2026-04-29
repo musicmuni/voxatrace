@@ -28,7 +28,7 @@ val student = LessonMaterial.fromAudio(
     keyHz = 261.63f
 )
 
-val extractor = CalibraPitch.createContourExtractor(ContourExtractorConfig.SCORING)
+val extractor = PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)
 val result = CalibraMelodyEval.evaluate(reference, student, extractor)
 extractor.release()
 
@@ -58,7 +58,7 @@ let student = LessonMaterial.fromAudio(
     keyHz: 261.63
 )
 
-let extractor = CalibraPitch.createContourExtractor(
+let extractor = PitchDetection.createContourExtractor(
     config: .scoring
 )
 let result = CalibraMelodyEval.evaluate(
@@ -84,7 +84,7 @@ The single public method on `CalibraMelodyEval`.
 fun evaluate(
     reference: LessonMaterial,
     student: LessonMaterial,
-    contourExtractor: CalibraPitch.ContourExtractor
+    contourExtractor: PitchContourExtractor
 ): SingingResult
 ```
 
@@ -94,7 +94,7 @@ fun evaluate(
 static func evaluate(
     reference: LessonMaterial,
     student: LessonMaterial,
-    contourExtractor: CalibraPitch.ContourExtractor
+    contourExtractor: PitchContourExtractor
 ) -> SingingResult
 ```
 
@@ -104,7 +104,7 @@ static func evaluate(
 |-----------|------|-------------|
 | `reference` | `LessonMaterial` | Reference material with audio, segments, and key |
 | `student` | `LessonMaterial` | Student recording with audio and key. If `segments` is empty, reference segments are used. If `pitchContour` is pre-computed, pitch extraction is skipped. |
-| `contourExtractor` | `CalibraPitch.ContourExtractor` | Pre-built contour extractor for pitch extraction. Caller owns the lifecycle and must call `release()` when done. |
+| `contourExtractor` | `PitchContourExtractor` (from `tona.detection`) | Pre-built contour extractor for pitch extraction. Caller owns the lifecycle and must call `release()` when done. |
 
 ### Sample Rate Requirement
 
@@ -378,7 +378,7 @@ class ScoringViewModel : ViewModel() {
                 keyHz = keyHz
             )
 
-            val extractor = CalibraPitch.createContourExtractor(
+            val extractor = PitchDetection.createContourExtractor(
                 ContourExtractorConfig.SCORING
             )
 
@@ -398,7 +398,7 @@ class ScoringViewModel : ViewModel() {
 
 ```kotlin
 // Extract pitch once, reuse for multiple evaluations
-val extractor = CalibraPitch.createContourExtractor(ContourExtractorConfig.SCORING)
+val extractor = PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)
 val refContour = extractor.extract(referenceAudio, 16000)
 
 val reference = LessonMaterial.fromAudio(
@@ -465,6 +465,7 @@ for (index, attempts) in result.sortedSegmentResults {
 
 ## Next Steps
 
-- [CalibraPitch](./pitch) -- Pitch detection and contour extraction
-- [CalibraVAD](./vad) -- Voice activity detection
-- [CalibraVocalRange](./vocal-range) -- Vocal range analysis
+- [PitchDetection](../tona/pitch-detection) — pitch detection and contour extraction
+- [CalibraVAD](./vad) — voice activity detection
+- [TesseraRange](../tessera/range) — vocal range analysis
+- [Accura](../accura/intonation) — intonation analysis and 0–100 scoring

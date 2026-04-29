@@ -117,7 +117,7 @@ class RealtimePitchViewModel : ViewModel() {
 
     private fun recreateDetectorIfRecording() {
         if (_isRecording.value) {
-            detector?.close()
+            detector?.release()
             detector = createDetector()
         }
     }
@@ -128,7 +128,7 @@ class RealtimePitchViewModel : ViewModel() {
             recorder?.release()
             recorder = SonixRecorder.create(recordPath, SonixRecorderConfig.VOICE)
 
-            detector?.close()
+            detector?.release()
             detector = createDetector()
             detector?.reset()
 
@@ -220,6 +220,6 @@ class RealtimePitchViewModel : ViewModel() {
         super.onCleared()
         recordingJob?.cancel()
         recorder?.release()
-        detector?.close()
+        detector?.release()
     }
 }

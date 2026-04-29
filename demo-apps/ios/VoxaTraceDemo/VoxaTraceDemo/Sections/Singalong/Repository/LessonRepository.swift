@@ -62,7 +62,7 @@ final class BundleLessonRepository: LessonRepositoryProtocol, @unchecked Sendabl
         if let pitchURL = Bundle.main.url(forResource: name, withExtension: "pitchPP"),
            let pitchContent = try? String(contentsOf: pitchURL),
            let pitchData = SonixParser.parsePitchString(content: pitchContent) {
-pitchContour = pitchData.toContour()
+            pitchContour = pitchData.toContour()
         }
 
         // 5. Create LessonMaterial

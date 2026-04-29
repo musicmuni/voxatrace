@@ -133,7 +133,7 @@ val recorder = SonixRecorder.create(path, SonixRecorderConfig.VOICE)
 
 ### Standard
 
-44.1kHz stereo, 128kbps - good balance.
+44.1 kHz mono, 128 kbps — good balance.
 
 ```kotlin
 val recorder = SonixRecorder.create(path, SonixRecorderConfig.STANDARD)
@@ -141,7 +141,7 @@ val recorder = SonixRecorder.create(path, SonixRecorderConfig.STANDARD)
 
 ### High
 
-48kHz stereo, 256kbps - maximum fidelity.
+44.1 kHz stereo, 192 kbps — maximum fidelity.
 
 ```kotlin
 val recorder = SonixRecorder.create(path, SonixRecorderConfig.HIGH)
@@ -373,12 +373,12 @@ class VoiceMemoRecorder(private val outputDir: String) {
 ```kotlin
 class PitchRecorder {
     private var recorder: SonixRecorder? = null
-    private var detector: CalibraPitch.Detector? = null
+    private var detector: PitchDetector? = null
     private val scope = CoroutineScope(Dispatchers.Default)
 
     fun start(outputPath: String, onPitch: (Float) -> Unit) {
         recorder = SonixRecorder.create(outputPath, SonixRecorderConfig.VOICE)
-        detector = CalibraPitch.createDetector()
+        detector = PitchDetection.createDetector()
 
         recorder?.start()
 

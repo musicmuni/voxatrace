@@ -20,7 +20,7 @@ A classic tuner display:
 
 ```kotlin
 class TunerViewModel : ViewModel() {
-    private var detector: CalibraPitch.Detector? = null
+    private var detector: PitchDetector? = null
     private var recorder: SonixRecorder? = null
 
     private val _state = MutableStateFlow(TunerState())
@@ -36,7 +36,7 @@ class TunerViewModel : ViewModel() {
     )
 
     fun start() {
-        detector = CalibraPitch.createDetector(
+        detector = PitchDetection.createDetector(
             PitchDetectorConfig.Builder()
                 .algorithm(PitchAlgorithm.YIN)
                 .enableProcessing()  // Smoothing for stable display

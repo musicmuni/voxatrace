@@ -434,7 +434,7 @@ let config = SessionConfig.Builder()
 | `scoreThreshold` | `Float` | `0` | Min score to auto-advance (0 = disabled) |
 | `maxAttempts` | `Int` | `0` | Max attempts before forced advance (0 = unlimited) |
 | `resultAggregation` | `ResultAggregation` | `LATEST` | How to aggregate multiple attempts |
-| `hopSize` | `Int` | `160` | Hop size between frames in samples (160 = 10ms at 16kHz) |
+| `hopSize` | `Int` | `320` | Hop size between frames in samples (320 = 20 ms at 16 kHz, 2 frames per buffer per ADR-020) |
 | `autoPhaseTransition` | `Boolean` | `true` | Auto transition LISTENING to SINGING in singafter mode |
 | `autoSegmentDetection` | `Boolean` | `true` | Auto detect segment end from player time |
 
@@ -500,15 +500,15 @@ Configuration for singing evaluation.
 | Transpose Up | `EvaluatorPreset.TRANSPOSE_UP` | `.transposeUp` | +2 | Slight pitch adjustment up |
 | Transpose Down | `EvaluatorPreset.TRANSPOSE_DOWN` | `.transposeDown` | -2 | Slight pitch adjustment down |
 
-## BreathMetrics
+## BreathMetrics (deprecated)
 
-Result of breath analysis containing capacity and control metrics.
+`BreathMetrics` is the return type of the deprecated `CalibraBreath.computeMetrics(...)` shell. The canonical types live in `tessera.model`:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `capacity` | `Float` | Breath capacity in seconds - measures longest sustained phrase |
-| `control` | `Float` | Breath control score (0.0 to 1.0) - measures breathing pattern consistency |
-| `isValid` | `Boolean` | Whether the result is valid (enough data was available) |
+| Old type | New type |
+|----------|----------|
+| `BreathMetrics { capacity: Float, control: Float, isValid: Boolean }` | [`BreathScore { capacity: Float?, controlScore: Float }`](../tessera/breath#breathscore) — capacity is now nullable, not `-1f` |
+| (none) | [`BreathFunction`](../tessera/breath#breathfunction) — composable intermediate |
+| (none) | [`BreathComparison`](../tessera/breath#breathcomparison) — reference-vs-student match score |
 
 ## Error Types
 
@@ -527,7 +527,7 @@ Calibra uses `CalibraException` with a `CalibraErrorType` enum:
 
 ```kotlin
 try {
-    val detector = CalibraPitch.createDetector(config)
+    val detector = PitchDetection.createDetector(config)
 } catch (e: CalibraException) {
     when (e.type) {
         CalibraErrorType.INITIALIZATION_FAILED -> println("Init failed: ${e.message}")
@@ -536,6 +536,8 @@ try {
     }
 }
 ```
+
+`VoxaTraceNotInitializedException` and `VoxaTraceKilledException` are the standard SDK exceptions thrown from any facade when `VT.initialize(...)` has not run or when licensing fails. See [Authentication](../guides/authentication).
 
 ### Swift
 
@@ -552,7 +554,7 @@ Calibra provides typed error enums on iOS for each subsystem. All conform to `Lo
 
 ```swift
 do {
-    let detector = try CalibraPitch.createDetector(config: config)
+    let detector = try PitchDetection.createDetector(config: config)
 } catch let error as PitchDetectorError {
     print(error.localizedDescription)
 }
@@ -598,19 +600,9 @@ do {
 | `detectionFailed` | `type: String, reason: String` | Detection failed |
 | `invalidInput` | `parameter: String, reason: String` | Invalid input parameter |
 
-## TimeUtils
-
-Platform-specific current time utility used internally for benchmarking in public APIs.
-
-```kotlin
-// Internal API — not directly consumed by SDK users
-internal expect fun currentTimeMillis(): Long
-```
-
-`currentTimeMillis()` is an internal `expect`/`actual` function that returns the current time in milliseconds. Each platform provides its own implementation. This is used internally by Calibra APIs for performance timing and benchmarking; it is not part of the public API surface.
-
 ## Next Steps
 
-- [CalibraPitch](./pitch) -- Real-time pitch detection
-- [CalibraVAD](./vad) -- Voice activity detection
-- [CalibraVocalRange](./vocal-range) -- Detect singer's comfortable range
+- [PitchDetection](../tona/pitch-detection) — real-time pitch detection (canonical)
+- [CalibraVAD](./vad) — voice activity detection
+- [TesseraRange](../tessera/range) — vocal range
+- [Common: MusicTheory](../common/music-theory) — `ShrutiAlignmentResult`, `ShrutiOption`, `UserShrutiDerivation`

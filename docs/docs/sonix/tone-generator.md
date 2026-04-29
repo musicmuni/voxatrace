@@ -42,7 +42,7 @@ let square = SonixToneGenerator.generate(
 | `durationMs` | `Int` | required | Duration in milliseconds |
 | `waveType` | `WaveType` | `SINE` | Waveform shape |
 | `amplitude` | `Float` | `0.8` | Peak amplitude (0.0 to 1.0) |
-| `sampleRate` | `Int` | `16000` | Sample rate in Hz |
+| `sampleRate` | `Int` | `44100` | Sample rate in Hz |
 
 ## Waveform Types
 
@@ -52,6 +52,10 @@ let square = SonixToneGenerator.generate(
 | `SQUARE` | Flat top and bottom | Rich harmonics, retro sounds |
 | `SAWTOOTH` | Linear ramp | Bright, buzzy tones |
 | `TRIANGLE` | Linear peak | Softer than square, mellower |
+
+## Validation
+
+`generate(...)` throws `IllegalArgumentException` when `frequencyHz`, `durationMs`, or `sampleRate` are not positive, or when `amplitude` is outside `[0.0, 1.0]`.
 
 ## Common Patterns
 
@@ -74,4 +78,4 @@ val normalized = SonixAudioUtils.normalize(tone)
 
 - [SonixAudioUtils](./audio-utils) — Manipulate generated audio (normalize, mix, concatenate)
 - [SonixEncoder](./encoder) — Save generated audio to file
-- [CalibraMusic](../calibra/music) — Music theory constants and frequency conversions
+- [MusicTheory](../common/music-theory) — Music theory constants and frequency conversions

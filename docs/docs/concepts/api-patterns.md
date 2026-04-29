@@ -17,7 +17,7 @@ Use predefined configurations. Zero learning curve.
 ```kotlin
 // Just works with sensible defaults
 val player = SonixPlayer.create("song.mp3")
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 val recorder = SonixRecorder.create("/path/to/output.m4a")
 ```
 
@@ -33,7 +33,7 @@ val config = PitchDetectorConfig.Builder()
     .enableProcessing()
     .build()
 
-val detector = CalibraPitch.createDetector(config, modelProvider = { ... })
+val detector = PitchDetection.createDetector(config, modelProvider = { ... })
 ```
 
 ### Tier 3: .copy() (5% of users)
@@ -79,9 +79,9 @@ SonixPlayerConfig.DEFAULT   // Play once at normal volume
 SonixPlayerConfig.LOOPING   // Infinite loop
 
 // Recorder presets
-SonixRecorderConfig.VOICE     // 16kHz mono for speech/singing
-SonixRecorderConfig.STANDARD  // 44.1kHz stereo
-SonixRecorderConfig.HIGH      // 48kHz stereo high fidelity
+SonixRecorderConfig.VOICE     // 16 kHz mono, 64 kbps
+SonixRecorderConfig.STANDARD  // 44.1 kHz mono, 128 kbps
+SonixRecorderConfig.HIGH      // 44.1 kHz stereo, 192 kbps
 
 // Detector presets
 PitchDetectorConfig.BALANCED  // Good tradeoff
@@ -114,7 +114,7 @@ player.release()
 Use Kotlin's `use` block for automatic cleanup:
 
 ```kotlin
-CalibraPitch.createDetector().use { detector ->
+PitchDetection.createDetector().use { detector ->
     val point = detector.detect(samples, sampleRate)
     // detector.close() called automatically
 }

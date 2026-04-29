@@ -78,7 +78,7 @@ Live evaluation returns several score types:
 |-------|------------------|
 | **Overall Score** | Combined pitch + timing accuracy (0.0 to 1.0) |
 | **Pitch Accuracy** | How many notes matched the reference pitch |
-| **Performance Level** | Qualitative rating (NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT) |
+| **Performance Level** | Qualitative rating: `NEEDS_WORK`, `FAIR`, `GOOD`, `VERY_GOOD`, `EXCELLENT`, `NOT_DETECTED` (negative score), `NOT_EVALUATED` |
 
 ## Session Lifecycle
 
@@ -86,7 +86,7 @@ Live evaluation returns several score types:
 
 ```kotlin
 // Create pitch detector
-val detector = CalibraPitch.createDetector()
+val detector = PitchDetection.createDetector()
 
 // Create session with reference material
 val session = CalibraLiveEval.create(
@@ -108,9 +108,13 @@ session.prepareSession()
 // Start practicing segment 0
 session.startPracticingSegment(0)
 
-// Feed audio from recorder
+// Feed audio from recorder. Pass buffer.timestamp for hardware-clock alignment (1.0.1+).
 recorder.audioBuffers.collect { buffer ->
-    session.feedAudioSamples(buffer.toFloatArray(), buffer.sampleRate)
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
 }
 
 // End segment and get result
@@ -133,15 +137,19 @@ Full control over audio flow. You manage player and recorder.
 ```kotlin
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
-    detector = CalibraPitch.createDetector()
+    detector = PitchDetection.createDetector()
 )
 
 session.prepareSession()
 session.startPracticingSegment(0)
 
 // You control when audio is fed
-myRecorder.audioFlow.collect { buffer ->
-    session.feedAudioSamples(buffer.samples, buffer.sampleRate)
+myRecorder.audioBuffers.collect { buffer ->
+    session.feedAudioSamples(
+        samples = buffer.toFloatArray(),
+        sampleRate = buffer.sampleRate,
+        captureTimestampNanos = buffer.timestamp,
+    )
 }
 
 val result = session.finishPracticingSegment()
@@ -155,7 +163,7 @@ Library coordinates playback, recording, and scoring automatically.
 ```kotlin
 val session = CalibraLiveEval.create(
     reference = lessonMaterial,
-    detector = CalibraPitch.createDetector(),
+    detector = PitchDetection.createDetector(),
     player = myPlayer,      // Library controls playback
     recorder = myRecorder   // Library controls recording
 )
