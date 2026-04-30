@@ -366,5 +366,4 @@ player.tempo = 0.75f  // 75% speed
 ## Next Steps
 
 - [Live Evaluation Guide](../guides/live-evaluation) - Deeper into scoring
-- [Audio Effects Concepts](../concepts/audio-effects) - Add reverb to vocals
 - [Demo App](https://github.com/musicmuni/voxatrace/tree/main/public/demo-apps) - Full source code

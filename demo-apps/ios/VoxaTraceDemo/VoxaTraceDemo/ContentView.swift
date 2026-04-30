@@ -114,7 +114,7 @@ struct HomeView: View {
                     icon: "music.note",
                     title: "Calibra",
                     subtitle: "Singing Evaluation",
-                    description: "Singalong, Singafter, Melody Eval, Note Eval, VAD, Effects",
+                    description: "Singalong, Singafter, Melody Eval, Note Eval, VAD",
                     color: .purple,
                     onTap: { onSelect(.calibra) }
                 )
@@ -227,7 +227,7 @@ struct CalibraMenuView: View {
 
     private let analysisFeatures = [
         ("VAD", "mic.fill", "Voice activity detection"),
-        ("Effects", "slider.horizontal.3", "Audio effects processing"),
+        // ("Effects", "slider.horizontal.3", "Audio effects processing"), // disabled: CalibraEffects is internal until effects are public-ready
     ]
 
     private let realtimeEvalFeatures = [
@@ -362,8 +362,8 @@ struct FeatureDetailView: View {
         // Calibra
         case "VAD":
             VADSection()
-        case "Effects":
-            EffectsView()
+        // case "Effects":
+        //     EffectsView() // disabled: CalibraEffects is internal until effects are public-ready
         case "Singalong Live":
             SingalongSection()
         case "Singafter Live":

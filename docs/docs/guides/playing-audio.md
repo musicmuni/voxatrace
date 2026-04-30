@@ -12,7 +12,7 @@ A complete guide to audio playback with SonixPlayer.
 - Control pitch, tempo, and volume
 - Handle looping and seeking
 - React to playback events
-- Use processing taps for real-time effects
+- Use processing taps for real-time analysis
 
 ## Prerequisites
 
@@ -263,25 +263,21 @@ player.setPlaybackListener(object : SonixPlayer.PlaybackListener {
 
 ## Processing Tap
 
-Access audio buffers during playback for real-time processing:
+Access audio buffers during playback for real-time analysis:
 
 ```kotlin
-// Apply effects during playback
-val effects = CalibraEffects.create(EffectsPreset.VOCAL_CHAIN)
-
 player.setProcessingTap { buffer ->
-    effects.process(buffer)  // Modifies buffer in-place
+    // Inspect or analyze buffer here.
+    // Buffer is mutable; modifications affect downstream playback.
 }
 
 player.play()
 
 // Remove tap when done
 player.setProcessingTap(null)
-effects.release()
 ```
 
 Use cases:
-- Apply reverb/compression to backing tracks
 - Visualize audio waveform
 - Extract features for analysis
 

@@ -43,7 +43,7 @@ import com.musicmuni.voxatrace.demo.sections.agility.view.AgilityView
 import com.musicmuni.voxatrace.demo.sections.songmatching.view.SongMatchingView
 import com.musicmuni.voxatrace.demo.sections.voiceprofile.view.VoiceProfileView
 import com.musicmuni.voxatrace.demo.sections.pitchanalysis.view.PitchAnalysisView
-import com.musicmuni.voxatrace.demo.sections.effects.view.EffectsView
+// import com.musicmuni.voxatrace.demo.sections.effects.view.EffectsView // disabled: CalibraEffects is internal until effects are public-ready
 import com.musicmuni.voxatrace.VT
 import com.musicmuni.voxatrace.ai.AIModels
 import com.musicmuni.voxatrace.exceptions.VoxaTraceKilledException
@@ -280,7 +280,7 @@ fun HomeScreen(
                 CategoryCard(
                     title = "Calibra",
                     subtitle = "Singing Evaluation",
-                    description = "Singalong, Singafter, Melody Eval, Note Eval, VAD, Effects",
+                    description = "Singalong, Singafter, Melody Eval, Note Eval, VAD",
                     onClick = onCalibraClick
                 )
             }
@@ -383,7 +383,7 @@ fun CalibraScreen(onBack: () -> Unit, onFeatureClick: (String) -> Unit) {
 
     val analysisFeatures = listOf(
         FeatureItem("VAD", "Voice activity detection"),
-        FeatureItem("Effects", "Audio effects processing")
+        // FeatureItem("Effects", "Audio effects processing"), // disabled: CalibraEffects is internal until effects are public-ready
     )
 
     val realtimeEvalFeatures = listOf(
@@ -603,7 +603,7 @@ fun FeatureScreen(feature: String, onBack: () -> Unit) {
                     "Voice Profile" -> VoiceProfileView()
                     // Calibra
                     "VAD" -> VADView()
-                    "Effects" -> EffectsView()
+                    // "Effects" -> EffectsView() // disabled: CalibraEffects is internal until effects are public-ready
                     "Singalong" -> SingalongView()
                     "Singafter" -> SingafterView()
                     "Melody Eval" -> MelodyEvalView()

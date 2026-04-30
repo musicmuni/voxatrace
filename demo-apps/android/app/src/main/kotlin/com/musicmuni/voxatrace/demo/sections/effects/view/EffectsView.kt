@@ -1,5 +1,9 @@
 package com.musicmuni.voxatrace.demo.sections.effects.view
 
+// Disabled: CalibraEffects is internal until effects are public-ready.
+// Restore this file (and re-enable the wiring in MainActivity.kt) once the
+// effects facade is promoted back to public.
+/*
 import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -318,3 +322,4 @@ private fun NoiseGateControls(
         }
     }
 }
+*/

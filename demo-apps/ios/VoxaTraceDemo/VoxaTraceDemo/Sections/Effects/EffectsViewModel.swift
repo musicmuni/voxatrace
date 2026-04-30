@@ -1,5 +1,10 @@
 import Foundation
 import Combine
+
+// Disabled: CalibraEffects is internal until effects are public-ready.
+// Restore this file (and re-enable the wiring in ContentView.swift) once the
+// effects facade is promoted back to public.
+/*
 import VoxaTrace
 
 /// ViewModel for audio effects using CalibraEffectsConfig.Builder.
@@ -308,3 +313,4 @@ final class EffectsViewModel: ObservableObject {
         return paths[0].appendingPathComponent("recording.wav")
     }
 }
+*/

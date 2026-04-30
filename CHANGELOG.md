@@ -151,7 +151,11 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
 | `calibra.model.PitchPoint.isVoiced` (alias for `isSinging`) | `point.isSinging` or `point.pitch > 0` (the canonical `PitchPoint` itself moved to `tona.model`) |
 
 Permanent calibra facades are unchanged: `CalibraLiveEval`,
-`CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`, `CalibraEffects`.
+`CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`. The audio-effects
+facade (`CalibraEffects` and its config/preset types) is held back in
+2.0.0 — kept internal until the public API is finalized. Apps that used
+the 1.x effects chain should pin to 1.0.x until the public surface
+returns in a later release.
 
 ### Migration
 

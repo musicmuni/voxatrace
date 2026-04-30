@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Calibra Overview
 
-Calibra is the **singing-evaluation** module of VoxaTrace. It scores a singer's performance against a reference, runs voice-activity detection, and applies real-time vocal effects.
+Calibra is the **singing-evaluation** module of VoxaTrace. It scores a singer's performance against a reference and runs voice-activity detection.
 
 | Facade | Purpose |
 |--------|---------|
@@ -12,7 +12,6 @@ Calibra is the **singing-evaluation** module of VoxaTrace. It scores a singer's 
 | [`CalibraMelodyEval`](./melody-eval) | Offline melody scoring of a complete recording |
 | [`CalibraNoteEval`](./note-eval) | Per-note scoring for scales, arpeggios, svara patterns |
 | [`CalibraVAD`](./vad) | Voice activity detection (multiple backends) |
-| [`CalibraEffects`](./effects) | Real-time vocal effects chain (noise gate, compressor, reverb) |
 | [Utilities](./utilities) | Shared model types (Segment, SessionConfig, SegmentResult, …) |
 
 Calibra **consumes** but does not own (1.x → 2.0):
@@ -64,17 +63,6 @@ val vad = CalibraVAD.create(VADModelProvider.General)
 val ratio = vad.getVADRatio(samples, sampleRate)
 if (ratio > 0.5f) println("Voice present")
 vad.release()
-```
-
-### Real-time effects (CalibraEffects)
-
-```kotlin
-val effects = CalibraEffects.create(EffectsPreset.VOCAL_CHAIN)
-recorder.audioBuffers.collect { buffer ->
-    val samples = buffer.toFloatArray()
-    effects.process(samples)   // in-place; expects 16kHz mono
-}
-effects.release()
 ```
 
 ## Two evaluation modes (Live Eval)

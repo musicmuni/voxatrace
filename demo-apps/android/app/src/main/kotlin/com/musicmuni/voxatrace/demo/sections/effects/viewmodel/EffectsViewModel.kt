@@ -1,5 +1,9 @@
 package com.musicmuni.voxatrace.demo.sections.effects.viewmodel
 
+// Disabled: CalibraEffects is internal until effects are public-ready.
+// Restore this file (and re-enable the wiring in MainActivity.kt) once the
+// effects facade is promoted back to public.
+/*
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -344,3 +348,4 @@ class EffectsViewModel : ViewModel() {
         cleanupAudio()
     }
 }
+*/
