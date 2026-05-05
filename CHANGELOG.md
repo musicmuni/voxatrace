@@ -45,9 +45,9 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   even after fixing imports, these functions take or return different
   values than their 1.x predecessors:
   - `CalibraBreath.computeCapacity(times, pitchesHz): Float` (returned
-    `-1f` on failure) → `TesseraBreath.computeScore(contour:
-    PitchContour).capacity: Float?` (null on failure). Build the contour
-    via `PitchContour.fromArrays(times, pitches)`.
+    `-1f` on failure) → `TesseraBreath.analyze(contour: PitchContour).phrases?.longestDuration: Float?`
+    (null when phrases can't be segmented). Build the contour via
+    `PitchContour.fromArrays(times, pitches)`.
   - `CalibraSpeakingPitch.detectFromAudio(...)` returned `-1` on failure
     → `TesseraSpeakingPitch.detectFromAudio(...)` returns `0` on failure.
   - `CalibraPitch.PostProcess.cleanup(contour, ContourCleanup.SCORING)`
@@ -61,9 +61,10 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
     `TesseraRange.computeVocalRange(contour)` (batch) or
     `TesseraRangeSession` (guided streaming with observable state).
   - `CalibraBreath.computeMetrics(...)` 9-array signature has no
-    direct equivalent. Use `TesseraBreath.compare(refContour,
-    studentContour)` for the comparison score and
-    `TesseraBreath.computeScore(...).capacity` for capacity.
+    direct equivalent. Use `TesseraBreath.analyze(studentContour, referenceContour)`
+    for a single call returning control score, phrase summary, and
+    `alignmentScore` together; or `TesseraBreath.compare(refContour,
+    studentContour)` for the alignment score alone.
 
 ### Added
 
@@ -169,8 +170,8 @@ val midi = CalibraMusic.hzToMidi(440f)
 // After
 val detector = PitchDetection.createDetector(PitchDetectorConfig.BALANCED)
 val cleaned = PitchProcessing.process(contour, PitchProcessingConfig.SCORING)
-val score = TesseraBreath.computeScore(PitchContour.fromArrays(times, pitchesHz))
-val capacity = score.capacity   // null if too short to detect a phrase
+val metrics = TesseraBreath.analyze(PitchContour.fromArrays(times, pitchesHz))
+val capacity = metrics.phrases?.longestDuration   // null if phrases can't be segmented
 val midi = MusicTheory.hzToMidi(440f)
 ```
 

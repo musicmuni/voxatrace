@@ -25,8 +25,8 @@ enum BreathMonitorState {
 /// // 2. Offline analysis via tessera + tona
 /// let extractor = PitchDetection.createContourExtractor()
 /// let contour = extractor.extract(audio: samples, sampleRate: sampleRate)
-/// let score = TesseraBreath.computeScore(contour: contour)
-/// // score.capacity, score.controlScore
+/// let metrics = TesseraBreath.analyze(contour: contour)
+/// // metrics.controlScore, metrics.phrases?.longestDuration
 /// ```
 @MainActor
 final class BreathMonitorViewModel: ObservableObject {
@@ -140,9 +140,9 @@ final class BreathMonitorViewModel: ObservableObject {
 
             if hasEnough {
                 // Compute breath metrics via tessera (replaces CalibraBreath)
-                let score = TesseraBreath.computeScore(contour: contour, config: .practice)
-                capacity = score.capacity ?? 0
-                controlScore = score.controlScore
+                let metrics = TesseraBreath.analyze(contour: contour, config: .practice)
+                capacity = metrics.phrases?.longestDuration ?? 0
+                controlScore = metrics.controlScore ?? 0
 
                 // Voiced time from contour
                 let pitches = contour.pitchesHz

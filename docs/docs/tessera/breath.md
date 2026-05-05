@@ -4,67 +4,90 @@ sidebar_position: 2
 
 # TesseraBreath
 
-Breath capacity, control, and reference-vs-student comparison from a `PitchContour`.
+Breath control score, phrase-level structure, and reference-vs-student alignment from a `PitchContour`.
 
 ## Quick Start
 
 ### Kotlin
 
 ```kotlin
-// One-shot scoring
-val score = TesseraBreath.computeScore(contour, BreathConfig.PRACTICE)
-println("Capacity: ${score.capacity}s, Control: ${score.controlScore}")
+// One-shot analysis: control score + phrase summary
+val metrics = TesseraBreath.analyze(contour, config = BreathConfig.PRACTICE)
+println("Control: ${metrics.controlScore}")
+println("Longest phrase: ${metrics.phrases?.longestDuration}s")
+println("Comfortable range: ${metrics.phrases?.comfortableRange}")
 
-// Composable: reuse the breath function for both score and comparison
+// With a reference recording: also populates alignmentScore
+val metricsVsRef = TesseraBreath.analyze(studentContour, reference = referenceContour)
+println("Alignment: ${metricsVsRef.alignmentScore}")
+
+// Composable: reuse the breath function for analysis + comparison
 val bf = TesseraBreath.computeBreathFunction(contour)
-val score = TesseraBreath.computeScore(bf)
-val comparison = TesseraBreath.compare(refBf, bf)
+val metrics = TesseraBreath.analyze(bf)
+val refBf = TesseraBreath.computeBreathFunction(referenceContour)
+val alignment = TesseraBreath.compare(refBf, bf)
 ```
 
 ### Swift
 
 ```swift
-let score = TesseraBreath.computeScore(contour: contour, config: .practice)
-print("Capacity: \(score.capacity ?? 0)s, Control: \(score.controlScore)")
+let metrics = TesseraBreath.analyze(contour: contour, config: .practice)
+print("Control: \(metrics.controlScore ?? 0), Longest: \(metrics.phrases?.longestDuration ?? 0)")
 ```
 
 ## Methods
 
 | Method | Description |
 |--------|-------------|
-| `computeBreathFunction(contour, config = BreathConfig.DEFAULT): BreathFunction` | Build the shared intermediate (values, times, equivalent sustain time) |
-| `computeScore(breathFunction, config = BreathConfig.DEFAULT): BreathScore` | Score from a pre-computed function |
-| `computeScore(contour, config = BreathConfig.DEFAULT): BreathScore` | One-shot from a contour |
-| `compare(reference, student, config = BreathConfig.DEFAULT): BreathComparison` | FFT cross-correlation peak-matching of two breath functions |
-| `compare(refContour, studentContour, config = BreathConfig.DEFAULT): BreathComparison` | One-shot comparison from contours |
+| `computeBreathFunction(contour, config = DEFAULT): BreathFunction` | Build the shared intermediate (values, times, equivalent sustain time) |
+| `analyze(contour, reference = null, config = DEFAULT): BreathMetrics` | Control score + phrase summary; pass `reference` to also populate `alignmentScore` |
+| `analyze(breathFunction, reference = null, config = DEFAULT): BreathMetrics` | Same, but reusing pre-computed breath functions |
+| `compare(reference, student, config = DEFAULT): Float?` | FFT cross-correlation peak-matching of two breath functions; returns alignment score alone. Null when too short to align, or when the reference has no detectable breath peaks. |
+| `compare(refContour, studentContour, config = DEFAULT): Float?` | One-shot comparison from contours |
 
 ## Result types
 
-### BreathScore
+### BreathMetrics
 
 ```kotlin
-data class BreathScore(
-    val capacity: Float?,    // longest phrase duration (seconds), null when too-short audio
-    val controlScore: Float, // sigmoid-scaled control score in [0, 1)
+data class BreathMetrics(
+    val controlScore: Float?,           // sigmoid-scaled control score in [0, 1); null when no breath signal
+    val phrases: PhraseSummary?,        // phrase-level structure; null when audio has no detectable phrase boundaries
+    val alignmentScore: Float? = null,  // populated only when `analyze(..., reference = ..., ...)` is used
 )
 ```
 
-`capacity` is **nullable** — null when there are no detectable phrase boundaries (e.g., very short audio with no pauses). Callers must guard.
+All three fields are nullable. `controlScore` is null when equivalent sustain time is zero (no voicing detected) — the sigmoid output for that case is mathematically valid but semantically meaningless. `phrases` is null when the recording has fewer than two pause boundaries (e.g., very short audio or unbroken voicing). `alignmentScore` is null on no-reference calls, when either recording is shorter than `BreathConfig.minAlignmentDuration`, or when the reference has no detectable breath peaks to align against.
+
+### PhraseSummary
+
+```kotlin
+data class PhraseSummary(
+    val totalPhrases: Int,
+    val phrases: List<Phrase>,                   // each (startTime, duration) in seconds
+    val comfortableRange: PhraseRange?,          // middle two bins of the 5-bin phrase-duration histogram
+    val avgDuration: Float,                      // mean phrase duration (s)
+    val shortestDuration: Float,                 // (s)
+    val longestDuration: Float,                  // (s) — LOF-filtered peak phrase, headline value for UI
+    val longestDurationUnfiltered: Float,        // (s) — raw maximum (no outlier filtering)
+    val phraseToBreathRatios: FloatArray,        // index-aligned with `phrases`; phrase ÷ preceding pause
+    val avgPhraseToBreathRatio: Float,           // headline efficiency value
+)
+
+data class Phrase(val startTime: Float, val duration: Float)
+data class PhraseRange(val lower: Float, val upper: Float)
+```
+
+`longestDuration` excludes phrases flagged as statistical outliers by Local Outlier Factor on the phrase-to-breath ratios — it's resilient to single fluky phrases. Use `longestDurationUnfiltered` for the raw maximum.
 
 ### BreathFunction
 
 ```kotlin
 data class BreathFunction(
-    val values: FloatArray,       // exponential growth on voiced, decay on unvoiced
-    val times: FloatArray,        // same length as values
-    val equivalentSustainTime: Float, // input to the control sigmoid
+    val values: FloatArray,            // exponential growth on voiced, decay on unvoiced
+    val times: FloatArray,             // same length as values
+    val equivalentSustainTime: Float,  // input to the control sigmoid
 )
-```
-
-### BreathComparison
-
-```kotlin
-data class BreathComparison(val matchScore: Float)  // [0, 1]
 ```
 
 ## BreathConfig
@@ -111,8 +134,10 @@ val config = BreathConfig.Builder()
 ## Common Pitfalls
 
 1. **Contour must have ≥ 2 samples.** Throws `IllegalArgumentException` per ADR-022.
-2. **`capacity` is nullable.** Always check `capacity != null` before using.
-3. **Match the preset to the audio.** `SINGING` for songs, `PRACTICE` for alankaar, `SPEECH` for spoken word, `CLINICAL` for sustained-tone tests.
+2. **`controlScore` is nullable.** Null when no voicing was detected. Always guard before scaling for display.
+3. **`phrases` is nullable.** Always check before using `longestDuration`, `comfortableRange`, etc.
+4. **`alignmentScore` is nullable.** Populated only when you pass `reference = ...`, and only when both recordings exceed `minAlignmentDuration` and the reference has detectable breath peaks.
+5. **Match the preset to the audio.** `SINGING` for songs, `PRACTICE` for alankaar, `SPEECH` for spoken word, `CLINICAL` for sustained-tone tests.
 
 ## See also
 

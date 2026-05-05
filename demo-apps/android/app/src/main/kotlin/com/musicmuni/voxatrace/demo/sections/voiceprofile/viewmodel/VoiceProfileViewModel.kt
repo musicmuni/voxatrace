@@ -90,8 +90,8 @@ class VoiceProfileViewModel : ViewModel() {
                 }
 
                 result.breath?.let { breath ->
-                    _breathCapacity.value = breath.capacity ?: 0f
-                    _breathControl.value = breath.controlScore
+                    _breathCapacity.value = breath.phrases?.longestDuration ?: 0f
+                    _breathControl.value = breath.controlScore ?: 0f
                 }
 
                 result.agility?.let { agility ->

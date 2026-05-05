@@ -62,7 +62,7 @@ fun analyze(
 
 ```kotlin
 data class TesseraResult(
-    val breath: BreathScore?,
+    val breath: BreathMetrics?,
     val agility: AgilityScore?,
     val vocalRange: VocalRangeResult?,
 )

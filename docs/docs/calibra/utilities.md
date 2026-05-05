@@ -500,15 +500,17 @@ Configuration for singing evaluation.
 | Transpose Up | `EvaluatorPreset.TRANSPOSE_UP` | `.transposeUp` | +2 | Slight pitch adjustment up |
 | Transpose Down | `EvaluatorPreset.TRANSPOSE_DOWN` | `.transposeDown` | -2 | Slight pitch adjustment down |
 
-## BreathMetrics (deprecated)
+## Breath types (moved to tessera)
 
-`BreathMetrics` is the return type of the deprecated `CalibraBreath.computeMetrics(...)` shell. The canonical types live in `tessera.model`:
+The legacy calibra `BreathMetrics { capacity, control, isValid }` and the short-lived 2.0.0 `BreathScore` were both replaced by the unified `tessera.model.BreathMetrics`:
 
 | Old type | New type |
 |----------|----------|
-| `BreathMetrics { capacity: Float, control: Float, isValid: Boolean }` | [`BreathScore { capacity: Float?, controlScore: Float }`](../tessera/breath#breathscore) — capacity is now nullable, not `-1f` |
+| `BreathMetrics { capacity: Float, control: Float, isValid: Boolean }` (1.x calibra) | [`BreathMetrics { controlScore, phrases, alignmentScore }`](../tessera/breath#breathmetrics) |
+| `BreathScore { capacity: Float?, controlScore: Float }` (2.0.0-only intermediate) | [`BreathMetrics`](../tessera/breath#breathmetrics) — capacity moved to `phrases?.longestDuration` |
 | (none) | [`BreathFunction`](../tessera/breath#breathfunction) — composable intermediate |
-| (none) | [`BreathComparison`](../tessera/breath#breathcomparison) — reference-vs-student match score |
+| (none) | [`PhraseSummary`](../tessera/breath#phrasesummary) — phrase-level structure |
+| (none) | Alignment match score is now `BreathMetrics.alignmentScore: Float?` |
 
 ## Error Types
 

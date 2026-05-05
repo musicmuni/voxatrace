@@ -224,7 +224,7 @@ struct BreathMonitorView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("Offline: TesseraBreath.computeScore() - capacity + control")
+            Text("Offline: TesseraBreath.analyze() - control + phrase summary")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 

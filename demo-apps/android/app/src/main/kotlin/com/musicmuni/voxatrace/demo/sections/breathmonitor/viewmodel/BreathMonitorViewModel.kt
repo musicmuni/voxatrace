@@ -37,7 +37,7 @@ enum class BreathMonitorState {
  *
  * APIs demonstrated:
  * - CalibraVAD (singingRealtime) for real-time voice detection
- * - TesseraBreath.computeScore() for breath capacity + control scoring
+ * - TesseraBreath.analyze() for breath control score + phrase summary
  * - PitchDetection.createContourExtractor() for pitch extraction
  * - SonixDecoder.decode() for audio file loading
  */
@@ -152,9 +152,9 @@ class BreathMonitorViewModel : ViewModel() {
                 extractor.release()
 
                 if (contour.size >= 2) {
-                    val score = TesseraBreath.computeScore(contour, BreathConfig.PRACTICE)
-                    _breathCapacity.value = score.capacity
-                    _controlScore.value = score.controlScore
+                    val metrics = TesseraBreath.analyze(contour, config = BreathConfig.PRACTICE)
+                    _breathCapacity.value = metrics.phrases?.longestDuration
+                    _controlScore.value = metrics.controlScore
                 }
             }
         } catch (e: Exception) {
@@ -200,9 +200,9 @@ class BreathMonitorViewModel : ViewModel() {
                 extractor.release()
 
                 if (contour.size >= 2) {
-                    val score = TesseraBreath.computeScore(contour, BreathConfig.PRACTICE)
-                    _offlineBreathCapacity.value = score.capacity ?: 0f
-                    _offlineControlScore.value = score.controlScore
+                    val metrics = TesseraBreath.analyze(contour, config = BreathConfig.PRACTICE)
+                    _offlineBreathCapacity.value = metrics.phrases?.longestDuration ?: 0f
+                    _offlineControlScore.value = metrics.controlScore ?: 0f
 
                     val pitches = contour.pitchesHz
                     val times = contour.times

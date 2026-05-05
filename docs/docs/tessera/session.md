@@ -63,7 +63,7 @@ The session always creates an internal `PitchDetector` from `detectorConfig` for
 
 ```kotlin
 data class TesseraResult(
-    val breath: BreathScore?,
+    val breath: BreathMetrics?,
     val agility: AgilityScore?,
     val vocalRange: VocalRangeResult?,
 )

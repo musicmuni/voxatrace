@@ -373,7 +373,7 @@ private fun ApiInfoCard() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Offline: TesseraBreath.computeScore(contour, BreathConfig.PRACTICE) — capacity + control",
+                text = "Offline: TesseraBreath.analyze(contour, BreathConfig.PRACTICE) — control + phrase summary",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

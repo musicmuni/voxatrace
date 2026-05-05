@@ -65,8 +65,8 @@ final class VoiceProfileViewModel: ObservableObject {
             var octaves: Float = 0
 
             if let breath = result.breath {
-                cap = breath.capacity ?? 0
-                ctrl = breath.controlScore
+                cap = breath.phrases?.longestDuration ?? 0
+                ctrl = breath.controlScore ?? 0
             }
             if let agility = result.agility {
                 agil = agility.scores.first ?? 0
