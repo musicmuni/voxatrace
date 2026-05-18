@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Realtime pitch-contour API on `PitchDetector` replaced.** The
+  bounded, observable `livePitchContour: StateFlow<PitchContour>` (a
+  fixed rolling window, 10 s by default) and the `setContourMaxDuration`
+  knob are removed in favour of `pitchContour: PitchContourRecorder` —
+  a lossless, append-only, unbounded contour store. This is a breaking
+  change; 2.0.0 and later consumers must adopt `pitchContour`. There is
+  no compatibility shim.
+
+### Added
+
+- **`PitchDetector.pitchContour: PitchContourRecorder`.** Records every
+  detected point for the lifetime of the detector with no rolling-window
+  cap. Read it two ways:
+  - `pitchContour.snapshot(): PitchContour` — the whole session so far,
+    for end-of-session scoring and analysis.
+  - `pitchContour.recent(seconds): PitchContour` — the trailing window,
+    for live visualization (replaces the old fixed `livePitchContour`
+    window; the caller now chooses the span at read time).
+
+  Also exposes `pitchAt(timeSeconds)`, `size`, and `durationSeconds`.
+  `PitchContourRecorder` is a new public type in
+  `com.musicmuni.voxatrace.common.streaming` — public reads,
+  detector-internal writes.
+
+### Removed
+
+- **`PitchDetector.livePitchContour`** (`StateFlow<PitchContour>`) and
+  **`PitchDetector.setContourMaxDuration(seconds)`** are gone. The
+  contour is no longer exposed as an observable flow and is no longer
+  windowed. Migration for 2.0.0+ consumers:
+  - reactive collection of `livePitchContour` for display → poll
+    `pitchContour.recent(seconds)` on your render tick.
+  - `livePitchContour.value` for whole-session scoring →
+    `pitchContour.snapshot()`. This also fixes silent truncation: the
+    old window dropped points beyond its cap, so long sessions were
+    scored on a partial contour.
+  - `setContourMaxDuration(n)` → no replacement; the window span is now
+    chosen at read time via `recent(n)`.
+
 ## [2.0.0]
 
 Major release. **1.x had two public namespaces — `sonix` and `calibra`. 2.0.0

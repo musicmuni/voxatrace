@@ -291,8 +291,6 @@ class MelodyEvalViewModel : ViewModel() {
             // Create pitch detector for realtime student pitch detection
             val detectorConfig = PitchDetectorConfig.BALANCED
             pitchDetector = PitchDetection.createDetector(detectorConfig)
-            val recordingDurationSeconds = (segmentEndTimeMs - segmentStartTimeMs) / 1000f
-            pitchDetector?.setContourMaxDuration(recordingDurationSeconds + 1f)
 
             _isReady.value = true
             _isPreparing.value = false
@@ -404,8 +402,8 @@ class MelodyEvalViewModel : ViewModel() {
         viewModelScope.launch {
             val studentAudio = collectedAudio.toFloatArray()
 
-            // Use live pitch contour from detector (now has proper hop size)
-            val studentContour = pitchDetector?.livePitchContour?.value
+            // Use the detector's accumulated session pitch contour
+            val studentContour = pitchDetector?.pitchContour?.snapshot()
 
             val studentMaterial = LessonMaterial.fromAudio(
                 samples = studentAudio,

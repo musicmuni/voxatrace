@@ -227,8 +227,6 @@ final class MelodyEvalViewModel: ObservableObject {
 
             // Create pitch detector for realtime student pitch detection
             pitchDetector = PitchDetection.createDetector(config: .balanced)
-            let recordingDurationSeconds = Float(segmentEndTimeMs - segmentStartTimeMs) / 1000.0
-            pitchDetector?.setContourMaxDuration(seconds: recordingDurationSeconds + 1.0)
 
             await MainActor.run {
                 isReady = true
@@ -345,7 +343,7 @@ final class MelodyEvalViewModel: ObservableObject {
 
             // Use detector's accumulated pitch contour (fast path)
             let studentContour: PitchContour? = {
-                guard let contour = pitchDetector?.livePitchContour.value,
+                guard let contour = pitchDetector?.pitchContour.snapshot(),
                       !contour.isEmpty else { return nil }
                 return contour
             }()
