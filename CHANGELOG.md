@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `PeakDetectionConfig` gains a `minPeakAreaFraction` knob (default `0f`
   = off) exposing this relative-area gate for direct peak-detection
   callers.
+- **Accura grading consolidated onto one scale.**
+  `SwaraAnalysis.deviationRemark: String` is replaced by
+  `tier: PitchingTier` (`EXCELLENT/GOOD/FAIR/POOR`), and a new
+  `score: Float` (per-note 0–100) is added. `PitchingScore` gains
+  `tier: PitchingTier`. Per-note and overall verdicts now derive from
+  one 0–100 grading curve and one tier band table, so a note's tier and
+  its score can no longer disagree. Breaking: read `tier` where you read
+  `deviationRemark`.
 
 ### Added
 
