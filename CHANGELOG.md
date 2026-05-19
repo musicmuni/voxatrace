@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   a lossless, append-only, unbounded contour store. This is a breaking
   change; 2.0.0 and later consumers must adopt `pitchContour`. There is
   no compatibility shim.
+- **`Accura.analyzePitching` no longer reports glided-through notes.**
+  A per-svara peak whose integrated histogram area is below 12 % of the
+  busiest peak's is treated as a transient glide rather than an intended
+  svara and is excluded from `IntonationAnalysisResult.swaras`.
+  `PeakDetectionConfig` gains a `minPeakAreaFraction` knob (default `0f`
+  = off) exposing this relative-area gate for direct peak-detection
+  callers.
 
 ### Added
 
