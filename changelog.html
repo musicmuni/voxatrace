@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Changelog | VoxaTrace</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://voxatrace.ai/img/voxatrace-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://voxatrace.ai/img/voxatrace-social-card.jpg"><meta data-rh="true" property="og:url" content="https://voxatrace.ai/changelog"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Changelog | VoxaTrace"><meta data-rh="true" name="description" content="All notable changes to VoxaTrace will be documented here."><meta data-rh="true" property="og:description" content="All notable changes to VoxaTrace will be documented here."><link data-rh="true" rel="icon" href="/img/favicon.png"><link data-rh="true" rel="canonical" href="https://voxatrace.ai/changelog"><link data-rh="true" rel="alternate" href="https://voxatrace.ai/changelog" hreflang="en"><link data-rh="true" rel="alternate" href="https://voxatrace.ai/changelog" hreflang="x-default"><link rel="stylesheet" href="/assets/css/styles.909d98f3.css">
-<script src="/assets/js/runtime~main.d9c33c23.js" defer="defer"></script>
-<script src="/assets/js/main.85bf0c4d.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.11102a88.js" defer="defer"></script>
+<script src="/assets/js/main.41149015.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -15,12 +15,25 @@
 <p>All notable changes to VoxaTrace will be documented here.</p>
 <p>The format is based on <a href="https://keepachangelog.com/" target="_blank" rel="noopener noreferrer" class="">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/" target="_blank" rel="noopener noreferrer" class="">Semantic Versioning</a>.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="unreleased">[Unreleased]<a href="#unreleased" class="hash-link" aria-label="Direct link to [Unreleased]" title="Direct link to [Unreleased]" translate="no">​</a></h2>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="added">Added<a href="#added" class="hash-link" aria-label="Direct link to Added" title="Direct link to Added" translate="no">​</a></h3>
-<ul>
-<li class="">Initial public release preparation</li>
-</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="latest-200-2026-05-22">Latest: 2.0.0 (2026-05-22)<a href="#latest-200-2026-05-22" class="hash-link" aria-label="Direct link to Latest: 2.0.0 (2026-05-22)" title="Direct link to Latest: 2.0.0 (2026-05-22)" translate="no">​</a></h2>
+<p>Major release. VoxaTrace 2.0.0 introduces four new public namespaces:
+<code>tona</code> (pitch detection / processing / analysis), <code>tessera</code> (voice
+metrics), <code>accura</code> (intonation scoring), and <code>common.MusicTheory</code>.</p>
+<p>Part of this is reorganization: calibra functionality that was never about
+singing evaluation moved to its permanent home (pitch to <code>tona</code>, voice
+metrics to <code>tessera</code>, music theory to <code>common</code>), and the legacy 1.x
+calibra facades (<code>CalibraPitch</code>, <code>CalibraBreath</code>, <code>CalibraVocalRange</code>,
+<code>VocalRangeSession</code>, <code>CalibraSpeakingPitch</code>, <code>CalibraMusic</code>) are removed.</p>
+<p>But most of the new surface is genuinely new functionality that did not
+exist in 1.x in any form: the entire <code>Accura</code> facade, the entire
+<code>PitchAnalysis</code> facade, <code>TesseraAgility</code>, the multi-metric
+<code>Tessera.analyze</code> / <code>TesseraSession</code>, the batch-shape
+<code>TesseraRange.computeVocalRange</code> / <code>computeSearchVector</code> / <code>computeMatch</code>,
+and <code>MusicTheory.deriveUserShruti</code>.</p>
+<p>Calibra retains the four singing-evaluation facades (<code>CalibraLiveEval</code>,
+<code>CalibraMelodyEval</code>, <code>CalibraNoteEval</code>, <code>CalibraVAD</code>). See the full entry,
+breaking-change list, and migration table in the canonical changelog.</p>
 <hr>
-<p><em>For older versions, see <a href="https://github.com/musicmuni/voxatrace/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="">CHANGELOG.md</a></em></p></article></div><div class="col col--2"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#unreleased" class="table-of-contents__link toc-highlight">[Unreleased]</a><ul><li><a href="#added" class="table-of-contents__link toc-highlight">Added</a></li></ul></li></ul></div></div></div></main></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/">Getting Started</a></li><li class="footer__item"><a href="/api/index.html" target="_blank" rel="noopener noreferrer" class="footer__link-item">API Reference<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/musicmuni/voxatrace" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 MusicMuni.</div></div></div></footer></div>
+<p><em>Full changelog (all versions, with migration notes): <a href="https://github.com/musicmuni/voxatrace/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="">CHANGELOG.md</a></em></p></article></div><div class="col col--2"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#latest-200-2026-05-22" class="table-of-contents__link toc-highlight">Latest: 2.0.0 (2026-05-22)</a></li></ul></div></div></div></main></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/">Getting Started</a></li><li class="footer__item"><a href="/api/index.html" target="_blank" rel="noopener noreferrer" class="footer__link-item">API Reference<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/musicmuni/voxatrace" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 MusicMuni.</div></div></div></footer></div>
 </body>
 </html>

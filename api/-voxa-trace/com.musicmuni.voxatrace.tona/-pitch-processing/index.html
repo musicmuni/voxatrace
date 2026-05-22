@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PitchProcessing</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<script type="text/javascript" src="../../../images/back-to-docs.js" async="async"></script>
+<link href="../../../images/logo.png">
+<link href="../../../images/favicon.png">
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2.0.0        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.tona/PitchProcessing///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.tona</a><span class="delimiter">/</span><span class="current">PitchProcessing</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Pitch</span><wbr></wbr><span><span>Processing</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">PitchProcessing</a></div><p class="paragraph">Public facade for batch pitch post-processing — cleanup, correction, smoothing, and segmentation (ADR-001).</p><h2 class="">What is Pitch Processing?</h2><p class="paragraph">Raw pitch contours from <a href="../-pitch-detection/index.html">PitchDetection</a> contain octave errors, short noise bursts (blips), and jitter. This facade provides a config-driven pipeline that cleans them up, plus individual operations for building custom pipelines.</p><p class="paragraph">Pipeline order (each stage skipped if disabled in config): octave correction → blip removal → smoothing.</p><h2 class="">When to Use</h2><div class="table--container"><table><thead><tr><th>Scenario</th><th>Use</th><th>Why</th></tr></thead><tbody><tr><td>Clean a contour for scoring / melody eval</td><td><code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">process(contour, .SCORING)</code></td><td>Octave fix + blip removal, no smoothing</td></tr><tr><td>Clean a contour for visualization</td><td><code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">process(contour, .DISPLAY)</code></td><td>All stages, shorter min-duration</td></tr><tr><td>Get raw pitch unchanged</td><td><code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">process(contour, .RAW)</code></td><td>No-op passthrough</td></tr><tr><td>Build a custom cleanup chain</td><td>Individual ops (<code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">correctOctaveErrors</code>, <code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">smooth</code>, <code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">medianFilter</code>, ...)</td><td>Mix and match</td></tr><tr><td>Realtime per-frame processing</td><td>Not this facade — realtime smoothing/correction is handled inside PitchDetector when enabled via <code class="org.jetbrains.dokka.pages.commenttable@86ca8d1 lang-kotlin">PitchDetectorConfig.Builder.enableProcessing()</code></td><td>Different budget (ADR-020)</td></tr></tbody></table></div><h2 class="">Usage Tiers</h2><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">// Tier 1: Preset (80% of users)<br>val cleaned = PitchProcessing.process(contour, PitchProcessingConfig.SCORING)<br><br>// Tier 2: Builder (15%)<br>val config = PitchProcessingConfig.Builder()<br>    .fixOctaveErrors(true)<br>    .removeSpuriousJumps(false)<br>    .smoothingWindowSize(9)<br>    .build()<br>val cleaned = PitchProcessing.process(contour, config)<br><br>// Tier 3: .copy() (5%)<br>val cleaned = PitchProcessing.process(contour, PitchProcessingConfig.DISPLAY.copy(hopMs = 20))<br><br>// Custom pipeline (individual operations)<br>var pitches = contour.toPitchesArray()<br>pitches = PitchProcessing.correctOctaveErrors(pitches, OctaveCorrectionConfig.BASIC)<br>pitches = PitchProcessing.iqrFilter(pitches)<br>pitches = PitchProcessing.smooth(pitches)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h3 class="">iOS (Swift)</h3><div class="sample-container"><pre><code class="block lang-swift" theme="idea">// Tier 1: Preset (native [Float] arrays, no KotlinFloatArray needed)<br>let cleaned = PitchProcessing.process(contour: contour, config: .scoring)<br><br>// Tier 2: Builder<br>let config = PitchProcessingConfig.Builder()<br>    .fixOctaveErrors(true)<br>    .removeSpuriousJumps(false)<br>    .smoothingWindowSize(9)<br>    .build()<br>let cleaned = PitchProcessing.process(contour: contour, config: config)<br><br>// Custom pipeline (individual operations with native [Float])<br>var pitches = contour.toPitchesArray().toSwiftArray()<br>pitches = PitchProcessing.correctOctaveErrors(pitchesHz: pitches, config: .basic)<br>pitches = PitchProcessing.iqrFilter(pitchesHz: pitches)<br>pitches = PitchProcessing.smooth(pitchesHz: pitches)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h2 class="">Common Pitfalls</h2><ol><li><p class="paragraph"><code class="strong lang-kotlin"><strong>smooth</strong></code><strong> and </strong><code class="strong lang-kotlin"><strong>medianFilter</strong></code><strong> require odd window/kernel size</strong>:     Even values throw <code class="lang-kotlin">IllegalArgumentException</code> (ADR-022). Defaults are     7 and 5 respectively.</p></li><li><p class="paragraph"><strong>Unvoiced frames use -1, not 0</strong>: All operations preserve the <code class="lang-kotlin">-1</code>     sentinel for unvoiced frames. Don't zero-fill before processing.</p></li><li><p class="paragraph"><code class="strong lang-kotlin"><strong>hopMs</strong></code><strong> matters for duration-based ops</strong>: <code class="lang-kotlin">removeBlips</code> and     <code class="lang-kotlin">interpolateSilence</code> convert millisecond thresholds to frame counts     via <code class="lang-kotlin">hopMs</code>. Wrong hop → wrong durations.</p></li><li><p class="paragraph"><strong>Batch processing, not realtime</strong>: This facade processes entire arrays.     For per-frame realtime processing, use PitchDetector with     <code class="lang-kotlin">enableProcessing()</code> in PitchDetectorConfig.Builder.</p></li></ol><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-pitch-detection/index.html"><span>Pitch</span><wbr></wbr><span><span>Detection</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For creating detectors and extractors that produce contours</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-pitch-analysis/index.html"><span>Pitch</span><wbr></wbr><span><span>Analysis</span></span></a></div></span></div><div><div class="title"><p class="paragraph">For histogram, quantization, and transcription on processed contours</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.tona.model/-pitch-processing-config/index.html"><span>Pitch</span><wbr></wbr><span>Processing</span><wbr></wbr><span><span>Config</span></span></a></div></span></div><div><div class="title"><p class="paragraph">The config class with presets (RAW, SCORING, DISPLAY)</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.tona.model/-octave-correction-config/index.html"><span>Octave</span><wbr></wbr><span>Correction</span><wbr></wbr><span><span>Config</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Standalone config for the octave correction stage</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1176042413%2FFunctions%2F-1201622999" anchor-label="correctOctaveErrors" id="1176042413%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="correct-octave-errors.html"><span>correct</span><wbr></wbr><span>Octave</span><wbr></wbr><span><span>Errors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1176042413%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="correct-octave-errors.html"><span class="token function">correctOctaveErrors</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.model/-octave-correction-config/index.html">OctaveCorrectionConfig</a><span class="token operator"> = </span>OctaveCorrectionConfig.FULL</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply config-driven octave correction.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1423541338%2FFunctions%2F-1201622999" anchor-label="dbscanFilter" id="1423541338%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dbscan-filter.html"><span>dbscan</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1423541338%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="dbscan-filter.html"><span class="token function">dbscanFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">epsCents<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">100.0f</span><span class="token punctuation">, </span></span><span class="parameter ">minSamples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply DBSCAN-based outlier filter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1441780827%2FFunctions%2F-1201622999" anchor-label="findSegments" id="-1441780827%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="find-segments.html"><span>find</span><wbr></wbr><span><span>Segments</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1441780827%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="find-segments.html"><span class="token function">findSegments</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">mask<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean-array/index.html">BooleanArray</a><span class="token punctuation">, </span></span><span class="parameter ">minGapMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter ">hopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.ranges/-int-range/index.html">IntRange</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Find contiguous segments where a mask is true.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2140029125%2FFunctions%2F-1201622999" anchor-label="getDurationMask" id="2140029125%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-duration-mask.html"><span>get</span><wbr></wbr><span>Duration</span><wbr></wbr><span><span>Mask</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2140029125%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-duration-mask.html"><span class="token function">getDurationMask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">hopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">minDurationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">80.0f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean-array/index.html">BooleanArray</a></div><div class="brief "><p class="paragraph">Get mask filtering short voiced segments below minimum duration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="607283859%2FFunctions%2F-1201622999" anchor-label="getStableSlopeMask" id="607283859%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-stable-slope-mask.html"><span>get</span><wbr></wbr><span>Stable</span><wbr></wbr><span>Slope</span><wbr></wbr><span><span>Mask</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="607283859%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-stable-slope-mask.html"><span class="token function">getStableSlopeMask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">hopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">maxSlopeCentsPerSec<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">500.0f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean-array/index.html">BooleanArray</a></div><div class="brief "><p class="paragraph">Get mask of frames with stable pitch slope.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="18582722%2FFunctions%2F-1201622999" anchor-label="getValidPitchMask" id="18582722%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-valid-pitch-mask.html"><span>get</span><wbr></wbr><span>Valid</span><wbr></wbr><span>Pitch</span><wbr></wbr><span><span>Mask</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="18582722%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-valid-pitch-mask.html"><span class="token function">getValidPitchMask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean-array/index.html">BooleanArray</a></div><div class="brief "><p class="paragraph">Get mask of valid (voiced) pitch values.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-557329614%2FFunctions%2F-1201622999" anchor-label="interpolateSilence" id="-557329614%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="interpolate-silence.html"><span>interpolate</span><wbr></wbr><span><span>Silence</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-557329614%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="interpolate-silence.html"><span class="token function">interpolateSilence</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">hopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">method<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.model/-interpolation-method/index.html">InterpolationMethod</a><span class="token operator"> = </span>InterpolationMethod.LINEAR<span class="token punctuation">, </span></span><span class="parameter ">maxGapMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">250.0f</span><span class="token punctuation">, </span></span><span class="parameter ">forceRemaining<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Interpolate over silence gaps in a pitch contour.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1380802002%2FFunctions%2F-1201622999" anchor-label="iqrFilter" id="1380802002%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="iqr-filter.html"><span>iqr</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1380802002%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="iqr-filter.html"><span class="token function">iqrFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">multiplier<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">2.5f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply IQR-based outlier filter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="418549569%2FFunctions%2F-1201622999" anchor-label="medianFilter" id="418549569%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="median-filter.html"><span>median</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="418549569%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="median-filter.html"><span class="token function">medianFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">kernelSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">5</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply median filter for spike removal.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1533994389%2FFunctions%2F-1201622999" anchor-label="process" id="1533994389%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="process.html"><span><span>process</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1533994389%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="process.html"><span class="token function">process</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contour<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.model/-pitch-contour/index.html">PitchContour</a><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.model/-pitch-processing-config/index.html">PitchProcessingConfig</a><span class="token operator"> = </span>PitchProcessingConfig.DISPLAY</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.model/-pitch-contour/index.html">PitchContour</a></div><div class="brief "><p class="paragraph">Process a pitch contour with preset or custom config.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="process.html"><span class="token function">process</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.model/-pitch-processing-config/index.html">PitchProcessingConfig</a><span class="token operator"> = </span>PitchProcessingConfig.DISPLAY</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Process a pitch array with preset or custom config.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-867721743%2FFunctions%2F-1201622999" anchor-label="rangeFilter" id="-867721743%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="range-filter.html"><span>range</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-867721743%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="range-filter.html"><span class="token function">rangeFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">minHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">maxHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply frequency range filter.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-871295059%2FFunctions%2F-1201622999" anchor-label="removeBlips" id="-871295059%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-blips.html"><span>remove</span><wbr></wbr><span><span>Blips</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-871295059%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-blips.html"><span class="token function">removeBlips</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">hopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">minDurationMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">80.0f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Remove short voiced runs (blips) below minimum duration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="162954416%2FFunctions%2F-1201622999" anchor-label="resample" id="162954416%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resample.html"><span><span>resample</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="162954416%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="resample.html"><span class="token function">resample</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">confidences<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">sourceHopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">targetHopMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Resample a pitch sequence to a different hop rate.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1588105973%2FFunctions%2F-1201622999" anchor-label="smooth" id="1588105973%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="smooth.html"><span><span>smooth</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1588105973%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="smooth.html"><span class="token function">smooth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">windowSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">7</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply weighted average smoothing in cents space.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2066799187%2FFunctions%2F-1201622999" anchor-label="smoothGaussian" id="-2066799187%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="smooth-gaussian.html"><span>smooth</span><wbr></wbr><span><span>Gaussian</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2066799187%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="smooth-gaussian.html"><span class="token function">smoothGaussian</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pitchesHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">sigma<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">3.0f</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a></div><div class="brief "><p class="paragraph">Apply Gaussian smoothing with NaN-aware gap interpolation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
