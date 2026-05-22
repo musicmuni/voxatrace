@@ -101,24 +101,24 @@ Sealed class. Both the object form (`VoiceType.WesternSoprano`) and a lowercase 
 
 | VoiceType | Range (Hz) |
 |-----------|-----------|
-| `Auto` | 80 – 1000 |
-| `WesternSoprano` | 250 – 1000 |
-| `WesternAlto` | 180 – 700 |
-| `WesternTenor` | 130 – 500 |
-| `WesternBass` | 80 – 350 |
-| `WesternChild` | 200 – 1200 |
-| `CarnaticMale` | 90 – 450 |
-| `CarnaticFemale` | 140 – 900 |
-| `CarnaticChild` | 200 – 1000 |
-| `HindustaniMale` | 90 – 450 |
-| `HindustaniFemale` | 180 – 900 |
-| `HindustaniChild` | 200 – 1000 |
-| `PopMale` | 100 – 500 |
-| `PopFemale` | 180 – 800 |
-| `PopChild` | 200 – 1000 |
-| `IndianFilmMale` | 100 – 500 |
-| `IndianFilmFemale` | 180 – 900 |
-| `IndianFilmChild` | 200 – 1000 |
+| `Auto` | 65 – 1500 |
+| `WesternSoprano` | 200 – 1500 |
+| `WesternAlto` | 130 – 1000 |
+| `WesternTenor` | 100 – 700 |
+| `WesternBass` | 65 – 450 |
+| `WesternChild` | 180 – 1500 |
+| `CarnaticMale` | 75 – 600 |
+| `CarnaticFemale` | 120 – 1100 |
+| `CarnaticChild` | 180 – 1300 |
+| `HindustaniMale` | 75 – 600 |
+| `HindustaniFemale` | 120 – 1100 |
+| `HindustaniChild` | 180 – 1300 |
+| `PopMale` | 75 – 600 |
+| `PopFemale` | 120 – 1100 |
+| `PopChild` | 180 – 1300 |
+| `IndianFilmMale` | 75 – 600 |
+| `IndianFilmFemale` | 120 – 1100 |
+| `IndianFilmChild` | 180 – 1300 |
 
 ## QuietHandling
 
@@ -190,11 +190,10 @@ val config = ContourExtractorConfig.Builder()
 
 | Method | Description |
 |--------|-------------|
-| `detect(samples, sampleRate, startTimeSeconds = null)` | Single-shot detection. Returns latest `PitchPoint`. Does NOT write to `livePitchContour`. |
-| `feedContour(samples, sampleRate, anchorTime)` | Stream audio into `livePitchContour` / `livePitch`. Each emission's timestamp is back-spread from `anchorTime` by the detector's hop. |
+| `detect(samples, sampleRate)` | Single-shot detection. Returns latest `PitchPoint`. Does NOT write to `pitchContour`. |
+| `feedContour(samples, sampleRate, anchorTime)` | Stream audio into `pitchContour` / `livePitch`. Each emission's timestamp is back-spread from `anchorTime` by the detector's hop. |
 | `pitchAt(timeSeconds)` | Closest contour point to `timeSeconds`. Returns `null` if contour is empty. |
 | `getAmplitude(samples, sampleRate)` | RMS of the input. Resamples to 16 kHz internally. |
-| `setContourMaxDuration(seconds)` | Trim oldest points when contour exceeds this duration. |
 | `clearPitchContour()` | Wipe the entire contour. |
 | `clearPitchContourFrom(timeSeconds)` | Drop points at-or-after `timeSeconds`; keep earlier ones. Used for segment-aware retry / seek-back. |
 | `reset()` | Reset internal state and audio buffer. |
@@ -209,10 +208,10 @@ val config = ContourExtractorConfig.Builder()
 | `latencyMs` | `Float` | Detection latency in milliseconds |
 | `hasProcessing` | `Boolean` | Whether post-processing is available |
 | `processingEnabled` | `Boolean` (var) | Toggle smoothing / octave correction at runtime |
-| `livePitchContour` | `StateFlow<PitchContour>` | Accumulated contour for scrolling visualization |
-| `livePitch` | `SharedFlow<PitchPoint>` | Per-emission pitch stream — same source/rate as `livePitchContour`, event-shaped |
+| `pitchContour` | `PitchContourRecorder` | Lossless append-only session contour; read whole via `snapshot()` or windowed via `recent(seconds)` |
+| `livePitch` | `SharedFlow<PitchPoint>` | Per-emission pitch stream — same source/rate as `pitchContour`, event-shaped |
 
-Both `livePitchContour` and `livePitch` are filled by `feedContour` in lock-step. Use the contour for scrolling trails; use the SharedFlow for live tuners or telemetry.
+Both `pitchContour` and `livePitch` are filled by `feedContour` in lock-step. Read `pitchContour.recent(seconds)` once per render frame for scrolling trails (the caller chooses the span at read time), or `pitchContour.snapshot()` for the whole session; use the SharedFlow for live tuners or telemetry. `PitchContourRecorder` lives in `com.musicmuni.voxatrace.common.streaming` and is read-only to the caller; also exposes `pitchAt(timeSeconds)`, `size`, and `durationSeconds`.
 
 ## PitchContourExtractor
 
@@ -275,7 +274,7 @@ data class PitchContour(
 1. **`PRECISE` is not for realtime.** 4096-sample buffer breaks the 40 ms per-buffer budget. Use `BALANCED` or `RELAXED` for realtime; reserve `PRECISE` for offline (per ADR-020).
 2. **SwiftF0 needs a model.** Either register globally (`AIModelRegistry.registerSwiftF0 { … }`) or pass `modelProvider` explicitly. `createDetector`/`createContourExtractor` throw `IllegalArgumentException` otherwise.
 3. **Mono input only.** `SonixDecoder.decode()` averages stereo channels automatically (per ADR-017). Custom audio paths must convert to mono.
-4. **`detect()` does not write the contour.** Use `feedContour(samples, sampleRate, anchorTime)` if you want `livePitchContour` populated.
+4. **`detect()` does not write the contour.** Use `feedContour(samples, sampleRate, anchorTime)` if you want `pitchContour` populated.
 5. **Always `release()` / `close()`.** Detectors and extractors hold native resources.
 
 ## See also

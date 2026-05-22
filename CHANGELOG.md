@@ -5,65 +5,7 @@ All notable changes to VoxaTrace will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
-
-### Changed
-
-- **Realtime pitch-contour API on `PitchDetector` replaced.** The
-  bounded, observable `livePitchContour: StateFlow<PitchContour>` (a
-  fixed rolling window, 10 s by default) and the `setContourMaxDuration`
-  knob are removed in favour of `pitchContour: PitchContourRecorder` —
-  a lossless, append-only, unbounded contour store. This is a breaking
-  change; 2.0.0 and later consumers must adopt `pitchContour`. There is
-  no compatibility shim.
-- **`Accura.analyzePitching` no longer reports glided-through notes.**
-  A per-svara peak whose integrated histogram area is below 12 % of the
-  busiest peak's is treated as a transient glide rather than an intended
-  svara and is excluded from `IntonationAnalysisResult.swaras`.
-  `PeakDetectionConfig` gains a `minPeakAreaFraction` knob (default `0f`
-  = off) exposing this relative-area gate for direct peak-detection
-  callers.
-- **Accura grading consolidated onto one scale.**
-  `SwaraAnalysis.deviationRemark: String` is replaced by
-  `tier: PitchingTier` (`EXCELLENT/GOOD/FAIR/POOR`), and a new
-  `score: Float` (per-note 0–100) is added. `PitchingScore` gains
-  `tier: PitchingTier`. Per-note and overall verdicts now derive from
-  one 0–100 grading curve and one tier band table, so a note's tier and
-  its score can no longer disagree. Breaking: read `tier` where you read
-  `deviationRemark`.
-
-### Added
-
-- **`PitchDetector.pitchContour: PitchContourRecorder`.** Records every
-  detected point for the lifetime of the detector with no rolling-window
-  cap. Read it two ways:
-  - `pitchContour.snapshot(): PitchContour` — the whole session so far,
-    for end-of-session scoring and analysis.
-  - `pitchContour.recent(seconds): PitchContour` — the trailing window,
-    for live visualization (replaces the old fixed `livePitchContour`
-    window; the caller now chooses the span at read time).
-
-  Also exposes `pitchAt(timeSeconds)`, `size`, and `durationSeconds`.
-  `PitchContourRecorder` is a new public type in
-  `com.musicmuni.voxatrace.common.streaming` — public reads,
-  detector-internal writes.
-
-### Removed
-
-- **`PitchDetector.livePitchContour`** (`StateFlow<PitchContour>`) and
-  **`PitchDetector.setContourMaxDuration(seconds)`** are gone. The
-  contour is no longer exposed as an observable flow and is no longer
-  windowed. Migration for 2.0.0+ consumers:
-  - reactive collection of `livePitchContour` for display → poll
-    `pitchContour.recent(seconds)` on your render tick.
-  - `livePitchContour.value` for whole-session scoring →
-    `pitchContour.snapshot()`. This also fixes silent truncation: the
-    old window dropped points beyond its cap, so long sessions were
-    scored on a partial contour.
-  - `setContourMaxDuration(n)` → no replacement; the window span is now
-    chosen at read time via `recent(n)`.
-
-## [2.0.0]
+## [2.0.0] - 2026-05-22
 
 Major release. **1.x had two public namespaces — `sonix` and `calibra`. 2.0.0
 introduces four new ones: `tona`, `tessera`, `accura`, and `common.MusicTheory`.**
@@ -97,6 +39,18 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   examples below.
 - **`PitchPoint.isVoiced` removed.** The 1.x alias for `isSinging` is
   gone. Use `point.isSinging` or `point.pitch > 0`.
+- **Unused calibra error and evaluator types removed.** `CalibraException`
+  and `CalibraErrorType` (never thrown by any facade), the iOS-only error
+  enums `PitchDetectorError` / `EvaluatorError` / `EffectsError` /
+  `AnalysisError` (never thrown/returned), and the orphaned
+  `calibra.model.EvaluatorConfig` / `EvaluatorPreset` (consumed by no
+  facade) are gone. Failure handling follows ADR-022:
+  `VoxaTraceNotInitializedException` and `VoxaTraceKilledException` for
+  SDK-state errors, `IllegalArgumentException` for invalid input, and
+  return-value encoding (`null`, `SingingResult.EMPTY`) for inconclusive
+  domain outcomes. For student key transposition use `studentKeyHz`
+  (`CalibraNoteEval.evaluate` / `CalibraMelodyEval` via `student.keyHz`)
+  or `CalibraLiveEval.setStudentKeyHz(...)`.
 - **Singer-side call shapes that changed alongside the renames** —
   even after fixing imports, these functions take or return different
   values than their 1.x predecessors:
@@ -121,6 +75,20 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
     for a single call returning control score, phrase summary, and
     `alignmentScore` together; or `TesseraBreath.compare(refContour,
     studentContour)` for the alignment score alone.
+- **Realtime pitch-contour API replaced.** `PitchDetector.livePitchContour:
+  StateFlow<PitchContour>` (a bounded rolling window, 10 s by default) and
+  `PitchDetector.setContourMaxDuration(seconds)` are removed in favour of
+  `PitchDetector.pitchContour: PitchContourRecorder`, a lossless,
+  append-only, unbounded contour store. There is no compatibility shim.
+  Migration:
+  - reactive collection of `livePitchContour` for display: poll
+    `pitchContour.recent(seconds)` on your render tick.
+  - `livePitchContour.value` for whole-session scoring:
+    `pitchContour.snapshot()`. This also fixes silent truncation, since the
+    old window dropped points beyond its cap, so long sessions were scored
+    on a partial contour.
+  - `setContourMaxDuration(n)`: no replacement; the window span is now
+    chosen at read time via `recent(n)`.
 
 ### Added
 
@@ -137,23 +105,23 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   labelling, and piecewise linear segment fitting.
 - **Voice metrics (`tessera`).** `Tessera.analyze` (multi-metric batch),
   `TesseraSession` (multi-metric streaming, 10-minute cap),
-  `TesseraBreath` (capacity / control / reference comparison),
+  `TesseraBreath` (control / phrase structure / reference comparison),
   `TesseraAgility` (10-stage pipeline + 0–1 score),
   `TesseraRange` (batch range + 13-dim search vector + matching) and
   `TesseraRangeSession` (guided phase-driven flow with observable state),
   `TesseraSpeakingPitch` (median-F0 detection from speech).
 - **Intonation (`accura`).** New top-level facade — no 1.x equivalent.
-  `Accura.analyzePitching` returns per-swara deviation against EQ
+  `Accura.analyzePitching` returns per-note deviation against EQ
   (12-TET) or JI (just-intonation) target intervals with optional
   global tuning-offset alignment; `Accura.calculateScore` produces a
   0–100 score with a piecewise-linear grading scale and a small-sample
   outlier-robust adjustment. Failure contract follows ADR-022 from
   inception: precondition violations (empty contour, `tonicHz <= 0`,
-  empty `scaleNoteNames`) throw `IllegalArgumentException`;
+  empty `scaleIntervals`) throw `IllegalArgumentException`;
   domain-level inconclusive outcomes (e.g. fewer than three histogram
   peaks) surface via the non-null `IntonationAnalysisResult.error`
   field. `calculateScore` requires `result.error == null` and a
-  non-empty `result.swaras`.
+  non-empty `result.notes`.
 - **Music theory (`common`).** `MusicTheory` is the canonical home for
   pitch ↔ MIDI ↔ note-label ↔ cents conversions, 12-TET / Just Intonation
   interval generators, the chromatic / Carnatic / Hindustani note-name
@@ -167,7 +135,7 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   `practiceShrutiHz`, `shiftSemitones`, and a list of
   `ShrutiOption` values (5 by default) for picker UIs. Each option is
   anchored at the octave nearest to the student's shruti.
-- **`MusicTheory.deriveUserShruti(nspHz, rangeLowHz, rangeHighHz, rangeThresholdSemitones)`.**
+- **`MusicTheory.deriveUserShruti(nspHz, rangeLowHz = null, rangeHighHz = null, rangeThresholdSemitones = 18f)`.**
   Computes the user's practice shruti from their natural speaking pitch
   (NSP) and most-recent vocal range, applying the policy from Musicmuni
   research synthesis (§B7). Returns `UserShrutiDerivation { targetHz, source }`
@@ -177,18 +145,56 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   `[rangeHigh − 17, rangeHigh − 12]`.
 - **`PitchDetector.feedContour(samples, sampleRate, anchorTime)` and
   `PitchDetector.pitchAt(timeSeconds)`** are the canonical streaming
-  contour APIs. `feedContour` writes into `livePitchContour` /
+  contour APIs. `feedContour` writes into `pitchContour` /
   `livePitch`, back-spread from the supplied anchor by the detector's
   hop. `pitchAt` returns the closest contour point via binary search.
 - **`PitchDetector.clearPitchContourFrom(timeSeconds)`** for
   segment-aware retry/seek-back: drops points at or after `timeSeconds`,
   keeps earlier ones.
+- **`PitchDetector.pitchContour: PitchContourRecorder`.** Records every
+  detected point for the lifetime of the detector with no rolling-window
+  cap. Read the whole session via `pitchContour.snapshot()` (end-of-session
+  scoring) or the trailing window via `pitchContour.recent(seconds)` (live
+  visualization; the caller chooses the span at read time). Also exposes
+  `pitchAt(timeSeconds)`, `size`, and `durationSeconds`. `PitchContourRecorder`
+  is a new public type in `com.musicmuni.voxatrace.common.streaming`, with
+  public reads and detector-internal writes.
+- **Off-scale note detection in `Accura.analyzePitching`.** When an explicit
+  scale is supplied, prominent peaks the singer dwelt on that land on a
+  chromatic degree outside the scale are surfaced as
+  `IntonationAnalysisResult.offScaleNotes: List<OffScaleNote>`: notes sung
+  by mistake, reported for awareness only. They carry no target, score, or
+  tier and never affect `PitchingScore`. Each `OffScaleNote` gives the
+  chromatic `label`, its `nearestInScaleLabel` (for "you reached for P"
+  framing), and cents offsets. Best-effort: if detection fails the list is
+  empty and `error` is not set. Capture radius is 30 cents.
 
 ### Changed
 
 - **Default frequency-detection range.** `PitchDetectorConfig.BALANCED`
   defaults to 80 Hz – 1000 Hz (was previously documented as 50–2000).
   SwiftF0 model range remains 46.875 Hz – 2093.75 Hz.
+- **`Accura.analyzePitching` does not report glided-through notes.** A
+  per-note histogram peak whose integrated area is below 12 % of the
+  busiest peak's is treated as a transient glide, not an intended note, and
+  is excluded from `IntonationAnalysisResult.notes`. `PeakDetectionConfig`
+  gains a `minPeakAreaFraction` knob (default `0f` = off) exposing this
+  relative-area gate to direct peak-detection callers.
+- **Accura grading on a single scale.** Each note reports
+  `tier: PitchingTier` (`EXCELLENT`/`GOOD`/`FAIR`/`POOR`) and
+  `score: Float` (per-note 0–100); `PitchingScore` also carries `tier` and
+  reports `noteCount`. Per-note and overall verdicts derive from one 0–100
+  grading curve and one tier band table, so a note's tier and its score can
+  never disagree. `PitchingTier` exposes each band's `minScore` boundary
+  (EXCELLENT ≥ 85, GOOD ≥ 65, FAIR ≥ 40, POOR ≥ 0) as the single source of
+  truth for the bands.
+- **`PitchDetector.detect` drops its reserved third parameter.** The
+  signature is now `detect(samples, sampleRate)`. The former
+  `startTimeSeconds` argument had no effect (it was reserved once `detect`
+  stopped writing the contour; contour writes go through `feedContour`).
+- **`LessonNote` is an immutable value type.** Its fields are now `val`,
+  and the unused `audioLengthMilliSecs` field is gone. The type is
+  `LessonNote(noteName, noteLabel, noteAudioFilePath, numBeats, numSamplesConsonant)`.
 
 ### Removed (migration table)
 
@@ -206,13 +212,17 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
 | `calibra.model.{PitchPoint, PitchContour, PitchDetectorConfig, …}` | `tona.model.*` (full list under "Breaking changes" above) |
 | `calibra.model.{VocalPitch, DetectedNote, VocalRange, VocalRangeConfig, RangeStats, VocalRangePhase, VocalRangeState, VocalRangeResult, VocalRangeSessionConfig}` | `tessera.model.*` |
 | `calibra.model.PitchPoint.isVoiced` (alias for `isSinging`) | `point.isSinging` or `point.pitch > 0` (the canonical `PitchPoint` itself moved to `tona.model`) |
+| `PitchDetector.livePitchContour` (`StateFlow<PitchContour>`) | `PitchDetector.pitchContour.recent(seconds)` (display) / `pitchContour.snapshot()` (whole-session scoring) |
+| `PitchDetector.setContourMaxDuration(seconds)` | removed; choose the window span at read time via `pitchContour.recent(seconds)` |
+| `sonix.model.LessonSvara` (`svaraName`, `svaraLabel`, `svaraAudioFilePath`) | `sonix.model.LessonNote` (`noteName`, `noteLabel`, `noteAudioFilePath`) |
+| `SonixLessonSynthesizer.create(svaras = …)` / `Builder.svaras(…)` | `SonixLessonSynthesizer.create(notes = …)` / `Builder.notes(…)` |
 
 Permanent calibra facades are unchanged: `CalibraLiveEval`,
-`CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`. The audio-effects
-facade (`CalibraEffects` and its config/preset types) is held back in
-2.0.0 — kept internal until the public API is finalized. Apps that used
-the 1.x effects chain should pin to 1.0.x until the public surface
-returns in a later release.
+`CalibraMelodyEval`, `CalibraNoteEval`, `CalibraVAD`. The 1.x audio-effects
+facade (`CalibraEffects` and its config/preset types) is **not available**
+in 2.0.0 — held back until its public API is finalized. Apps that used the
+1.x effects chain should pin to 1.0.x until the public surface returns in a
+later release.
 
 ### Migration
 
@@ -236,7 +246,7 @@ There is no `ContourCleanup` enum — the cleanup field on
 `RAW`, `SCORING`, `DISPLAY`.
 
 `Accura` failure semantics (ADR-022): always inspect `result.error`
-before reading `result.swaras` or passing the result to
+before reading `result.notes` or passing the result to
 `Accura.calculateScore`. Empty inputs throw rather than returning a
 wrapped failure.
 
@@ -355,9 +365,11 @@ retuned based on field use. Callers upgrading from 0.9.x should read the
   interval generators. `SonixToneGenerator` produces sine, square, sawtooth,
   and triangle waveforms. `SonixAudioUtils` adds concatenation,
   frame/time conversion, and frame-mask-to-segment helpers.
-- **`TransSegment.type`.** `.trans` JSON segment types (`teacher_vocal`,
-  `student_vocal`, `commentary`) are now parsed instead of silently
-  dropped.
+- **`TransSegment.type`.** The `.trans` JSON `type` field is now
+  deserialized onto `TransSegment.type` instead of being silently
+  dropped. The value (e.g. `teacher_vocal`, `student_vocal`,
+  `commentary`) is passed through verbatim; the SDK does not validate
+  or interpret it.
 
 ### Changed
 

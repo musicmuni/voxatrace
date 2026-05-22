@@ -24,7 +24,7 @@ val material = LessonMaterial.fromFile(
 
 ```swift
 let material = LessonMaterial.fromFile(
-    audioPath: "/path/to/reference.mp3",
+    url: URL(fileURLWithPath: "/path/to/reference.mp3"),
     segments: segments,
     keyHz: 261.63
 )
@@ -368,8 +368,6 @@ Current state of a CalibraLiveEval session. Exposed as a `StateFlow` from `Calib
 | Member | Kotlin | Swift | Description |
 |--------|--------|-------|-------------|
 | Idle | `SessionState.IDLE` | `.idle` | Initial idle state |
-| Ready | `SessionState.ready()` | `SessionState.ready()` | Create a ready state |
-| Error | `SessionState.error(message)` | `SessionState.error(message:)` | Create an error state |
 
 ## ActiveSegmentState
 
@@ -479,26 +477,9 @@ Configuration for note evaluation scoring.
 | Balanced | `NoteEvalPreset.BALANCED` | `.balanced` | SIMPLE | 100ms | Standard practice |
 | Strict | `NoteEvalPreset.STRICT` | `.strict` | WEIGHTED | 0ms | Advanced/performance |
 
-## EvaluatorConfig
-
-Configuration for singing evaluation.
-
-### Properties
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `sampleRate` | `Int` | `16000` | Audio sample rate in Hz |
-| `semitoneShift` | `Int` | `0` | Transpose reference by this many semitones |
-
-### Presets
-
-| Preset | Kotlin | Swift | Semitone Shift | Description |
-|--------|--------|-------|----------------|-------------|
-| Standard | `EvaluatorPreset.STANDARD` | `.standard` | 0 | Standard evaluation at original pitch |
-| Male to Female | `EvaluatorPreset.MALE_TO_FEMALE` | `.maleToFemale` | +12 | Transpose up one octave |
-| Female to Male | `EvaluatorPreset.FEMALE_TO_MALE` | `.femaleToMale` | -12 | Transpose down one octave |
-| Transpose Up | `EvaluatorPreset.TRANSPOSE_UP` | `.transposeUp` | +2 | Slight pitch adjustment up |
-| Transpose Down | `EvaluatorPreset.TRANSPOSE_DOWN` | `.transposeDown` | -2 | Slight pitch adjustment down |
+For student key transposition, set `studentKeyHz` on the evaluation call
+(`CalibraNoteEval.evaluate`, `CalibraMelodyEval` via `student.keyHz`) or
+`CalibraLiveEval.setStudentKeyHz(...)` at runtime.
 
 ## Breath types (moved to tessera)
 
@@ -514,93 +495,58 @@ The legacy calibra `BreathMetrics { capacity, control, isValid }` and the short-
 
 ## Error Types
 
+Calibra follows the SDK-wide failure-semantics contract (ADR-022) and the
+exception hierarchy in ADR-011. There is no Calibra-specific exception type.
+
+### Failure semantics (ADR-022)
+
+| Failure kind | How it surfaces |
+|--------------|-----------------|
+| SDK not initialized | Throws `VoxaTraceNotInitializedException` (every facade calls `VT.ensureInitialized()` first) |
+| License invalid / revoked | Throws `VoxaTraceKilledException` |
+| Caller bug / invalid input (empty samples, non-16kHz audio, malformed config) | Throws `IllegalArgumentException` (via `require()`) |
+| Domain inconclusive (valid input, no usable result) | Encoded in the return value — e.g. `CalibraLiveEval.finishPracticingSegment()` returns `null`, `CalibraMelodyEval.evaluate(...)` returns `SingingResult.EMPTY` — never thrown |
+
+All thrown types extend `VoxaTraceException`. See [Authentication](../guides/authentication) for `VoxaTraceNotInitializedException` / `VoxaTraceKilledException` details.
+
 ### Kotlin
-
-Calibra uses `CalibraException` with a `CalibraErrorType` enum:
-
-| Error Type | Description |
-|-----------|-------------|
-| `INITIALIZATION_FAILED` | Failed to initialize native library |
-| `INVALID_CONFIG` | Invalid configuration parameters |
-| `ALLOCATION_FAILED` | Native resource allocation failed |
-| `PROCESSING_ERROR` | Processing error |
-| `FILE_ERROR` | File not found or inaccessible |
-| `UNKNOWN` | Unknown error |
 
 ```kotlin
 try {
-    val detector = PitchDetection.createDetector(config)
-} catch (e: CalibraException) {
-    when (e.type) {
-        CalibraErrorType.INITIALIZATION_FAILED -> println("Init failed: ${e.message}")
-        CalibraErrorType.INVALID_CONFIG -> println("Bad config: ${e.message}")
-        else -> println("Error: ${e.message}")
+    val result = CalibraMelodyEval.evaluate(reference, student, extractor)
+    // Domain outcome: empty result when nothing could be scored.
+    if (result == SingingResult.EMPTY) {
+        println("Nothing to score (silent or unalignable recording)")
     }
+} catch (e: VoxaTraceNotInitializedException) {
+    println("Call VT.initialize(...) first")
+} catch (e: IllegalArgumentException) {
+    // Caller bug, e.g. audio was not 16kHz.
+    println("Invalid input: ${e.message}")
 }
 ```
-
-`VoxaTraceNotInitializedException` and `VoxaTraceKilledException` are the standard SDK exceptions thrown from any facade when `VT.initialize(...)` has not run or when licensing fails. See [Authentication](../guides/authentication).
 
 ### Swift
 
-Calibra provides typed error enums on iOS for each subsystem. All conform to `LocalizedError` and provide descriptive `errorDescription` messages.
-
-### PitchDetectorError
-
-| Case | Parameters | Description |
-|------|-----------|-------------|
-| `initializationFailed` | `reason: String` | Failed to initialize pitch detector |
-| `detectionFailed` | `reason: String` | Pitch detection failed |
-| `invalidSampleRate` | `rate: Int` | Invalid sample rate (expected 16000 Hz) |
-| `bufferTooSmall` | `size: Int, required: Int` | Buffer too small for detection |
+`IllegalArgumentException` bridges through SKIE as a caller-catchable error
+(ADR-010 / ADR-022); domain outcomes come back as typed results, not optionals
+of optionals.
 
 ```swift
 do {
-    let detector = try PitchDetection.createDetector(config: config)
-} catch let error as PitchDetectorError {
-    print(error.localizedDescription)
-}
-```
-
-### EvaluatorError
-
-| Case | Parameters | Description |
-|------|-----------|-------------|
-| `initializationFailed` | `reason: String` | Failed to initialize evaluator |
-| `invalidReference` | `reason: String` | Invalid reference audio |
-| `evaluationFailed` | `reason: String` | Evaluation failed |
-| `segmentNotFound` | `index: Int` | Segment not found at given index |
-| `captureNotStarted` | (none) | Capture was not started before evaluation |
-| `yamlParsingFailed` | `path: String` | Failed to parse YAML file |
-
-```swift
-do {
-    let session = try CalibraLiveEval.create(reference: material, config: config)
-} catch let error as EvaluatorError {
-    switch error {
-    case .invalidReference(let reason):
-        print("Invalid reference: \(reason)")
-    default:
-        print(error.localizedDescription)
+    let result = CalibraMelodyEval.evaluate(
+        reference: reference,
+        student: student,
+        contourExtractor: extractor
+    )
+    if result == SingingResult.companion.EMPTY {
+        print("Nothing to score")
     }
+} catch {
+    // IllegalArgumentException (invalid input) or an uninitialized-SDK error.
+    print("Evaluation failed: \(error.localizedDescription)")
 }
 ```
-
-### EffectsError
-
-| Case | Parameters | Description |
-|------|-----------|-------------|
-| `initializationFailed` | `effect: String, reason: String` | Failed to initialize effect |
-| `processingFailed` | `effect: String, reason: String` | Effect processing failed |
-| `invalidParameter` | `name: String, value: Float, range: String` | Invalid parameter value |
-
-### AnalysisError
-
-| Case | Parameters | Description |
-|------|-----------|-------------|
-| `insufficientData` | `required: String, actual: String` | Not enough data for analysis |
-| `detectionFailed` | `type: String, reason: String` | Detection failed |
-| `invalidInput` | `parameter: String, reason: String` | Invalid input parameter |
 
 ## Next Steps
 

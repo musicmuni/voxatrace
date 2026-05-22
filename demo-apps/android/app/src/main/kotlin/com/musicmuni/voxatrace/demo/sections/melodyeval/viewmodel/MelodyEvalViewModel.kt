@@ -351,7 +351,7 @@ class MelodyEvalViewModel : ViewModel() {
                     val rms = sqrt(sum / samples.size)
 
                     // Detect pitch for this buffer (realtime)
-                    // Pitch points automatically accumulated in detector.livePitchContour
+                    // Pitch points automatically accumulated in detector.pitchContour
                     pitchDetector?.detect(samples, 16000)
 
                     _recordingLevel.value = (rms * 5).coerceAtMost(1f)

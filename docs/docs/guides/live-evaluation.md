@@ -70,7 +70,7 @@ try await session.prepareSession()
 session.startPracticingSegment(index: 0)
 
 // 4. Feed audio (pass buffer.timestamp for hardware-clock alignment, 1.0.1+)
-for await buffer in recorder.audioBuffersStream() {
+for await buffer in recorder.audioBuffers {
     session.feedAudioSamples(
         samples: buffer.samples,
         sampleRate: Int32(buffer.sampleRate),
@@ -205,10 +205,9 @@ session.phase.collect { phase ->
     }
 }
 
-// Live pitch for visualization
-session.livePitchContour.collect { contour ->
-    drawPitchCurve(contour)
-}
+// Live pitch for visualization — poll the trailing window once per render frame
+val contour = session.pitchContour.recent(seconds = 10f)
+drawPitchCurve(contour)
 ```
 
 ## Segment Control

@@ -1,10 +1,10 @@
 import SwiftUI
 
-// Disabled: CalibraEffects is internal until effects are public-ready.
+// Disabled: Effects is internal until effects are public-ready.
 // Restore this file (and re-enable the wiring in ContentView.swift) once the
 // effects facade is promoted back to public.
 /*
-/// Audio effects view demonstrating CalibraEffectsConfig.Builder pattern (ADR-001).
+/// Audio effects view demonstrating EffectsConfig.Builder pattern (ADR-001).
 struct EffectsView: View {
     @StateObject private var viewModel = EffectsViewModel()
 

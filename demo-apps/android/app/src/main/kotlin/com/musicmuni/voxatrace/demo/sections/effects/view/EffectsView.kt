@@ -1,6 +1,6 @@
 package com.musicmuni.voxatrace.demo.sections.effects.view
 
-// Disabled: CalibraEffects is internal until effects are public-ready.
+// Disabled: Effects is internal until effects are public-ready.
 // Restore this file (and re-enable the wiring in MainActivity.kt) once the
 // effects facade is promoted back to public.
 /*
@@ -20,7 +20,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.musicmuni.voxatrace.demo.sections.effects.viewmodel.EffectsViewModel
 
 /**
- * Audio effects view demonstrating CalibraEffectsConfig.Builder pattern (ADR-001).
+ * Audio effects view demonstrating EffectsConfig.Builder pattern (ADR-001).
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

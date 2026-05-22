@@ -189,7 +189,7 @@ recorder.audioBuffers.collect { buffer ->
 ### Skip Silent Sections for Analysis
 
 ```kotlin
-val contour = pitchExtractor.extract(audio, sampleRate)
+val contour = PitchDetection.createContourExtractor().extract(audio, sampleRate)
 val vadRatio = vad.getVADRatio(audio, sampleRate)
 
 if (vadRatio < 0.1f) {
@@ -197,8 +197,8 @@ if (vadRatio < 0.1f) {
     return SkipResult("No voice detected")
 }
 
-// Proceed with evaluation
-val score = evaluator.evaluate(contour)
+// Proceed with your own scoring on the cleaned contour
+// (e.g. Accura.analyzePitching(...) or CalibraMelodyEval.evaluate(...))
 ```
 
 ### Combine with Pitch Detection
@@ -226,7 +226,6 @@ recorder.audioBuffers.collect { buffer ->
 |---------|---------|--------|
 | General | < 1ms | Minimal |
 | Speech | ~5ms | ~10 MB (model) |
-| Singing | ~20ms | ~50 MB (model) |
 | SingingRealtime | ~5ms | ~10 MB (model) |
 
 For battery-sensitive apps, use **General** backend and only load neural models when needed.

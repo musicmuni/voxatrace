@@ -105,12 +105,16 @@ mixer.setTrackVolume("guide", 0.3f)
 mixer.play()
 ```
 
-Tracks are keyed by **string name** (not int index). Per-track controls: volume (`setTrackVolume`, `fadeTrackVolume`), mute (`muteTrack`), solo (`soloTrack`).
+Tracks are keyed by **string name** (not int index). Per-track controls: volume (`setTrackVolume`, `fadeTrackVolume`); tracks are added and removed by name (`addTrack`, `removeTrack`). There is no mute/solo API; set a track's volume to `0f` to silence it.
 
 ### Metronome
 
 ```kotlin
-val metronome = SonixMetronome.create(bpm = 120f)
+val metronome = SonixMetronome.create(
+    samaSamplePath = "sama.wav",   // downbeat (first beat of the cycle)
+    beatSamplePath = "beat.wav",   // regular beat
+    bpm = 120f
+)
 metronome.currentBeat.collect { beat -> updateUI(beat) }
 metronome.start()
 ```
@@ -119,22 +123,22 @@ metronome.start()
 | ------- | ----- |
 | BPM | 30 – 300 |
 | Beats per cycle | Any positive integer (set at build time) |
-| Custom sounds | Sama / beat sample paths via `SonixMetronomeConfig.Builder` |
+| Custom sounds | Sama / beat sample paths via `SonixMetronome.Builder` |
 
 ### MIDI Synthesis
 
 Synthesize vocal guides or accompaniment from MIDI files / pitch files:
 
 ```kotlin
-val synth = SonixMidiSynthesizer.create("piano.sf2")
-val audio = synth.synthesizeMidi("song.mid", sampleRate = 44100)
+val synth = SonixMidiSynthesizer.create("piano.sf2")   // sample rate set via Builder (default 44100)
+val ok = synth.synthesize(midiPath = "song.mid", outputPath = "out.wav")
 ```
 
 | Feature | Specification |
 | ------- | ------------- |
-| SoundFont support | .sf2 files |
-| Inputs | MIDI files, MidiNote lists, pitch files |
-| Output | `AudioRawData` (PCM) — synthesizer is stateless; no `noteOn`/`noteOff` event API |
+| SoundFont support | .sf2 / .sf3 files |
+| Inputs | MIDI files (`synthesize`), raw MIDI bytes (`synthesizeMidi`), MidiNote lists (`synthesizeFromNotes`), pitch files (`synthesizeFromPitchFile`) |
+| Output | WAV file written to `outputPath`; every synthesis method returns `Boolean`. Synthesizer is stateless; no `noteOn`/`noteOff` event API |
 
 ## Next Steps
 
@@ -150,7 +154,7 @@ val audio = synth.synthesizeMidi("song.mid", sampleRate = 44100)
 - [SonixToneGenerator](./tone-generator) — Generate sine, square, sawtooth, and triangle waveforms
 - [SonixResampler](./resampler) — Sample rate conversion
 - [SonixMidiSynthesizer](./midi-synthesizer) — MIDI to audio synthesis
-- [SonixLessonSynthesizer](./lesson-synthesizer) — Lesson audio from svara sequences
+- [SonixLessonSynthesizer](./lesson-synthesizer) — Lesson audio from note sequences
 - [Utilities](./utilities) — Parser, frames, and error types
 
 ### Guides

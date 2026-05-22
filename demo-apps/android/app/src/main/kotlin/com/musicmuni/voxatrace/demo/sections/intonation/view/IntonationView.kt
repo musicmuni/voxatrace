@@ -123,12 +123,12 @@ private fun IntonationResultSection(
 
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "Swaras Detected",
+                            text = "Notes Detected",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${score.swaraCount}",
+                            text = "${score.noteCount}",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -136,9 +136,9 @@ private fun IntonationResultSection(
                 }
             }
 
-            // Per-swara table
-            val swaras = result?.swaras
-            if (!swaras.isNullOrEmpty()) {
+            // Per-note table
+            val notes = result?.notes
+            if (!notes.isNullOrEmpty()) {
                 HorizontalDivider()
 
                 // Header row
@@ -147,7 +147,7 @@ private fun IntonationResultSection(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Swara",
+                        text = "Note",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.weight(1f)
@@ -159,30 +159,30 @@ private fun IntonationResultSection(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = "Remark",
+                        text = "Score",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.weight(1f)
                     )
                 }
 
-                swaras.forEach { swara ->
+                notes.forEach { note ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = swara.label,
+                            text = note.label,
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
-                            text = "%+.1f cents".format(swara.deviationCents),
+                            text = "%+.1f cents".format(note.deviationCents),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
-                            text = swara.deviationRemark,
+                            text = "%.0f".format(note.score),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.weight(1f)
                         )

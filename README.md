@@ -36,7 +36,7 @@ Eight years of R&D. Five million users in production. All running natively on An
 │              │              │              │ scoring      │  eval      │
 ├──────────────┼──────────────┼──────────────┼──────────────┼────────────┤
 │ • Player     │ • Detection  │ • Breath     │ • EQ / JI    │ • LiveEval │
-│ • Recorder   │ • Processing │ • Agility    │   per-swara  │ • MelodyEv │
+│ • Recorder   │ • Processing │ • Agility    │   per-note   │ • MelodyEv │
 │ • Mixer      │ • Analysis   │ • Range      │   deviation  │ • NoteEval │
 │ • Encoder    │   (histogram │ • Speaking   │ • 0–100      │ • VAD      │
 │ • Decoder    │   transcr.)  │   pitch      │   scoring    │ • Effects  │

@@ -68,8 +68,9 @@ class KaraokeViewModel : ViewModel() {
     private val _state = MutableStateFlow(KaraokeState(...))
     val state: StateFlow<KaraokeState> = _state.asStateFlow()
 
-    val livePitch: StateFlow<PitchContour>
-        get() = session?.livePitchContour ?: MutableStateFlow(PitchContour.EMPTY)
+    // Lossless append-only session contour; read a trailing window per render frame
+    val pitchContour: PitchContourRecorder?
+        get() = session?.pitchContour
 
     // Settings
     var pitchShift: Float = 0f
@@ -201,7 +202,15 @@ class KaraokeViewModel : ViewModel() {
 @Composable
 fun KaraokeScreen(viewModel: KaraokeViewModel) {
     val state by viewModel.state.collectAsState()
-    val pitchContour by viewModel.livePitch.collectAsState()
+
+    // Poll the trailing window once per frame for the scrolling visualization
+    val pitchContour by produceState(PitchContour.EMPTY, viewModel.pitchContour) {
+        val recorder = viewModel.pitchContour ?: return@produceState
+        while (true) {
+            value = recorder.recent(seconds = 10f)
+            withFrameNanos { }  // wait for the next render frame
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Pitch visualization
@@ -289,8 +298,8 @@ struct KaraokeView: View {
 
     var body: some View {
         VStack {
-            // Pitch visualization
-            PitchVisualizationView(contour: viewModel.livePitch)
+            // Pitch visualization — read the trailing window each refresh
+            PitchVisualizationView(contour: viewModel.pitchContour?.recent(seconds: 10) ?? .empty)
                 .frame(height: 200)
 
             // Progress

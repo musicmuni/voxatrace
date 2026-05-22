@@ -50,7 +50,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-1.0.0        </div>
+2.0.0        </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
                 <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
@@ -259,7 +259,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="timestamp.html">timestamp</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">Buffer timestamp in milliseconds from recording start</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="timestamp.html">timestamp</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">Absolute monotonic nanoseconds at the moment the LAST sample in this buffer was captured at the microphone. Lives in the same time domain as <span data-unresolved-link="com.musicmuni.voxatrace.internal.platform//nowMonotonicNanos/#/PointingToDeclaration/">com.musicmuni.voxatrace.internal.platform.nowMonotonicNanos</span>, Android's <code class="lang-kotlin">AudioTimestamp.nanoTime</code>, and iOS's <code class="lang-kotlin">AVAudioTime.hostTime</code>. The OS audio pipeline already accounts for input latency in this value — downstream consumers do <strong>not</strong> need to subtract <code class="lang-kotlin">SonixRecorder.inputLatencyMs</code> again. Monotonic across buffers from the same recorder instance; its absolute value is only meaningful relative to other readings in the same monotonic domain on the same device.</p></div></div></div>
                 </div>
               </div>
             </div>

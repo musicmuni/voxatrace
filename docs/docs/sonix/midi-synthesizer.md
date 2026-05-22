@@ -192,6 +192,6 @@ if (wavData != null) {
 
 ## Next Steps
 
-- [SonixLessonSynthesizer](./lesson-synthesizer) — Synthesize lessons from svara sequences
+- [SonixLessonSynthesizer](./lesson-synthesizer) — Synthesize lessons from note sequences
 - [SonixPlayer](./player) — Play synthesized audio
 - [SonixEncoder](./encoder) — Convert WAV output to MP3/M4A

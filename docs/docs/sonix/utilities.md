@@ -103,7 +103,7 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 | `startTimes` | `FloatArray` | Note start times in seconds |
 | `endTimes` | `FloatArray` | Note end times in seconds |
 | `frequencies` | `FloatArray` | Note frequencies in Hz |
-| `labels` | `Array<String>` | Note labels (svara names) |
+| `labels` | `Array<String>` | Note labels |
 
 #### TransData
 
@@ -120,7 +120,7 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 | Property | Type | Description |
 |----------|------|-------------|
 | `id` | `Int` | Segment identifier from the JSON |
-| `type` | `String?` | Segment type. As of 1.0.0, the parser recognizes `"teacher_vocal"`, `"student_vocal"`, and `"commentary"`. `null` when the field is absent. |
+| `type` | `String?` | Raw segment-type string from the JSON `type` field, deserialized verbatim (e.g. `"teacher_vocal"`, `"student_vocal"`, `"commentary"`); `null` when the field is absent. The SDK does not validate or interpret the value. |
 | `lyrics` | `String` | Lyrics for the segment |
 | `timeStamp` | `List<Double>` | Two-element segment time bounds (parsed from `time_stamp`) |
 | `trans` | `List<TransNote>` | Per-note transcription within the segment |
@@ -134,7 +134,7 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 | `tStart` | `Double` | Note start (seconds; parsed from `t_start`) |
 | `tEnd` | `Double` | Note end (seconds; parsed from `t_end`) |
 | `freqHz` | `Double` | Frequency in Hz |
-| `label` | `String` | Note label (svara name) |
+| `label` | `String` | Note label |
 
 ## SonixFrames
 

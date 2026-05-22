@@ -108,9 +108,11 @@ static func evaluate(
 
 ### Sample Rate Requirement
 
-Audio in `LessonMaterial` must be **16kHz mono**. The `evaluate` method validates this and throws `IllegalArgumentException` if the sample rate is not 16000. Use `SonixDecoder` to decode and resample, or call `SonixResampler.resample()` before creating the `LessonMaterial`.
+Audio in `LessonMaterial` must be **16kHz mono**. How this is enforced depends on the `AudioSource`:
 
-Note that the `ContourExtractor.extract()` method itself supports internal resampling from any sample rate to 16kHz, but `CalibraMelodyEval.evaluate` enforces 16kHz at the `LessonMaterial` level.
+- `AudioSource.Samples` (built via `fromAudio`): `evaluate` throws `IllegalArgumentException` if `sampleRate != 16000`. Decode/resample first with `SonixDecoder`, or call `SonixResampler.resample()` before creating the `LessonMaterial`.
+- `AudioSource.File` (built via `fromFile`): the file is decoded (and downmixed/resampled to 16kHz mono) internally via `SonixDecoder` — no pre-check needed.
+- `AudioSource.Url`: not supported — `evaluate` throws `IllegalArgumentException`.
 
 ### Return Value
 
@@ -179,7 +181,7 @@ LessonMaterial.fromFile(
 ): LessonMaterial
 ```
 
-Note: `AudioSource.File` is not currently supported by `CalibraMelodyEval.evaluate`. Decode the file first using `SonixDecoder`, then use `fromAudio`.
+`AudioSource.File` (created via `fromFile`) is supported: `CalibraMelodyEval.evaluate` decodes the file to 16kHz mono internally via `SonixDecoder`. You can also decode yourself and use `fromAudio` if you already have samples.
 
 ## Creating Segments
 

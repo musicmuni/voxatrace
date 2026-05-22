@@ -45,7 +45,7 @@ A classic DSP algorithm that works well for most use cases.
 |--------|---------|
 | **Accuracy** | Good for clean audio |
 | **Latency** | ~50ms |
-| **Dependencies** | None (pure Kotlin) |
+| **Dependencies** | None (native DSP, no ML model bundle) |
 | **Best For** | Simple tuners, low-resource devices |
 
 ### SwiftF0 (Neural Network)

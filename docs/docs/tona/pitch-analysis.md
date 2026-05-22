@@ -6,7 +6,7 @@ sidebar_position: 4
 
 Histograms, tuning estimation, quantization, and melodic transcription on a `PitchContour`. Use after detection ([`PitchDetection`](./pitch-detection)) and optional cleanup ([`PitchProcessing`](./pitch-processing)).
 
-For full intonation scoring (per-swara deviation + 0–100 score), use [`Accura.analyzePitching`](../accura/intonation) — Accura wraps this facade.
+For full intonation scoring (per-note deviation + 0–100 score), use [`Accura.analyzePitching`](../accura/intonation) — Accura wraps this facade.
 
 ## Quick Start
 
@@ -148,6 +148,7 @@ data class TonalSegment(
 | `valleyThresh` | `0.00003f` |
 | `lookahead` | `20` |
 | `avgIntervalHint` | `null` |
+| `minPeakAreaFraction` | `0f` (relative valley-to-valley area gate; `0` = off) |
 
 ### PeakStatsConfig
 

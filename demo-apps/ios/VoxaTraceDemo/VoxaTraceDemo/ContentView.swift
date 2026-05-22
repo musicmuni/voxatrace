@@ -227,7 +227,7 @@ struct CalibraMenuView: View {
 
     private let analysisFeatures = [
         ("VAD", "mic.fill", "Voice activity detection"),
-        // ("Effects", "slider.horizontal.3", "Audio effects processing"), // disabled: CalibraEffects is internal until effects are public-ready
+        // ("Effects", "slider.horizontal.3", "Audio effects processing"), // disabled: Effects is internal until effects are public-ready
     ]
 
     private let realtimeEvalFeatures = [
@@ -363,7 +363,7 @@ struct FeatureDetailView: View {
         case "VAD":
             VADSection()
         // case "Effects":
-        //     EffectsView() // disabled: CalibraEffects is internal until effects are public-ready
+        //     EffectsView() // disabled: Effects is internal until effects are public-ready
         case "Singalong Live":
             SingalongSection()
         case "Singafter Live":

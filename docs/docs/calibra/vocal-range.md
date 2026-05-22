@@ -44,6 +44,6 @@ session.release()
 
 Other moves:
 - `CalibraVocalRange.labelForMidi(midi)` → [`MusicTheory.midiToNoteLabel(midi.toFloat())`](../common/music-theory)
-- All model types (`VocalPitch`, `DetectedNote`, `VocalRange`, `VocalRangeConfig`, `RangeStats`, `VocalRangePhase`, `VocalRangeState`, `VocalRangeSessionConfig`, `VocalRangeSessionResult`) live under `com.musicmuni.voxatrace.tessera.model`. Source-level typealiases on the calibra side are kept for compilation compatibility.
+- All model types (`VocalPitch`, `DetectedNote`, `VocalRange`, `VocalRangeConfig`, `RangeStats`, `VocalRangePhase`, `VocalRangeState`, `VocalRangeSessionConfig`, `VocalRangeSessionResult`) live under `com.musicmuni.voxatrace.tessera.model`. Re-import them from `tessera.model`; there are no calibra-side aliases (the 1.x calibra surface was removed outright, no source-compat shell).
 
 For full reference, see [TesseraRange](../tessera/range).

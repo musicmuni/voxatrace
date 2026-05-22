@@ -53,8 +53,8 @@ try await session.prepareSession()
 session.startPracticingSegment(index: 0)
 for await buffer in recorder.audioBuffers {
     session.feedAudioSamples(
-        samples: buffer.samples,
-        sampleRate: Int32(buffer.sampleRate),
+        buffer.samples,
+        sampleRate: Int(buffer.sampleRate),
         captureTimestampNanos: buffer.timestamp
     )
 }
@@ -355,8 +355,8 @@ session.feedAudioSamples(samples, sampleRate = 16000)
 ```swift
 for await buffer in recorder.audioBuffers {
     session.feedAudioSamples(
-        samples: buffer.samples,
-        sampleRate: Int32(buffer.sampleRate),
+        buffer.samples,
+        sampleRate: Int(buffer.sampleRate),
         captureTimestampNanos: buffer.timestamp
     )
 }
@@ -474,9 +474,9 @@ session.phase.collect { phase ->
 }
 
 // Live pitch contour for scrolling visualization
-session.livePitchContour.collect { contour ->
-    drawPitchCanvas(contour)
-}
+// Poll the trailing window once per render frame (caller chooses the span)
+val contour = session.pitchContour.recent(seconds = 10f)
+drawPitchCanvas(contour)
 
 // Live pitch point (real-time, includes time and confidence)
 session.livePitch.collect { pitchPoint ->
@@ -512,9 +512,8 @@ let phaseTask = session.observePhase { phase in
     self.practicePhase = phase
 }
 
-let contourTask = session.observeLivePitchContour { contour in
-    self.pitchContour = contour
-}
+// Pitch contour is read on demand (poll the trailing window per render frame),
+// not observed: self.contour = session.pitchContour.recent(seconds: 10)
 
 let pitchTask = session.observeLivePitch { pitchPoint in
     self.livePitch = pitchPoint
@@ -544,7 +543,7 @@ stateTask.cancel()
 | `activeSegment` | `StateFlow<ActiveSegmentState?>` | Active segment details, or null if not practicing |
 | `completedSegments` | `StateFlow<Map<Int, List<SegmentResult>>>` | Map of segment index to list of attempts |
 | `phase` | `StateFlow<PracticePhase>` | Current practice phase (IDLE, LISTENING, SINGING, EVALUATED) |
-| `livePitchContour` | `StateFlow<PitchContour>` | Accumulated pitch contour for scrolling visualization (preferred for trails) |
+| `pitchContour` | `PitchContourRecorder` | Lossless append-only session contour (passthrough to the student detector); read whole via `snapshot()` or windowed via `recent(seconds)` (preferred for trails) |
 | `livePitch` | `SharedFlow<PitchPoint>` | Per-emission pitch stream — every point is emitted (multi-emit per `feedAudioSamples` call). 1.0.0 changed this from `StateFlow` to `SharedFlow`; callers relying on `.value` must migrate to collection. Best for live tuner displays / telemetry. |
 | `currentTime` | `StateFlow<Float>` | Playback position in seconds |
 | `isPlaying` | `StateFlow<Boolean>` | Whether player is currently playing |
@@ -558,7 +557,6 @@ stateTask.cancel()
 | `observeActiveSegment(_:)` | `(ActiveSegmentState?) -> Void` | Active segment changes |
 | `observeCompletedSegments(_:)` | `([Int: [SegmentResult]]) -> Void` | Completed segments with native Swift `Int` keys |
 | `observePhase(_:)` | `(PracticePhase) -> Void` | Practice phase changes |
-| `observeLivePitchContour(_:)` | `(PitchContour) -> Void` | Live pitch contour updates |
 | `observeLivePitch(_:)` | `(PitchPoint) -> Void` | Real-time pitch point updates |
 | `observeCurrentTime(_:)` | `(Float) -> Void` | Playback time updates |
 | `observeIsPlaying(_:)` | `(Bool) -> Void` | Playing state changes |
@@ -935,7 +933,9 @@ session.closeSession()
 ### Pitch Visualization (Swift)
 
 ```swift
-let contourTask = session.observeLivePitchContour { contour in
+// Call once per render frame; the caller chooses the trailing span at read time
+func drawPitchTrail() {
+    let contour = session.pitchContour.recent(seconds: 10)
     let anchorX: CGFloat = 200  // "Now" position on screen
     let currentTime = contour.samples.last?.timeSeconds ?? 0
 

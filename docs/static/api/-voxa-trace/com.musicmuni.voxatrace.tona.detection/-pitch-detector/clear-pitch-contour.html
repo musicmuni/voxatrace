@@ -50,7 +50,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-1.0.0        </div>
+2.0.0        </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
                 <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
@@ -115,7 +115,7 @@
   <div class="cover ">
     <h1 class="cover"><span>clear</span><wbr></wbr><span>Pitch</span><wbr></wbr><span><span>Contour</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="clear-pitch-contour.html"><span class="token function">clearPitchContour</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Clear the accumulated pitch contour.</p><p class="paragraph">Call when starting a new recording segment to reset the contour.</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="clear-pitch-contour.html"><span class="token function">clearPitchContour</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Clear the accumulated pitch contour.</p><p class="paragraph">Call when starting a new recording segment to reset the contour.</p><p class="paragraph">Wipes the entire contour. For segment-aware wiping in a live-eval pipeline, prefer <a href="clear-pitch-contour-from.html">clearPitchContourFrom</a> which keeps earlier segments intact.</p></div></div>
 </div>
     <div class="footer">
         <div class="footer--container">

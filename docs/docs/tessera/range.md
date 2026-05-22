@@ -61,11 +61,13 @@ This is distinct from `VocalRangeSessionResult` (returned by `TesseraRangeSessio
 
 ```kotlin
 data class VocalRange(
-    val lower: VocalPitch,    // 5th-percentile pitch
-    val upper: VocalPitch,    // 95th-percentile pitch
+    val lower: VocalPitch,    // batch (this facade): centroid-anchored; streaming: 5th percentile
+    val upper: VocalPitch,    // batch (this facade): centroid-anchored; streaming: 95th percentile
     val octaves: Float,
 )
 ```
+
+`TesseraRange.computeVocalRange` (batch) derives `lower`/`upper` from a density histogram: it anchors on the density-weighted centroid and expands a symmetric window until it captures `ratioSumInRange` (default 0.9) of the pitch mass. The streaming detector behind `TesseraRangeSession` / `TesseraSession` instead reads the 5th / 95th percentiles of its running histogram.
 
 `semitones` (computed) returns `upper.midiNote - lower.midiNote`.
 
@@ -154,7 +156,7 @@ fun create(
 | `cancel()` | Cancel session, transition to `CANCELLED`. |
 | `reset()` | Reset state and detector. |
 | `startPhase(phase)` | Manual flow only — start a specific phase. Throws when `autoFlow = true`. |
-| `advancePhase()` | Manual flow only — advance to next phase. |
+| `advancePhase()` | Manual flow only — advance to next phase. Throws when `autoFlow = true`. |
 | `complete()` | Force completion using current `lowNote`/`highNote`. |
 | `getStats(): RangeStats` | Statistics about accumulated range data. |
 | `release()` | Free detector resources. |
@@ -169,7 +171,7 @@ data class VocalRangeState(
     val countdownSeconds: Int = 0,
     val phaseMessage: String = "Ready to detect your vocal range",
     val currentPitch: VocalPitch? = null,
-    val currentAmplitude: Float = 0f,
+    val currentAmplitude: Float = 0f,         // input RMS level [0,1]; updated on addAudio only
     val stabilityProgress: Float = 0f,
     val bestLowNote: DetectedNote? = null,
     val bestHighNote: DetectedNote? = null,
@@ -206,12 +208,11 @@ For a research-backed shruti derivation that combines NSP + range, use [`MusicTh
 
 ### VocalRangeSessionConfig
 
+Tunes the guided flow only; detection-engine settings live in `VocalRangeConfig` (below).
+
 | Property | Type | Default |
 |----------|------|---------|
 | `countdownSeconds` | `Int` | `3` |
-| `maxDetectionTimeSeconds` | `Int` | `10` |
-| `minNoteDurationSeconds` | `Float` | `1.0` |
-| `minConfidence` | `Float` | `0.5` |
 | `transitionDelayMs` | `Long` | `500` |
 | `autoFlow` | `Boolean` | `true` |
 

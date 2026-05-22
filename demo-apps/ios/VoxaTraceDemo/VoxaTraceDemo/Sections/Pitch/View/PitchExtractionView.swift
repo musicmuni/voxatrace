@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 import VoxaTrace
 
-/// Batch pitch extraction view with ContourCleanup presets.
+/// Batch pitch extraction view with PitchProcessingConfig cleanup presets.
 struct PitchExtractionView: View {
     @StateObject private var viewModel = PitchExtractionViewModel()
 
@@ -163,7 +163,7 @@ struct PitchExtractionView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            Text("• ContourCleanup: .raw, .scoring, .display")
+            Text("• PitchProcessingConfig: .raw, .scoring, .display")
                 .font(.caption2)
                 .foregroundColor(.secondary)
 

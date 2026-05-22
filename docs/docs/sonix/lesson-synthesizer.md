@@ -4,32 +4,32 @@ sidebar_position: 10
 
 # SonixLessonSynthesizer
 
-Synthesize audio lessons from svara (note) sequences for Indian classical music education.
+Synthesize audio lessons from note sequences (e.g. Sa Re Ga in Indian classical practice), each with its own audio recording.
 
 ## Quick Start
 
 ### Kotlin
 
 ```kotlin
-val svaras = listOf(
-    LessonSvara(
-        svaraName = "Sa",
-        svaraLabel = "S",
-        svaraAudioFilePath = "/path/to/sa.wav",
+val notes = listOf(
+    LessonNote(
+        noteName = "Sa",
+        noteLabel = "S",
+        noteAudioFilePath = "/path/to/sa.wav",
         numBeats = 2,
         numSamplesConsonant = 100
     ),
-    LessonSvara(
-        svaraName = "Re",
-        svaraLabel = "R",
-        svaraAudioFilePath = "/path/to/re.wav",
+    LessonNote(
+        noteName = "Re",
+        noteLabel = "R",
+        noteAudioFilePath = "/path/to/re.wav",
         numBeats = 2,
         numSamplesConsonant = 100
     )
 )
 
 val synth = SonixLessonSynthesizer.create(
-    svaras = svaras,
+    notes = notes,
     beatLengthMs = 500
 )
 
@@ -44,25 +44,25 @@ synth.release()
 ### Swift
 
 ```swift
-let svaras = [
-    LessonSvara(
-        svaraName: "Sa",
-        svaraLabel: "S",
-        svaraAudioFilePath: "/path/to/sa.wav",
+let notes = [
+    LessonNote(
+        noteName: "Sa",
+        noteLabel: "S",
+        noteAudioFilePath: "/path/to/sa.wav",
         numBeats: 2,
         numSamplesConsonant: 100
     ),
-    LessonSvara(
-        svaraName: "Re",
-        svaraLabel: "R",
-        svaraAudioFilePath: "/path/to/re.wav",
+    LessonNote(
+        noteName: "Re",
+        noteLabel: "R",
+        noteAudioFilePath: "/path/to/re.wav",
         numBeats: 2,
         numSamplesConsonant: 100
     )
 ]
 
 let synth = SonixLessonSynthesizer.create(
-    svaras: svaras,
+    notes: notes,
     beatLengthMs: 500
 )
 
@@ -81,7 +81,7 @@ synth.release()
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `svaras` | `List<LessonSvara>` | — | Svara sequence (required) |
+| `notes` | `List<LessonNote>` | — | Note sequence (required) |
 | `beatLengthMs` | `Int` | — | Beat duration in milliseconds (required) |
 
 ### Builder
@@ -92,7 +92,7 @@ For advanced configuration:
 
 ```kotlin
 val synth = SonixLessonSynthesizer.Builder()
-    .svaras(svaraList)
+    .notes(noteList)
     .beatLengthMs(500)
     .silenceBeats(start = 2, end = 2)
     .sampleRate(44100)
@@ -104,7 +104,7 @@ val synth = SonixLessonSynthesizer.Builder()
 
 | Method | Type | Default | Description |
 |--------|------|---------|-------------|
-| `svaras` | `List<LessonSvara>` | — | Svara sequence (required) |
+| `notes` | `List<LessonNote>` | — | Note sequence (required) |
 | `beatLengthMs` | `Int` | — | Beat duration in ms (required) |
 | `silenceBeats` | `start: Int, end: Int` | `2, 2` | Silence beats at start/end |
 | `sampleRate` | `Int` | `16000` | Output sample rate in Hz |
@@ -116,7 +116,7 @@ The synthesis process has two steps:
 
 ### 1. Load Audio
 
-Load svara audio files into memory:
+Load note audio files into memory:
 
 ```kotlin
 // Suspending (preferred)
@@ -203,15 +203,15 @@ synth.isLoadingPublisher
 | `silenceBeatsEnd` | `Int` | Silence beats at the end |
 | `sampleRate` | `Int` | Output sample rate |
 
-## LessonSvara
+## LessonNote
 
-Each svara in the sequence is defined by:
+Each note in the sequence is defined by:
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `svaraName` | `String` | Full name (e.g., "Sa", "Re") |
-| `svaraLabel` | `String` | Short label (e.g., "S", "R") |
-| `svaraAudioFilePath` | `String` | Path to audio recording |
+| `noteName` | `String` | Full name (e.g., "Sa", "Re") |
+| `noteLabel` | `String` | Short label (e.g., "S", "R") |
+| `noteAudioFilePath` | `String` | Path to audio recording |
 | `numBeats` | `Int` | Duration in beats |
 | `numSamplesConsonant` | `Int` | Consonant samples for crossfading |
 

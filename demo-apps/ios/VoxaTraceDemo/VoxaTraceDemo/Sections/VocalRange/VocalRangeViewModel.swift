@@ -123,7 +123,7 @@ final class VocalRangeViewModel: ObservableObject {
         recorder.start()
 
         // Feed audio to session
-        // ADR-017: Pass sampleRate directly; VocalRangeSession handles resampling internally
+        // ADR-017: Pass sampleRate directly; TesseraRangeSession handles resampling internally
         audioTask = Task {
             let hwRate = AudioSessionManager.hardwareSampleRate
             for await buffer in recorder.audioBuffers {

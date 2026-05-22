@@ -50,7 +50,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-1.0.0        </div>
+2.0.0        </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
                 <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
@@ -115,7 +115,7 @@
   <div class="cover ">
     <h1 class="cover"><span>live</span><wbr></wbr><span><span>Pitch</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="live-pitch.html">livePitch</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/SharedFlow///PointingToDeclaration/">SharedFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-pitch-point/index.html">PitchPoint</a><span class="token operator">&gt;</span></div><p class="paragraph">Real-time pitch point for visualization (includes time and confidence).</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="live-pitch.html">livePitch</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/SharedFlow///PointingToDeclaration/">SharedFlow</span><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.tona.model/-pitch-point/index.html">PitchPoint</a><span class="token operator">&gt;</span></div><p class="paragraph">Per-emission pitch stream — same source, rate (100 Hz), and timestamps as <a href="pitch-contour.html">pitchContour</a>. Different surface shape: <a href="pitch-contour.html">pitchContour</a> is the accumulated trail (read whole or windowed), <a href="live-pitch.html">livePitch</a> is the per-event firehose (best for live tuner displays, telemetry, anything event-driven).</p><p class="paragraph">Backed by the student detector's <code class="lang-kotlin">feedContour</code> pipeline, so timestamps are audible-player-time minus input-latency, and smoothing / octave-correction is applied identically.</p></div></div>
 </div>
     <div class="footer">
         <div class="footer--container">

@@ -42,7 +42,7 @@ detector.close()
 ```swift
 let detector = PitchDetection.createDetector()
 
-for await buffer in recorder.audioBuffersStream() {
+for await buffer in recorder.audioBuffers {
     let samples = buffer.samples
     let point = detector.detect(samples: samples, sampleRate: Int(buffer.sampleRate))
 
@@ -270,13 +270,12 @@ val filtered = PitchProcessing.medianFilter(pitches, kernelSize = 3)
 For visualization, access the growing contour:
 
 ```kotlin
-// Observe live contour for drawing
-detector.livePitchContour.collect { contour ->
-    drawPitchCurve(contour.samples)
-}
+// Read the trailing window for drawing — call once per render frame
+val contour = detector.pitchContour.recent(seconds = 10f)
+drawPitchCurve(contour.samples)
 
-// Set max duration (for scrolling displays)
-detector.setContourMaxDuration(30f)  // Keep last 30 seconds
+// The window span is chosen at read time (for scrolling displays):
+// pass the number of trailing seconds you want to recent(...).
 
 // Clear when starting new recording
 detector.clearPitchContour()

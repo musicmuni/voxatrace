@@ -42,10 +42,10 @@ Eight years of R&D. Five million users in production. All running natively on An
 │              │              │              │ scoring      │  eval      │
 ├──────────────┼──────────────┼──────────────┼──────────────┼────────────┤
 │ • Player     │ • Detection  │ • Breath     │ • EQ / JI    │ • LiveEval │
-│ • Recorder   │ • Processing │ • Agility    │   per-swara  │ • MelodyEval│
+│ • Recorder   │ • Processing │ • Agility    │   per-note   │ • MelodyEval│
 │ • Mixer      │ • Analysis   │ • Range      │   deviation  │ • NoteEval │
 │ • Encoder    │   (histogram │ • Speaking   │ • 0–100      │ • VAD      │
-│ • Decoder    │   transcr.)  │   pitch      │   scoring    │ • Effects  │
+│ • Decoder    │   transcr.)  │   pitch      │   scoring    │            │
 │ • Metronome  │              │              │              │            │
 │ • MIDI synth │              │              │              │            │
 └──────────────┴──────────────┴──────────────┴──────────────┴────────────┘
@@ -62,7 +62,7 @@ Eight years of R&D. Five million users in production. All running natively on An
 | SwiftF0 model range | 46.875 Hz – 2093.75 Hz |
 | Confidence threshold | 0.0 – 1.0 (default 0.75 for BALANCED) |
 | Sample rates | Auto-resampling to 16 kHz internally (ADR-017) |
-| Minimum Android | API 24 (Android 7.0) |
+| Minimum Android | API 26 (Android 8.0) |
 | Minimum iOS | iOS 15 |
 
 ## Hello, Pitch Detection
@@ -153,7 +153,7 @@ val config = PitchDetectorConfig.PRECISE.copy(confidenceThreshold = 0.6f)
 - [Tona](./tona/overview) – Pitch detection / processing / analysis
 - [Tessera](./tessera/overview) – Voice metrics (breath, agility, range, speaking pitch)
 - [Accura](./accura/overview) – Intonation analysis and 0–100 scoring
-- [Calibra](./calibra/overview) – Singing evaluation (LiveEval / MelodyEval / NoteEval / VAD / Effects)
+- [Calibra](./calibra/overview) – Singing evaluation (LiveEval / MelodyEval / NoteEval / VAD)
 - [Common: MusicTheory](./common/music-theory) – Pitch ↔ MIDI ↔ note ↔ cents conversions, shruti alignment
 
 ## Installation

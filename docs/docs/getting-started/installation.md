@@ -93,7 +93,7 @@ Add microphone usage description for recording:
 
 | VoxaTrace | Android Min SDK | iOS Min | Kotlin |
 |-----------|-----------------|---------|--------|
-| 2.0.x     | API 24 (7.0)    | iOS 15  | 1.9+   |
+| 2.0.x     | API 26 (8.0)    | iOS 15  | 1.9+   |
 
 ## Authentication
 

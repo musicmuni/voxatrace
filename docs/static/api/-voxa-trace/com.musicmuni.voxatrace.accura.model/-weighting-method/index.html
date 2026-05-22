@@ -50,7 +50,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-1.0.0        </div>
+2.0.0        </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
                 <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
@@ -114,7 +114,7 @@
   <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.accura.model</a><span class="delimiter">/</span><span class="current">WeightingMethod</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Weighting</span><wbr></wbr><span><span>Method</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="index.html">WeightingMethod</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="index.html">WeightingMethod</a><span class="token operator">&gt; </span></div><p class="paragraph">Strategy for combining per-swara scores into an overall <a href="../-pitching-score/index.html">PitchingScore</a>.</p><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.accura/-accura/calculate-score.html"><span>Accura.</span><wbr></wbr><span>calculate</span><wbr></wbr><span><span>Score</span></span></a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="index.html">WeightingMethod</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="index.html">WeightingMethod</a><span class="token operator">&gt; </span></div><p class="paragraph">Strategy for combining per-note scores into an overall <a href="../-pitching-score/index.html">PitchingScore</a>.</p><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.accura/-accura/calculate-score.html"><span>Accura.</span><wbr></wbr><span>calculate</span><wbr></wbr><span><span>Score</span></span></a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="ENTRY">Entries</button></div>
@@ -131,7 +131,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><a href="-e-q-u-a-l/index.html">EQUAL</a></div></div><div class="brief "><p class="paragraph">All detected swaras contribute equally to the overall score.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><a href="-e-q-u-a-l/index.html">EQUAL</a></div></div><div class="brief "><p class="paragraph">All detected notes contribute equally to the overall score.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -146,7 +146,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><a href="-d-u-r-a-t-i-o-n/index.html">DURATION</a></div></div><div class="brief "><p class="paragraph">Swaras are weighted by histogram peak amplitude — longer-held or more prominent notes count more. Falls back to <a href="-e-q-u-a-l/index.html">EQUAL</a> internally when all amplitudes are ≈ 0.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><a href="-d-u-r-a-t-i-o-n/index.html">DURATION</a></div></div><div class="brief "><p class="paragraph">Notes are weighted by histogram peak amplitude — longer-held or more prominent notes count more. Falls back to <a href="-e-q-u-a-l/index.html">EQUAL</a> internally when all amplitudes are ≈ 0.</p></div></div></div>
                 </div>
               </div>
             </div>

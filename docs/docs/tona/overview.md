@@ -25,7 +25,7 @@ audio samples ─► PitchDetection ──► PitchContour ──► PitchProces
                                                   PitchHistogram, TonalSegment[], …
 ```
 
-- **Live use case**: `PitchDetection.createDetector()` — feed audio buffer-by-buffer, get a `PitchPoint` per frame, and observe `livePitchContour` for visualization.
+- **Live use case**: `PitchDetection.createDetector()` — feed audio buffer-by-buffer: call `detect(samples, sampleRate)` for a `PitchPoint` per frame, and/or `feedContour(samples, sampleRate, anchorTime)` to accumulate the session contour, then read `pitchContour.recent(seconds)` for visualization.
 - **Offline use case**: `PitchDetection.createContourExtractor()` — pass a complete recording, get back a full `PitchContour` with cleanup baked in (configurable via `ContourExtractorConfig`).
 - **Cleanup an existing contour**: `PitchProcessing.process(contour, PitchProcessingConfig.SCORING)`.
 - **Histogram or transcription**: `PitchAnalysis.computeHistogram(contour, tonicHz)`, `PitchAnalysis.quantize(...)`, `PitchAnalysis.labelByMeanPitch(...)`.

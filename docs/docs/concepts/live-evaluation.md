@@ -195,10 +195,9 @@ session.state.collect { state ->
     }
 }
 
-// Observe live pitch for visualization
-session.livePitchContour.collect { contour ->
-    drawPitchCurve(contour)
-}
+// Live pitch for visualization — poll the trailing window once per render frame
+val contour = session.pitchContour.recent(seconds = 10f)
+drawPitchCurve(contour)
 
 // Observe practice phase (singalong/singafter)
 session.phase.collect { phase ->
@@ -260,7 +259,7 @@ data class SegmentResult(
     val segment: Segment,           // Which segment
     val score: Float,               // Overall score (0.0 to 1.0)
     val pitchAccuracy: Float,       // Pitch accuracy (0.0 to 1.0)
-    val level: PerformanceLevel,    // NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT
+    val level: PerformanceLevel,    // NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT, NOT_EVALUATED, NOT_DETECTED
     val attemptNumber: Int,         // Which attempt this was
     val referencePitch: PitchContour,  // What they should have sung
     val studentPitch: PitchContour     // What they actually sung

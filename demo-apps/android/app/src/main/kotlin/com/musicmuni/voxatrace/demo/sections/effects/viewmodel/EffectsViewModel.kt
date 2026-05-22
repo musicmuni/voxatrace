@@ -1,14 +1,14 @@
 package com.musicmuni.voxatrace.demo.sections.effects.viewmodel
 
-// Disabled: CalibraEffects is internal until effects are public-ready.
+// Disabled: Effects is internal until effects are public-ready.
 // Restore this file (and re-enable the wiring in MainActivity.kt) once the
 // effects facade is promoted back to public.
 /*
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuni.voxatrace.calibra.CalibraEffects
-import com.musicmuni.voxatrace.calibra.CalibraEffectsConfig
+import com.musicmuni.voxatrace.effects.Effects
+import com.musicmuni.voxatrace.effects.model.EffectsConfig
 import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
@@ -20,17 +20,17 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 /**
- * ViewModel for audio effects using CalibraEffectsConfig.Builder.
+ * ViewModel for audio effects using EffectsConfig.Builder.
  *
  * ## VoxaTrace Integration
  * ```kotlin
  * // 1. Build effects config and create chain (ADR-001: Builder builds Config)
- * val config = CalibraEffectsConfig.Builder()
+ * val config = EffectsConfig.Builder()
  *     .addNoiseGate(thresholdDb = threshold, holdTimeMs = 100f, timeConstMs = 10f)
  *     .addCompressor(thresholdDb = threshold, ratio = ratio)
  *     .addReverb(mix = mix, roomSize = roomSize)
  *     .build()
- * effects = CalibraEffects.create(config)
+ * effects = Effects.create(config)
  *
  * // 2. Apply to audio (via SonixPlayer processing tap)
  * player.setProcessingTap { samples ->
@@ -78,7 +78,7 @@ class EffectsViewModel : ViewModel() {
     // Private
     private var player: SonixPlayer? = null
     private var recorder: SonixRecorder? = null
-    private var effects: CalibraEffects? = null
+    private var effects: Effects? = null
     private var audioTask: Job? = null
     private var audioFilePath: String? = null
 
@@ -186,7 +186,7 @@ class EffectsViewModel : ViewModel() {
 
     private fun setupAudioIfNeeded(context: Context) {
         if (effects == null) {
-            val config = CalibraEffectsConfig.Builder()
+            val config = EffectsConfig.Builder()
                 .addNoiseGate(
                     thresholdDb = _noiseGateThreshold.value,
                     holdTimeMs = 100f,
@@ -202,7 +202,7 @@ class EffectsViewModel : ViewModel() {
                 )
                 .addReverb(mix = _reverbMix.value, roomSize = _reverbRoomSize.value)
                 .build()
-            effects = CalibraEffects.create(config)
+            effects = Effects.create(config)
         }
 
         if (audioFilePath == null) {
@@ -215,7 +215,7 @@ class EffectsViewModel : ViewModel() {
 
         val oldEffects = effects
 
-        val config = CalibraEffectsConfig.Builder()
+        val config = EffectsConfig.Builder()
             .addNoiseGate(
                 thresholdDb = _noiseGateThreshold.value,
                 holdTimeMs = 100f,
@@ -231,7 +231,7 @@ class EffectsViewModel : ViewModel() {
             )
             .addReverb(mix = _reverbMix.value, roomSize = _reverbRoomSize.value)
             .build()
-        effects = CalibraEffects.create(config)
+        effects = Effects.create(config)
 
         // Reinstall processing tap if playing
         if (_isPlaying.value) {

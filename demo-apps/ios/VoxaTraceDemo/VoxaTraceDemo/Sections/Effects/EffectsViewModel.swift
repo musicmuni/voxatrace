@@ -1,23 +1,23 @@
 import Foundation
 import Combine
 
-// Disabled: CalibraEffects is internal until effects are public-ready.
+// Disabled: Effects is internal until effects are public-ready.
 // Restore this file (and re-enable the wiring in ContentView.swift) once the
 // effects facade is promoted back to public.
 /*
 import VoxaTrace
 
-/// ViewModel for audio effects using CalibraEffectsConfig.Builder.
+/// ViewModel for audio effects using EffectsConfig.Builder.
 ///
 /// ## VoxaTrace Integration (~15 lines)
 /// ```swift
 /// // 1. Build effects config and create chain (ADR-001: Builder builds Config)
-/// let config = CalibraEffectsConfig.Builder()
+/// let config = EffectsConfig.Builder()
 ///     .addNoiseGate(thresholdDb: threshold, holdTimeMs: 100, timeConstMs: 10)
 ///     .addCompressor(thresholdDb: threshold, ratio: ratio)
 ///     .addReverb(mix: mix, roomSize: roomSize)
 ///     .build()
-/// effects = CalibraEffects.create(config: config)
+/// effects = Effects.create(config: config)
 ///
 /// // 2. Apply to audio (via SonixPlayer processing tap)
 /// player.setProcessingTap { samples in
@@ -51,7 +51,7 @@ final class EffectsViewModel: ObservableObject {
 
     private var player: SonixPlayer?
     private var recorder: SonixRecorder?
-    private var effects: CalibraEffects?
+    private var effects: Effects?
     private var playerObserverTask: Task<Void, Never>?
     private var audioTask: Task<Void, Never>?
 
@@ -155,7 +155,7 @@ final class EffectsViewModel: ObservableObject {
         guard effects == nil else { return }
 
         // Build effects config and create chain (ADR-001: Builder builds Config)
-        let config = CalibraEffectsConfig.Builder()
+        let config = EffectsConfig.Builder()
             .addNoiseGate(thresholdDb: noiseGateThreshold, holdTimeMs: 100, timeConstMs: 10)
             .addCompressor(
                 thresholdDb: compressorThreshold,
@@ -167,7 +167,7 @@ final class EffectsViewModel: ObservableObject {
             )
             .addReverb(mix: reverbMix, roomSize: reverbRoomSize)
             .build()
-        effects = CalibraEffects.create(config: config)
+        effects = Effects.create(config: config)
 
         // Create recorder
         let recordingPath = getAudioFileURL().path
@@ -181,7 +181,7 @@ final class EffectsViewModel: ObservableObject {
         let oldEffects = effects
 
         // Build effects config and create chain (ADR-001: Builder builds Config)
-        let config = CalibraEffectsConfig.Builder()
+        let config = EffectsConfig.Builder()
             .addNoiseGate(thresholdDb: noiseGateThreshold, holdTimeMs: 100, timeConstMs: 10)
             .addCompressor(
                 thresholdDb: compressorThreshold,
@@ -193,7 +193,7 @@ final class EffectsViewModel: ObservableObject {
             )
             .addReverb(mix: reverbMix, roomSize: reverbRoomSize)
             .build()
-        effects = CalibraEffects.create(config: config)
+        effects = Effects.create(config: config)
 
         // Reinstall processing tap if playing
         if isPlaying {

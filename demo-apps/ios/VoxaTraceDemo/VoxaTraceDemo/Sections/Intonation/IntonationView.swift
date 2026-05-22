@@ -76,18 +76,18 @@ struct IntonationView: View {
                 Spacer()
 
                 VStack(alignment: .trailing) {
-                    Text("Swaras")
+                    Text("Notes")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text("\(result.swaras.count)")
+                    Text("\(result.notes.count)")
                         .font(.title2)
                         .fontWeight(.bold)
                 }
             }
 
-            // Per-swara rows
-            ForEach(Array(result.swaras.enumerated()), id: \.offset) { _, swara in
-                swaraRow(swara)
+            // Per-note rows
+            ForEach(Array(result.notes.enumerated()), id: \.offset) { _, note in
+                noteRow(note)
             }
         }
         .padding(12)
@@ -95,22 +95,22 @@ struct IntonationView: View {
         .cornerRadius(8)
     }
 
-    private func swaraRow(_ swara: SwaraAnalysis) -> some View {
+    private func noteRow(_ note: NoteAnalysis) -> some View {
         HStack {
-            Text(swara.label)
+            Text(note.label)
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .frame(width: 40, alignment: .leading)
 
-            Text(String(format: "%+.1f cents", swara.deviationCents))
+            Text(String(format: "%+.1f cents", note.deviationCents))
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             Spacer()
 
-            Text(swara.deviationRemark)
+            Text(String(format: "%.0f", note.score))
                 .font(.caption)
-                .foregroundColor(remarkColor(swara.deviationRemark))
+                .foregroundColor(scoreColor(note.score))
         }
     }
 
@@ -149,15 +149,6 @@ struct IntonationView: View {
         if score >= 70 { return .green }
         if score >= 40 { return .orange }
         return .red
-    }
-
-    private func remarkColor(_ remark: String) -> Color {
-        switch remark {
-        case "Excellent": return .green
-        case "Good": return .blue
-        case "Fair": return .orange
-        default: return .red
-        }
     }
 }
 

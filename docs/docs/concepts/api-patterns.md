@@ -15,10 +15,13 @@ Every VoxaTrace API supports three usage tiers, letting you choose the right lev
 Use predefined configurations. Zero learning curve.
 
 ```kotlin
-// Just works with sensible defaults
-val player = SonixPlayer.create("song.mp3")
-val detector = PitchDetection.createDetector()
-val recorder = SonixRecorder.create("/path/to/output.m4a")
+// Just works with sensible defaults.
+// SonixPlayer.create suspends (it decodes audio), so call it from a coroutine.
+suspend fun setup() {
+    val player = SonixPlayer.create("song.mp3")
+    val detector = PitchDetection.createDetector()
+    val recorder = SonixRecorder.create("/path/to/output.m4a")
+}
 ```
 
 ### Tier 2: Builder (15% of users)
@@ -200,7 +203,7 @@ session.state.collect { state ->
 In Swift, use the provided async sequences:
 
 ```swift
-for await timeMs in player.currentTimeStream() {
+for await timeMs in player.currentTime {
     updateSeekBar(timeMs)
 }
 ```

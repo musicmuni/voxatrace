@@ -23,7 +23,7 @@ sidebar_position: 2
 | `CalibraPitch.PostProcess.correctOctaveErrors(...)` | [`PitchProcessing.correctOctaveErrors(...)`](../tona/pitch-processing) |
 | `CalibraPitch.PostProcess.rejectOutliers(...)` | [`PitchProcessing.removeBlips(...)`](../tona/pitch-processing) (renamed) |
 | `CalibraPitch.Detector` (nested type) | `com.musicmuni.voxatrace.tona.detection.PitchDetector` (interface) |
-| `ContourExtractorConfig` | `com.musicmuni.voxatrace.tona.model.ContourExtractorConfig` (typealias kept for source compatibility) |
+| `ContourExtractorConfig` | `com.musicmuni.voxatrace.tona.model.ContourExtractorConfig` (re-import from `tona.model`; no calibra-side alias) |
 | `PitchPoint`, `PitchContour`, `Tuning`, `PitchAlgorithm`, `VoiceType`, `QuietHandling`, `DetectionStrictness`, `PitchPreset`, `PitchDetectorConfig`, `PitchProcessingConfig`, `OctaveCorrectionConfig`, `InterpolationMethod` | All under `com.musicmuni.voxatrace.tona.model` |
 
 ## Migration

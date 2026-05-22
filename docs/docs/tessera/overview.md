@@ -10,7 +10,7 @@ Tessera is the voice-metrics module. It analyzes a `PitchContour` (from [`PitchD
 |--------|---------|
 | [`Tessera`](#tesseraanalyze-batch) | Multi-metric batch — breath + agility + range from one contour |
 | [`TesseraSession`](./session) | Streaming multi-metric — feed audio incrementally |
-| [`TesseraBreath`](./breath) | Breath capacity, control, comparison |
+| [`TesseraBreath`](./breath) | Breath control, phrase structure, reference comparison |
 | [`TesseraAgility`](./agility) | Vocal agility (ornament speed and regularity) |
 | [`TesseraRange`](./range) | Vocal range, search vector, song matching |
 | [`TesseraRangeSession`](./range#tesserarangesession) | Guided "find your range" flow with observable state |
@@ -24,7 +24,7 @@ All facades operate on a `tona.model.PitchContour`. Get one via `PitchDetection.
 |----------|--------|
 | Profile a singer from one recording (one call) | [`Tessera.analyze`](#tesseraanalyze-batch) |
 | Stream metrics live | [`TesseraSession`](./session) |
-| Score breath capacity / control | [`TesseraBreath`](./breath) |
+| Score breath control / phrase structure | [`TesseraBreath`](./breath) |
 | Score vocal agility | [`TesseraAgility`](./agility) |
 | Find a singer's lower / upper note (batch) | [`TesseraRange`](./range) |
 | Interactive "find your range" flow | [`TesseraRangeSession`](./range#tesserarangesession) |

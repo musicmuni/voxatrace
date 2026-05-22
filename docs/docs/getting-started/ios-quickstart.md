@@ -115,7 +115,7 @@ class PitchDetectorViewModel: ObservableObject {
         task = Task {
             guard let recorder = recorder else { return }
 
-            for await buffer in recorder.audioBuffersStream() {
+            for await buffer in recorder.audioBuffers {
                 guard !Task.isCancelled else { break }
 
                 let samples = buffer.samples
@@ -291,7 +291,7 @@ class PitchDetectorViewController: UIViewController {
         task = Task {
             guard let recorder = recorder else { return }
 
-            for await buffer in recorder.audioBuffersStream() {
+            for await buffer in recorder.audioBuffers {
                 guard !Task.isCancelled else { break }
 
                 let samples = buffer.samples

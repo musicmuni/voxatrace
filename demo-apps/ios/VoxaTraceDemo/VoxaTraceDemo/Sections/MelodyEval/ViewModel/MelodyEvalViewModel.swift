@@ -280,7 +280,7 @@ final class MelodyEvalViewModel: ObservableObject {
                 sampleCount += buffer.samples.count
 
                 // Detect pitch for this buffer (realtime)
-                // Pitch points automatically accumulated in detector.livePitchContour
+                // Pitch points automatically accumulated in detector.pitchContour
                 _ = pitchDetector?.detect(samples: buffer.samples, sampleRate: hwRate)
 
                 let sum = buffer.samples.reduce(0) { $0 + $1 * $1 }
