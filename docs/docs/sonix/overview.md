@@ -155,6 +155,7 @@ val ok = synth.synthesize(midiPath = "song.mid", outputPath = "out.wav")
 - [SonixResampler](./resampler) — Sample rate conversion
 - [SonixMidiSynthesizer](./midi-synthesizer) — MIDI to audio synthesis
 - [SonixLessonSynthesizer](./lesson-synthesizer) — Lesson audio from note sequences
+- [AudioSessionManager](./audio-session) — Audio session / focus coordination (usually automatic)
 - [Utilities](./utilities) — Parser, frames, and error types
 
 ### Guides

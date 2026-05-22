@@ -229,19 +229,23 @@ Complete result of a singing evaluation session, aggregating results across all 
 | `bestScorePerSegment()` | `Map<Int, Float>` | Get the best score for each segment |
 | `averageScorePerSegment()` | `Map<Int, Float>` | Get the average score for each segment |
 | `latestResultPerSegment()` | `Map<Int, SegmentResult>` | Get the latest result for each segment |
+| `latestScore(segmentIndex)` | `Float?` | Latest score for a single segment, or null if not practiced |
+| `bestScore(segmentIndex)` | `Float?` | Best score for a single segment, or null if not practiced |
 | `getAllFeedback()` | `List<String>` | Get feedback messages for all segments |
 
-### Swift Convenience Methods
+### Single-segment accessors
+
+`latestScore` / `bestScore` return one segment's score on both platforms. Swift uses the `forSegment:` label and native `Int`:
+
+```kotlin
+val score = result.latestScore(segmentIndex = 0)   // Float?
+val best  = result.bestScore(segmentIndex = 0)      // Float?
+```
 
 ```swift
-let result: SingingResult = ...
-
-// Latest score for a specific segment
 if let score = result.latestScore(forSegment: 0) {
     print("Score: \(Int(score * 100))%")
 }
-
-// Best score for a specific segment
 if let best = result.bestScore(forSegment: 0) {
     print("Best: \(Int(best * 100))%")
 }

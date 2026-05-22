@@ -433,7 +433,7 @@ class MelodyEvalViewModel : ViewModel() {
 
     /** Get the score for a specific segment index */
     fun segmentScore(index: Int): Float? {
-        return _result.value?.latestScorePerSegment()?.get(index)
+        return _result.value?.latestScore(index)
     }
 
     private fun copyAssetToFile(context: Context, assetName: String): File {

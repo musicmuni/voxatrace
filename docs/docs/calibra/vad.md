@@ -200,13 +200,20 @@ for await buffer in recorder.audioBuffers {
 }
 ```
 
-### Swift Convenience Methods
+### Convenience Methods
+
+Available on both platforms (Swift uses `[Float]` / lowercase enum cases):
+
+```kotlin
+// Quick check with custom threshold
+val hasVoice = vad.hasVoiceActivity(samples, sampleRate = 48000, threshold = 0.3f)
+
+// Classify activity level — NONE, PARTIAL, or FULL
+val level = vad.classifyVoiceActivity(samples, sampleRate = 48000)
+```
 
 ```swift
-// Quick check with custom threshold
 let hasVoice = vad.hasVoiceActivity(samples: samples, sampleRate: 48000, threshold: 0.3)
-
-// Classify activity level
 let level = vad.classifyVoiceActivity(samples: samples, sampleRate: 48000)
 // .none, .partial, or .full
 ```
@@ -217,6 +224,8 @@ let level = vad.classifyVoiceActivity(samples: samples, sampleRate: 48000)
 |--------|-------------|
 | `getVADRatio(samples, sampleRate)` | Get voiced frame ratio (0.0–1.0) |
 | `analyze(samples, sampleRate)` | Get rich VADResult with level classification |
+| `hasVoiceActivity(samples, sampleRate, threshold = 0.3)` | Convenience: true when the VAD ratio exceeds `threshold` |
+| `classifyVoiceActivity(samples, sampleRate)` | Convenience: band the ratio into `VoiceActivityLevel` (NONE / PARTIAL / FULL) |
 | `acceptWaveform(samples, sampleRate)` | Feed samples for streaming detection |
 | `isVoiceDetected()` | Check if voice is currently detected (streaming mode) |
 | `reset()` | Reset state for new audio stream |

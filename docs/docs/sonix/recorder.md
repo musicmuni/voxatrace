@@ -250,9 +250,16 @@ recorder.audioBuffers.collect { buffer ->
     pitchDetector.detect(samples, buffer.sampleRate)
     // Pass buffer.timestamp to CalibraLiveEval.feedAudioSamples for player alignment
 }
+
+// Or get a fixed-rate stream — resampling handled internally
+recorder.audioBuffersResampled(targetRate = 16000).collect { samples ->
+    pitchDetector.detect(samples, 16000)
+}
 ```
 
 ### Swift (Resampled Stream)
+
+`audioBuffersResampled` is exposed on iOS as an `AsyncStream` via `audioBuffers(resampledTo:)`:
 
 ```swift
 for await samples in recorder.audioBuffers(resampledTo: 16000) {

@@ -168,6 +168,15 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   chromatic `label`, its `nearestInScaleLabel` (for "you reached for P"
   framing), and cents offsets. Best-effort: if detection fails the list is
   empty and `error` is not set. Capture radius is 30 cents.
+- **Kotlin/Swift parity for convenience helpers.** Helpers that previously
+  existed only as iOS Swift conveniences now have Kotlin equivalents (the
+  Swift wrappers delegate to them, so behaviour is identical on both
+  platforms): `CalibraVAD.hasVoiceActivity(samples, sampleRate, threshold = 0.3)`
+  and `CalibraVAD.classifyVoiceActivity(samples, sampleRate)`;
+  `SingingResult.latestScore(segmentIndex)` / `bestScore(segmentIndex)`
+  (single-segment accessors alongside the existing `*PerSegment()` maps);
+  and `SonixRecorder.audioBuffersResampled(targetRate): Flow<FloatArray>`
+  (a fixed-rate counterpart to the raw `audioBuffers` flow).
 
 ### Changed
 
