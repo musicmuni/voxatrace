@@ -283,9 +283,11 @@ $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/SingingResul
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/aggregation/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/aggregation.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/allPassing/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/all-passing.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/averageScorePerSegment/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/average-score-per-segment.html
+$dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/bestScore/#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/best-score.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/bestScorePerSegment/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/best-score-per-segment.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/getAllFeedback/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/get-all-feedback.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/latestResultPerSegment/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/latest-result-per-segment.html
+$dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/latestScore/#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/latest-score.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/latestScorePerSegment/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/latest-score-per-segment.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/overallScore/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/overall-score.html
 $dokka.location:com.musicmuni.voxatrace.calibra.model/SingingResult/overallScorePercent/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra.model/-singing-result/overall-score-percent.html
@@ -416,7 +418,9 @@ $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD.Companion/create/#com
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD///PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/index.html
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/acceptWaveform/#kotlin.FloatArray#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/accept-waveform.html
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/analyze/#kotlin.FloatArray#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/analyze.html
+$dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/classifyVoiceActivity/#kotlin.FloatArray#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/classify-voice-activity.html
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/getVADRatio/#kotlin.FloatArray#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/get-v-a-d-ratio.html
+$dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/hasVoiceActivity/#kotlin.FloatArray#kotlin.Int#kotlin.Float/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/has-voice-activity.html
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/isVoiceDetected/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/is-voice-detected.html
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/release/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/release.html
 $dokka.location:com.musicmuni.voxatrace.calibra/CalibraVAD/reset/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.calibra/-calibra-v-a-d/reset.html
@@ -920,6 +924,7 @@ $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder.RecordingListener/on
 $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder///PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/index.html
 $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder/actualSampleRate/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/actual-sample-rate.html
 $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder/audioBuffers/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/audio-buffers.html
+$dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder/audioBuffersResampled/#kotlin.Int/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/audio-buffers-resampled.html
 $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder/bufferPoolAvailable/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/buffer-pool-available.html
 $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder/bufferPoolWasExhausted/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/buffer-pool-was-exhausted.html
 $dokka.location:com.musicmuni.voxatrace.sonix/SonixRecorder/clearSegments/#/PointingToDeclaration/-voxa-trace/com.musicmuni.voxatrace.sonix/-sonix-recorder/clear-segments.html
