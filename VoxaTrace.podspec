@@ -1,9 +1,9 @@
 Pod::Spec.new do |spec|
   spec.name         = "VoxaTrace"
-  spec.version      = "1.0.1"
-  spec.summary      = "Cross-platform audio SDK for music applications"
+  spec.version      = "2.0.0"
+  spec.summary      = "Acoustic intelligence for voice apps: real-time pitch, intonation analysis, voice metrics, singing evaluation. On-device, cross-platform."
   spec.description  = <<-DESC
-    Cross-platform audio SDK for music applications
+    Acoustic intelligence for voice apps: real-time pitch, intonation analysis, voice metrics, singing evaluation. On-device, cross-platform.
   DESC
 
   spec.homepage     = "https://github.com/musicmuni/voxatrace"
@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
   spec.swift_versions = ["5.9"]
 
   spec.source = {
-    :http => "https://github.com/musicmuni/voxatrace/releases/download/voxatrace-v1.0.1/voxatrace.xcframework.zip"
+    :http => "https://github.com/musicmuni/voxatrace/releases/download/voxatrace-v2.0.0/voxatrace.xcframework.zip"
   }
 
   spec.vendored_frameworks = "VoxaTrace.xcframework"
