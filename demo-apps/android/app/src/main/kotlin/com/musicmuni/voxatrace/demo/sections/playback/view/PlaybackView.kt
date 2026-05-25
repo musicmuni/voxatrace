@@ -17,7 +17,7 @@ import com.musicmuni.voxatrace.demo.sections.playback.viewmodel.PlaybackViewMode
  *
  * Demonstrates:
  * - SonixPlayer Builder pattern
- * - Real-time volume and pitch control
+ * - Real-time volume, pitch, and speed (tempo) control
  * - Loop count configuration
  * - Seek slider
  * - Fade in/out effects
@@ -44,6 +44,7 @@ fun PlaybackView(viewModel: PlaybackViewModel = viewModel()) {
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
     val volume by viewModel.volume.collectAsStateWithLifecycle()
     val pitch by viewModel.pitch.collectAsStateWithLifecycle()
+    val tempo by viewModel.tempo.collectAsStateWithLifecycle()
     val loopCount by viewModel.loopCount.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
     val isLoaded by viewModel.isLoaded.collectAsStateWithLifecycle()
@@ -126,6 +127,23 @@ fun PlaybackView(viewModel: PlaybackViewModel = viewModel()) {
                 modifier = Modifier.weight(1f)
             )
             Text("${pitch.toInt()} st", modifier = Modifier.width(40.dp))
+        }
+
+        // Speed control (tempo) - realtime, pitch-preserving
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Speed:", modifier = Modifier.width(60.dp))
+            Slider(
+                value = (tempo - 0.25f) / 3.75f,
+                onValueChange = {
+                    val newTempo = (it * 3.75f) + 0.25f
+                    viewModel.setTempo(newTempo)
+                },
+                modifier = Modifier.weight(1f)
+            )
+            Text("${"%.2f".format(tempo)}x", modifier = Modifier.width(40.dp))
         }
 
         // Loop count

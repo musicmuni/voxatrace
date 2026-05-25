@@ -29,6 +29,9 @@ struct PlaybackView: View {
             // Pitch control
             pitchControl
 
+            // Speed control (tempo)
+            speedControl
+
             // Loop count
             loopControl
 
@@ -104,6 +107,24 @@ struct PlaybackView: View {
                 )
             )
             Text("\(Int(viewModel.pitch)) st")
+                .frame(width: 40)
+        }
+    }
+
+    private var speedControl: some View {
+        HStack {
+            Text("Speed:")
+                .frame(width: 60, alignment: .leading)
+            Slider(
+                value: Binding(
+                    get: { Double((viewModel.tempo - 0.25) / 3.75) },
+                    set: { newValue in
+                        let newTempo = Float(newValue * 3.75 + 0.25)
+                        viewModel.setTempo(newTempo)
+                    }
+                )
+            )
+            Text(String(format: "%.2fx", viewModel.tempo))
                 .frame(width: 40)
         }
     }

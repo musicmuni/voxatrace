@@ -8,7 +8,7 @@ import VoxaTrace
 /// ```swift
 /// // 1. Create player with Config + Factory pattern
 /// let config = SonixPlayerConfig.Builder()
-///     .volume(volume).pitch(pitch).loopCount(loopCount)
+///     .volume(volume).pitch(pitch).tempo(tempo).loopCount(loopCount)
 ///     .onComplete { }.onError { }.build()
 /// player = try await SonixPlayer.create(source: path, config: config, audioSession: .playback)
 ///
@@ -31,6 +31,7 @@ final class PlaybackViewModel: ObservableObject {
     @Published private(set) var status = "Ready"
     @Published var volume: Float = 0.8
     @Published var pitch: Float = 0
+    @Published var tempo: Float = 1
     @Published var loopCount: Int32 = 1
 
     // MARK: - Computed Properties
@@ -79,6 +80,7 @@ final class PlaybackViewModel: ObservableObject {
             let config = SonixPlayerConfig.Builder()
                 .volume(volume)
                 .pitch(pitch)
+                .tempo(tempo)
                 .loopCount(loopCount)
                 .onComplete { [weak self] in
                     Log.i(.playback, "Playback completed")
@@ -152,6 +154,11 @@ final class PlaybackViewModel: ObservableObject {
     func setPitch(_ newPitch: Float) {
         pitch = newPitch
         player?.pitch = newPitch
+    }
+
+    func setTempo(_ newTempo: Float) {
+        tempo = newTempo
+        player?.tempo = newTempo
     }
 
     func setLoopCount(_ count: Int32) {

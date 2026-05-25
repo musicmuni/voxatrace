@@ -26,6 +26,7 @@ import java.io.FileOutputStream
  * val config = SonixPlayerConfig.Builder()
  *     .volume(0.8f)
  *     .pitch(-2f)
+ *     .tempo(0.75f)
  *     .loopCount(3)
  *     .onComplete { }
  *     .onLoopComplete { loopIndex, totalLoops -> }
@@ -39,7 +40,7 @@ import java.io.FileOutputStream
  *
  * // 3. Control playback
  * player.play() / player.pause() / player.stop() / player.seek(ms)
- * player.volume = 0.5f / player.pitch = 2f
+ * player.volume = 0.5f / player.pitch = 2f / player.tempo = 0.75f
  * ```
  */
 class PlaybackViewModel : ViewModel() {
@@ -60,6 +61,9 @@ class PlaybackViewModel : ViewModel() {
 
     private val _pitch = MutableStateFlow(0f)
     val pitch: StateFlow<Float> = _pitch.asStateFlow()
+
+    private val _tempo = MutableStateFlow(1f)
+    val tempo: StateFlow<Float> = _tempo.asStateFlow()
 
     private val _loopCount = MutableStateFlow(1)
     val loopCount: StateFlow<Int> = _loopCount.asStateFlow()
@@ -93,6 +97,7 @@ class PlaybackViewModel : ViewModel() {
                 val playerConfig = SonixPlayerConfig.Builder()
                     .volume(_volume.value)
                     .pitch(_pitch.value)
+                    .tempo(_tempo.value)
                     .loopCount(_loopCount.value)
                     .onComplete {
                         Napier.d("Playback completed!")
@@ -153,6 +158,11 @@ class PlaybackViewModel : ViewModel() {
     fun setPitch(newPitch: Float) {
         _pitch.value = newPitch
         player?.let { it.pitch = newPitch }
+    }
+
+    fun setTempo(newTempo: Float) {
+        _tempo.value = newTempo
+        player?.let { it.tempo = newTempo }
     }
 
     fun setLoopCount(count: Int) {
