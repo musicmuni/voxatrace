@@ -5,6 +5,17 @@ All notable changes to VoxaTrace will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **`PitchContourRecorder` is now usable from Kotlin Multiplatform `commonMain`.**
+  It no longer extends `kotlinx.atomicfu.locks.SynchronizedObject`; thread-safety
+  is now held by an internal lock (composition). atomicfu is a compile-only
+  dependency, so leaking it as a public supertype broke KMP consumers'
+  `commonMain` metadata compilation ("Cannot access 'SynchronizedObject' which is
+  a supertype of 'PitchContourRecorder'"). Android-only consumers were unaffected.
+  No behavioral or API change otherwise.
+
 ## [2.0.0] - 2026-05-22
 
 Major release. **1.x had two public namespaces — `sonix` and `calibra`. 2.0.0
