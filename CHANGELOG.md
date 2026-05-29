@@ -7,7 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-05-29
+
+### Added
+- **Synced backing-track accompaniment under live evaluation.** A new
+  `PlaybackController` transport interface (`currentTime`, `isPlaying`,
+  `play`/`pause`/`seek`, `audibleTimeMsAtWallNanos`) is implemented by both
+  `SonixPlayer` and `SonixMixer`, and `CalibraLiveEval` now accepts a
+  `PlaybackController`. A multi-track mix (teacher + accompaniment) can
+  therefore drive a scored session, sample-locked to a single audible
+  presentation clock. `SonixMixer.setReferenceTrack(...)` selects the track
+  whose clock drives `currentTime`; `setPitch(...)` transposes every track
+  tempo-preserving so reference and backing stay in tune.
+- **iOS: `PlayerState.tempo` passthrough.** The SwiftUI observable wrapper
+  now exposes `tempo`, restoring parity with the Kotlin `SonixPlayer` and the
+  Swift builder so SwiftUI apps can control playback speed.
+
 ### Fixed
+- **Singing scores are now correct when the student sings in a different key
+  than the reference.** `CalibraLiveEval.setStudentKeyHz()` is now honored
+  even when called before `prepareSession()`. Previously such a call was
+  silently dropped (the evaluator did not exist yet), so a lesson sung in a
+  key other than the reference recording was scored with **no key-shift
+  compensation**: the student's pitch sat a fixed interval off the reference
+  and scored far too low. The student key is now retained on the session and
+  applied when the evaluator is created, independent of call order.
 - **`PitchContourRecorder` is now usable from Kotlin Multiplatform `commonMain`.**
   It no longer extends `kotlinx.atomicfu.locks.SynchronizedObject`; thread-safety
   is now held by an internal lock (composition). atomicfu is a compile-only
