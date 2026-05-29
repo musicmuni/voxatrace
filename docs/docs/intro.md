@@ -161,14 +161,14 @@ val config = PitchDetectorConfig.PRECISE.copy(confidenceThreshold = 0.6f)
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.musicmuni:voxatrace:2.0.0")
+    implementation("com.musicmuni:voxatrace:{{version}}")
 }
 ```
 
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/musicmuni/voxatrace", from: "2.0.0")
+    .package(url: "https://github.com/musicmuni/voxatrace", from: "{{version}}")
 ]
 ```
 
