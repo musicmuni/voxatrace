@@ -91,9 +91,10 @@ Add microphone usage description for recording:
 
 ## Version Compatibility
 
-| VoxaTrace | Android Min SDK | iOS Min | Kotlin |
-|-----------|-----------------|---------|--------|
-| 2.0.x     | API 26 (8.0)    | iOS 15  | 1.9+   |
+| VoxaTrace | Android Min SDK | iOS Min | JVM                     | Kotlin |
+|-----------|-----------------|---------|-------------------------|--------|
+| 3.0.x     | API 26 (8.0)    | iOS 15  | Java 11+ (macOS, Linux) | 1.9+   |
+| 2.0.x     | API 26 (8.0)    | iOS 15  | —                       | 1.9+   |
 
 ## Authentication
 
@@ -116,6 +117,44 @@ VT.initializeForServer(apiKey: "sk_live_your_key_here")
 :::tip
 For production mobile apps, use **Proxy** or **App Attestation** instead of embedding API keys directly. See the [Authentication guide](../guides/authentication) for all three methods, proxy server setup, and security best practices.
 :::
+
+## Desktop & Server (JVM)
+
+VoxaTrace runs on the JVM for desktop apps and server-side analysis or lesson
+authoring (macOS and Linux). The library jar is platform-agnostic; the native
+code ships as a per-platform artifact you select with a classifier. AI-backed
+features (neural pitch and voice activity detection) are an opt-in extra.
+
+```kotlin
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // SDK classes (required)
+    implementation("com.musicmuni:voxatrace-jvm:{{version}}")
+
+    // Native libraries for your platform (required) — pick one:
+    runtimeOnly("com.musicmuni:voxatrace-jvm:{{version}}:natives-macos-arm64")
+    // runtimeOnly("com.musicmuni:voxatrace-jvm:{{version}}:natives-linux-x64")
+
+    // Optional: AI-backed features (neural pitch / VAD). Larger download.
+    // runtimeOnly("com.musicmuni:voxatrace-jvm:{{version}}:natives-ai-macos-arm64")
+}
+```
+
+The native libraries are loaded automatically from the classpath at runtime; no
+`java.library.path` configuration is needed.
+
+Initialize for server/desktop use with your API key:
+
+```kotlin
+VT.initializeForServer(apiKey = "sk_live_your_key_here")
+```
+
+See the [JVM Quickstart](./jvm-quickstart) to build your first desktop/server
+program, and the [Lesson Authoring guide](../guides/lesson-authoring) to
+pre-compute reference lesson bundles.
 
 ## Verifying Installation
 
@@ -148,3 +187,4 @@ func test() async throws {
 - [Authentication](../guides/authentication) - Set up secure authentication for production
 - [Android Quickstart](./android-quickstart) - Build your first Android app
 - [iOS Quickstart](./ios-quickstart) - Build your first iOS app
+- [JVM Quickstart](./jvm-quickstart) - Build your first desktop/server program

@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Desktop & server JVM SDK.** VoxaTrace is now published for the JVM (macOS and
+  Linux) with the full pitch, voice-metrics, intonation, singing-evaluation and
+  audio API, so you can build desktop apps and run analysis or lesson authoring
+  on a server. Add the base dependency plus the native artifact for your platform
+  (AI-backed features are an opt-in extra). Initialize with
+  `VT.initializeForServer(apiKey = ...)`. See the JVM quick start.
+- **Octave-robust pitch detection (`PitchAlgorithm.MELODIA`).** A new pitch
+  backend tracks the fundamental on high or harmonic-rich voices where the
+  default detector can jump down an octave. Recommended for offline reference
+  extraction and batch analysis.
+- **Lesson bundles: a stable, versioned format.** Reference material
+  (16 kHz audio, pitch, HPCP, phrases) is packaged as a documented bundle you can
+  produce ahead of time and load with `LessonBundle`. Author bundles with the new
+  offline `lesson-extractor` CLI, or from your own JVM code via `ReferenceExtractor`.
+  See the lesson-authoring guide and the bundle-format reference.
+
+### Changed
+- The experimental `PYIN` pitch algorithm has been removed; use
+  `PitchAlgorithm.MELODIA` for octave-robust detection or `YIN` for low-latency
+  real-time use.
+
 ## [2.1.0] - 2026-05-29
 
 ### Added
