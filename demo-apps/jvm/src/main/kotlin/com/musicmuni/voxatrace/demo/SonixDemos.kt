@@ -8,6 +8,7 @@ import com.musicmuni.voxatrace.sonix.SonixParser
 import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixRecorder
 import com.musicmuni.voxatrace.sonix.SonixResampler
+import com.musicmuni.voxatrace.sonix.SonixToneGenerator
 import com.musicmuni.voxatrace.sonix.midi.MidiNote
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -39,18 +40,64 @@ fun playbackDemo() {
 
 fun recordDemo() {
     val out = File.createTempFile("vt-demo-rec", ".wav").apply { deleteOnExit() }
+    // .wav extension -> WAV format auto-detected. start()/stop() is the simple
+    // single-file record path (segment recording needs Builder config).
     val recorder = SonixRecorder.create(out.path)
-    println("  [device] Recording 3s from the default mic...")
-    recorder.startRecordingSegment(0)
-    Thread.sleep(3000)
-    val file = runBlocking { recorder.stopRecordingSegment(0) }
+    val seconds = 6
+    println("  [device] Sing after the beep! Recording for ${seconds}s, then a beep stops it.")
+    playCue()                 // audible "start" beep
+    recorder.start()
+    Thread.sleep(seconds * 1000L)
+    recorder.stop()
+    playCue()                 // audible "stop" beep
+    // stop() finalizes the file asynchronously; wait for it to appear.
+    val deadline = System.currentTimeMillis() + 5000
+    while ((!out.exists() || out.length() < 1024) && System.currentTimeMillis() < deadline) Thread.sleep(100)
     recorder.release()
-    if (file == null) { println("  Recording produced no file"); return }
-    println("  Wrote $file; analyzing pitch...")
-    val audio = SonixDecoder.decode(file, targetSampleRate = SAMPLE_RATE) ?: return
-    val voiced = contourOf(audio).samples.filter { it.pitch > 0f }
-    if (voiced.isEmpty()) println("  No voiced frames detected")
-    else println("  ${voiced.size} voiced frames, median ${"%.1f".format(voiced.map { it.pitch }.sorted()[voiced.size / 2])} Hz")
+    if (!out.exists() || out.length() < 1024) { println("  No audio captured (mic permission?)"); return }
+    println("  Wrote ${out.path} (${out.length()} bytes).")
+
+    val audio = SonixDecoder.decode(out.path, targetSampleRate = SAMPLE_RATE)
+    if (audio != null) {
+        val voiced = contourOf(audio).samples.filter { it.pitch > 0f }
+        if (voiced.isEmpty()) println("  No voiced frames (silence?)")
+        else println("  ${voiced.size} voiced frames, median ${"%.1f".format(voiced.map { it.pitch }.sorted()[voiced.size / 2])} Hz")
+    }
+    println("  Playing your recording back...")
+    playFile(out.path)
+}
+
+/**
+ * Play a clear beep through the speakers as an audible cue. Uses a SourceDataLine
+ * (Clip playback is unreliable on some JVM/OS combinations), and a 250 ms tone so
+ * it is unmistakable.
+ */
+private fun playCue() {
+    runCatching {
+        val tone = SonixToneGenerator.generate(frequencyHz = 880f, durationMs = 250, sampleRate = 16000)
+        val fmt = javax.sound.sampled.AudioFormat(16000f, 16, 1, true, false)
+        val line = javax.sound.sampled.AudioSystem.getLine(
+            javax.sound.sampled.DataLine.Info(javax.sound.sampled.SourceDataLine::class.java, fmt)
+        ) as javax.sound.sampled.SourceDataLine
+        line.open(fmt); line.start()
+        line.write(tone.audioData, 0, tone.audioData.size)
+        line.drain(); line.stop(); line.close()
+    }
+}
+
+/** Play a file to the speakers and block until it finishes. */
+private fun playFile(path: String) {
+    runBlocking {
+        val player = SonixPlayer.create(path)
+        try {
+            player.play()
+            val start = System.nanoTime()
+            while (player.isPlaying.value && (System.nanoTime() - start) < 30_000_000_000L) Thread.sleep(100)
+            player.stop()
+        } finally {
+            player.release()
+        }
+    }
 }
 
 fun resampleDemo() {
@@ -70,11 +117,17 @@ fun metronomeDemo() {
         beatsPerCycle = 4
     )
     try {
-        println("  [device] Metronome at 100 BPM, 4/4 for ~5s...")
+        // Samples load asynchronously; wait for isInitialized before start().
+        val ready = System.currentTimeMillis() + 3000
+        while (!metronome.isInitialized.value && System.currentTimeMillis() < ready) Thread.sleep(50)
+        println("  [device] Metronome at 100 BPM, 4/4 for ~5s (initialized=${metronome.isInitialized.value})...")
         metronome.start()
-        Thread.sleep(5000)
+        repeat(5) {
+            Thread.sleep(1000)
+            print(" beat=${metronome.currentBeat.value}")
+        }
+        println()
         metronome.stop()
-        println("  Stopped at beat ${metronome.currentBeat.value}")
     } finally {
         metronome.release()
     }
@@ -103,10 +156,10 @@ fun multitrackDemo() {
     val vocal = resourceToFile("/samples/vocal-16k-mono.wav")
     val mixer = SonixMixer.create()
     try {
-        runBlocking {
-            mixer.addTrack("song", song)
-            mixer.addTrack("vocal", vocal)
+        val (songOk, vocalOk) = runBlocking {
+            mixer.addTrack("song", song) to mixer.addTrack("vocal", vocal)
         }
+        println("  addTrack song=$songOk vocal=$vocalOk; tracks=${mixer.getTrackNames()}")
         println("  [device] Mixing 'song' + 'vocal' (duration ${mixer.duration} ms) for ~5s...")
         mixer.setTrackVolume("song", 0.7f)
         mixer.play()
