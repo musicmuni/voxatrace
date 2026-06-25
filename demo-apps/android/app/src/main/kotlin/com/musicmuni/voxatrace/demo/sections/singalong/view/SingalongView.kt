@@ -24,7 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.musicmuni.voxatrace.common.MusicTheory
-import com.musicmuni.voxatrace.calibra.model.PerformanceLevel
+import com.musicmuni.voxatrace.demo.util.performanceFeedback
+import com.musicmuni.voxatrace.demo.util.performanceLabel
 import com.musicmuni.voxatrace.calibra.model.ResultAggregation
 import com.musicmuni.voxatrace.calibra.model.SegmentResult
 import com.musicmuni.voxatrace.calibra.model.SingingResult
@@ -378,7 +379,7 @@ private fun SegmentResultCard(result: SegmentResult) {
                 color = scoreColor
             )
             Text(
-                text = result.feedbackMessage,
+                text = performanceFeedback(result.score),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -606,7 +607,7 @@ private fun SummaryView(
                 color = scoreColor
             )
             Text(
-                text = PerformanceLevel.fromScore(overallScore).displayName,
+                text = performanceLabel(overallScore),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -738,7 +739,7 @@ private fun MiniResultCard(segmentIndex: Int, result: SegmentResult) {
             color = scoreColor
         )
         Text(
-            text = PerformanceLevel.fromScore(result.score).displayName,
+            text = performanceLabel(result.score),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

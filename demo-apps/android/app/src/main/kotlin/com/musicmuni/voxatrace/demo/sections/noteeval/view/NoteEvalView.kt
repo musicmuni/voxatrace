@@ -474,6 +474,10 @@ private fun SingalongSection(
 
 @Composable
 private fun ResultsSection(result: ExerciseResult) {
+    // Per-note pass count: verdicts left the SDK (ADR-023), so the app picks the
+    // threshold. A note "passes" at >= 60% of its score.
+    val passingNotes = result.noteResults.count { it.score >= 0.6f }
+    val passingRatio = if (result.noteCount > 0) passingNotes.toFloat() / result.noteCount else 0f
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -498,12 +502,12 @@ private fun ResultsSection(result: ExerciseResult) {
             )
             StatBox(
                 title = "Passing",
-                value = "${result.passingNotes}/${result.noteCount}",
+                value = "${passingNotes}/${result.noteCount}",
                 modifier = Modifier.weight(1f)
             )
             StatBox(
                 title = "Pass Rate",
-                value = "${(result.passingRatio * 100).toInt()}%",
+                value = "${(passingRatio * 100).toInt()}%",
                 modifier = Modifier.weight(1f)
             )
         }
