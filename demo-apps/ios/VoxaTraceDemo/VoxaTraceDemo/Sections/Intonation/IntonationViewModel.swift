@@ -61,7 +61,7 @@ final class IntonationViewModel: ObservableObject {
                 contour: contour,
                 tonicHz: tonicHz,
                 intonationSystem: .eq,
-                noteLabelTradition: .carnatic
+                genre: .carnatic
             )
 
             // Analyze against Just Intonation
@@ -69,7 +69,7 @@ final class IntonationViewModel: ObservableObject {
                 contour: contour,
                 tonicHz: tonicHz,
                 intonationSystem: .ji,
-                noteLabelTradition: .carnatic
+                genre: .carnatic
             )
 
             // Calculate scores (only when analysis succeeded — ADR-022)

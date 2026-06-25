@@ -25,9 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   See the lesson-authoring guide and the bundle-format reference.
 
 ### Changed
-- The experimental `PYIN` pitch algorithm has been removed; use
-  `PitchAlgorithm.MELODIA` for octave-robust detection or `YIN` for low-latency
-  real-time use.
+- **Note-label genre is now `MusicGenre`.** The `analyzePitching`
+  `noteLabelTradition: NoteLabelTradition` parameter is renamed to
+  `genre: MusicGenre`, and the type moved package. Update call sites and imports.
+- **Svara octave markers now use the traditional combining dots.** Upper/lower
+  octaves are marked with a dot above/below the svara (e.g. `Ṡ`, `Ṣ`) instead of
+  apostrophe/comma (`S'`, `S,`), matching standard Indian-classical notation. This
+  affects intonation note labels and lesson-bundle svara transcription.
 
 ## [2.1.0] - 2026-05-29
 

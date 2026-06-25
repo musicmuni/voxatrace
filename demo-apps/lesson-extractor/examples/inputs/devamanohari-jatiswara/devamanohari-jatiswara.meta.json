@@ -1,22 +1,13 @@
 {
   "shruti": "G#3",
+  "genre": "carnatic",
   "lessonType": "singafter",
-  "svaraMask": [
-    true,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    true,
-    false,
-    true,
-    false,
-    true,
-    false,
-    false,
-    true,
-    false
+  "svaras": [
+    "S",
+    "R2",
+    "M1",
+    "P",
+    "D2",
+    "N2"
   ]
 }

@@ -1,18 +1,14 @@
 {
   "shruti": "A3",
+  "genre": "hindustani",
   "lessonType": "singalong",
-  "svaraMask": [
-    true,
-    true,
-    false,
-    true,
-    false,
-    true,
-    false,
-    true,
-    true,
-    false,
-    true,
-    false
+  "svaras": [
+    "S",
+    "r",
+    "g",
+    "m",
+    "P",
+    "d",
+    "n"
   ]
 }

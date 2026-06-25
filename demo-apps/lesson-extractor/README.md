@@ -16,7 +16,7 @@ downloads and consumes them on demand.
 
 - **[Preparing lesson content](content-guide.md)** — for content creators: how to
   organize a lesson's inputs, the file formats, naming, sargam notation, and the
-  `svaraMask`. No coding.
+  `genre`/`svaras`. No coding.
 - **[Running the extractor](operations-guide.md)** — for operators: how to get the
   CLI, run it, and upload the output bundles.
 

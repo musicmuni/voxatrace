@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.accura.Accura
 import com.musicmuni.voxatrace.accura.model.IntonationAnalysisResult
 import com.musicmuni.voxatrace.accura.model.IntonationSystem
-import com.musicmuni.voxatrace.accura.model.NoteLabelTradition
+import com.musicmuni.voxatrace.common.model.MusicGenre
 import com.musicmuni.voxatrace.accura.model.PitchingScore
 import com.musicmuni.voxatrace.sonix.SonixDecoder
 import com.musicmuni.voxatrace.tona.PitchDetection
@@ -85,7 +85,7 @@ class IntonationViewModel : ViewModel() {
                         contour,
                         tonicHz = 146.83f,
                         intonationSystem = IntonationSystem.EQ,
-                        noteLabelTradition = NoteLabelTradition.CARNATIC
+                        genre = MusicGenre.CARNATIC
                     )
                 }
                 _eqResult.value = eqAnalysis
@@ -100,7 +100,7 @@ class IntonationViewModel : ViewModel() {
                         contour,
                         tonicHz = 146.83f,
                         intonationSystem = IntonationSystem.JI,
-                        noteLabelTradition = NoteLabelTradition.CARNATIC
+                        genre = MusicGenre.CARNATIC
                     )
                 }
                 _jiResult.value = jiAnalysis

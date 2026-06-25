@@ -2,7 +2,7 @@ package com.musicmuni.voxatrace.demo
 
 import com.musicmuni.voxatrace.accura.Accura
 import com.musicmuni.voxatrace.accura.model.IntonationSystem
-import com.musicmuni.voxatrace.accura.model.NoteLabelTradition
+import com.musicmuni.voxatrace.common.model.MusicGenre
 import com.musicmuni.voxatrace.common.MusicTheory
 import com.musicmuni.voxatrace.tessera.Tessera
 import com.musicmuni.voxatrace.tessera.TesseraAgility
@@ -59,7 +59,7 @@ fun intonationDemo() {
             contour = contour,
             tonicHz = TONIC_HZ,
             intonationSystem = system,
-            noteLabelTradition = NoteLabelTradition.HINDUSTANI
+            genre = MusicGenre.HINDUSTANI
         )
         val score = Accura.calculateScore(result)
         println("  $system: score ${"%.1f".format(score.score)} over ${score.noteCount} notes")

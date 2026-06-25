@@ -76,8 +76,9 @@ note label via `shruti`, or directly in Hz via `keyHz`:
 ```json
 {
   "shruti": "A3",
+  "genre": "hindustani",
   "lessonType": "singalong",
-  "svaraMask": [true, true, false, true, false, true, false, true, true, false, true, false]
+  "svaras": ["S", "r", "g", "m", "P", "d", "n"]
 }
 ```
 
@@ -85,31 +86,34 @@ note label via `shruti`, or directly in Hz via `keyHz`:
 |-------|----------|-------|
 | `shruti` | one of shruti/keyHz | Tonic as a note label, e.g. `"A3"`, `"G#3"` (sharps `#`, flats `b`) |
 | `keyHz` | one of shruti/keyHz | Tonic directly in Hz, e.g. `220.0` |
+| `genre` | with `svaras` | `"hindustani"` or `"carnatic"` — see below |
+| `svaras` | with `genre` | The raga's svaras — see below |
 | `lessonType` | no | `"singalong"` (default) or `"singafter"` |
-| `svaraMask` | no | The raga's svara set — see below |
 | `bpm` | no | Tempo, for metered lessons |
 | `beatsPerMeasure` | no | For metered lessons |
 
-### `svaraMask` — the raga's svara set
+### `genre` + `svaras` — the raga's svara set
 
-A JSON array of `true`/`false`, one entry per svara position, marking which
-svaras the raga uses. When you provide it, the bundle gains per-note **svara
-transcription** (each phrase's notes are labelled S, R, G, …); without it,
-phrases carry their window and sargam text but no note-level labels.
+To get per-note **svara transcription** in the bundle (each phrase's notes
+labelled S, R, G, …), list the raga's svaras by name and declare the genre.
+Provide the two together, or omit both (then phrases carry their window and
+sargam text but no note-level labels).
 
-Use **either** 12 entries (one per semitone) **or** 16 entries (Carnatic
-swarasthanas), in this fixed order (index 0 = Sa):
+Write the svaras in the genre's notation:
 
-- **12-entry:** `S r R g G m M P d D n N`
-- **16-entry:** `S R1 R2 R3 G1 G2 G3 M1 M2 P D1 D2 D3 N1 N2 N3`
+- **`"hindustani"`** — `S r R g G m M P d D n N`. Letter **case matters**: lower
+  case is komal (`r` `g` `d` `n`) and `m` is shuddha madhyam; upper case is
+  shuddha (`R` `G` `D` `N`) and `M` is tivra madhyam.
+- **`"carnatic"`** — `S R1 R2 R3 G1 G2 G3 M1 M2 P D1 D2 D3 N1 N2 N3`.
 
-Set `true` for each svara the lesson's scale uses, `false` otherwise. The
-`raag-bhairavi-aroh-avroh` example uses the 7-svara set `S r g m P d n` (12-entry):
+List only the svaras the raga uses, in any order. The
+`raag-bhairavi-aroh-avroh` example (Bhairavi, 7 svaras):
 
 ```json
-"svaraMask": [true, true, false, true, false, true, false, true, true, false, true, false]
+"genre": "hindustani",
+"svaras": ["S", "r", "g", "m", "P", "d", "n"]
 ```
 
-(Reading against `S r R g G m M P d D n N`: `S`,`r`,`g`,`m`,`P`,`d`,`n` true.) The
-`devamanohari-jatiswara` example uses a 16-entry Carnatic mask. Omit `svaraMask`
-entirely if you don't need per-note labels.
+The `devamanohari-jatiswara` example uses `"genre": "carnatic"` with Carnatic
+names (`R2`, `M1`, …). An unknown name for the genre is reported as an error, so
+typos surface instead of producing wrong labels.
