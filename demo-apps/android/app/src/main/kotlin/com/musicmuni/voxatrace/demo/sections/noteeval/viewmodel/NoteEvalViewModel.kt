@@ -220,11 +220,12 @@ class NoteEvalViewModel : ViewModel() {
 
         _isSingalongActive.value = true
 
-        // Start recorder first to get actual sample rate
+        // Start recorder. The actual capture rate is read from each delivered
+        // buffer below: recorder.actualSampleRate is unreliable immediately after
+        // the async start() (it returns the requested rate until the platform
+        // recorder is created). buffer.sampleRate is the authoritative per-buffer
+        // rate (SDK guidance); extract() resamples to 16kHz internally per ADR-017.
         recorder?.start()
-
-        // Capture actual sample rate (SDK handles resampling internally per ADR-017)
-        recordingSampleRate = recorder?.actualSampleRate ?: 16000
 
         // Start collecting audio
         recordingJob = viewModelScope.launch {
@@ -232,6 +233,11 @@ class NoteEvalViewModel : ViewModel() {
 
             recorder?.audioBuffers?.collect { buffer ->
                 val samples = buffer.samples
+
+                // Authoritative capture rate from the buffer itself.
+                if (sampleCount == 0) {
+                    recordingSampleRate = buffer.sampleRate
+                }
 
                 collectedAudio.addAll(samples.toList())
                 sampleCount += samples.size

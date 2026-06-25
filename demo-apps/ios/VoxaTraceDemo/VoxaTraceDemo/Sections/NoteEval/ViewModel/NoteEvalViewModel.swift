@@ -166,12 +166,14 @@ final class NoteEvalViewModel: ObservableObject {
 
         isSingalongActive = true
 
-        // Start recorder first to get actual sample rate
+        // Start recorder. The actual capture rate is read from each delivered
+        // buffer below: recorder.actualSampleRate is unreliable immediately after
+        // the async start() (it returns the requested rate until the platform
+        // recorder is created), and on iOS the mic is locked to 48kHz, not 16kHz.
+        // buffer.sampleRate is the authoritative per-buffer rate (SDK guidance);
+        // extract() then resamples to 16kHz internally per ADR-017.
         recorder?.start()
-
-        // Capture actual sample rate (SDK handles resampling internally per ADR-017)
-        recordingSampleRate = Int(recorder?.actualSampleRate ?? 16000)
-        Log.d(.session, "[NoteEval] 🎤 Recorder started, sampleRate=\(recordingSampleRate)")
+        Log.d(.session, "[NoteEval] 🎤 Recorder started")
 
         // Start collecting audio (store task to properly cancel on stop)
         audioCollectionTask = Task {
@@ -186,6 +188,12 @@ final class NoteEvalViewModel: ObservableObject {
             for await buffer in recorder.audioBuffers {
                 let samples = buffer.samples
                 bufferCount += 1
+
+                // Authoritative capture rate from the buffer itself (SDK guidance).
+                if bufferCount == 1 {
+                    recordingSampleRate = Int(buffer.sampleRate)
+                    Log.d(.session, "[NoteEval] 🎤 Capture sampleRate=\(recordingSampleRate)Hz")
+                }
 
                 collectedAudio.append(contentsOf: samples)
                 sampleCount += samples.count
@@ -397,7 +405,7 @@ final class NoteEvalViewModel: ObservableObject {
             Log.d(.session, "[NoteEval]    Overall score: \(evalResult.scorePercent)%")
             Log.d(.session, "[NoteEval]    Note results count: \(evalResult.noteResults.count)")
             for noteResult in evalResult.noteResults {
-                Log.d(.session, "[NoteEval]    Note[\(noteResult.noteIndex)]: score=\(noteResult.scorePercent)%, expectedFreq=\(String(format: "%.1f", noteResult.expectedFrequencyHz))Hz, level=\(noteResult.level), passing=\(noteResult.isPassing)")
+                Log.d(.session, "[NoteEval]    Note[\(noteResult.noteIndex)]: score=\(noteResult.scorePercent)%, expectedFreq=\(String(format: "%.1f", noteResult.expectedFrequencyHz))Hz, passing=\(noteResult.isPassing)")
             }
 
             await MainActor.run {
