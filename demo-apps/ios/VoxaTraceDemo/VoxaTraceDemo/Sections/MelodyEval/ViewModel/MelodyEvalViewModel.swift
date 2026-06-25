@@ -358,19 +358,25 @@ final class MelodyEvalViewModel: ObservableObject {
             )
 
             let extractor = PitchDetection.createContourExtractor()
+            defer { extractor.release() }
 
-            let evalResult = CalibraMelodyEval.evaluate(
-                reference: reference,
-                student: studentMaterial,
-                contourExtractor: extractor
-            )
+            do {
+                let evalResult = try CalibraMelodyEval.evaluate(
+                    reference: reference,
+                    student: studentMaterial,
+                    contourExtractor: extractor
+                )
 
-            extractor.release()
-
-            await MainActor.run {
-                result = evalResult
-                isEvaluating = false
-                status = "Evaluation complete: \(Int(evalResult.overallScore * 100))%"
+                await MainActor.run {
+                    result = evalResult
+                    isEvaluating = false
+                    status = "Evaluation complete: \(Int(evalResult.overallScore * 100))%"
+                }
+            } catch {
+                await MainActor.run {
+                    isEvaluating = false
+                    status = "Evaluation failed: \(error.localizedDescription)"
+                }
             }
         }
     }

@@ -17,7 +17,7 @@ struct SegmentResultCard: View {
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundColor(scoreColor)
-                Text(result.feedbackMessage)
+                Text(ScoreLabels.performanceFeedback(result.score))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

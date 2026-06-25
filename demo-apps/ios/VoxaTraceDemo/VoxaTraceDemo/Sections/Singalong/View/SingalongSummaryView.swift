@@ -68,14 +68,13 @@ struct SingalongSummaryView: View {
 
     private var overallScoreView: some View {
         let score = computeOverallScore()
-        let level = PerformanceLevel.fromScore(score)
 
         return VStack(spacing: 8) {
             Text("\(Int(score * 100))%")
                 .font(.system(size: 64, weight: .bold))
                 .foregroundColor(scoreColor(score))
 
-            Text(level.displayName)
+            Text(ScoreLabels.performanceLabel(score))
                 .font(.title3)
                 .foregroundColor(.secondary)
         }
@@ -168,7 +167,7 @@ private struct MiniContourCard: View {
                 .foregroundColor(scoreColor)
                 .frame(height: 60)
 
-            Text(PerformanceLevel.fromScore(result.score).displayName)
+            Text(ScoreLabels.performanceLabel(result.score))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

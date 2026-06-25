@@ -236,7 +236,12 @@ struct NoteEvalView: View {
     }
 
     private func resultsSection(_ result: ExerciseResult) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        // ADR-023: ExerciseResult no longer exposes passingNotes/passingRatio;
+        // derive them from the per-note isPassing flag.
+        let passingCount = result.noteResults.filter { $0.isPassing }.count
+        let passRate = result.noteCount > 0 ? Int(Float(passingCount) / Float(result.noteCount) * 100) : 0
+
+        return VStack(alignment: .leading, spacing: 12) {
             Text("Results")
                 .font(.subheadline)
                 .fontWeight(.medium)
@@ -247,8 +252,8 @@ struct NoteEvalView: View {
             // Stats
             HStack {
                 statBox(title: "Notes", value: "\(result.noteCount)")
-                statBox(title: "Passing", value: "\(result.passingNotes)/\(result.noteCount)")
-                statBox(title: "Pass Rate", value: "\(Int(result.passingRatio * 100))%")
+                statBox(title: "Passing", value: "\(passingCount)/\(result.noteCount)")
+                statBox(title: "Pass Rate", value: "\(passRate)%")
             }
         }
     }

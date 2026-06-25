@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 import VoxaTrace
 
 /// ViewModel for comparing two VAD backends side-by-side.
