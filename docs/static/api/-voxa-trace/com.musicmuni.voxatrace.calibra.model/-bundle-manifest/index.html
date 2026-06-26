@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>BundleManifest</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<script type="text/javascript" src="../../../images/back-to-docs.js" async="async"></script>
+<link href="../../../images/logo.png">
+<link href="../../../images/favicon.png">
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+3.0.0-SNAPSHOT        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.calibra.model/BundleManifest///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra.model</a><span class="delimiter">/</span><span class="current">BundleManifest</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Bundle</span><wbr></wbr><span><span>Manifest</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/Serializable///PointingToDeclaration/"><span class="token annotation builtin">Serializable</span></span></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">BundleManifest</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>version<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>FORMAT_VERSION<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>keyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sampleRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">16000</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>hopSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">320</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>frameSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1024</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>hpcpSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">12</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>lessonType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;singalong&quot;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>bpm<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>beatsPerMeasure<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><p class="paragraph">Metadata for a reference lesson bundle (<code class="lang-kotlin">reference-meta.json</code>).</p><p class="paragraph">Carries everything the loader needs beyond the per-file payloads: the tonic, the HPCP frame geometry (so the pre-computed chroma lines up with the consuming live session — see com.musicmuni.voxatrace.calibra.ReferenceExtractorConfig), and pass-through playback metadata (lesson type, tempo). Phrase boundaries and lyrics live in <code class="lang-kotlin">reference-phrases.json</code>, not here.</p><p class="paragraph">Read/written by <a href="../../com.musicmuni.voxatrace.calibra/-lesson-bundle/index.html">com.musicmuni.voxatrace.calibra.LessonBundle</a>.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="4757881%2FConstructors%2F-1201622999" anchor-label="BundleManifest" id="4757881%2FConstructors%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-bundle-manifest.html"><span>Bundle</span><wbr></wbr><span><span>Manifest</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="4757881%2FConstructors%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">version<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>FORMAT_VERSION<span class="token punctuation">, </span></span><span class="parameter ">keyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">sampleRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">16000</span><span class="token punctuation">, </span></span><span class="parameter ">hopSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">320</span><span class="token punctuation">, </span></span><span class="parameter ">frameSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1024</span><span class="token punctuation">, </span></span><span class="parameter ">hpcpSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">12</span><span class="token punctuation">, </span></span><span class="parameter ">lessonType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;singalong&quot;</span><span class="token punctuation">, </span></span><span class="parameter ">bpm<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">beatsPerMeasure<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="123044166%2FClasslikes%2F-1201622999" anchor-label="Companion" id="123044166%2FClasslikes%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="123044166%2FClasslikes%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1305296031%2FProperties%2F-1201622999" anchor-label="beatsPerMeasure" id="-1305296031%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="beats-per-measure.html"><span>beats</span><wbr></wbr><span>Per</span><wbr></wbr><span><span>Measure</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1305296031%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="beats-per-measure.html">beatsPerMeasure</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Beats per measure for metered lessons; null if unmetered.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1940132992%2FProperties%2F-1201622999" anchor-label="bpm" id="1940132992%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bpm.html"><span><span>bpm</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1940132992%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="bpm.html">bpm</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Tempo for metered lessons; null if unmetered.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-551904079%2FProperties%2F-1201622999" anchor-label="frameSize" id="-551904079%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="frame-size.html"><span>frame</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-551904079%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="frame-size.html">frameSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">HPCP analysis frame size in samples.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="921278421%2FProperties%2F-1201622999" anchor-label="hopSize" id="921278421%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hop-size.html"><span>hop</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="921278421%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="hop-size.html">hopSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">HPCP hop in samples (must match the consuming session).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1634286875%2FProperties%2F-1201622999" anchor-label="hpcpSize" id="-1634286875%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hpcp-size.html"><span>hpcp</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1634286875%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="hpcp-size.html">hpcpSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Chroma bins per frame.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1139223986%2FProperties%2F-1201622999" anchor-label="keyHz" id="-1139223986%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="key-hz.html"><span>key</span><wbr></wbr><span><span>Hz</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1139223986%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="key-hz.html">keyHz</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Tonic frequency in Hz.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1512000663%2FProperties%2F-1201622999" anchor-label="lessonType" id="-1512000663%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="lesson-type.html"><span>lesson</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1512000663%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="lesson-type.html">lessonType</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Lesson type (e.g. &quot;singalong&quot;, &quot;singafter&quot;); client playback metadata.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1343282863%2FProperties%2F-1201622999" anchor-label="sampleRate" id="-1343282863%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sample-rate.html"><span>sample</span><wbr></wbr><span><span>Rate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1343282863%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="sample-rate.html">sampleRate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Sample rate the features were computed at, in Hz.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1644994905%2FProperties%2F-1201622999" anchor-label="version" id="-1644994905%2FProperties%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="version.html"><span><span>version</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1644994905%2FProperties%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="version.html">version</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Bundle format version (see <a href="-companion/-f-o-r-m-a-t_-v-e-r-s-i-o-n.html">FORMAT_VERSION</a>). A bundle whose version exceeds the loading SDK's <a href="-companion/-f-o-r-m-a-t_-v-e-r-s-i-o-n.html">FORMAT_VERSION</a> is rejected by <a href="../../com.musicmuni.voxatrace.calibra/-lesson-bundle/load.html">com.musicmuni.voxatrace.calibra.LessonBundle.load</a>; older versions stay readable.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

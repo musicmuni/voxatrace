@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ReferenceExtractor</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../images/prism-swift.js" async="async"></script>
+<script type="text/javascript" src="../../../images/back-to-docs.js" async="async"></script>
+<link href="../../../images/logo.png">
+<link href="../../../images/favicon.png">
+<link href="../../../images/logo-icon.svg">
+<link href="../../../styles/styles.css" rel="Stylesheet">
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    VoxaTrace
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+3.0.0-SNAPSHOT        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":modules:voxatrace/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":modules:voxatrace/commonMain"
+                                       data-filter=":modules:voxatrace/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    VoxaTrace
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="VoxaTrace::com.musicmuni.voxatrace.calibra/ReferenceExtractor///PointingToDeclaration//-1201622999">
+  <div class="breadcrumbs"><a href="../../../index.html">VoxaTrace</a><span class="delimiter">/</span><a href="../index.html">com.musicmuni.voxatrace.calibra</a><span class="delimiter">/</span><span class="current">ReferenceExtractor</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Reference</span><wbr></wbr><span><span>Extractor</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">ReferenceExtractor</a></div><p class="paragraph">Offline pre-extraction of the reference side of a lesson.</p><p class="paragraph">Turns raw reference audio + phrase segments + tonic into a fully-populated <a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a> — pitch contour and HPCP frames pre-computed — so a client app hands the result straight to <a href="../-calibra-live-eval/index.html">CalibraLiveEval</a> / <a href="../-calibra-melody-eval/index.html">CalibraMelodyEval</a> without doing pitch/chroma DSP at runtime.</p><p class="paragraph">This is an <strong>authoring</strong> helper (run ahead of time, e.g. in a content pipeline). It only <i>produces</i> a <a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a>; evaluation consumes one. The on-disk bundle format that ships these features lives outside the SDK; this facade is the SDK-internal compute it builds on (it needs the module-internal HPCP extractor, which is why it lives in calibra rather than a separate module).</p><h2 class="">What it computes</h2><ul><li><p class="paragraph"><strong>pitchContour</strong> — via the injected <a href="../../com.musicmuni.voxatrace.tona.detection/-pitch-contour-extractor/index.html">PitchContourExtractor</a> (caller owns its lifecycle; release it when done). Looked up by time at evaluation.</p></li><li><p class="paragraph"><strong>hpcpFrames</strong> — a whole-file flat array of 12-bin chroma at the <a href="../../com.musicmuni.voxatrace.calibra.model/-reference-extractor-config/index.html">ReferenceExtractorConfig</a> geometry, the form the live evaluator indexes by absolute frame number. The geometry must match the consuming session; see <a href="../../com.musicmuni.voxatrace.calibra.model/-reference-extractor-config/index.html">ReferenceExtractorConfig</a>.</p></li></ul><p class="paragraph">Audio is resampled to 16 kHz internally (ADR-017); the returned <a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a> holds the 16 kHz mono samples used for the features.</p><h2 class="">Quick Start</h2><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val extractor = PitchDetection.createContourExtractor(ContourExtractorConfig.SCORING)<br>val reference = ReferenceExtractor.extract(<br>    samples = wavSamples, sampleRate = 44100,<br>    segments = phrases, keyHz = 196f,<br>    contourExtractor = extractor<br>)<br>extractor.release()<br>// reference.pitchContour and reference.hpcpFrames are now populated</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-melody-eval/index.html"><span>Calibra</span><wbr></wbr><span>Melody</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Consumes the pitch contour (ignores HPCP).</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-calibra-live-eval/index.html"><span>Calibra</span><wbr></wbr><span>Live</span><wbr></wbr><span><span>Eval</span></span></a></div></span></div><div><div class="title"><p class="paragraph">Consumes both pitch contour and HPCP frames.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.musicmuni.voxatrace.calibra.model/-reference-extractor-config/index.html"><span>Reference</span><wbr></wbr><span>Extractor</span><wbr></wbr><span><span>Config</span></span></a></div></span></div><div><div class="title"><p class="paragraph">HPCP geometry; must match the live session.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1078799830%2FFunctions%2F-1201622999" anchor-label="extract" id="1078799830%2FFunctions%2F-1201622999" data-filterable-set=":modules:voxatrace/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":modules:voxatrace/commonMain" data-filterable-set=":modules:voxatrace/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="extract.html"><span><span>extract</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1078799830%2FFunctions%2F-1201622999"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.native/-should-refine-in-swift/index.html"><span class="token annotation builtin">ShouldRefineInSwift</span></a></div></div><span class="token keyword">fun </span><a href="extract.html"><span class="token function">extract</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">samples<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float-array/index.html">FloatArray</a><span class="token punctuation">, </span></span><span class="parameter ">sampleRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">segments<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.musicmuni.voxatrace.calibra.model/-segment/index.html">Segment</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">keyHz<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">contourExtractor<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.tona.detection/-pitch-contour-extractor/index.html">PitchContourExtractor</a><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-reference-extractor-config/index.html">ReferenceExtractorConfig</a><span class="token operator"> = </span>ReferenceExtractorConfig.DEFAULT</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a></div><div class="brief "><p class="paragraph">Pre-extract reference features into a <a href="../../com.musicmuni.voxatrace.calibra.model/-lesson-material/index.html">LessonMaterial</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>(c) MusicMuni</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
