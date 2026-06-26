@@ -7,31 +7,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-06-26
+
+A major release with breaking API changes (see **Removed** and the `MusicGenre`
+rename under **Changed**). Singing score values also change — see below.
+
 ### Added
-- **Desktop & server JVM SDK.** VoxaTrace is now published for the JVM (macOS and
-  Linux) with the full pitch, voice-metrics, intonation, singing-evaluation and
-  audio API, so you can build desktop apps and run analysis or lesson authoring
-  on a server. Add the base dependency plus the native artifact for your platform
-  (AI-backed features are an opt-in extra). Initialize with
-  `VT.initializeForServer(apiKey = ...)`. See the JVM quick start.
-- **Octave-robust pitch detection (`PitchAlgorithm.MELODIA`).** A new pitch
-  backend tracks the fundamental on high or harmonic-rich voices where the
-  default detector can jump down an octave. Recommended for offline reference
-  extraction and batch analysis.
-- **Lesson bundles: a stable, versioned format.** Reference material
-  (16 kHz audio, pitch, HPCP, phrases) is packaged as a documented bundle you can
-  produce ahead of time and load with `LessonBundle`. Author bundles with the new
-  offline `lesson-extractor` CLI, or from your own JVM code via `ReferenceExtractor`.
-  See the lesson-authoring guide and the bundle-format reference.
+- **JVM (desktop & server) is now a supported target** — macOS (Apple Silicon)
+  and Linux (x64), alongside Android and iOS. The full API (pitch, voice metrics,
+  intonation, singing evaluation, audio I/O) is available. Add the base
+  `voxatrace-jvm` dependency plus the `natives-<platform>` artifact for your
+  OS/arch (AI features are an opt-in `natives-ai-<platform>` extra). Initialize
+  with `VT.initializeForServer(apiKey = ...)`. AAC/M4A is not available on the JVM
+  (use MP3).
+- **`PitchAlgorithm.MELODIA`** — an octave-robust pitch algorithm for
+  offline/batch contour extraction. The realtime detector rejects it.
+- **Lesson bundles.** `LessonBundle` loads a versioned reference bundle (audio,
+  pitch, HPCP, phrases); `ReferenceExtractor` produces one programmatically, and a
+  new offline `lesson-extractor` CLI produces one from audio + segment inputs.
+- **`PitchAnalysis.computeSvaraTemplate(...)` and `PitchAnalysis.transcribeNotes(...)`**
+  — svara templates and note-level transcription (`SvaraTemplate`, `NoteEvent`).
+- **`SessionConfig.scoreCalibration`** (`ScoreCalibration` presets or a custom
+  curve) maps raw scores to reported scores. Default leaves scores unchanged.
+- **`SessionConfig.playInterSegmentAudio`** plays authored audio between phrases
+  instead of seeking over it.
+- **`CalibraLiveEval.setMaxAttempts(n)`** changes the per-phrase retry cap at
+  runtime.
+- **(iOS)** `ReferenceExtractorConfig.default` and unlabeled Swift builder setters.
 
 ### Changed
-- **Note-label genre is now `MusicGenre`.** The `analyzePitching`
-  `noteLabelTradition: NoteLabelTradition` parameter is renamed to
-  `genre: MusicGenre`, and the type moved package. Update call sites and imports.
-- **Svara octave markers now use the traditional combining dots.** Upper/lower
-  octaves are marked with a dot above/below the svara (e.g. `Ṡ`, `Ṣ`) instead of
-  apostrophe/comma (`S'`, `S,`), matching standard Indian-classical notation. This
-  affects intonation note labels and lesson-bundle svara transcription.
+- **BREAKING — `NoteLabelTradition` → `MusicGenre`.** `Accura.analyzePitching`'s
+  `noteLabelTradition` parameter is now `genre: MusicGenre`
+  (`CARNATIC`/`HINDUSTANI`/`WESTERN`), in a new package.
+  `PitchAnalysis.computeSvaraTemplate` now takes `genre` plus a list of svara
+  names instead of a boolean `svaraMask`. Update call sites and imports.
+- **BREAKING — `CalibraMelodyEval.evaluate` now `throws`.** It accepts audio at
+  any sample rate (resampled internally) and surfaces errors as a catchable error
+  (Swift `throws`) instead of aborting. Swift callers add `try`.
+- **Svara octave markers now use the traditional combining dots** (e.g. `Ṡ`, `Ṣ`)
+  instead of apostrophe/comma, in intonation note labels and svara transcription.
+- **Singing score values change.** Scoring is more discriminating — a partial or
+  out-of-order take no longer scores high, and singing nothing against a voiced
+  reference scores zero. Reported scores differ from 2.x.
+
+### Removed
+- **BREAKING — score verdicts.** `PerformanceLevel`, the intonation pitching tier,
+  and the convenience verdict helpers on results (per-segment/per-note
+  pass/good/excellent flags and feedback messages, `SingingResult` aggregate
+  pass/feedback, exercise passing counts) are removed. Results carry the numeric
+  `score`; derive any labels or thresholds in your app. (iOS:
+  `PerformanceLevel.fromScore` is removed.)
+
+### Fixed
+- Realtime pitch no longer folds a sustained upper note an octave below what was
+  sung.
+- Intonation analysis no longer over-reports in-tune notes as off-scale.
+- Fixed a playback crash when a player is stopped and released near-simultaneously.
+- `SonixRecorder.actualSampleRate` reports the true hardware rate immediately
+  after `start()`.
+- Removed an audible stutter at segment boundaries during auto-advance.
 
 ## [2.1.0] - 2026-05-29
 
@@ -59,11 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   and scored far too low. The student key is now retained on the session and
   applied when the evaluator is created, independent of call order.
 - **`PitchContourRecorder` is now usable from Kotlin Multiplatform `commonMain`.**
-  It no longer extends `kotlinx.atomicfu.locks.SynchronizedObject`; thread-safety
-  is now held by an internal lock (composition). atomicfu is a compile-only
-  dependency, so leaking it as a public supertype broke KMP consumers'
-  `commonMain` metadata compilation ("Cannot access 'SynchronizedObject' which is
-  a supertype of 'PitchContourRecorder'"). Android-only consumers were unaffected.
+  It previously could not be referenced from `commonMain` in KMP consumer
+  projects; that limitation is fixed. Android-only consumers were unaffected.
   No behavioral or API change otherwise.
 
 ## [2.0.0] - 2026-05-22
@@ -105,7 +136,7 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   enums `PitchDetectorError` / `EvaluatorError` / `EffectsError` /
   `AnalysisError` (never thrown/returned), and the orphaned
   `calibra.model.EvaluatorConfig` / `EvaluatorPreset` (consumed by no
-  facade) are gone. Failure handling follows ADR-022:
+  facade) are gone. Failure handling is now:
   `VoxaTraceNotInitializedException` and `VoxaTraceKilledException` for
   SDK-state errors, `IllegalArgumentException` for invalid input, and
   return-value encoding (`null`, `SingingResult.EMPTY`) for inconclusive
@@ -162,8 +193,8 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   removal → smoothing) plus 14 individual array-level operations
   (`smooth`, `medianFilter`, `iqrFilter`, `dbscanFilter`, `removeBlips`,
   `interpolateSilence`, masking, segmentation, resampling); `PitchAnalysis`
-  covers histograms, tuning estimation, quantization, mean-pitch
-  labelling, and piecewise linear segment fitting.
+  covers pitch histograms, mean-pitch labelling, and piecewise linear
+  segment fitting.
 - **Voice metrics (`tessera`).** `Tessera.analyze` (multi-metric batch),
   `TesseraSession` (multi-metric streaming, 10-minute cap),
   `TesseraBreath` (control / phrase structure / reference comparison),
@@ -176,12 +207,12 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   (12-TET) or JI (just-intonation) target intervals with optional
   global tuning-offset alignment; `Accura.calculateScore` produces a
   0–100 score with a piecewise-linear grading scale and a small-sample
-  outlier-robust adjustment. Failure contract follows ADR-022 from
-  inception: precondition violations (empty contour, `tonicHz <= 0`,
-  empty `scaleIntervals`) throw `IllegalArgumentException`;
-  domain-level inconclusive outcomes (e.g. fewer than three histogram
-  peaks) surface via the non-null `IntonationAnalysisResult.error`
-  field. `calculateScore` requires `result.error == null` and a
+  outlier-robust adjustment. Failure contract: precondition violations
+  (empty contour, `tonicHz <= 0`, empty `scaleIntervals`) throw
+  `IllegalArgumentException`; domain-level inconclusive outcomes (e.g.
+  too few distinct notes to analyze) surface via the non-null
+  `IntonationAnalysisResult.error` field. `calculateScore` requires
+  `result.error == null` and a
   non-empty `result.notes`.
 - **Music theory (`common`).** `MusicTheory` is the canonical home for
   pitch ↔ MIDI ↔ note-label ↔ cents conversions, 12-TET / Just Intonation
@@ -218,8 +249,7 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
   scoring) or the trailing window via `pitchContour.recent(seconds)` (live
   visualization; the caller chooses the span at read time). Also exposes
   `pitchAt(timeSeconds)`, `size`, and `durationSeconds`. `PitchContourRecorder`
-  is a new public type in `com.musicmuni.voxatrace.common.streaming`, with
-  public reads and detector-internal writes.
+  is a new public type in `com.musicmuni.voxatrace.common.streaming`.
 - **Off-scale note detection in `Accura.analyzePitching`.** When an explicit
   scale is supplied, prominent peaks the singer dwelt on that land on a
   chromatic degree outside the scale are surfaced as
@@ -244,12 +274,12 @@ the entire `Accura` facade, the entire `PitchAnalysis` facade,
 - **Default frequency-detection range.** `PitchDetectorConfig.BALANCED`
   defaults to 80 Hz – 1000 Hz (was previously documented as 50–2000).
   SwiftF0 model range remains 46.875 Hz – 2093.75 Hz.
-- **`Accura.analyzePitching` does not report glided-through notes.** A
-  per-note histogram peak whose integrated area is below 12 % of the
-  busiest peak's is treated as a transient glide, not an intended note, and
-  is excluded from `IntonationAnalysisResult.notes`. `PeakDetectionConfig`
-  gains a `minPeakAreaFraction` knob (default `0f` = off) exposing this
-  relative-area gate to direct peak-detection callers.
+- **`Accura.analyzePitching` does not report glided-through notes.** Notes
+  the singer only passed through briefly are treated as transient glides,
+  not intended notes, and are excluded from
+  `IntonationAnalysisResult.notes`. `PeakDetectionConfig` gains a
+  `minPeakAreaFraction` knob (default `0f` = off) exposing this gate to
+  direct peak-detection callers.
 - **Accura grading on a single scale.** Each note reports
   `tier: PitchingTier` (`EXCELLENT`/`GOOD`/`FAIR`/`POOR`) and
   `score: Float` (per-note 0–100); `PitchingScore` also carries `tier` and
@@ -315,7 +345,7 @@ There is no `ContourCleanup` enum — the cleanup field on
 `ContourExtractorConfig` is typed as `PitchProcessingConfig` with presets
 `RAW`, `SCORING`, `DISPLAY`.
 
-`Accura` failure semantics (ADR-022): always inspect `result.error`
+`Accura` failure semantics: always inspect `result.error`
 before reading `result.notes` or passing the result to
 `Accura.calculateScore`. Empty inputs throw rather than returning a
 wrapped failure.
@@ -350,11 +380,11 @@ crash fix. All changes are backward-compatible with 1.0.0.
   during stop, releasing the native object twice
   (`decStrong() called on 0x... too many times`). Both paths now use a
   swap-and-null pattern; only one frees.
-- **Android: stale `_currentTime` after seek.** A cancelled `AudioTrack`
-  playback coroutine could publish a stale post-seek timestamp because
-  `track.write()` is not a suspension point. Downstream live evaluation
-  observed a forward jump as a spurious segment completion, wedging the
-  evaluator silently. The loop now checks `isActive` before publishing.
+- **Android: stale `_currentTime` after seek.** After a seek, playback
+  could briefly publish a stale timestamp. Downstream live evaluation
+  observed the forward jump as a spurious segment completion, wedging the
+  evaluator silently. Timestamps are no longer published after a seek is
+  superseded.
 - **Recorder: input latency compensated at the source.**
   `AudioBuffer.timestamp` is now `deliveryMs - inputLatencyMs` on
   Android and subtracts `AVAudioSession.inputLatency` on iOS; consumers
@@ -453,9 +483,9 @@ retuned based on field use. Callers upgrading from 0.9.x should read the
 
 ### Fixed
 
-- **R8 keep rules.** `SonixAudioUtils` and `SonixToneGenerator` are now
-  retained in the AAR — they were previously stripped by R8 despite being
-  public API, making them unusable from consumer apps.
+- **`SonixAudioUtils` and `SonixToneGenerator` are now available in the
+  AAR.** They were previously missing from the published artifact despite
+  being public API, making them unusable from consumer apps.
 
 ## [0.9.2] - 2026-02-11
 
