@@ -6,7 +6,15 @@ and upload the output bundles.
 
 ## 1. Prerequisites
 
-- **Java 11+** (`java -version` to check).
+- **Java 17 or newer.** Check with `java -version`. To install:
+  - **macOS** (Apple Silicon), with [Homebrew](https://brew.sh):
+    ```bash
+    brew install --cask temurin@17
+    ```
+  - **Ubuntu / Debian**:
+    ```bash
+    sudo apt update && sudo apt install -y openjdk-17-jdk
+    ```
 - Your **VoxaTrace API key**. The extractor registers over the network on each
   run, so it needs internet access.
 - macOS (Apple Silicon) or Linux x64.

@@ -6,9 +6,11 @@ No coding required.
 
 ## One folder per lesson
 
-Put each lesson in its own folder. **The folder name is the lesson id** (your app
-refers to the bundle by this name), so name it clearly. Inside each folder, put
-three files: an audio file, a `.csv`, and a `.meta.json`.
+Put each lesson in its own folder, with three files inside: an audio file, a
+`.csv`, and a `.meta.json`. Name the folder whatever you like; the extractor
+doesn't read the name, it just processes every folder that contains those three
+files. The output bundle is written to a folder of the same name, so pick
+something you'll recognize downstream.
 
 ```
 inputs/
@@ -34,16 +36,18 @@ and resamples to 16 kHz internally, so hand off your natural recordings as-is.
 One phrase per line, **four comma-separated fields**:
 
 ```
-startSeconds,type,durationSeconds,sargam
+startSeconds,type,durationSeconds,label
 ```
 
 - `startSeconds` / `durationSeconds` — the phrase window, in seconds.
 - `type` — `1` for a teacher/reference phrase, `2` for a student-response window
   (see singalong vs singafter below).
-- `sargam` — the phrase's svaras. Write them out (use spaces to group as you
-  like); `^` marks an upper octave on the preceding svara, `_` a lower octave
-  (`^^` / `__` for two octaves). In the finished bundle these render as the
-  traditional dot above/below the svara (e.g. `S^` → `Ṡ`).
+- `label` — free text associated with the phrase, for your app to display:
+  sargam, Western notation, lyrics, whatever you want. It's stored verbatim.
+  As a convenience for sargam, `^` marks an upper octave on the preceding token
+  and `_` a lower one (`^^` / `__` for two octaves), rendering as the traditional
+  dot above/below in the bundle (e.g. `S^` → `Ṡ`). If you'd rather use your own
+  symbols, just type the final text directly and it passes through unchanged.
 
 Example (`raag-bhairavi-aroh-avroh.csv`, a singalong):
 ```
@@ -53,14 +57,21 @@ Example (`raag-bhairavi-aroh-avroh.csv`, a singalong):
 
 ## 3. Singalong vs singafter
 
-- **Singalong**: the student sings *along with* the reference. Every row is a
-  teacher phrase (`type` `1`). Set `lessonType` to `singalong`.
+`lessonType` in the `.meta.json` (next section) decides how the lesson is
+treated. It is the switch — not the row types.
+
+- **Singalong** (`lessonType: "singalong"`, the default): the student sings
+  *along with* the reference. Every row is a teacher phrase (`type` `1`).
   (`raag-bhairavi-aroh-avroh` is a singalong.)
-- **Singafter**: call-and-response — the teacher sings, then the student repeats.
-  Each teacher phrase (`type` `1`) is followed by a student-response window
-  (`type` `2`) with the **same sargam**; the `2` row's window is where the student
-  is expected to sing back. Set `lessonType` to `singafter`.
-  (`devamanohari-jatiswara` is a singafter.)
+- **Singafter** (`lessonType: "singafter"`): call-and-response — the teacher
+  sings, then the student repeats. Each teacher phrase (`type` `1`) gets a
+  student-response window. You can mark it explicitly with a `type` `2` row
+  (same label) right after the teacher row, or omit type-2 rows and let the
+  extractor derive each window: the gap after the phrase, or — for the last
+  phrase — a window of the phrase's own length. Every derivation is reported in
+  the run summary. If a phrase has no room for a window (phrases are back-to-back,
+  or a last phrase has no trailing audio) it is skipped with a warning.
+  (`devamanohari-jatiswara` is a singafter, with explicit type-2 rows.)
 
 Example (`devamanohari-jatiswara.csv`, a singafter — note the paired `1`/`2` rows):
 ```
@@ -97,7 +108,7 @@ note label via `shruti`, or directly in Hz via `keyHz`:
 To get per-note **svara transcription** in the bundle (each phrase's notes
 labelled S, R, G, …), list the raga's svaras by name and declare the genre.
 Provide the two together, or omit both (then phrases carry their window and
-sargam text but no note-level labels).
+label text but no note-level labels).
 
 Write the svaras in the genre's notation:
 
