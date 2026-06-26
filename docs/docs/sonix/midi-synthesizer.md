@@ -156,6 +156,7 @@ val success: Boolean = synth.synthesizeFromPitchFile(
 | `note` | `Int` | MIDI note number (60 = C4, 72 = C5) |
 | `startTime` | `Float` | Start time in milliseconds |
 | `endTime` | `Float` | End time in milliseconds |
+| `duration` | `Float` | Note duration in milliseconds (computed: `endTime - startTime`) |
 
 ## Common Patterns
 

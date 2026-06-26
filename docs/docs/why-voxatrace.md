@@ -37,6 +37,12 @@ No server calls. No network latency. No data leaving the device.
 - **5 million users** — proven in production
 - **Same API on Android and iOS** — write once, ship everywhere
 
+### Beyond Mobile (3.0.0)
+
+As of 3.0.0, VoxaTrace also ships a **desktop/server JVM target** (macOS Apple
+Silicon and Linux x64) so you can run the same analysis off-device — for example
+batch lesson authoring on the server. See the [JVM Quickstart](./getting-started/jvm-quickstart).
+
 ### Three-Tier API Design
 
 Use as much complexity as you need:

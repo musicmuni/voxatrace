@@ -40,6 +40,27 @@ mixer.release()
 
 ## Configuration
 
+### Factory Method
+
+```kotlin
+fun create(
+    config: SonixMixerConfig = SonixMixerConfig.DEFAULT,
+    audioSession: AudioMode = AudioMode.PLAYBACK,
+): SonixMixer
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `config` | `SonixMixerConfig` | `DEFAULT` | Mixer configuration (looping, callbacks) |
+| `audioSession` | `AudioMode` | `PLAYBACK` | Audio session mode; configured automatically via [`AudioSessionManager`](./audio-session). Use `PLAY_AND_RECORD` when recording alongside the mixer. |
+
+```swift
+let mixer = SonixMixer.create(
+    config: .default,
+    audioSession: .playback
+)
+```
+
 ### Presets
 
 | Preset | Kotlin | Swift | Description |
@@ -148,6 +169,36 @@ mixer.fadeTrackVolume(name: "vocal", targetVolume: 0, durationMs: 2000)
 mixer.fadeTrackVolume(name: "vocal", startVolume: 1, endVolume: 0, durationMs: 2000)
 ```
 
+## Pitch Shift
+
+`pitch` transposes every track by a number of semitones while preserving tempo. Set it at any time, including during playback.
+
+```kotlin
+mixer.pitch = 2f     // up two semitones
+mixer.pitch = -1.5f  // down one and a half semitones
+mixer.pitch = 0f     // back to original pitch
+```
+
+```swift
+mixer.pitch = 2
+```
+
+## Clock Synchronization
+
+When a live evaluator scores against a reference track, designate that track with `setReferenceTrack(name)`. Its DAC-presentation clock then drives `currentTime` and `audibleTimeMsAtWallNanos(...)`, with accompaniment tracks riding the same shared clock. Without a reference track, time falls back to a wall-clock estimate.
+
+```kotlin
+mixer.setReferenceTrack("backing")
+
+// Audible playback position (ms) corresponding to a wall-clock timestamp (ns)
+val audibleMs: Long = mixer.audibleTimeMsAtWallNanos(System.nanoTime())
+```
+
+```swift
+mixer.setReferenceTrack(name: "backing")
+let audibleMs = mixer.audibleTimeMsAtWallNanos(wallNanos: someWallNanos)
+```
+
 ## Looping
 
 ```kotlin
@@ -228,6 +279,7 @@ mixer.isPlayingPublisher
 | `duration` | `Long` | Total duration in ms (longest track) |
 | `completedLoops` | `Int` | Number of completed loop iterations |
 | `loopCount` | `Int` | Current loop count setting (mutable) |
+| `pitch` | `Float` | Pitch shift in semitones, tempo-preserving, applied to every track (mutable) |
 
 ## Listener Interface
 

@@ -47,17 +47,28 @@ the bundle's `version` before reading the payloads.
 
 ## Authoring with the CLI
 
-The `lesson-extractor` CLI turns reference inputs into bundles. For each
-`<name>.wav` it expects a sibling `<name>.csv` (phrase markers) and
-`<name>.meta.json` (lesson metadata).
+The `lesson-extractor` CLI turns reference inputs into bundles. `inputDir`
+contains **one sub-folder per lesson**; each lesson folder holds three files:
+
+| File in `<inputDir>/<lesson>/` | Contents |
+|--------------------------------|----------|
+| an audio file (`.wav` or `.mp3`) | Reference recording — any sample rate / channels / bit depth (decoded, down-mixed to mono, and resampled to 16 kHz internally) |
+| a `.csv` | Phrase markers |
+| a `.meta.json` | Lesson metadata (tonic, lesson type) |
 
 ```bash
 export VOXATRACE_API_KEY=sk_live_your_key_here
 lesson-extractor <inputDir> <outputDir>
 ```
 
-Each `<name>` produces `<outputDir>/<name>/` with the bundle files above. Pitch
-is extracted with the octave-robust `MELODIA` backend.
+Each lesson folder named `<lesson>` produces `<outputDir>/<lesson>/` with the
+bundle files above. Pitch is extracted with the octave-robust `MELODIA` backend.
+
+To print the CLI version (no API key required):
+
+```bash
+lesson-extractor --version
+```
 
 Per-platform CLI distributions are published on the releases page.
 
@@ -99,8 +110,10 @@ readable.
 
 `reference-phrases.json` is the segment source of truth. Each phrase carries a
 time window, lyrics/sargam, and optional note events (`t_start`, `t_end`,
-`freqHz`, `label`). Note labels follow the VoxaTrace octave convention: `'` per
-octave above the tonic octave, `,` per octave below (e.g. `S`, `S'`, `N,`).
+`freqHz`, `label`). Note labels follow the VoxaTrace octave convention: a
+combining dot above the base letter per octave above the tonic octave (U+0307),
+a dot below per octave below (U+0323); e.g. `S`, `Ṡ` (one up), `Ṣ` (one down).
+The dot rides the base letter even for Carnatic numbered svaras (`Ṙ1`).
 
 - **singalong** — one phrase object per phrase.
 - **singafter** — each phrase is a `teacher_vocal` / `student_vocal` pair,

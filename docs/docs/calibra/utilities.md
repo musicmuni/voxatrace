@@ -166,15 +166,10 @@ Result of evaluating a single segment.
 | `segment` | `Segment` | The segment that was evaluated |
 | `score` | `Float` | Overall score for this segment (0.0 - 1.0) |
 | `pitchAccuracy` | `Float` | Pitch accuracy component of the score (0.0 - 1.0) |
-| `level` | `PerformanceLevel` | Performance level classification |
 | `attemptNumber` | `Int` | Which attempt this is (1-based, for retry tracking) |
 | `referencePitch` | `PitchContour` | Reference pitch contour for visualization |
 | `studentPitch` | `PitchContour` | Student pitch contour for visualization |
-| `isPassing` | `Boolean` | True if score >= 0.5 |
-| `isGood` | `Boolean` | True if score >= 0.7 |
-| `isExcellent` | `Boolean` | True if score >= 0.9 |
 | `scorePercent` | `Int` | Score as a percentage (0-100) |
-| `feedbackMessage` | `String` | Human-readable feedback based on performance level |
 
 ### Swift Pitch Data Extensions
 
@@ -219,7 +214,6 @@ Complete result of a singing evaluation session, aggregating results across all 
 | `overallScorePercent` | `Int` | Overall score as a percentage (0-100) |
 | `segmentCount` | `Int` | Number of segments evaluated |
 | `totalAttempts` | `Int` | Number of total attempts across all segments |
-| `allPassing` | `Boolean` | True if all segments pass (score >= 0.5) |
 
 ### Methods
 
@@ -231,7 +225,6 @@ Complete result of a singing evaluation session, aggregating results across all 
 | `latestResultPerSegment()` | `Map<Int, SegmentResult>` | Get the latest result for each segment |
 | `latestScore(segmentIndex)` | `Float?` | Latest score for a single segment, or null if not practiced |
 | `bestScore(segmentIndex)` | `Float?` | Best score for a single segment, or null if not practiced |
-| `getAllFeedback()` | `List<String>` | Get feedback messages for all segments |
 
 ### Single-segment accessors
 
@@ -267,51 +260,6 @@ How to aggregate multiple attempts per segment into a final score.
 | `LATEST` | Use the most recent attempt's score |
 | `BEST` | Use the highest score across all attempts |
 | `AVERAGE` | Use the average of all attempts |
-
-## PerformanceLevel
-
-Score-based classification for singing evaluation results.
-
-### Values
-
-| Value | Score Range | Display Name | Description |
-|-------|-------------|-------------|-------------|
-| `NEEDS_WORK` | < 0.3 | "Needs Work" | Significant improvement needed |
-| `FAIR` | 0.3 - 0.6 | "Fair" | Room for improvement |
-| `GOOD` | 0.6 - 0.8 | "Good" | Solid performance |
-| `VERY_GOOD` | 0.8 - 0.95 | "Very Good" | Very strong performance |
-| `EXCELLENT` | >= 0.95 | "Excellent" | Outstanding performance |
-| `NOT_EVALUATED` | N/A | "Not Evaluated" | Could not evaluate (insufficient data) |
-| `NOT_DETECTED` | < 0 | "No Voice" | No voice detected during segment |
-
-### Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `displayName` | `String` | Human-readable display name for UI |
-
-### Factory Methods
-
-| Method | Description |
-|--------|-------------|
-| `PerformanceLevel.fromScore(score)` | Get level based on score (0.0-1.0, negative for NOT_DETECTED) |
-| `PerformanceLevel.fromCode(code)` | Convert from integer code (for JNI/C interop) |
-
-#### Kotlin
-
-```kotlin
-val level = PerformanceLevel.fromScore(0.85f)
-// level == PerformanceLevel.VERY_GOOD
-println(level.displayName)  // "Very Good"
-```
-
-#### Swift
-
-```swift
-let level = PerformanceLevel.fromScore(0.85)
-// level == .veryGood
-print(level.displayName)  // "Very Good"
-```
 
 ## PracticePhase
 
@@ -439,6 +387,8 @@ let config = SessionConfig.Builder()
 | `hopSize` | `Int` | `320` | Hop size between frames in samples (320 = 20 ms at 16 kHz, 2 frames per buffer per ADR-020) |
 | `autoPhaseTransition` | `Boolean` | `true` | Auto transition LISTENING to SINGING in singafter mode |
 | `autoSegmentDetection` | `Boolean` | `true` | Auto detect segment end from player time |
+| `playInterSegmentAudio` | `Boolean` | `false` | Play authored intros/rests/count-ins between the playhead and a starting segment instead of seeking over them |
+| `scoreCalibration` | `ScoreCalibration` | `IDENTITY` | Curve applied once at the scoring seam to every score (segment results, session score, `scoreThreshold`); default `IDENTITY` passes raw scores through |
 
 ### Builder Methods
 
@@ -452,6 +402,32 @@ let config = SessionConfig.Builder()
 | `hopSize(samples)` | Set hop size between frames |
 | `autoPhaseTransition(enabled)` | Enable or disable auto phase transition |
 | `autoSegmentDetection(enabled)` | Enable or disable auto segment end detection |
+| `playInterSegmentAudio(enabled)` | Play authored intros/rests/count-ins instead of seeking over them |
+| `scoreCalibration(calibration)` | Set the score-calibration curve (preset or custom); see `ScoreCalibration` |
+
+## ScoreCalibration
+
+A curve that maps raw 0..1 evaluation scores to the 0..1 score a session reports. Applied exactly once, at the scoring seam, to every score a `CalibraLiveEval` session produces: per-segment results, the session score, and the `SessionConfig.scoreThreshold` the auto-advance policy compares against. Measurements (pitch accuracy, cents, durations) stay raw.
+
+### Presets
+
+| Preset | Description |
+|--------|-------------|
+| `ScoreCalibration.IDENTITY` | Raw scores pass through unchanged. The default. |
+| `ScoreCalibration.LENIENT` | Generous low-and-mid boost: rough takes get visible credit. |
+| `ScoreCalibration.BALANCED` | The field-tested reference curve (preserved exactly for score-history continuity). |
+| `ScoreCalibration.STRICT` | Closer to raw: the middle is not flattered. |
+
+### Custom curves
+
+`ScoreCalibration.custom(curve, name)` builds a calibration from a `ScoreCurve` (`(rawScore: Float) -> Float`). The curve is validated at construction: it must be monotonic non-decreasing over 0..1, finite everywhere, and not constant, or `custom` throws `IllegalArgumentException`. Outputs are clamped to 0..1 at apply time.
+
+```kotlin
+val calibration = ScoreCalibration.custom({ raw -> raw * raw }, name = "squared")
+val config = SessionConfig.Builder()
+    .scoreCalibration(calibration)
+    .build()
+```
 
 ## ScoringAlgorithm
 
@@ -538,7 +514,7 @@ of optionals.
 
 ```swift
 do {
-    let result = CalibraMelodyEval.evaluate(
+    let result = try CalibraMelodyEval.evaluate(
         reference: reference,
         student: student,
         contourExtractor: extractor

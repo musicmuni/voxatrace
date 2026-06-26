@@ -236,10 +236,7 @@ segmentButtons.forEachIndexed { index, button ->
 ```kotlin
 session.onSegmentComplete { result ->
     // Show score
-    scoreLabel.text = "${(result.score * 100).toInt()}%"
-
-    // Show performance level
-    levelLabel.text = result.level.name  // NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT
+    scoreLabel.text = "${result.scorePercent}%"
 
     // Draw pitch comparison
     drawPitchComparison(

@@ -64,7 +64,7 @@ extractor.release()
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `algorithm` | `PitchAlgorithm` | `YIN` | `YIN` or `SWIFT_F0` |
+| `algorithm` | `PitchAlgorithm` | `YIN` | `YIN` or `SWIFT_F0`. `MELODIA` is offline-only — `createDetector` rejects it (`IllegalArgumentException`); use it on `ContourExtractorConfig` instead. |
 | `bufferSize` | `Int` | `1024` | Audio buffer size (YIN-specific) |
 | `hopSize` | `Int` | `160` | Hop size between frames in samples |
 | `tolerance` | `Float` | `0.15` | YIN tolerance (lower = more accurate) |
@@ -158,7 +158,7 @@ Used by `createContourExtractor`.
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `preset` | `PitchPreset` | `BALANCED` | Resolution / accuracy trade-off |
-| `algorithm` | `PitchAlgorithm` | `SWIFT_F0` | YIN or SwiftF0 |
+| `algorithm` | `PitchAlgorithm` | `SWIFT_F0` | `YIN`, `SWIFT_F0`, or `MELODIA` (octave-robust, offline-only; valid here since extraction has the whole signal) |
 | `sampleRate` | `Int` | `16000` | Input audio sample rate (Hz) |
 | `hopMs` | `Int` | `10` | Hop between pitch samples (ms) |
 | `cleanup` | `PitchProcessingConfig` | `SCORING` | Post-processing applied after extraction |
@@ -273,9 +273,10 @@ data class PitchContour(
 
 1. **`PRECISE` is not for realtime.** 4096-sample buffer breaks the 40 ms per-buffer budget. Use `BALANCED` or `RELAXED` for realtime; reserve `PRECISE` for offline (per ADR-020).
 2. **SwiftF0 needs a model.** Either register globally (`AIModelRegistry.registerSwiftF0 { … }`) or pass `modelProvider` explicitly. `createDetector`/`createContourExtractor` throw `IllegalArgumentException` otherwise.
-3. **Mono input only.** `SonixDecoder.decode()` averages stereo channels automatically (per ADR-017). Custom audio paths must convert to mono.
-4. **`detect()` does not write the contour.** Use `feedContour(samples, sampleRate, anchorTime)` if you want `pitchContour` populated.
-5. **Always `release()` / `close()`.** Detectors and extractors hold native resources.
+3. **`MELODIA` is offline-only.** It tracks the predominant melody across the whole recording (octave-robust, no model bundle), so it is only valid on `ContourExtractorConfig` via `createContourExtractor`. `createDetector` throws `IllegalArgumentException` if asked for it.
+4. **Mono input only.** `SonixDecoder.decode()` averages stereo channels automatically (per ADR-017). Custom audio paths must convert to mono.
+5. **`detect()` does not write the contour.** Use `feedContour(samples, sampleRate, anchorTime)` if you want `pitchContour` populated.
+6. **Always `release()` / `close()`.** Detectors and extractors hold native resources.
 
 ## See also
 

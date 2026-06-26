@@ -141,6 +141,10 @@ if (SonixEncoder.isFormatAvailable("mp3")) {
 
 `encode` is a synchronous (blocking) call — for non-trivial outputs, invoke it from a background thread.
 
+:::note Desktop/JVM
+On the desktop-JVM target, only **MP3** and **WAV** (plus **AU**/**AIFF** for decoding) are available. There is no JVM-native AAC encoder, so M4A/AAC `encode` calls fail (the encoder reports an error and `encode` returns `false`). Use `format = "mp3"` on desktop. `isFormatAvailable` still reports availability per platform — check it, or simply prefer MP3 when running on desktop.
+:::
+
 ## Bitrate Guide
 
 | Bitrate | Quality | File Size |

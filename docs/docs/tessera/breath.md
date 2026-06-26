@@ -94,8 +94,8 @@ data class BreathFunction(
 
 ### Presets
 
-| Preset | tauRise | tauFall | sigmoidK | sigmoidM | minUnvoiced |
-|--------|---------|---------|----------|----------|-------------|
+| Preset | tauRise | tauFall | sigmoidK | sigmoidM | minUnvoicedDuration |
+|--------|---------|---------|----------|----------|---------------------|
 | `DEFAULT` / `SINGING` | 8.0 | 0.4 | 0.3 | 10 | 0.10 |
 | `PRACTICE` | 8.0 | 0.15 | 0.3 | 15 | 0.05 |
 | `SPEECH` | 5.0 | 0.4 | 0.3 | 6 | 0.15 |

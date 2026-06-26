@@ -7,6 +7,10 @@ sidebar_position: 4
 Build a desktop or server program that analyzes audio with VoxaTrace on the JVM
 (macOS or Linux).
 
+:::info Requires JDK 17+
+The VoxaTrace JVM target needs **JDK 17 or newer** at build and runtime.
+:::
+
 ## 1. Add the dependency
 
 ```kotlin

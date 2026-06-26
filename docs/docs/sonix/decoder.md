@@ -93,6 +93,10 @@ The decoded result contains:
 | OGG | Yes | No |
 | FLAC | Yes | Yes |
 
+:::note Desktop/JVM
+On the desktop-JVM target, only **MP3** and **WAV** (plus **AU**/**AIFF**) decode. There is no JVM-native AAC decoder, so decoding an M4A/AAC file returns `null`. Use MP3 or WAV sources on desktop.
+:::
+
 ## Common Patterns
 
 ### Decode for Analysis

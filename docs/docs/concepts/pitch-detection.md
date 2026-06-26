@@ -35,7 +35,7 @@ val octave = (midi.toInt() / 12) - 1
 
 ## Detection Algorithms
 
-VoxaTrace offers two pitch detection algorithms:
+VoxaTrace offers three pitch detection algorithms — two for realtime or batch (YIN, SwiftF0) and one offline-only (Melodia):
 
 ### YIN (Default)
 
@@ -58,6 +58,19 @@ A deep learning model trained on singing and speech data.
 | **Latency** | ~50ms |
 | **Dependencies** | ONNX Runtime |
 | **Best For** | Singing apps, noisy environments |
+
+### Melodia (Offline / Batch)
+
+A salience-based predominant-melody tracker that analyzes the whole recording at once. Because it reasons over the entire signal, it is **octave-robust** — it avoids the octave-halving that plain YIN can show on high or strong-harmonic voices — which makes it well suited to offline reference-contour extraction.
+
+| Aspect | Details |
+|--------|---------|
+| **Accuracy** | Octave-robust over the full recording |
+| **Mode** | Offline / batch only (needs the whole signal) |
+| **Dependencies** | None (native DSP, no ML model bundle) |
+| **Best For** | Offline reference / batch contour extraction |
+
+Melodia is offline-only: set `PitchAlgorithm.MELODIA` on a `ContourExtractorConfig` and use `PitchDetection.createContourExtractor`. The realtime `createDetector` rejects it (throws `IllegalArgumentException`).
 
 ### Choosing an Algorithm
 

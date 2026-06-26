@@ -61,16 +61,21 @@ let student = LessonMaterial.fromAudio(
 let extractor = PitchDetection.createContourExtractor(
     config: .scoring
 )
-let result = CalibraMelodyEval.evaluate(
-    reference: reference,
-    student: student,
-    contourExtractor: extractor
-)
-extractor.release()
+defer { extractor.release() }
 
-print("Overall: \(result.overallScorePercent)%")
-for (index, attempts) in result.sortedSegmentResults {
-    print("Segment \(index): \(attempts.last!.scorePercent)%")
+do {
+    let result = try CalibraMelodyEval.evaluate(
+        reference: reference,
+        student: student,
+        contourExtractor: extractor
+    )
+
+    print("Overall: \(result.overallScorePercent)%")
+    for (index, attempts) in result.sortedSegmentResults {
+        print("Segment \(index): \(attempts.last!.scorePercent)%")
+    }
+} catch {
+    print("Evaluation failed: \(error)")
 }
 ```
 
@@ -95,7 +100,7 @@ static func evaluate(
     reference: LessonMaterial,
     student: LessonMaterial,
     contourExtractor: PitchContourExtractor
-) -> SingingResult
+) throws -> SingingResult
 ```
 
 ### Parameters
@@ -266,17 +271,17 @@ The top-level result returned by `evaluate`.
 | `aggregation` | `ResultAggregation` | How the overall score was calculated |
 | `segmentCount` | `Int` | Number of segments evaluated |
 | `totalAttempts` | `Int` | Total attempts across all segments |
-| `allPassing` | `Boolean` | True if all segments have score >= 0.5 |
 
 #### SingingResult Methods
 
 | Method | Return Type | Description |
 |--------|-------------|-------------|
+| `latestScore(segmentIndex)` | `Float?` | Latest attempt's score for a single segment, or null |
+| `bestScore(segmentIndex)` | `Float?` | Best score across attempts for a single segment, or null |
 | `latestScorePerSegment()` | `Map<Int, Float>` | Latest score for each segment |
 | `bestScorePerSegment()` | `Map<Int, Float>` | Best score for each segment |
 | `averageScorePerSegment()` | `Map<Int, Float>` | Average score for each segment |
 | `latestResultPerSegment()` | `Map<Int, SegmentResult>` | Latest result for each segment |
-| `getAllFeedback()` | `List<String>` | Feedback messages for all segments |
 
 #### Swift-Only Extensions
 
@@ -312,15 +317,10 @@ Result for a single evaluated segment.
 | `segment` | `Segment` | The segment that was evaluated |
 | `score` | `Float` | Overall score (0.0 - 1.0) |
 | `pitchAccuracy` | `Float` | Pitch accuracy component (0.0 - 1.0) |
-| `level` | `PerformanceLevel` | Performance level classification |
 | `attemptNumber` | `Int` | Which attempt this is (1-based) |
 | `referencePitch` | `PitchContour` | Reference pitch contour for visualization |
 | `studentPitch` | `PitchContour` | Student pitch contour for visualization |
-| `isPassing` | `Boolean` | True if score >= 0.5 |
-| `isGood` | `Boolean` | True if score >= 0.7 |
-| `isExcellent` | `Boolean` | True if score >= 0.9 |
 | `scorePercent` | `Int` | Score as percentage (0 - 100) |
-| `feedbackMessage` | `String` | Human-readable feedback based on performance level |
 
 #### Swift Pitch Data Access
 
@@ -328,20 +328,6 @@ Result for a single evaluated segment.
 let (times, pitchesHz, pitchesMidi) = segmentResult.referencePitchData
 let (studentTimes, studentHz, studentMidi) = segmentResult.studentPitchData
 ```
-
-### PerformanceLevel
-
-Score-based classification of singing performance.
-
-| Level | Score Range | Display Name |
-|-------|-------------|--------------|
-| `NEEDS_WORK` | < 0.3 | "Needs Work" |
-| `FAIR` | 0.3 - 0.6 | "Fair" |
-| `GOOD` | 0.6 - 0.8 | "Good" |
-| `VERY_GOOD` | 0.8 - 0.95 | "Very Good" |
-| `EXCELLENT` | >= 0.95 | "Excellent" |
-| `NOT_EVALUATED` | n/a | "Not Evaluated" |
-| `NOT_DETECTED` | < 0 | "No Voice" |
 
 ### ResultAggregation
 
@@ -447,21 +433,23 @@ val student = LessonMaterial.fromAudio(
 val result = CalibraMelodyEval.evaluate(reference, student, extractor)
 ```
 
-### Segment Results with Feedback (iOS)
+### Per-Segment Scores (iOS)
 
 ```swift
-let result = CalibraMelodyEval.evaluate(
-    reference: reference,
-    student: student,
-    contourExtractor: extractor
-)
+do {
+    let result = try CalibraMelodyEval.evaluate(
+        reference: reference,
+        student: student,
+        contourExtractor: extractor
+    )
 
-for (index, attempts) in result.sortedSegmentResults {
-    guard let latest = attempts.last else { continue }
-    print("Segment \(index): \(latest.level.displayName)")
-    print("  Score: \(latest.scorePercent)%")
-    print("  Feedback: \(latest.feedbackMessage)")
-    print("  Passing: \(latest.isPassing)")
+    for (index, attempts) in result.sortedSegmentResults {
+        guard let latest = attempts.last else { continue }
+        print("Segment \(index): \(latest.scorePercent)%")
+        print("  Score: \(latest.score)")
+    }
+} catch {
+    print("Evaluation failed: \(error)")
 }
 ```
 

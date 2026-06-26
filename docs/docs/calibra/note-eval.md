@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # CalibraNoteEval
 
-Offline note/exercise evaluation for scales, arpeggios, and svara patterns. Scores how accurately a student performs **individual notes** in a sequence, with per-note feedback and performance level classification.
+Offline note/exercise evaluation for scales, arpeggios, and svara patterns. Scores how accurately a student performs **individual notes** in a sequence, with per-note scores.
 
 ## Quick Start
 
@@ -363,8 +363,6 @@ Overall result of an exercise evaluation.
 | `noteResults` | `List<NoteResult>` | Per-note evaluation results |
 | `keyHz` | `Float` | Key frequency used for evaluation |
 | `noteCount` | `Int` | Number of notes evaluated |
-| `passingNotes` | `Int` | Number of notes with score >= 0.5 |
-| `passingRatio` | `Float` | Ratio of passing notes to total notes |
 
 `ExerciseResult.EMPTY` provides an empty result constant (score 0, no notes, key 261.63 Hz).
 
@@ -378,28 +376,7 @@ Result for a single note in the exercise.
 | `expectedFrequencyHz` | `Float` | Expected frequency in Hz |
 | `score` | `Float` | Score for this note (0.0 -- 1.0) |
 | `scorePercent` | `Int` | Score as a percentage (0 -- 100) |
-| `level` | `PerformanceLevel` | Performance level classification |
 | `isPassing` | `Boolean` | Whether the note is passing (score >= 0.5) |
-
-### PerformanceLevel
-
-Score-based classification for each note result.
-
-| Level | Score Range | Display Name |
-|-------|-------------|--------------|
-| `NEEDS_WORK` | < 0.3 | "Needs Work" |
-| `FAIR` | 0.3 -- 0.6 | "Fair" |
-| `GOOD` | 0.6 -- 0.8 | "Good" |
-| `VERY_GOOD` | 0.8 -- 0.95 | "Very Good" |
-| `EXCELLENT` | >= 0.95 | "Excellent" |
-| `NOT_EVALUATED` | N/A | "Not Evaluated" |
-| `NOT_DETECTED` | < 0 | "No Voice" |
-
-| Property / Method | Type | Description |
-|-------------------|------|-------------|
-| `displayName` | `String` | Human-readable label for UI display |
-| `fromScore(score)` | `PerformanceLevel` | Classify a score (0.0 -- 1.0) into a level |
-| `fromCode(code)` | `PerformanceLevel` | Convert from integer code (for native interop) |
 
 ## Common Patterns
 
@@ -419,10 +396,11 @@ val result = CalibraNoteEval.evaluate(
     preset = NoteEvalPreset.BALANCED
 )
 
-println("Overall: ${result.scorePercent}% (${result.passingNotes}/${result.noteCount} passing)")
+val passing = result.noteResults.count { it.isPassing }
+println("Overall: ${result.scorePercent}% ($passing/${result.noteCount} passing)")
 result.noteResults.forEach { note ->
     val status = if (note.isPassing) "PASS" else "FAIL"
-    println("  Note ${note.noteIndex}: ${note.scorePercent}% [${note.level.displayName}] $status")
+    println("  Note ${note.noteIndex}: ${note.scorePercent}% $status")
 }
 ```
 
@@ -440,10 +418,11 @@ let result = CalibraNoteEval.evaluate(
     preset: .balanced
 )
 
-print("Overall: \(result.scorePercent)% (\(result.passingNotes)/\(result.noteCount) passing)")
+let passing = result.noteResults.filter { $0.isPassing }.count
+print("Overall: \(result.scorePercent)% (\(passing)/\(result.noteCount) passing)")
 for note in result.noteResults {
     let status = note.isPassing ? "PASS" : "FAIL"
-    print("  Note \(note.noteIndex): \(note.scorePercent)% [\(note.level.displayName)] \(status)")
+    print("  Note \(note.noteIndex): \(note.scorePercent)% \(status)")
 }
 ```
 

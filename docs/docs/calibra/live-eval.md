@@ -137,6 +137,8 @@ let session = CalibraLiveEval.create(
 | `hopSize` | `Int` | `320` | Hop size between frames in samples (320 = 20 ms at 16 kHz, 2 frames per buffer per ADR-020) |
 | `autoPhaseTransition` | `Boolean` | `true` | Automatically transition LISTENING to SINGING in singafter mode |
 | `autoSegmentDetection` | `Boolean` | `true` | Automatically detect segment end from player time |
+| `playInterSegmentAudio` | `Boolean` | `false` | Play authored intros/rests/count-ins between the playhead and a starting segment instead of seeking over them |
+| `scoreCalibration` | `ScoreCalibration` | `IDENTITY` | Curve applied once at the scoring seam to every score (segment results, session score, `scoreThreshold`); default `IDENTITY` passes raw scores through |
 
 ### Builder Methods
 
@@ -150,6 +152,8 @@ let session = CalibraLiveEval.create(
 | `hopSize(samples)` | Set hop size between frames in samples |
 | `autoPhaseTransition(enabled)` | Enable or disable automatic LISTENING to SINGING transition |
 | `autoSegmentDetection(enabled)` | Enable or disable automatic segment end detection |
+| `playInterSegmentAudio(enabled)` | Play authored intros/rests/count-ins between the playhead and a starting segment instead of seeking over them |
+| `scoreCalibration(calibration)` | Set the score-calibration curve (preset or custom); see `ScoreCalibration` |
 
 ## Creating a Session
 
@@ -385,12 +389,17 @@ val isEnabled: Boolean = session.pitchProcessingEnabled
 // false = always advance regardless of score
 session.setAutoLoopEnabled(true)
 val autoLoopOn: Boolean = session.isAutoLoopEnabled
+
+// Update the per-segment retry cap at runtime (takes effect on next segment
+// completion; 0 = unlimited). Persists across setAutoLoopEnabled toggles.
+session.setMaxAttempts(5)
 ```
 
 ```swift
 session.setStudentKeyHz(keyHz: 220.0)
 session.setPitchProcessingEnabled(enabled: true)
 session.setAutoLoopEnabled(enabled: true)
+session.setMaxAttempts(maxAttempts: 5)
 ```
 
 ### Query Methods
@@ -664,15 +673,10 @@ session.onSessionComplete { result in
 | `segment` | `Segment` | The segment that was evaluated |
 | `score` | `Float` | Overall score (0.0 - 1.0) |
 | `pitchAccuracy` | `Float` | Pitch accuracy component (0.0 - 1.0) |
-| `level` | `PerformanceLevel` | Performance level classification |
 | `attemptNumber` | `Int` | Which attempt this is (1-based) |
 | `referencePitch` | `PitchContour` | Reference pitch contour for visualization |
 | `studentPitch` | `PitchContour` | Student pitch contour for visualization |
-| `isPassing` | `Boolean` | True if score >= 0.5 |
-| `isGood` | `Boolean` | True if score >= 0.7 |
-| `isExcellent` | `Boolean` | True if score >= 0.9 |
 | `scorePercent` | `Int` | Score as percentage (0-100) |
-| `feedbackMessage` | `String` | Human-readable feedback based on performance level |
 
 ### SingingResult
 
@@ -686,27 +690,15 @@ Returned by `finishSession()` with aggregated results across all segments.
 | `overallScorePercent` | `Int` | Overall score as percentage (0-100) |
 | `segmentCount` | `Int` | Number of segments evaluated |
 | `totalAttempts` | `Int` | Total attempts across all segments |
-| `allPassing` | `Boolean` | True if all segments have a passing score |
 
 | Method | Description |
 |--------|-------------|
+| `latestScore(segmentIndex)` | Latest attempt's score for a single segment, or null |
+| `bestScore(segmentIndex)` | Best score across attempts for a single segment, or null |
 | `latestScorePerSegment()` | Latest score for each segment |
 | `bestScorePerSegment()` | Best score for each segment |
 | `averageScorePerSegment()` | Average score for each segment |
 | `latestResultPerSegment()` | Latest `SegmentResult` for each segment |
-| `getAllFeedback()` | Feedback messages for all segments |
-
-### PerformanceLevel
-
-| Level | Score Range | Display Name |
-|-------|-------------|--------------|
-| `NEEDS_WORK` | < 0.3 | "Needs Work" |
-| `FAIR` | 0.3 - 0.6 | "Fair" |
-| `GOOD` | 0.6 - 0.8 | "Good" |
-| `VERY_GOOD` | 0.8 - 0.95 | "Very Good" |
-| `EXCELLENT` | >= 0.95 | "Excellent" |
-| `NOT_DETECTED` | negative | "No Voice" |
-| `NOT_EVALUATED` | -- | "Not Evaluated" |
 
 ### Segment
 

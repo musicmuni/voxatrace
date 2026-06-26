@@ -6,6 +6,24 @@ sidebar_position: 4
 
 VoxaTrace APIs follow consistent patterns that make them predictable and easy to learn.
 
+## Initialization Contract
+
+Initialize the SDK once, at app startup, before calling any facade:
+
+```kotlin
+VT.initialize(/* license / platform context */)
+```
+
+Every public facade across `tona`, `tessera`, `accura`, `common`, `calibra`, and `sonix` calls `VT.ensureInitialized()` before doing any work. If `VT.initialize*` has not completed successfully, that call throws `VoxaTraceNotInitializedException` — so initialize before constructing detectors, players, or analyzers.
+
+- **Factory methods (`create()`)** are the gate: they call `ensureInitialized()`, so instance methods on the returned object don't re-check.
+- **One-shot utility methods** (batch `process`, `compute*`, `detect*`, the `MusicTheory` math helpers) each guard individually, since there's no prior factory.
+
+```kotlin
+// Throws VoxaTraceNotInitializedException if VT.initialize* was not called
+val detector = PitchDetection.createDetector()
+```
+
 ## The Three-Tier Pattern
 
 Every VoxaTrace API supports three usage tiers, letting you choose the right level of complexity for your needs.

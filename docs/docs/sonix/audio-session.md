@@ -30,7 +30,7 @@ AudioSessionManager.deactivate()
 ### Swift
 
 ```swift
-AudioSessionManager.configure(.playAndRecord, echoCancellation: true)
+AudioSessionManager.configure(mode: .playAndRecord, echoCancellation: true)
 
 // Closure-based focus listener (returns an opaque token for removeFocusListener)
 let token = AudioSessionManager.addFocusListener(

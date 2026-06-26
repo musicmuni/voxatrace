@@ -36,8 +36,11 @@ audio samples ─► PitchDetection ──► PitchContour ──► PitchProces
 |-----------|----------|------|--------------|
 | `PitchAlgorithm.YIN` | Realtime, pure DSP, no model bundle | Lower per frame | None |
 | `PitchAlgorithm.SWIFT_F0` | Higher accuracy on vocals; batch | Needs ONNX model | `swift_f0.onnx` (95k params) |
+| `PitchAlgorithm.MELODIA` | Offline / batch reference-contour extraction; octave-robust | Needs the whole signal | None |
 
-`PitchDetectorConfig` defaults to `YIN` (realtime). `ContourExtractorConfig` defaults to `SWIFT_F0` (batch). To use SwiftF0 in either path, register a model provider once at startup or pass it explicitly:
+`PitchDetectorConfig` defaults to `YIN` (realtime). `ContourExtractorConfig` defaults to `SWIFT_F0` (batch). `MELODIA` is **offline-only**: it tracks the predominant melody across the whole recording, so it avoids the octave-halving plain `YIN` shows on high / strong-harmonic voices, but it needs the full signal. Set it on a `ContourExtractorConfig` (`createContourExtractor`); `createDetector` rejects it (throws `IllegalArgumentException`).
+
+To use SwiftF0 in either path, register a model provider once at startup or pass it explicitly:
 
 ```kotlin
 AIModelRegistry.registerSwiftF0 { ModelLoader.loadSwiftF0() }

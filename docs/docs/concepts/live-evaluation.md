@@ -78,7 +78,6 @@ Live evaluation returns several score types:
 |-------|------------------|
 | **Overall Score** | Combined pitch + timing accuracy (0.0 to 1.0) |
 | **Pitch Accuracy** | How many notes matched the reference pitch |
-| **Performance Level** | Qualitative rating: `NEEDS_WORK`, `FAIR`, `GOOD`, `VERY_GOOD`, `EXCELLENT`, `NOT_DETECTED` (negative score), `NOT_EVALUATED` |
 
 ## Session Lifecycle
 
@@ -259,7 +258,6 @@ data class SegmentResult(
     val segment: Segment,           // Which segment
     val score: Float,               // Overall score (0.0 to 1.0)
     val pitchAccuracy: Float,       // Pitch accuracy (0.0 to 1.0)
-    val level: PerformanceLevel,    // NEEDS_WORK, FAIR, GOOD, VERY_GOOD, EXCELLENT, NOT_EVALUATED, NOT_DETECTED
     val attemptNumber: Int,         // Which attempt this was
     val referencePitch: PitchContour,  // What they should have sung
     val studentPitch: PitchContour     // What they actually sung
@@ -277,7 +275,7 @@ session.onSegmentComplete { result ->
     )
 
     // Show score
-    showScore(result.score, result.level)
+    showScore(result.score, result.scorePercent)
 }
 ```
 

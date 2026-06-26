@@ -29,7 +29,7 @@ val result = Accura.analyzePitching(
         TargetInterval(700f, "P"),
         TargetInterval(900f, "D2"),
     ),
-    noteLabelTradition = NoteLabelTradition.CARNATIC,
+    genre = MusicGenre.CARNATIC,
     alignTuning = true,
 )
 
@@ -61,7 +61,7 @@ let result = Accura.analyzePitching(
         TargetInterval(cents: 700, label: "P"),
         TargetInterval(cents: 900, label: "D2"),
     ],
-    noteLabelTradition: .carnatic,
+    genre: .carnatic,
     alignTuning: true
 )
 if result.error == nil {
@@ -78,7 +78,7 @@ fun analyzePitching(
     tonicHz: Float,
     intonationSystem: IntonationSystem,
     scaleIntervals: List<TargetInterval>? = null,
-    noteLabelTradition: NoteLabelTradition = NoteLabelTradition.CARNATIC,
+    genre: MusicGenre = MusicGenre.CARNATIC,
     alignTuning: Boolean = true,
     minNotes: Int = 3,
 ): IntonationAnalysisResult
@@ -92,7 +92,7 @@ fun analyzePitching(
 | `tonicHz` | `Float` | — | Tonic frequency in Hz. Must be `> 0`. |
 | `intonationSystem` | `IntonationSystem` | — | `EQ` (12-TET) or `JI` (Just Intonation) |
 | `scaleIntervals` | `List<TargetInterval>?` | `null` | Optional explicit `(cents, label)` targets the user is grading against. Multi-octave allowed; labels are used verbatim in the result. `null` grades against the full 12-TET / JI multi-octave grid with chromatic labels. If non-null, must be non-empty. |
-| `noteLabelTradition` | `NoteLabelTradition` | `CARNATIC` | Naming tradition for the chromatic fallback labels (only consulted when `scaleIntervals == null`) |
+| `genre` | `MusicGenre` | `CARNATIC` | Music genre whose naming convention is used for the chromatic fallback labels (only consulted when `scaleIntervals == null`) |
 | `alignTuning` | `Boolean` | `true` | If true, estimate and correct a global tuning offset before analysis |
 | `minNotes` | `Int` | `3` | Minimum histogram peaks for a conclusive result. Lower to `1` for sustained-note contexts (e.g. tanpura tuning). Must be `>= 1`. |
 
@@ -217,8 +217,10 @@ val best = listOfNotNull(eq, ji).maxOrNull()
 
 ```kotlin
 enum class IntonationSystem { EQ, JI }
-enum class NoteLabelTradition { CARNATIC, HINDUSTANI, WESTERN }
 enum class WeightingMethod { EQUAL, DURATION }
+
+// from com.musicmuni.voxatrace.common.model
+enum class MusicGenre { CARNATIC, HINDUSTANI, WESTERN }
 
 // Each tier carries its minScore — the lowest score that bands into it.
 enum class PitchingTier(val minScore: Float) {

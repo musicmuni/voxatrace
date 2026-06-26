@@ -52,7 +52,7 @@ metronome.release()
 |-----------|------|---------|-------------|
 | `samaSamplePath` | `String` | — | Path to downbeat audio sample (required) |
 | `beatSamplePath` | `String` | — | Path to regular beat audio sample (required) |
-| `bpm` | `Float` | `120` | Initial tempo (30–300) |
+| `bpm` | `Float` | `120` | Initial tempo. Passed through as-is (the factory does **not** clamp). For a clamped value (30–300), use `Builder.bpm()` or `setBpm()`. |
 | `beatsPerCycle` | `Int` | `4` | Beats per cycle |
 
 ### Builder

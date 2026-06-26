@@ -107,6 +107,12 @@ detector.close()
 - 5 million users in production
 - Same API on Android and iOS
 
+**Beyond mobile (3.0.0):**
+
+- A desktop/server JVM target (macOS Apple Silicon + Linux x64) runs the same
+  analysis server-side, e.g. for batch lesson authoring. See the
+  [JVM Quickstart](./getting-started/jvm-quickstart).
+
 **Three-tier API:**
 
 ```kotlin

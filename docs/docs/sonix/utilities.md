@@ -17,6 +17,7 @@ Parses pitch, note transcription, and transcription data from text files used in
 | `parsePitchString` | `content: String` | `PitchData?` | Parse .pitchPP file content |
 | `parseNotesString` | `content: String` | `NotesData?` | Parse .notes file content |
 | `parseTransString` | `content: String` | `TransData?` | Parse .trans JSON file content |
+| `parseHpcp` | `bytes: ByteArray` | `HpcpData?` | Decode binary HPCP chroma bytes; `null` if the bytes are malformed (bad magic, unsupported version, or truncated) |
 
 ### Parsing Pitch Data
 
@@ -110,6 +111,7 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 | Property | Type | Description |
 |----------|------|-------------|
 | `segments` | `List<TransSegment>` | Transcription segments |
+| `count` | `Int` | Number of segments (`segments.size`) |
 
 | Method | Returns | Description |
 |--------|---------|-------------|
@@ -122,10 +124,11 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 | `id` | `Int` | Segment identifier from the JSON |
 | `type` | `String?` | Raw segment-type string from the JSON `type` field, deserialized verbatim (e.g. `"teacher_vocal"`, `"student_vocal"`, `"commentary"`); `null` when the field is absent. The SDK does not validate or interpret the value. |
 | `lyrics` | `String` | Lyrics for the segment |
+| `relatedSeg` | `Int?` | Paired segment's `id` for singafter lessons (parsed from `related_seg`); `null` for singalong. A `teacher_vocal` and `student_vocal` pair cross-link via this field. |
 | `timeStamp` | `List<Double>` | Two-element segment time bounds (parsed from `time_stamp`) |
 | `trans` | `List<TransNote>` | Per-note transcription within the segment |
-| `startTime` | `Double` | First element of `timeStamp` |
-| `endTime` | `Double` | Last element of `timeStamp` |
+| `startTime` | `Double` | First element of `timeStamp` (`timeStamp.getOrNull(0)`, else `0.0`) |
+| `endTime` | `Double` | Second element of `timeStamp` (`timeStamp.getOrNull(1)`, else `0.0`) |
 
 #### TransNote
 
@@ -135,6 +138,35 @@ if let transData = SonixParser.parseTransString(content: jsonContent) {
 | `tEnd` | `Double` | Note end (seconds; parsed from `t_end`) |
 | `freqHz` | `Double` | Frequency in Hz |
 | `label` | `String` | Note label |
+
+## SonixWriter
+
+Formats reference data into the on-disk text formats parsed by `SonixParser` — the inverse direction, for tools that author reference lessons.
+
+### Methods
+
+| Method | Input | Returns | Description |
+|--------|-------|---------|-------------|
+| `formatPitchString` | `data: PitchData` | `String` | Format `.pitchPP` text (one `time<TAB>pitchHz` line per frame); unvoiced frames written as `0.0`. Inverse of `parsePitchString`. |
+| `formatHpcp` | `frames: List<FloatArray>, hopSize: Int, sampleRate: Int` | `ByteArray` | Encode HPCP chroma frames as binary HPCP bytes. Inverse of `parseHpcp`. |
+| `formatTransString` | `data: TransData` | `String` | Format `.trans` JSON (array of phrase objects). Inverse of `parseTransString`. |
+
+### Usage
+
+```kotlin
+// Round-trips through SonixParser
+val text = SonixWriter.formatPitchString(pitchData)
+val roundTripped = SonixParser.parsePitchString(text)  // voiced times/pitches preserved
+
+val hpcpBytes = SonixWriter.formatHpcp(frames, hopSize = 512, sampleRate = 44100)
+val transJson = SonixWriter.formatTransString(transData)
+```
+
+```swift
+let text = SonixWriter.formatPitchString(data: pitchData)
+let hpcpBytes = SonixWriter.formatHpcp(frames: frames, hopSize: 512, sampleRate: 44100)
+let transJson = SonixWriter.formatTransString(data: transData)
+```
 
 ## SonixFrames
 

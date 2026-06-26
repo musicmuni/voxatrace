@@ -56,6 +56,55 @@ let segments = PitchAnalysis.labelByMeanPitch(
 | `quantize(contour, tonicHz, targetIntervalsCents, config = QuantizationConfig.DEFAULT): PitchContour` | Snap stable frames to nearest target interval; non-stable frames become unvoiced. |
 | `labelByMeanPitch(contour, tonicHz, targetIntervalsCents, config = LabellingConfig.DEFAULT): List<TonalSegment>` | Sliding-window mean-pitch labelling against target intervals. |
 | `fitLinearSegments(contour, tonicHz, config = LinearFitConfig.DEFAULT): List<TonalSegment>` | Piecewise linear regression (gamaka / ornament analysis). |
+| `computeSvaraTemplate(contour, tonicHz, genre, svaras, config = SvaraTemplateConfig.DEFAULT): SvaraTemplate` | Data-driven svara grid for a raga from the contour's folded histogram (see below). |
+| `transcribeNotes(contour, tonicHz, template, config = NoteTranscriptionConfig.DEFAULT): List<NoteEvent>` | Transcribe the contour into discrete, svara-labelled notes against a `SvaraTemplate`. |
+
+### Svara template + note transcription
+
+`computeSvaraTemplate` and `transcribeNotes` are a two-step path for turning a raga performance into labelled notes:
+
+```kotlin
+val template = PitchAnalysis.computeSvaraTemplate(
+    contour = contour,
+    tonicHz = 196f,                                 // G3
+    genre = MusicGenre.CARNATIC,                    // from common.model
+    svaras = listOf("S", "R2", "G3", "M1", "P", "D2", "N3"),  // svara NAMES the raga uses
+)
+val notes = PitchAnalysis.transcribeNotes(contour, tonicHz = 196f, template = template)
+for (note in notes) {
+    println("${note.label}: ${note.tStartSeconds}s – ${note.tEndSeconds}s @ ${note.freqHz} Hz")
+}
+```
+
+```kotlin
+fun computeSvaraTemplate(
+    contour: PitchContour,
+    tonicHz: Float,
+    genre: MusicGenre,
+    svaras: List<String>,
+    config: SvaraTemplateConfig = SvaraTemplateConfig.DEFAULT,
+): SvaraTemplate
+```
+
+`computeSvaraTemplate` folds the contour's pitch histogram into one octave, peak-picks it, and for each svara the raga uses takes the measured peak near its theory position (falling back to the theory default when no peak is close), then extends the grid across octaves. The grid is selected by `genre`, not a boolean mask:
+
+- **`MusicGenre.HINDUSTANI`** → 12-TET grid, names `S r R g G m M P d D n N`.
+- **`MusicGenre.CARNATIC`** → just-intonation grid, 16 swarasthanas `S R1 R2 R3 G1 G2 G3 M1 M2 P D1 D2 D3 N1 N2 N3`.
+
+Pass the svara **names** the raga uses (not a `svaraMask` / boolean array). Octave labels in the resulting `symbols` use combining-dot accents (e.g. `S`, `Ṡ` for the octave up, `Ṣ` for the octave down).
+
+Throws `IllegalArgumentException` when `tonicHz <= 0`, `genre == MusicGenre.WESTERN`, or a name in `svaras` is not a valid svara for the genre.
+
+```kotlin
+fun transcribeNotes(
+    contour: PitchContour,
+    tonicHz: Float,
+    template: SvaraTemplate,
+    config: NoteTranscriptionConfig = NoteTranscriptionConfig.DEFAULT,
+): List<NoteEvent>
+```
+
+`transcribeNotes` assigns each contour frame to a template svara when within `config.vicinityCents`, groups consecutive frames into notes, and drops notes shorter than `config.minDurationSeconds`. Each `NoteEvent` carries onset, offset, svara frequency (`tonic · 2^(cents/1200)`), and label. Notes are returned sorted ascending by onset (may be empty). Throws `IllegalArgumentException` when `tonicHz <= 0`.
 
 ## Config classes
 
@@ -96,6 +145,25 @@ Presets: `DEFAULT`, `FOLDED` (foldOctaves=true), `RAW` (density=false, smoothSig
 | `breakThresholdSeconds` | `Float` | `1.5` |
 | `hopSeconds` | `Float?` | `null` (= window/2) |
 
+### SvaraTemplateConfig
+
+Presets: `DEFAULT`. Also has a `Builder` and `.copy()` (ADR-001).
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `smoothSigmaCents` | `Float` | `15` | Gaussian smoothing applied to the folded histogram before peak detection |
+| `peakToleranceCents` | `Float` | `50` | A detected peak is used as a svara's measured position only if within this many cents of its theory default; otherwise the default is used |
+| `octaveSpan` | `Int` | `1` | Octaves to extend the grid on each side of the middle octave (`1` → lower, middle, upper) |
+
+### NoteTranscriptionConfig
+
+Presets: `DEFAULT`. Also has a `Builder` and `.copy()` (ADR-001).
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `vicinityCents` | `Float` | `50` | A frame is assigned to a svara when its cents value is within this many cents of the svara's position |
+| `minDurationSeconds` | `Float` | `0.05` | Notes shorter than this are discarded |
+
 ## Result types
 
 ### PitchHistogram
@@ -134,6 +202,34 @@ data class TonalSegment(
 `duration: Float` (computed) returns `endSeconds - startSeconds`.
 
 `TonalSegment` is distinct from `calibra.model.Segment` (which models song structure with `index` / `lyrics` / student timing).
+
+### SvaraTemplate
+
+A raga's measured intonation grid, produced by `computeSvaraTemplate` and consumed by `transcribeNotes`. `cents` and `symbols` are parallel arrays of equal length, sorted ascending by cents.
+
+```kotlin
+data class SvaraTemplate(
+    val cents: FloatArray,       // svara positions in cents relative to tonic (across octaves)
+    val symbols: List<String>,   // parallel labels, e.g. "S", "g", "Ṡ", "ṇ"
+)
+```
+
+`size: Int` (computed) returns the number of svara entries (across all octaves). Octave accents in `symbols` use combining dots (e.g. `S`, `Ṡ` one octave up, `Ṣ` one octave down).
+
+### NoteEvent
+
+A transcribed note: a time-bounded span labelled with a svara and its frequency, produced by `transcribeNotes`.
+
+```kotlin
+data class NoteEvent(
+    val tStartSeconds: Float,    // note onset in seconds
+    val tEndSeconds: Float,      // note offset in seconds
+    val freqHz: Float,           // svara frequency in Hz (tonic · 2^(cents/1200))
+    val label: String,           // svara label, e.g. "S", "g", "Ṡ"
+)
+```
+
+`durationSeconds: Float` (computed) returns `tEndSeconds - tStartSeconds`.
 
 ### PeakStats / PeakStatsCollection
 

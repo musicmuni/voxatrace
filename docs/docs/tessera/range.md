@@ -64,12 +64,12 @@ data class VocalRange(
     val lower: VocalPitch,    // batch (this facade): centroid-anchored; streaming: 5th percentile
     val upper: VocalPitch,    // batch (this facade): centroid-anchored; streaming: 95th percentile
     val octaves: Float,
-)
+) {
+    val semitones: Int get() = upper.midiNote - lower.midiNote
+}
 ```
 
 `TesseraRange.computeVocalRange` (batch) derives `lower`/`upper` from a density histogram: it anchors on the density-weighted centroid and expands a symmetric window until it captures `ratioSumInRange` (default 0.9) of the pitch mass. The streaming detector behind `TesseraRangeSession` / `TesseraSession` instead reads the 5th / 95th percentiles of its running histogram.
-
-`semitones` (computed) returns `upper.midiNote - lower.midiNote`.
 
 ### VocalPitch
 
