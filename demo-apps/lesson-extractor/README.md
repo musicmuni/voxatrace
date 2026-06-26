@@ -22,9 +22,10 @@ downloads and consumes them on demand.
 
 ## Get the CLI
 
-Download the latest `lesson-extractor-<version>.zip` from the project's **GitHub
-Releases** page and unzip it. One download runs on **macOS (Apple Silicon)** and
-**Linux x64** — the binary picks the right native libraries at runtime.
+Download the latest `lesson-extractor-<version>.zip` from the VoxaTrace
+releases page — **https://github.com/musicmuni/voxatrace/releases** — and unzip
+it. One download runs on **macOS (Apple Silicon)** and **Linux x64** — the binary
+picks the right native libraries at runtime.
 
 ```
 lesson-extractor/

@@ -21,8 +21,12 @@ and upload the output bundles.
 
 ## 2. Get the CLI
 
-Download the latest `lesson-extractor-<version>.zip` from the project's **GitHub
-Releases** page and unzip it. The same download runs on macOS and Linux.
+Download the latest `lesson-extractor-<version>.zip` from the VoxaTrace releases
+page — **https://github.com/musicmuni/voxatrace/releases** — and unzip it. The
+same download runs on macOS and Linux.
+
+Confirm what you have any time with `./lesson-extractor/bin/lesson-extractor
+--version` (no API key needed).
 
 ## 3. Run it
 
