@@ -100,6 +100,7 @@ note label via `shruti`, or directly in Hz via `keyHz`:
 | `genre` | with `svaras` | `"hindustani"` or `"carnatic"` — see below |
 | `svaras` | with `genre` | The raga's svaras — see below |
 | `lessonType` | no | `"singalong"` (default) or `"singafter"` |
+| `soloVoice` | no | `true` (default) for a solo voice recording; `false` if it has accompaniment — see below |
 | `bpm` | no | Tempo, for metered lessons |
 | `beatsPerMeasure` | no | For metered lessons |
 
@@ -128,3 +129,18 @@ List only the svaras the raga uses, in any order. The
 The `devamanohari-jatiswara` example uses `"genre": "carnatic"` with Carnatic
 names (`R2`, `M1`, …). An unknown name for the genre is reported as an error, so
 typos surface instead of producing wrong labels.
+
+### `soloVoice` — solo or accompanied recording
+
+Declare what is *in* the recording, so the extractor picks the right pitch
+tracker:
+
+- **`true` (the default)** — a lone voice (reverb is fine). This is the usual
+  case for teacher reference recordings.
+- **`false`** — the voice is accompanied (tanpura, tabla, harmonium, a backing
+  track, a metronome bell, …).
+
+Getting this wrong shows up as a bad pitch contour: a solo recording processed
+as accompanied loses its quieter notes (holes in the contour and missing notes
+in the transcription); an accompanied recording processed as solo can track the
+accompaniment instead of the voice.

@@ -16,7 +16,8 @@ and upload the output bundles.
     sudo apt update && sudo apt install -y openjdk-17-jdk
     ```
 - Your **VoxaTrace API key**. The extractor registers over the network on each
-  run, so it needs internet access.
+  run, so it needs internet access. (The first run also downloads a small pitch
+  model, ~400 KB, cached under `~/.voxatrace/models`.)
 - macOS (Apple Silicon) or Linux x64.
 
 ## 2. Get the CLI
