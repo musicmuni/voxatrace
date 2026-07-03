@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-07-03
+
+Lesson-extractor CLI fix; the SDK libraries are unchanged from 3.0.0.
+
+### Added
+- **Lesson extractor: `soloVoice` field in `meta.json`.** Declare per lesson
+  whether the recording is a lone voice (`true`, the default) or has
+  accompaniment such as tanpura/tabla/harmonium or a backing track (`false`);
+  the extractor picks the pitch tracker suited to that content. See the content
+  guide for details.
+
+### Fixed
+- **Lesson extractor: missing notes on solo-voice recordings.** Quieter notes
+  could vanish from the reference pitch contour (and, with it, the note
+  transcription). Solo recordings — the default — now use a solo-voice pitch
+  tracker. Existing lesson folders re-extract correctly without any edits.
+  Note: the CLI downloads a small pitch model (~400 KB) on first run.
+
 ## [3.0.0] - 2026-06-26
 
 A major release with breaking API changes (see **Removed** and the `MusicGenre`
