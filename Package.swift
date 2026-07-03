@@ -1,9 +1,9 @@
 // swift-tools-version:5.9
 import PackageDescription
 
-let version = "3.0.0"
-let releaseTag = "voxatrace-v3.0.0"
-let checksum = "3aaa9e4e8767bee12e25cb54620223bde0a3978a04d789e15c08ef033102a938"
+let version = "3.0.1"
+let releaseTag = "voxatrace-v3.0.1"
+let checksum = "0bb6735471806321a1e33320a59d42ed158536516f8710f71bf3b764a340202c"
 
 let package = Package(
     name: "VoxaTrace",
