@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Sonix: `SonixRecorderConfig.inputSource` / `AudioInputSource`.** Stream a
+  WAV file through `SonixRecorder` as if it were live microphone input —
+  deterministic tests, replay, offline analysis. Accepts any canonical PCM WAV
+  (any rate/channel count; decoded to mono at the configured rate), emits in
+  real time, and supports loop and lead-in-silence options. With
+  `playbackSyncProvider` set, the stream follows the playback timeline
+  (late starts, pauses, seeks) instead of free-running. Also new:
+  `SonixClock.nowNanos()`, the monotonic clock `AudioBuffer.timestamp` and
+  `audibleTimeMsAtWallNanos` live in. Default remains the microphone;
+  existing code is unaffected.
+
 ## [3.0.1] - 2026-07-03
 
 Lesson-extractor CLI fix; the SDK libraries are unchanged from 3.0.0.
