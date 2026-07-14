@@ -8,6 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Calibra: `ExercisePattern.fromNotes(freqsHz, startsMs, endsMs)`.** Place
+  exercise notes at their real windows on the playback timeline (lead-in
+  before the first note, gaps/rests between notes) instead of a contiguous
+  run from t=0; `ExercisePattern` gains an optional `noteStartsMs`. The
+  evaluator scores each note only against the audio inside its own window.
+  Pass true target frequencies — targets are not snapped to the
+  equal-tempered grid.
+- **Calibra: `LessonMaterial.lessonType`.** Declare whether a lesson is
+  sing-along or sing-after (`LessonType.SINGALONG` / `SINGAFTER`;
+  `LessonType.fromWire("singafter_meter")`-style strings parse directly). The
+  session's listen-then-echo behavior now follows this declaration. New
+  `LessonMaterial.segmentsFromTrans(...)` builds segments from a parsed
+  `.trans`, pairing teacher/student phrase windows for sing-after lessons and
+  deriving missing student windows from the gaps between phrases (corrections
+  are reported). Previously, sing-after behavior depended on segments carrying
+  explicit student windows — segments without them silently evaluated as
+  sing-along and scored 0.
+
+### Fixed
+- **Calibra: `SegmentResult.pitchAccuracy` is now aligned to playback time.**
+  The per-segment accuracy ratio compared the sung pitch and the reference at
+  slightly different moments whenever capture started off the exact segment
+  boundary or the device's playback clock was still converging (typically the
+  session's first phrase). Scores (`SegmentResult.score`) are unchanged;
+  `pitchAccuracy` no longer under-reports early phrases.
+- **Sonix: playback-synced file input starts cleanly.** With
+  `playbackSyncProvider` set, `AudioInputSource.File` no longer emits
+  early-file content during the moments a just-started player cannot report
+  its position yet; it emits silence and locks on once the position is real.
+
+### Added
 - **Sonix: `SonixRecorderConfig.inputSource` / `AudioInputSource`.** Stream a
   WAV file through `SonixRecorder` as if it were live microphone input —
   deterministic tests, replay, offline analysis. Accepts any canonical PCM WAV
