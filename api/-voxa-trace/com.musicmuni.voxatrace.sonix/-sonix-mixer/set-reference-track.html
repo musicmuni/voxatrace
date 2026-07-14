@@ -50,7 +50,7 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-3.0.1        </div>
+3.0.2        </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
                 <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
@@ -115,7 +115,7 @@
   <div class="cover ">
     <h1 class="cover"><span>set</span><wbr></wbr><span>Reference</span><wbr></wbr><span><span>Track</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-reference-track.html"><span class="token function">setReferenceTrack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Designate the track whose DAC-presentation clock drives <a href="current-time.html">currentTime</a> and <a href="audible-time-ms-at-wall-nanos.html">audibleTimeMsAtWallNanos</a> — typically the reference/lesson track a live evaluator scores against. Accompaniment tracks then ride the same shared clock. Without one, time falls back to a wall-clock estimate.</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":modules:voxatrace/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-reference-track.html"><span class="token function">setReferenceTrack</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Designate the reference track — typically the lesson track a live evaluator scores against. While one is set, <a href="current-time.html">currentTime</a> and <a href="audible-time-ms-at-wall-nanos.html">audibleTimeMsAtWallNanos</a> ride the DAC-presentation clock of its playback (on Android the single mix sink all tracks share; on iOS the reference player node), so accompaniment and evaluation live on one clock. Without one, time falls back to a wall-clock estimate.</p></div></div>
 </div>
     <div class="footer">
         <div class="footer--container">
