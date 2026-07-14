@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.musicmuni.voxatrace.calibra.CalibraLiveEval
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
+import com.musicmuni.voxatrace.calibra.model.LessonType
 import com.musicmuni.voxatrace.tona.PitchDetection
 import com.musicmuni.voxatrace.calibra.model.PracticePhase
 import com.musicmuni.voxatrace.tona.model.PitchDetectorConfig
@@ -46,7 +47,8 @@ import java.util.UUID
  *
  * The actual library integration is minimal (~30 lines):
  * ```kotlin
- * // 1. Create session with singafter segments (includes studentStartSeconds/studentEndSeconds)
+ * // 1. Create session with lessonType = SINGAFTER and singafter segments
+ * //    (studentStartSeconds/studentEndSeconds carry the echo-window timing)
  * session = CalibraLiveEval.create(reference, session, detector, player, recorder)
  *
  * // 2. Setup callbacks
@@ -319,7 +321,10 @@ class SingafterViewModel : ViewModel() {
                 sampleRate = audioData.sampleRate,
                 segments = calibraSegments,
                 keyHz = 196.0f,
-                pitchContour = pitchContour
+                pitchContour = pitchContour,
+                // The lesson-level declaration drives the listen-then-echo phase
+                // machine; segments carry the timing, this says what it means.
+                lessonType = LessonType.SINGAFTER
             )
 
             // Create pitch detector

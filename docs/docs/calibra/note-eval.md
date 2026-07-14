@@ -176,11 +176,13 @@ let pattern = ExercisePattern.create(
 | `noteFrequencies` | `List<Float>` | required | Frequencies in Hz for each note in the pattern |
 | `noteDurations` | `List<Int>` | required | Duration in milliseconds for each note |
 | `notesPerLoop` | `Int` | `noteFrequencies.size` | Number of notes per loop/cycle (for repeating patterns) |
+| `noteStartsMs` | `List<Int>?` | `null` | Explicit note-start offsets (ms) on the take's playback timeline. `null` lays notes contiguously from t=0; explicit starts express a lead-in and inter-note gaps (see [`fromNotes`](#fromnotes----create-from-explicit-note-windows)) |
 
 Validation rules:
 - `noteFrequencies` and `noteDurations` must have the same size
 - Pattern must have at least one note
 - `notesPerLoop` must be between 1 and pattern length
+- `noteStartsMs`, when provided, must have the same size as `noteFrequencies`
 
 ### Properties
 
@@ -226,6 +228,35 @@ let pattern = ExercisePattern.fromMidiNotes(
     noteDurationMs: 500  // default: 500
 )
 ```
+
+#### `fromNotes` -- Create from Explicit Note Windows
+
+Real lessons rarely start at t=0: there is a lead-in before the first note and
+gaps or rests between notes. `fromNotes` places each note at its actual window
+on the playback timeline, and the evaluator scores each note only against the
+student audio inside that window — audio in the gaps is not evaluated.
+
+```kotlin
+// Kotlin — three notes with a 1s lead-in and 250ms gaps
+val pattern = ExercisePattern.fromNotes(
+    freqsHz = listOf(261.63f, 293.66f, 329.63f),
+    startsMs = listOf(1000, 1750, 2500),
+    endsMs = listOf(1500, 2250, 3000)
+)
+```
+
+```swift
+// Swift
+let pattern = ExercisePattern.fromNotes(
+    freqsHz: [261.63, 293.66, 329.63],
+    startsMs: [1000, 1750, 2500],
+    endsMs: [1500, 2250, 3000]
+)
+```
+
+Pass true target frequencies: exercise targets are the recorded artist's (or
+synthesizer's) actual pitches, which may sit off the equal-tempered grid by
+design. Do not snap them to MIDI note numbers.
 
 ## Evaluation
 

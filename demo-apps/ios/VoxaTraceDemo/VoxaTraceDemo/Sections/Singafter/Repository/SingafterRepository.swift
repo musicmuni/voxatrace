@@ -91,12 +91,15 @@ final class BundleSingafterRepository: SingafterRepositoryProtocol, @unchecked S
         }
 
         // 6. Create LessonMaterial
+        // lessonType = .singafter drives the listen-then-echo phase machine;
+        // the segments' student windows carry the timing, this says what it means.
         let reference = LessonMaterial.fromAudio(
             samples: audioData.samples,
             sampleRate: audioData.sampleRate,
             segments: segments,
             keyHz: 196.0,
-            pitchContour: pitchContour
+            pitchContour: pitchContour,
+            lessonType: .singafter
         )
 
         return SingafterLessonData(

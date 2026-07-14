@@ -7,6 +7,7 @@ import com.musicmuni.voxatrace.sonix.SonixMixer
 import com.musicmuni.voxatrace.sonix.SonixParser
 import com.musicmuni.voxatrace.sonix.SonixPlayer
 import com.musicmuni.voxatrace.sonix.SonixRecorder
+import com.musicmuni.voxatrace.sonix.SonixRecorderConfig
 import com.musicmuni.voxatrace.sonix.SonixResampler
 import com.musicmuni.voxatrace.sonix.SonixToneGenerator
 import com.musicmuni.voxatrace.sonix.midi.MidiNote
@@ -65,6 +66,29 @@ fun recordDemo() {
     }
     println("  Playing your recording back...")
     playFile(out.path)
+}
+
+fun fileInputDemo() {
+    // A WAV streams through the recorder as if it were the microphone
+    // (inputSource = AudioInputSource.File): deterministic, no mic, no device.
+    val input = resourceToFile("/samples/vocal-16k-mono.wav")
+    val out = File.createTempFile("vt-demo-fileinput", ".wav").apply { deleteOnExit() }
+    val config = SonixRecorderConfig.Builder()
+        .inputFile(input)
+        .build()
+    val recorder = SonixRecorder.create(out.path, config)
+    println("  Streaming ${File(input).name} as mic input for 3s (no microphone touched)...")
+    recorder.start()
+    Thread.sleep(3000)
+    recorder.stop()
+    val deadline = System.currentTimeMillis() + 5000
+    while ((!out.exists() || out.length() < 1024) && System.currentTimeMillis() < deadline) Thread.sleep(100)
+    recorder.release()
+    val audio = SonixDecoder.decode(out.path, targetSampleRate = SAMPLE_RATE)
+    if (audio == null) { println("  Decode failed"); return }
+    val voiced = contourOf(audio).samples.filter { it.pitch > 0f }
+    println("  Wrote ${out.path} (${out.length()} bytes), ${voiced.size} voiced frames -- " +
+        "same pipeline as live capture, deterministic input.")
 }
 
 /**

@@ -7,45 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Fixed
-- **Sonix: playback-time anchoring survives devices without presentation
-  timestamps.** `audibleTimeMsAtWallNanos` answered -1 whenever the platform
-  had no hardware presentation timestamp; on devices where that persists
-  (some HALs, emulators under load) every consumer anchoring captured audio
-  to playback time silently received nothing for the whole session. While
-  actively playing, the clock now degrades to a playback-position estimate
-  (within ~output latency) and returns -1 only when genuinely not playing.
-
-### Added
-- **Calibra: `ExercisePattern.fromNotes(freqsHz, startsMs, endsMs)`.** Place
-  exercise notes at their real windows on the playback timeline (lead-in
-  before the first note, gaps/rests between notes) instead of a contiguous
-  run from t=0; `ExercisePattern` gains an optional `noteStartsMs`. The
-  evaluator scores each note only against the audio inside its own window.
-  Pass true target frequencies — targets are not snapped to the
-  equal-tempered grid.
-- **Calibra: `LessonMaterial.lessonType`.** Declare whether a lesson is
-  sing-along or sing-after (`LessonType.SINGALONG` / `SINGAFTER`;
-  `LessonType.fromWire("singafter_meter")`-style strings parse directly). The
-  session's listen-then-echo behavior now follows this declaration. New
-  `LessonMaterial.segmentsFromTrans(...)` builds segments from a parsed
-  `.trans`, pairing teacher/student phrase windows for sing-after lessons and
-  deriving missing student windows from the gaps between phrases (corrections
-  are reported). Previously, sing-after behavior depended on segments carrying
-  explicit student windows — segments without them silently evaluated as
-  sing-along and scored 0.
-
-### Fixed
-- **Calibra: `SegmentResult.pitchAccuracy` is now aligned to playback time.**
-  The per-segment accuracy ratio compared the sung pitch and the reference at
-  slightly different moments whenever capture started off the exact segment
-  boundary or the device's playback clock was still converging (typically the
-  session's first phrase). Scores (`SegmentResult.score`) are unchanged;
-  `pitchAccuracy` no longer under-reports early phrases.
-- **Sonix: playback-synced file input starts cleanly.** With
-  `playbackSyncProvider` set, `AudioInputSource.File` no longer emits
-  early-file content during the moments a just-started player cannot report
-  its position yet; it emits silence and locks on once the position is real.
+## [3.0.2] - 2026-07-14
 
 ### Added
 - **Sonix: `SonixRecorderConfig.inputSource` / `AudioInputSource`.** Stream a
@@ -58,6 +20,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `SonixClock.nowNanos()`, the monotonic clock `AudioBuffer.timestamp` and
   `audibleTimeMsAtWallNanos` live in. Default remains the microphone;
   existing code is unaffected.
+- **Calibra: `LessonMaterial.lessonType`.** Declare whether a lesson is
+  sing-along or sing-after (`LessonType.SINGALONG` / `SINGAFTER`;
+  `LessonType.fromWire("singafter_meter")`-style strings parse directly). The
+  session's listen-then-echo behavior now follows this declaration. New
+  `LessonMaterial.segmentsFromTrans(...)` builds segments from a parsed
+  `.trans`, pairing teacher/student phrase windows for sing-after lessons and
+  deriving missing student windows from the gaps between phrases (corrections
+  are reported). Previously, sing-after behavior depended on segments carrying
+  explicit student windows — segments without them silently evaluated as
+  sing-along and scored 0.
+- **Calibra: `ExercisePattern.fromNotes(freqsHz, startsMs, endsMs)`.** Place
+  exercise notes at their real windows on the playback timeline (lead-in
+  before the first note, gaps/rests between notes) instead of a contiguous
+  run from t=0; `ExercisePattern` gains an optional `noteStartsMs`. The
+  evaluator scores each note only against the audio inside its own window.
+  Pass true target frequencies — targets are not snapped to the
+  equal-tempered grid.
+- **Sonix: `pitchExempt` tracks.** `SonixMixer.addTrack` and
+  `MultiTrackPlayer.loadTrack` accept `pitchExempt: Boolean = false` — an
+  exempt track plays at its original pitch while the rest of the mix is
+  transposed (for percussive content like metronome clicks, which
+  pitch-shifting smears). Also new: `SonixMetronome.renderClickTrack`
+  renders a metronome pattern to a PCM track so it can play as a
+  sample-locked mixer channel instead of a free-running timer.
+
+### Changed
+- **`AIModelRegistry` is now public.** The documented startup registration
+  (`AIModelRegistry.registerSwiftF0 { ... }`) was previously impossible to
+  call because the object was not public.
+
+### Fixed
+- **Sonix: multi-track playback on Android is sample-locked.** With a
+  realtime pitch shift active, tracks in a `SonixMixer` session could start
+  a fixed ~120 ms apart and stay desynchronized for the whole session. All
+  tracks are now mixed into a single audio sink, so they start and stay in
+  sync by construction. Note: per-track volume, mute, and fade changes now
+  take effect after the output buffer drains (roughly a third of a second)
+  rather than instantly.
+- **Sonix: playback-time anchoring survives devices without presentation
+  timestamps.** `audibleTimeMsAtWallNanos` answered -1 whenever the platform
+  had no hardware presentation timestamp; on devices where that persists
+  (some HALs, emulators under load) every consumer anchoring captured audio
+  to playback time silently received nothing for the whole session. While
+  actively playing, the clock now degrades to a playback-position estimate
+  (within ~output latency) and returns -1 only when genuinely not playing.
+- **Calibra: `SegmentResult.pitchAccuracy` is now aligned to playback time.**
+  The per-segment accuracy ratio compared the sung pitch and the reference at
+  slightly different moments whenever capture started off the exact segment
+  boundary or the device's playback clock was still converging (typically the
+  session's first phrase). Scores (`SegmentResult.score`) are unchanged;
+  `pitchAccuracy` no longer under-reports early phrases.
+- **Sonix: playback-synced file input starts cleanly.** With
+  `playbackSyncProvider` set, `AudioInputSource.File` no longer emits
+  early-file content during the moments a just-started player cannot report
+  its position yet; it emits silence and locks on once the position is real.
 
 ## [3.0.1] - 2026-07-03
 

@@ -39,6 +39,7 @@ private val menu: List<Pair<String, () -> Unit>> = listOf(
     "Sonix: audio info (decode)" to ::audioInfoDemo,
     "Sonix: playback [device]" to ::playbackDemo,
     "Sonix: record 3s from mic [device]" to ::recordDemo,
+    "Sonix: file input (WAV streams as the mic)" to ::fileInputDemo,
     "Sonix: resample 16k -> 8k" to ::resampleDemo,
     "Sonix: metronome [device]" to ::metronomeDemo,
     "Sonix: MIDI synthesis (to file)" to ::midiDemo,

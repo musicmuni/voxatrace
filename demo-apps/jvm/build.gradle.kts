@@ -10,7 +10,7 @@ repositories {
 }
 
 // Bump to the release version (e.g. "3.0.0") once published to Maven Central.
-val voxatraceVersion = "3.0.0-SNAPSHOT"
+val voxatraceVersion = "3.0.2"
 
 // Native classifier for your platform. Switch to natives-linux-x64 on Linux.
 val nativesClassifier = "natives-macos-arm64"

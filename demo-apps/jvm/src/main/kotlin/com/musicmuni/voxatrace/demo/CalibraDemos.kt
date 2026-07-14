@@ -6,6 +6,7 @@ import com.musicmuni.voxatrace.calibra.CalibraNoteEval
 import com.musicmuni.voxatrace.calibra.CalibraVAD
 import com.musicmuni.voxatrace.calibra.ExercisePattern
 import com.musicmuni.voxatrace.calibra.model.LessonMaterial
+import com.musicmuni.voxatrace.calibra.model.LessonType
 import com.musicmuni.voxatrace.calibra.model.NoteEvalPreset
 import com.musicmuni.voxatrace.calibra.model.Segment
 import com.musicmuni.voxatrace.calibra.model.VADModelProvider
@@ -83,7 +84,12 @@ private fun liveSessionSetup(callResponse: Boolean) {
         listOf(Segment(0, 0f, durSec, "phrase 1"))
     }
 
-    val reference = LessonMaterial.fromAudio(audio.samples, audio.sampleRate, segments, keyHz = TONIC_HZ)
+    // The lesson-level declaration is the authority for call/response behavior;
+    // student windows on segments carry the timing, lessonType says what it means.
+    val lessonType = if (callResponse) LessonType.SINGAFTER else LessonType.SINGALONG
+    val reference = LessonMaterial.fromAudio(
+        audio.samples, audio.sampleRate, segments, keyHz = TONIC_HZ, lessonType = lessonType
+    )
     val detector = PitchDetection.createDetector()
     val session = CalibraLiveEval.create(reference = reference, detector = detector)
     try {

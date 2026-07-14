@@ -76,6 +76,7 @@ let recorder = SonixRecorder.create(outputPath: "/path/to/output.mp3", config: c
 | `bitrate` | `Int` | `64000` | Encoder bitrate (bps) |
 | `echoCancellation` | `Boolean` | `false` | Enable acoustic echo cancellation |
 | `audioBufferSizeMs` | `Int` | `40` | Audio capture buffer size (ms) |
+| `inputSource` | `AudioInputSource` | `Microphone` | Audio source: the microphone, or a WAV file streamed as if it were the microphone (see [File Input](#file-input)) |
 
 ### Callbacks
 
@@ -327,6 +328,55 @@ recorder.start()
 // Recording timestamps align with playback position
 val syncedTime = recorder.synchronizedTimeMs
 ```
+
+## File Input
+
+Stream a WAV file through the recorder as if it were live microphone input —
+deterministic tests, replay of captured sessions, offline analysis of existing
+audio. Everything downstream (level metering, real-time buffers, encoding,
+playback sync) behaves exactly as with the microphone.
+
+### Kotlin
+
+```kotlin
+val config = SonixRecorderConfig.Builder()
+    .inputFile("/path/to/take.wav")            // loop = false, leadInSilenceMs = 0
+    .build()
+
+val recorder = SonixRecorder.create("output.m4a", config)
+recorder.start()   // streams the WAV in real time instead of opening the mic
+```
+
+### Swift
+
+```swift
+let config = SonixRecorderConfig.Builder()
+    .inputFile(path: "/path/to/take.wav", loop: false, leadInSilenceMs: 0)
+    .build()
+
+let recorder = SonixRecorder.create(outputPath: "output.m4a", config: config)
+recorder.start()
+```
+
+### AudioInputSource
+
+| Value | Description |
+|-------|-------------|
+| `AudioInputSource.Microphone` | Live microphone capture (default) |
+| `AudioInputSource.File(path, loop, leadInSilenceMs)` | Stream a WAV file in real time |
+
+- Accepts any canonical PCM WAV (any sample rate / channel count); audio is
+  decoded to mono at the configured `sampleRate`.
+- `leadInSilenceMs` plays silence once before the file starts; at end-of-file
+  the stream continues with silence (a quiet room, not a dead mic) unless
+  `loop = true`.
+- A missing or non-WAV file surfaces through the normal `onError` /
+  `RecordingState.Error` path when recording starts.
+- No OS audio session or audio focus is touched, so file input also runs in
+  host environments without audio hardware.
+- With `playbackSyncProvider` set (see [Playback Sync](#playback-sync)), the
+  file stream follows the playback timeline — late starts, pauses, and seeks —
+  instead of free-running.
 
 ## Listener Interface
 

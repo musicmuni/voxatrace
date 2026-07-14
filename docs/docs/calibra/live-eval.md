@@ -725,6 +725,7 @@ Returned by `finishSession()` with aggregated results across all segments.
 | `keyHz` | `Float` | Musical key frequency in Hz (e.g., 261.63 for middle C) |
 | `pitchContour` | `PitchContour?` | Pre-computed pitch (enables fast initialization) |
 | `hpcpFrames` | `List<FloatArray>?` | Pre-computed HPCP frames for DTW alignment |
+| `lessonType` | `LessonType` | How the student performs relative to the reference: `SINGALONG` (default, sing over the reference) or `SINGAFTER` (listen to a phrase, then echo it). The session's listen-then-echo behavior keys on this declaration |
 | `duration` | `Float` | Total duration based on the last segment's end time |
 | `segmentCount` | `Int` | Number of segments |
 
@@ -746,7 +747,29 @@ val material = LessonMaterial.fromAudio(
     keyHz = 196.0f,
     pitchContour = preComputedContour  // optional, speeds up prepareSession()
 )
+
+// Sing-after (call/response) lesson: declare it
+val material = LessonMaterial.fromAudio(
+    samples = audioData.samples,
+    sampleRate = audioData.sampleRate,
+    segments = singafterSegments,      // segments carrying student windows
+    keyHz = 196.0f,
+    lessonType = LessonType.SINGAFTER
+)
 ```
+
+:::info Sing-after lessons must declare `LessonType.SINGAFTER`
+Segments carry the student-window *timing*; `lessonType` says what that timing
+means. A lesson whose segments have `studentStartSeconds`/`studentEndSeconds`
+but whose material is left at the default `SINGALONG` is evaluated as
+sing-along — the student windows are ignored.
+:::
+
+For lessons authored as `.trans` files, `LessonMaterial.segmentsFromTrans(trans,
+lessonType, audioDurationSec)` builds the segment list: for `SINGAFTER` it pairs
+teacher/student phrase windows (deriving missing student windows from the gaps
+between phrases and reporting every correction), for `SINGALONG` it maps one
+segment per window.
 
 #### Creating Segments
 
