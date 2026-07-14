@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **Sonix: playback-time anchoring survives devices without presentation
+  timestamps.** `audibleTimeMsAtWallNanos` answered -1 whenever the platform
+  had no hardware presentation timestamp; on devices where that persists
+  (some HALs, emulators under load) every consumer anchoring captured audio
+  to playback time silently received nothing for the whole session. While
+  actively playing, the clock now degrades to a playback-position estimate
+  (within ~output latency) and returns -1 only when genuinely not playing.
+
 ### Added
 - **Calibra: `ExercisePattern.fromNotes(freqsHz, startsMs, endsMs)`.** Place
   exercise notes at their real windows on the playback timeline (lead-in
