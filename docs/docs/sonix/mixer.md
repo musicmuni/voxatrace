@@ -333,6 +333,10 @@ class MultiTrackViewModel : ViewModel() {
 }
 ```
 
+## Output Route (3.0.3+)
+
+`mixer.outputRoute` reports the `SonixOutputRoute` the mix is playing through (`SPEAKER` / `WIRED` / `BLUETOOTH` / `USB` / `OTHER` / `UNKNOWN`). Output-latency compensation is process-wide via the static `SonixPlayer.outputLatencyCompensationMs` / `SonixPlayer.bluetoothExtraCompensationMs` knobs and applies to the mixer's clock too (live evaluation anchors through the mixer). See [Audio Latency](../concepts/audio-latency).
+
 ## Next Steps
 
 - [SonixPlayer](./player) — Single-file playback

@@ -97,6 +97,10 @@ The decoded result contains:
 On the desktop-JVM target, only **MP3** and **WAV** (plus **AU**/**AIFF**) decode. There is no JVM-native AAC decoder, so decoding an M4A/AAC file returns `null`. Use MP3 or WAV sources on desktop.
 :::
 
+:::note WAV bit depth and layout
+WAV decodes at any common sample format (16, 24, and 32-bit integer, plus 32/64-bit float) and tolerates non-canonical chunk layouts, including files that carry `JUNK`, `bext`, or other chunks before `fmt`/`data` (studio and Broadcast-WAV masters). Everything is normalized to 16-bit PCM. iOS and desktop have always handled this; Android gained it in 3.0.3.
+:::
+
 ## Common Patterns
 
 ### Decode for Analysis

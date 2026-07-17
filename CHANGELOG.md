@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.3] - 2026-07-17
+
+### Added
+- **Sonix: output-latency compensation for tighter capture/playback sync.**
+  `SonixLatencyCalibration.measureOutputLatencyMs()` measures how far the
+  reported playback clock leads actually-audible output on the current device;
+  set `SonixPlayer.outputLatencyCompensationMs` to subtract it so a singer's
+  captured audio lines up with what they hear. Default 0 (behavior unchanged
+  until you set it).
+- **Sonix: active output route with a Bluetooth latency knob.**
+  `SonixOutputRoute` (SPEAKER / WIRED / BLUETOOTH / USB / OTHER / UNKNOWN),
+  readable via `SonixPlayer.outputRoute` and `SonixMixer.outputRoute`, reports
+  the route audio is actually playing through. `SonixPlayer.bluetoothExtraCompensationMs`
+  (default 0) applies extra latency compensation only while on Bluetooth, which
+  adds transport delay the OS clock does not report.
+
+### Changed
+- **A late or misaligned take now scores gracefully instead of collapsing to
+  zero.** Previously a recording whose timing drifted far enough could drop the
+  whole segment score to ~0; it now degrades smoothly with the amount of drift.
+
+### Fixed
+- **Sonix: WAV playback/decoding now handles 24-bit, 32-bit, and float files,
+  and files with extra header chunks.** Previously the Android decoder assumed
+  a canonical 16-bit PCM WAV with audio starting at byte 44; a studio-master
+  WAV (24-bit, or carrying `JUNK`/`bext` metadata chunks) played as white
+  noise. Any WAV a DAW exports now decodes correctly across `SonixPlayer`,
+  `SonixMixer`, and `SonixDecoder`. iOS and desktop were already correct.
+
 ## [3.0.2] - 2026-07-14
 
 ### Added

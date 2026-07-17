@@ -14,6 +14,15 @@ Mobile audio pipelines introduce latency between the application and the hardwar
 
 No action is needed for standard `SonixPlayer` + `CalibraLiveEval` usage. If you migrated from earlier versions, **remove** any manual `outputLatencyMs` / `inputLatencyMs` corrections you applied — the SDK accounts for both at the source layer now.
 
+## Residual output-latency compensation (3.0.3+)
+
+The source-layer handling above removes the latency the OS reports. On some devices the presentation clock still leads *truly-audible* output by a residual the OS does not expose, so a synced singer's captured contour lands slightly late. Three knobs let you correct it; all default to 0/off, so behavior is unchanged until you opt in.
+
+- **Measure it.** `SonixLatencyCalibration.measureOutputLatencyMs()` plays a chirp through the speaker and detects its arrival at the mic, returning the residual lead in milliseconds (0 if nothing is detected). Run it once at a natural speaker moment.
+- **Apply it.** Set `SonixPlayer.outputLatencyCompensationMs` (a process-wide value) to that number. It is subtracted from every `audibleTimeMsAtWallNanos` result, on both `SonixPlayer` and `SonixMixer` (practice anchors through the mixer, so setting it on the player covers both).
+- **Route.** `SonixPlayer.outputRoute` / `SonixMixer.outputRoute` report the `SonixOutputRoute` audio is actually playing through (SPEAKER / WIRED / BLUETOOTH / USB / OTHER / UNKNOWN), resolved from the active output track, not the list of attached devices. UNKNOWN before playback and on the JVM.
+- **Bluetooth.** A BT sink adds transport delay the speaker measurement cannot capture (the mic cannot hear the user's earbuds) and no public API reports. Set `SonixPlayer.bluetoothExtraCompensationMs` to a conservative, measured constant; it is added on top of the base value only while the route is Bluetooth. Prefer under-compensating: over-compensating shifts an on-time singer's contour early.
+
 ## Public API
 
 ```kotlin

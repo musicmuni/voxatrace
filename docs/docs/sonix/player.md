@@ -392,6 +392,18 @@ class MusicPlayerViewModel : ViewModel() {
 }
 ```
 
+## Output Route and Latency (3.0.3+)
+
+For syncing captured audio to playback (e.g. live evaluation), the SDK maps mic-capture moments to audible playback time automatically (see [Audio Latency](../concepts/audio-latency)). These members expose the residual the OS clock does not report:
+
+| Member | Type | Description |
+|--------|------|-------------|
+| `player.outputRoute` | `SonixOutputRoute` | The route audio is actually playing through: `SPEAKER` / `WIRED` / `BLUETOOTH` / `USB` / `OTHER` / `UNKNOWN`. `UNKNOWN` before playback and on the JVM. |
+| `SonixPlayer.outputLatencyCompensationMs` | `Long` (static) | Process-wide residual latency to subtract from audible-time mapping. Measure once with `SonixLatencyCalibration.measureOutputLatencyMs()`. Default 0. |
+| `SonixPlayer.bluetoothExtraCompensationMs` | `Long` (static) | Extra compensation applied only while the route is Bluetooth. Default 0. |
+
+These default to off; set them only if you need tighter capture/playback alignment. See [Audio Latency](../concepts/audio-latency) for the full story.
+
 ## Next Steps
 
 - [SonixRecorder](./recorder) — Record audio
