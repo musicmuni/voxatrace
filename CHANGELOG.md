@@ -64,9 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `PitchProcessingConfig.bridgeGaps` fills the brief dropouts a tracker leaves
   mid-note, on consonants and wherever the voice thins out, so a note stays one
   note. It only bridges a gap that is short, has the same pitch either side, and
-  has audio still sounding across it, so a rest stays a rest. Gaps under 50 ms
-  skip the pitch test, since in fast singing the dropped frame usually lands on a
-  note change rather than inside a note. On by default when extracting with pYIN;
+  has audio still sounding across it, so a rest stays a rest. How far the pitch
+  may move across a gap depends on how long the gap is: anything over a couple of
+  frames, tightening to a whole tone by a tenth of a second, since the longer the
+  silence the more likely it is a phrase ending rather than a dropped frame. On by default when extracting with pYIN;
   across 30 lessons it cut the number of separate contour fragments roughly in
   half, with coverage rising from 97.1% to 98.0% and no recording losing any.
   The filled section follows the slope of the notes either side rather than
