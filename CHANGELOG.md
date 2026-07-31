@@ -7,7 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING: `PitchProcessingConfig` is now a set of stages, not a bag of
+  booleans.** Each property is either a stage's parameters or `null`, meaning
+  that stage is not in the pipeline:
+
+  ```kotlin
+  PitchProcessingConfig(
+      correctOctaves = OctaveCorrectionConfig.BASIC,   // null: not in the pipeline
+      removeShortRuns = ShortRunRemoval(minimumDurationMs = 80f),
+      gateConfidence = null,
+      smooth = Smoothing(windowSize = 7),
+  )
+  ```
+
+  The presets (`RAW`, `SCORING`, `DISPLAY`) behave exactly as before, so code
+  that passes a preset needs no change. Code that set individual flags moves to
+  the matching stage object: `fixOctaveErrors`/`removeSpuriousJumps`/
+  `fixBoundaryOctaves`/`octaveThresholdCents`/`boundaryWindowMs`/
+  `referencePitchHz` are now `OctaveCorrectionConfig` (a type that already
+  existed, with its own presets); `removeBlips`/`minimumNoteDurationMs` are
+  `ShortRunRemoval`; `gateByConfidence`/`minConfidence` are `ConfidenceGate`;
+  `smoothPitch`/`smoothingWindowSize` are `Smoothing`.
+
+  Why: a boolean cannot distinguish "the caller wants this off" from "this
+  detector makes it meaningless", so the contour extractor had taken to
+  overriding what callers passed. pYIN resolves the octave across a whole
+  recording, and running the frame-to-frame corrector over it *introduced* nine
+  octave errors into contours that had none. With stages, the extractor supplies
+  a config whose octave stage is simply absent, and a config you pass is used as
+  written. See ADR-027.
+
+  One behaviour change beyond the rename: `PitchProcessingConfig()` with no
+  arguments is now an empty pipeline (the same as `RAW`), where it used to mean
+  everything on.
+
+### Changed
+- **tona: extraction with SwiftF0 keeps more of the melody and breaks it up
+  less.** Its confidence gate is gone, replaced by the same handling of short
+  runs and brief dropouts that pYIN uses. Across 30 lessons: coverage of the
+  audio that should carry a pitch rises from 97.0% to 97.5%, the worst recording
+  from 86.7% to 88.2%, the number of separate contour fragments falls by a fifth,
+  and octave errors drop from 7 to 1. Nothing to change on your side.
+
 ### Added
+- **tona: a wrong tonic no longer produces wrong notes.** Passing
+  `ContourExtractorConfig.tonicHz` narrows the pitch search to where the voice
+  is, which is what makes pYIN a single pass. If the tonic is wrong for the
+  recording, notes above or below the implied range used to be reported at the
+  range's edge, showing up as a flat line in the contour rather than as an
+  obvious failure. The extractor now notices that and falls back to working the
+  range out from the audio itself. On catalog lessons with a mis-stated key, the
+  flat line disappears and coverage rises about a point.
+- **tona: contours no longer come back in pieces.** New cleanup stage
+  `PitchProcessingConfig.bridgeGaps` fills the brief dropouts a tracker leaves
+  mid-note, on consonants and wherever the voice thins out, so a note stays one
+  note. It only bridges a gap that is short, has the same pitch either side, and
+  has audio still sounding across it, so a rest stays a rest. On by default when
+  extracting with pYIN; across 30 lessons it cut the number of separate contour
+  fragments by a quarter with no recording losing coverage.
 - **tona: pYIN, a new offline pitch algorithm.** `PitchAlgorithm.PYIN` on
   `ContourExtractorConfig`, batch only like `MELODIA` (it needs the whole
   recording, so `PitchDetection.createDetector` rejects it). pYIN weighs every
