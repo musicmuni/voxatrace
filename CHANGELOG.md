@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   note change rather than inside a note. On by default when extracting with pYIN;
   across 30 lessons it cut the number of separate contour fragments roughly in
   half, with coverage rising from 97.1% to 98.0% and no recording losing any.
+  The filled section follows the slope of the notes either side rather than
+  cutting straight across, so it reads as part of the phrase; it can never
+  overshoot the pitches it joins.
 - **tona: pYIN, a new offline pitch algorithm.** `PitchAlgorithm.PYIN` on
   `ContourExtractorConfig`, batch only like `MELODIA` (it needs the whole
   recording, so `PitchDetection.createDetector` rejects it). pYIN weighs every
