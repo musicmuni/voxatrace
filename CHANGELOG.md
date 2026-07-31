@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **tona: pYIN, a new offline pitch algorithm.** `PitchAlgorithm.PYIN` on
+  `ContourExtractorConfig`, batch only like `MELODIA` (it needs the whole
+  recording, so `PitchDetection.createDetector` rejects it). pYIN weighs every
+  period a range of thresholds would accept and then picks the most likely
+  sequence across the recording, so an ambiguous frame does not have to commit to
+  the wrong octave. Use it for reference extraction from a **solo voice**; on
+  audio with accompaniment under the voice, `MELODIA` is still the one to reach
+  for. Nothing changes unless you select it.
+
+### Fixed
+- **tona: pYIN contours keep much more of the melody.** Extraction with
+  `PitchAlgorithm.PYIN` used to drop stretches of real singing: sustained vowels
+  where the voice's fundamental is weak, and fast passages where notes are shorter
+  than the vocal scoops the cleanup exists to remove. Across 31 lessons covering
+  both Indian traditions, male and female voices, sing-along and sing-after, and
+  slow alaap through speed-3 alankar, coverage of the audio that should carry a
+  pitch rose from 90% to 97% on average, and from 48% to 87% on the hardest
+  recording; on a further 146 recordings held back from the tuning, 86% to 97%.
+  Every recording measured improved. pYIN now searches only the
+  range the voice occupies: tell it the tonic with the new
+  `ContourExtractorConfig.tonicHz` (it searches half to three times that) or leave
+  it at 0 and it works the range out from a first pass over the audio, at the cost
+  of a second pass (still tens of times faster than realtime, and offline only).
+  New knob for the cleanup half of this, `PitchProcessingConfig
+  .keepShortRunsWithinCents`: a short run this close in pitch to the run beside it
+  is kept as part of the same phrase rather than removed as a blip. Off by default
+  for every other algorithm.
+- **tona: octave correction is skipped when extracting with pYIN.** pYIN already
+  settles the octave across the whole recording, so the frame-to-frame corrector
+  had nothing to fix and was putting octave errors *into* clean contours. The rest
+  of the cleanup you configure still runs. Affects `PitchAlgorithm.PYIN` only;
+  every other algorithm keeps the cleanup it was given.
+- **tona: `ContourExtractorConfig.voiceType` was ignored by batch extraction.**
+  Setting it (say `VoiceType.carnaticMale`) had no effect: every algorithm
+  searched the full 65-1500 Hz range regardless. It now narrows the search as
+  documented. Default behaviour is unchanged, since the default voice type is
+  `Auto`; if you were setting a voice type, contours may differ slightly, and
+  they will differ in the direction you asked for.
+
 ## [3.0.3] - 2026-07-17
 
 ### Added
