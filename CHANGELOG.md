@@ -64,9 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `PitchProcessingConfig.bridgeGaps` fills the brief dropouts a tracker leaves
   mid-note, on consonants and wherever the voice thins out, so a note stays one
   note. It only bridges a gap that is short, has the same pitch either side, and
-  has audio still sounding across it, so a rest stays a rest. On by default when
-  extracting with pYIN; across 30 lessons it cut the number of separate contour
-  fragments by a quarter with no recording losing coverage.
+  has audio still sounding across it, so a rest stays a rest. Gaps under 50 ms
+  skip the pitch test, since in fast singing the dropped frame usually lands on a
+  note change rather than inside a note. On by default when extracting with pYIN;
+  across 30 lessons it cut the number of separate contour fragments roughly in
+  half, with coverage rising from 97.1% to 98.0% and no recording losing any.
 - **tona: pYIN, a new offline pitch algorithm.** `PitchAlgorithm.PYIN` on
   `ContourExtractorConfig`, batch only like `MELODIA` (it needs the whole
   recording, so `PitchDetection.createDetector` rejects it). pYIN weighs every
