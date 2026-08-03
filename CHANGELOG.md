@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Changed
+- **A performance is cleaned the way its reference was, before it is scored.**
+  At each segment boundary the singer's contour gets the same two stages the
+  offline authoring path applies to reference material: short dropouts inside a
+  note are bridged, and stray short runs that continue nothing are dropped. The
+  live pitch stream is untouched, and nothing is delayed: the segment is over
+  when this runs.
+  - Why: a detector reading audio as it arrives loses a frame or two mid-note to
+    a consonant or a breath, and emits the occasional blip on an onset. The
+    reference contour has had both removed already. Without this the difference
+    is charged to the singer, as stopped singing and as wrong notes.
+  - `PitchProcessingConfig.PERFORMANCE` is that stage set, and it is the same
+    configuration the extractor uses, so the two sides are held to one standard.
+  - Measured on 41 lessons by singing each reference back at itself: voiced
+    frames rise from 64% to 71% (the reference finds 80%), the contour comes back
+    in 39 pieces instead of 139 (the reference has 19), and the score goes from
+    0.73 to 0.88 with pitch agreement unchanged.
+
 - **A live frame produces two values: one to score, one to draw.** The recorded
   `pitchContour` (and everything that scores or analyses it) now holds the frame
   as measured — octave repair only, no smoothing, and unvoiced where the singer
