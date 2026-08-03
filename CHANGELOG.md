@@ -58,6 +58,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   Bundles written before this have no field and keep the old name, so they load
   unchanged. `LessonBundle.load` takes the audio from whatever the manifest
   names; an SDK older than this rejects a format-2 bundle at the version check.
+- **A bundle no longer costs an audio decode to load.** `LessonBundle.load`
+  returns material whose `audioSource` is an `AudioSource.File`, and
+  `CalibraLiveEval` skips decoding a reference that already carries a pitch
+  contour and HPCP frames — which every bundle does. Previously both decoded the
+  full reference audio into memory before the first note was sung, for samples
+  the evaluator never read.
+  - `BundleManifest.durationSeconds` records the lesson's length, which is what
+    the samples were still needed for. Bundles written before format 2 have no
+    such field and are decoded as before.
+  - Consequence worth knowing: a bundle can now carry audio in a format the
+    loading platform cannot decode (an m4a on the desktop JVM) and still load and
+    evaluate. Playback is the client's own player, from the file the bundle names.
+  - If your material has no pre-computed features, nothing changes: the reference
+    audio is still decoded and used.
 - **Provenance fields on the manifest**: `source`, `extractorVersion`,
   `pitchAlgorithm`, `extractedAt`, all optional. They record what produced a
   bundle and from what; nothing in evaluation reads them.

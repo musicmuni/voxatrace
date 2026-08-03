@@ -85,7 +85,7 @@ audio is named by the manifest. All five are required.
 | File | Contents |
 |------|----------|
 | `reference-meta.json` | Manifest: tonic (`keyHz`), geometry (`sampleRate` / `hopSize` / `frameSize` / `hpcpSize`), `lessonType`, optional tempo, and `audioFile` — the name of the audio below. |
-| the audio (`audioFile`) | Reference audio for playback: a 16 kHz mono WAV, or a compressed master (m4a/mp3) the bundle carries as-is. Bundles written before format 2 have no `audioFile` and always use `reference-16k-mono.wav`. |
+| the audio (`audioFile`) | Reference audio for playback: a 16 kHz mono WAV, or a compressed master (m4a/mp3) the bundle carries as-is. **Not decoded at load** — the loader references it by path. Bundles written before format 2 have no `audioFile` and always use `reference-16k-mono.wav`. |
 | `reference-pitch.tsv` | Pre-computed pitch contour (looked up by time). |
 | `reference-hpcp.bin` | Pre-computed HPCP chroma frames (indexed by absolute frame number). |
 | `reference-phrases.json` | Phrase boundaries + note-level transcription; the **segment source of truth**. |
