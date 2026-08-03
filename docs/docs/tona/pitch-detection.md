@@ -52,11 +52,19 @@ extractor.release()
 
 ### Presets
 
-| Preset | Kotlin | Swift | bufferSize | tolerance | confidenceThreshold |
-|--------|--------|-------|-----------|-----------|---------------------|
-| Balanced (default) | `PitchDetectorConfig.BALANCED` | `.balanced` | 1024 | 0.15 | 0.75 |
-| Relaxed | `PitchDetectorConfig.RELAXED` | `.relaxed` | 1024 | 0.20 | 0.65 |
-| Precise (offline only) | `PitchDetectorConfig.PRECISE` | `.precise` | 4096 | 0.10 | 0.85 |
+| Preset | Kotlin | Swift | bufferSize | strictness | tolerance | confidenceThreshold |
+|--------|--------|-------|-----------|------------|-----------|---------------------|
+| Balanced (default) | `PitchDetectorConfig.BALANCED` | `.balanced` | 1024 | balanced | 0.25 | 0.75 |
+| Relaxed | `PitchDetectorConfig.RELAXED` | `.relaxed` | 1024 | lenient | 0.35 | 0.65 |
+| Precise (offline only) | `PitchDetectorConfig.PRECISE` | `.precise` | 4096 | strict | 0.15 | 0.85 |
+
+Each preset is one `DetectionStrictness` step, which sets both numbers because
+the two detectors read different ones. **YIN honours `tolerance`; SwiftF0 honours
+`confidenceThreshold`.** YIN returns a pitch only where its aperiodicity valley
+falls under the tolerance, and reports confidence as `1 - that valley`, so every
+frame it returns already clears `1 - tolerance`: a confidence threshold below
+that cannot fire. To change what YIN keeps, change the strictness or the
+tolerance, not the confidence.
 
 `PRECISE` uses a 4096-sample buffer — too expensive per frame for realtime use (per ADR-020). Use it only for offline batch analysis.
 
@@ -67,7 +75,7 @@ extractor.release()
 | `algorithm` | `PitchAlgorithm` | `YIN` | `YIN` or `SWIFT_F0`. `MELODIA` is offline-only — `createDetector` rejects it (`IllegalArgumentException`); use it on `ContourExtractorConfig` instead. |
 | `bufferSize` | `Int` | `1024` | Audio buffer size (YIN-specific) |
 | `hopSize` | `Int` | `160` | Hop size between frames in samples |
-| `tolerance` | `Float` | `0.15` | YIN tolerance (lower = more accurate) |
+| `tolerance` | `Float` | `0.25` | YIN's bar for calling a frame periodic. Lower keeps fewer frames; it does not make the kept ones more accurate. Ignored by SwiftF0. |
 | `minFreq` | `Float` | `80` | Minimum detectable frequency (Hz) |
 | `maxFreq` | `Float` | `1000` | Maximum detectable frequency (Hz) |
 | `amplitudeGateDb` | `Float` | `-40` | RMS gate threshold (dB); below = unvoiced |
@@ -86,11 +94,11 @@ val config = PitchDetectorConfig.Builder()
     .algorithm(PitchAlgorithm.SWIFT_F0)
     .voiceType(VoiceType.carnaticMale)
     .quietHandling(QuietHandling.SENSITIVE)
-    .strictness(DetectionStrictness.LENIENT)
+    .strictness(DetectionStrictness.LENIENT)   // sets tolerance AND confidence
     .enableProcessing()              // smoothing + octave correction
     .bufferSize(1024)
     .hopSize(160)
-    .tolerance(0.15f)
+    .tolerance(0.25f)                // overrides what strictness just set
     .swiftF0BatchSize(2560)
     .build()
 ```

@@ -127,7 +127,7 @@ val detector = PitchDetection.createDetector(
 )
 
 // Tier 3: Full control
-val config = PitchDetectorConfig.PRECISE.copy(confidenceThreshold = 0.6f)
+val config = PitchDetectorConfig.PRECISE.copy(tolerance = 0.30f)
 ```
 
 [Read more about why VoxaTrace →](./why-voxatrace)

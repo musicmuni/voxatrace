@@ -61,7 +61,7 @@ val detector = PitchDetection.createDetector(
 
 // Tier 3: Full control (5% of users)
 val config = PitchDetectorConfig.PRECISE.copy(
-    confidenceThreshold = 0.6f,
+    tolerance = 0.30f,
     amplitudeGateDb = -50f
 )
 ```

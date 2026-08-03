@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Changed
+- **The detector presets are one strictness step each, and the balanced default
+  keeps more singing.** `DetectionStrictness` carries a YIN tolerance alongside
+  the SwiftF0 confidence, and presets and `Builder.strictness()` set both, so the
+  step reaches whichever knob the chosen algorithm honours.
+  - `BALANCED` tolerance moves 0.15 → 0.25, `PRECISE` 0.10 → 0.15, `RELAXED`
+    0.20 → 0.35. Measured over 41 recordings: coverage plateaus at 0.25 and falls
+    away past 0.35, while pitch agreement is unchanged at 4 cents. The old
+    default discarded about a sixth of the singing and gained no accuracy for it.
+  - Why the presets needed reworking rather than retuning: `confidenceThreshold`
+    could never fire on YIN. It reports a pitch only where its aperiodicity
+    valley is under `tolerance` and reports confidence as `1 - that valley`, so
+    every frame it returns already cleared the threshold in all three presets.
+    To change what YIN keeps, change strictness or tolerance.
+  - `PitchPreset` no longer has a `tolerance`; it sets frame geometry only.
+  - Expect a live contour to include more of the quiet and breathy parts of a
+    take. Anything downstream of it (scoring, vocal range, speaking pitch) sees
+    those frames now.
+
 - **A performance is cleaned the way its reference was, before it is scored.**
   At each segment boundary the singer's contour gets the same two stages the
   offline authoring path applies to reference material: short dropouts inside a
