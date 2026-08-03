@@ -21,7 +21,7 @@ A bundle is a directory containing exactly these files:
 | File | Contents |
 |------|----------|
 | `reference-meta.json` | Manifest: tonic, geometry, lesson metadata |
-| `reference-16k-mono.wav` | Reference audio for playback (16 kHz mono PCM) |
+| the audio, named by the manifest's `audioFile` | Reference audio for playback: a 16 kHz mono WAV, or a compressed master carried as-is |
 | `reference-pitch.tsv` | Pre-computed pitch contour |
 | `reference-hpcp.bin` | Pre-computed HPCP chroma frames |
 | `reference-phrases.json` | Phrase boundaries + note transcription |

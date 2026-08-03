@@ -47,7 +47,8 @@ Each lesson produces a folder with exactly these files:
 ```
 outputs/raag-bhairavi-aroh-avroh/
     reference-meta.json      # tonic + geometry
-    reference-16k-mono.wav   # the reference audio (16 kHz mono)
+    reference-16k-mono.wav   # the reference audio (16 kHz mono), or your own
+                             # master when the meta names one (audioMaster)
     reference-pitch.tsv      # pitch contour
     reference-hpcp.bin       # chroma features
     reference-phrases.json   # phrases + note transcription

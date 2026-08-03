@@ -103,6 +103,8 @@ note label via `shruti`, or directly in Hz via `keyHz`:
 | `soloVoice` | no | `true` (default) for a solo voice recording; `false` if it has accompaniment — see below |
 | `bpm` | no | Tempo, for metered lessons |
 | `beatsPerMeasure` | no | For metered lessons |
+| `audioMaster` | no | File name of the compressed master the audio was decoded from — see below |
+| `source` | no | Where the audio came from, in your catalog's terms (e.g. an S3 key). Recorded in the bundle; nothing reads it |
 
 ### `genre` + `svaras` — the raga's svara set
 
@@ -129,6 +131,34 @@ List only the svaras the raga uses, in any order. The
 The `devamanohari-jatiswara` example uses `"genre": "carnatic"` with Carnatic
 names (`R2`, `M1`, …). An unknown name for the genre is reported as an error, so
 typos surface instead of producing wrong labels.
+
+### `audioMaster` — carrying your own file as the lesson audio
+
+A bundle holds the audio it was analysed from, and that audio is also what the
+app plays back. By default the extractor writes a 16 kHz WAV of what it decoded.
+That is bigger than your master and, if your master is compressed, one generation
+further from it.
+
+Put the master in the lesson folder and name it, and the bundle carries your file
+instead:
+
+```
+raag-bhairavi-aroh-avroh/
+  raag-bhairavi-aroh-avroh.wav        # what is analysed
+  raag-bhairavi-aroh-avroh.m4a        # what the bundle carries
+  raag-bhairavi-aroh-avroh.csv
+  raag-bhairavi-aroh-avroh.meta.json  # "audioMaster": "raag-bhairavi-aroh-avroh.m4a"
+```
+
+This is also how an **AAC/M4A** catalog gets through: the extractor decodes WAV
+and MP3 only, so convert the master to WAV yourself (`ffmpeg -i in.m4a
+-ac 1 -ar 16000 in.wav`) and name the master. An MP3 input needs none of this —
+it is carried as-is already.
+
+The extractor never decodes the master, so **it cannot check that the two files
+are the same recording.** Convert, don't hand-pick: a mismatched pair gives every
+learner a lesson whose answer key belongs to different audio, and nothing in the
+pipeline will say so.
 
 ### `soloVoice` — solo or accompanied recording
 

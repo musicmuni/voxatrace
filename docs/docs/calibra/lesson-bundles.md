@@ -79,13 +79,13 @@ serialization exception.
 
 ## Bundle layout
 
-A bundle directory contains exactly these five files (all names are literal). All
-five are required.
+A bundle directory contains exactly five files. Four have literal names; the
+audio is named by the manifest. All five are required.
 
 | File | Contents |
 |------|----------|
-| `reference-meta.json` | Manifest: tonic (`keyHz`), geometry (`sampleRate` / `hopSize` / `frameSize` / `hpcpSize`), `lessonType`, optional tempo. |
-| `reference-16k-mono.wav` | Reference audio for playback (16 kHz mono 16-bit PCM WAV). |
+| `reference-meta.json` | Manifest: tonic (`keyHz`), geometry (`sampleRate` / `hopSize` / `frameSize` / `hpcpSize`), `lessonType`, optional tempo, and `audioFile` — the name of the audio below. |
+| the audio (`audioFile`) | Reference audio for playback: a 16 kHz mono WAV, or a compressed master (m4a/mp3) the bundle carries as-is. Bundles written before format 2 have no `audioFile` and always use `reference-16k-mono.wav`. |
 | `reference-pitch.tsv` | Pre-computed pitch contour (looked up by time). |
 | `reference-hpcp.bin` | Pre-computed HPCP chroma frames (indexed by absolute frame number). |
 | `reference-phrases.json` | Phrase boundaries + note-level transcription; the **segment source of truth**. |
@@ -128,7 +128,7 @@ val material = ReferenceExtractor.extract(
 extractor.release()
 // material.pitchContour and material.hpcpFrames are now populated.
 // Serialize with SonixWriter.formatPitchString / formatHpcp / formatTransString,
-// write reference-meta.json + reference-16k-mono.wav, and you have a bundle.
+// write reference-meta.json + the audio it names, and you have a bundle.
 ```
 
 ### Extract Method
