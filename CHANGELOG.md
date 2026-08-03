@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Changed
+- **A live frame produces two values: one to score, one to draw.** The recorded
+  `pitchContour` (and everything that scores or analyses it) now holds the frame
+  as measured — octave repair only, no smoothing, and unvoiced where the singer
+  was not audible. `livePitch` keeps the value meant for display: the short gap
+  hold and the smoothing that stop a cursor jumping around.
+  - Why: the reference contour a performance is scored against keeps vibrato and
+    note transitions, and the live path was smoothing them away. Measured over 41
+    lessons by putting each reference recording back through the live detector,
+    agreement with its own reference went from 17.7 cents to 4.0.
+  - A pitch held across a dropout was also being scored as singing. It no longer
+    is, so a session's voiced fraction reads lower and truer.
+  - Consumers drawing from `pitchContour` rather than `livePitch` will see a
+    less smooth line; that path is the measurement, not the picture.
+- **`PitchDetection.contourAsSung(samples, sampleRate, config)`** returns the
+  contour a live session would have produced from a recording. Use it for any
+  offline scoring or regression work on a *performance*: it runs the realtime
+  pipeline, so what you measure is what a singer would have been scored on.
+  `createContourExtractor` remains the tool for authoring reference material.
+
+### Changed
 
 - **BREAKING: `PitchProcessingConfig` is now a set of stages, not a bag of
   booleans.** Each property is either a stage's parameters or `null`, meaning
