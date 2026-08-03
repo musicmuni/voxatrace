@@ -52,6 +52,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   and octave errors drop from 7 to 1. Nothing to change on your side.
 
 ### Added
+- **Bundle format 2: a bundle can carry compressed audio.** `BundleManifest`
+  gains `audioFile`, naming the audio inside the bundle directory, so a bundle
+  may hold `reference-audio.m4a` rather than a decoded `reference-16k-mono.wav`.
+  Bundles written before this have no field and keep the old name, so they load
+  unchanged. `LessonBundle.load` takes the audio from whatever the manifest
+  names; an SDK older than this rejects a format-2 bundle at the version check.
+- **Provenance fields on the manifest**: `source`, `extractorVersion`,
+  `pitchAlgorithm`, `extractedAt`, all optional. They record what produced a
+  bundle and from what; nothing in evaluation reads them.
 - **tona: a wrong tonic no longer produces wrong notes.** Passing
   `ContourExtractorConfig.tonicHz` narrows the pitch search to where the voice
   is, which is what makes pYIN a single pass. If the tonic is wrong for the
