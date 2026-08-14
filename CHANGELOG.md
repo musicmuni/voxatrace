@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
     each beat for slow counts.
   - The strokes are synthesised, key themselves to `tonicHz` while staying
     unpitched, and render identically every time, so a track can be cached.
+  - Two voicings. The default puts the cycle's weight low, which is right on
+    headphones and inaudible on a phone's own speaker, where there is no bass
+    to radiate; `CycleVoicing.SPEAKER` moves the strokes up so the cycle can be
+    followed there. Pick by output route: raising the volume does not help.
   - `SonixMetronome` is unchanged.
 
 ### Changed
