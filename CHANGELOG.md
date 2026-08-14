@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`SonixMetricCycle`: a click that plays a rhythmic cycle, not a bar.**
+  `SonixMetronome` accents every Nth beat from the start of the audio at one
+  tempo. A cycle needs more than that: the strokes fall where the metre puts
+  them, the cycle can begin anywhere in a recording, and the tempo is the
+  recording's own.
+  - `renderTrack(config, durationMs)` returns a fixed-length click track to mix
+    beside a recording, **and every beat in it** (time, cycle number, index and
+    role). Because the audio and the beat list come from one pass they cannot
+    disagree, and `beatAt(positionMs)` gives the beat currently sounding without
+    rebuilding the grid.
+  - `create(config)` is the same click free-running, for a surface with no
+    recording. `currentBeat` follows the audio itself, so an indicator cannot
+    show one beat while another is heard.
+  - A cycle is a list of beat roles: `PRIMARY`, `SECONDARY`, `HOLLOW`, `PLAIN`.
+    They name how a beat sounds, not where it sits, because some cycles do not
+    open on their heaviest stroke. Map your own vocabulary onto them.
+  - `offsetBeats` places the cycle against the recording, negative included for
+    a cycle that began just before the audio did. `beatMultiplier` stretches
+    each beat for slow counts.
+  - The strokes are synthesised, key themselves to `tonicHz` while staying
+    unpitched, and render identically every time, so a track can be cached.
+  - `SonixMetronome` is unchanged.
+
 ### Changed
 - **The detector presets are one strictness step each, and the balanced default
   keeps more singing.** `DetectionStrictness` carries a YIN tolerance alongside
