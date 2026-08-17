@@ -35,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
     stretched four times and counted in four puts a pulse back where the
     unstretched beat was. A beat's own stroke is the first pulse of that beat,
     so nothing is sounded twice at one instant.
+  - A pulse has its own voice, not the count's turned down: `CycleVoicing
+    .pulseRatio` places it below the count's register and its strike is duller.
+    Level alone leaves the two the same sound a few decibels apart, and a metre
+    whose beats include unaccented counts then reads as one undifferentiated
+    stream.
   - Pulses are audio only. `RenderedCycle.beats` is the grid you count against
     and is unchanged by `pulsesPerBeat`, and `BeatWeight` still has its four
     roles: a pulse has no index in the cycle, so it is not one of them. The
