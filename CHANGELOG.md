@@ -192,6 +192,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   for. Nothing changes unless you select it.
 
 ### Fixed
+- **sonix: a lesson no longer stops for about a second where the microphone
+  starts.** On iOS, `AudioSessionManager.configure` set the category and
+  activated the session on every call, however little had changed, and each of
+  those rebuilds every audio unit on the session: 821-862 ms of silence,
+  measured on an iPhone, landing on a phrase boundary because that is where a
+  recorder starts. ADR-016 always said the manager is idempotent; now it is, on
+  both platforms and from one rule. A request the active session already
+  provides changes nothing, a session is never weakened by a later one
+  (`PLAY_AND_RECORD` satisfies a `PLAYBACK` request), and a session the OS took
+  away — an iOS interruption, an Android focus loss — provides nothing, so the
+  next request is a real one. Callers no longer need their own
+  `currentMode == null` guard; ask for what you need and the manager decides.
+- **calibra: capture starts with the take, and only evaluation waits for the
+  phrase.** With `SessionConfig.playInterSegmentAudio` on, a segment's phases
+  and its microphone both waited for the playhead to reach the segment start, so
+  the microphone opened at the exact moment the learner was meant to begin —
+  the most expensive moment to open it. Capture now starts when the take does;
+  what still waits for the learner's entry is what is evaluated, scored and
+  drawn, which is what ADR-025 meant and now says. Nothing is judged from a
+  count-in or a lead-in. **Behaviour note:** a session recording made through
+  `CalibraLiveEval` now includes the lead-in audio it plays over.
+- **sonix: iOS's output route is read once, not on every clock read.**
+  `AVAudioSession.currentRoute` is a synchronous call into the audio server and
+  it sat behind `SonixPlayer`/`SonixMixer.audibleTimeMsAtWallNanos`, which a
+  live UI calls once per drawn frame on the main thread. It is now cached and
+  refreshed from `AVAudioSessionRouteChangeNotification` on a queue of its own,
+  so the answer is the same and nobody waits on the audio server for it.
 - **tona: pYIN contours keep much more of the melody.** Extraction with
   `PitchAlgorithm.PYIN` used to drop stretches of real singing: sustained vowels
   where the voice's fundamental is weak, and fast passages where notes are shorter
