@@ -25,6 +25,7 @@ A bundle is a directory containing exactly these files:
 | `reference-pitch.tsv` | Pre-computed pitch contour |
 | `reference-hpcp.bin` | Pre-computed HPCP chroma frames |
 | `reference-phrases.json` | Phrase boundaries + note transcription |
+| `accompaniment-<n>.<ext>` | One per declared accompaniment track, if the lesson has any (see below) |
 
 The manifest declares the analysis geometry (`sampleRate`, `hopSize`,
 `frameSize`, `hpcpSize`) and the tonic (`keyHz`). The geometry **must match the
@@ -54,7 +55,8 @@ contains **one sub-folder per lesson**; each lesson folder holds three files:
 |--------------------------------|----------|
 | an audio file (`.wav` or `.mp3`) | Reference recording — any sample rate / channels / bit depth (decoded, down-mixed to mono, and resampled to 16 kHz internally) |
 | a `.csv` | Phrase markers |
-| a `.meta.json` | Lesson metadata (tonic, lesson type) |
+| a `.meta.json` | Lesson metadata (tonic, lesson type, and anything else the lesson plays) |
+| any further audio files | Whatever else the lesson plays, **each declared in the meta** (see below) |
 
 ```bash
 export VOXATRACE_API_KEY=sk_live_your_key_here
@@ -63,6 +65,33 @@ lesson-extractor <inputDir> <outputDir>
 
 Each lesson folder named `<lesson>` produces `<outputDir>/<lesson>/` with the
 bundle files above. Pitch is extracted with the octave-robust `MELODIA` backend.
+
+### Declaring what else a lesson plays
+
+A lesson folder may hold more audio than the recording, as long as the meta's
+`accompaniment` declares every extra file:
+
+```json
+{ "keyHz": 233.08,
+  "lessonType": "singafter",
+  "accompaniment": [
+    { "file": "backing.m4a", "loop": false, "transposes": true,
+      "gainDb": 0.0, "role": "backing" }
+  ] }
+```
+
+`file` names a file in the same lesson folder. The tool copies each into the
+bundle, transcoding as it already does for the recording, and carries `loop`,
+`transposes`, `gainDb` and `role` through untouched. What they mean is described
+in [Lesson Bundles](../calibra/lesson-bundles#accompaniment).
+
+Declaring them is also what identifies the recording: **it is the audio file
+nothing declared**. So a folder holding two undeclared audio files fails that
+lesson by name rather than one of them quietly becoming the lesson, and so does a
+declared file that is not in the folder or is in a format the tool cannot read.
+Two things warn rather than fail, because neither makes a bundle unreadable: a
+track that plays once and is more than a second from the recording's length
+(what a stale upload looks like), and a loop longer than the recording.
 
 To print the CLI version (no API key required):
 

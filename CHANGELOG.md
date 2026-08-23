@@ -8,6 +8,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **A lesson bundle can now describe what plays besides the teacher.** A bundle
+  carried exactly one audio file, so a lesson whose material included a backing
+  recording, a repeating pattern or a guide part could not express it: the extra
+  audio was dropped, and nothing in the bundle said so.
+  - The manifest gains an optional `accompaniment` list, and `LessonBundle.load`
+    surfaces it as `LessonMaterial.accompaniment`. Each entry points at a file
+    the bundle carries and states three things about how to play it — `loop`
+    (tile it to fill the reference, or play it once), `transposes` (follow the
+    key when the learner moves the tonic, or stay fixed) and `gainDb` (level
+    relative to the reference) — plus `role`, a free-form label **VoxaTrace
+    stores and never reads**. It is there so your app can find its own track
+    without this SDK owning the word for it.
+  - **List order is mix priority**, and the format sets no cap: a player that
+    can only afford two tracks plays the first two, and should say what it
+    dropped. **Looping is declared, not performed** — the entry says a track
+    tiles; tiling it is your player's job.
+  - **Nothing about existing bundles changes.** The list is optional, a bundle
+    that declares none is byte-for-byte what the same inputs produced before,
+    and the bundle format version is unchanged. An older SDK reading a bundle
+    that does declare accompaniment plays the reference alone, which is what it
+    did with such a lesson before.
+  - `LessonMaterial` gains `accompaniment` as a new final parameter, defaulted to
+    empty: source-compatible from Kotlin and Swift, and binary-incompatible as
+    any added parameter is.
+
+- **`lesson-extractor`: declare a lesson's other audio in its `meta.json`.** An
+  `accompaniment` array there names files sitting in the same lesson folder, with
+  the same four fields; the tool copies each into the bundle, transcoding as it
+  already does for the recording, and carries the four fields through untouched.
+
+  ```json
+  { "keyHz": 233.08,
+    "lessonType": "singafter",
+    "accompaniment": [
+      { "file": "backing.m4a", "loop": false, "transposes": true,
+        "gainDb": 0.0, "role": "backing" }
+    ] }
+  ```
+
+  - **The recording is now the audio file nothing declared**, rather than the
+    first one the tool happened to find. That was right while a lesson folder
+    held exactly one audio file, and a silent defect the moment it held two.
+    **A folder with two undeclared audio files now fails that lesson by name**
+    instead of one of them quietly becoming the lesson, and so does a declared
+    file that is not in the folder or is in a format the tool cannot read.
+  - A lesson whose `meta.json` cannot be read is skipped by name; it used to end
+    the run.
+  - Two new warnings before you publish: a track that plays once and is more
+    than a second from the recording's length (what a stale upload looks like),
+    and a loop longer than the recording (which is not a loop).
+
 - **`PitchProcessing.cleanPerformance`: the tidy-up a live contour needs before
   it is compared with a reference.** A detector reading audio as it arrives
   loses a frame or two mid-note to a consonant or a breath catch, and emits the

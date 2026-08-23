@@ -79,8 +79,9 @@ serialization exception.
 
 ## Bundle layout
 
-A bundle directory contains exactly five files. Four have literal names; the
-audio is named by the manifest. All five are required.
+A bundle directory contains five required files — four with literal names, plus
+the audio the manifest names — and one further file per declared accompaniment
+track, if the lesson has any.
 
 | File | Contents |
 |------|----------|
@@ -89,10 +90,52 @@ audio is named by the manifest. All five are required.
 | `reference-pitch.tsv` | Pre-computed pitch contour (looked up by time). |
 | `reference-hpcp.bin` | Pre-computed HPCP chroma frames (indexed by absolute frame number). |
 | `reference-phrases.json` | Phrase boundaries + note-level transcription; the **segment source of truth**. |
+| `accompaniment-<n>.<ext>` | One per entry of the manifest's `accompaniment`, if it declares any. See [Accompaniment](#accompaniment). Most bundles have none. |
 
 The manifest's geometry **must match the consuming session** (ADR-017): the live
 evaluator indexes HPCP frames by absolute frame number, so `hopSize` /
 `frameSize` / `sampleRate` are load-bearing, not cosmetic.
+
+### Accompaniment
+
+A lesson is often more than the recording a learner answers: there may be a
+backing recording under it, a repeating pattern over it, a guide part beside it.
+The manifest's optional `accompaniment` is that material, in **mix priority**,
+and `LessonBundle.load` hands it back as `LessonMaterial.accompaniment`.
+
+```kotlin
+val reference = LessonBundle.load("/path/to/bundle-dir")
+
+reference.accompaniment.forEach { track ->
+    // track.source  - where the audio is (an AudioSource.File in the bundle)
+    // track.loop    - tile it to fill the reference, or play it once through
+    // track.transposes - follow the key when the learner moves the tonic
+    // track.gainDb  - level relative to the reference
+    // track.role    - your own label; VoxaTrace never reads it
+}
+```
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `source` | `AudioSource` | Where the track's audio is. Not decoded at load, like the reference. |
+| `loop` | `Boolean` | Tile it to fill the reference, or play it once through. |
+| `transposes` | `Boolean` | Follow the key when the learner moves the tonic, or stay fixed. Pitched material has to move; unpitched material has to stay put. |
+| `gainDb` | `Float` | Level relative to the reference, in decibels. |
+| `role` | `String` | What your app calls this track. Free-form, and **never read by VoxaTrace**: it exists so you can find your own track without this SDK owning the vocabulary that names it. |
+
+Three mechanical switches and one opaque label, deliberately. A track you carry
+that nobody here anticipated — a chord pad, a drum machine, a spoken cue — is
+described with the same three switches and your own word for it, and needs no
+change to the format.
+
+**Order is mix priority**, and the format sets no cap: a device that can only
+afford two tracks plays the first two, and should report what it dropped.
+**Looping is declared, not performed** — the entry says a track tiles; tiling it
+is your player's job.
+
+A bundle that declares none has none, which is every bundle written before this
+existed. The bundle format version is unchanged, so an older SDK reading a
+bundle that does declare accompaniment plays the reference alone.
 
 ### `lessonType` (authoritative)
 
