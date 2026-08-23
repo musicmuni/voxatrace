@@ -78,6 +78,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   version carry these offsets, so re-extract rather than reinterpret. The live
   shift scales with your configured hop, so a contour read at a coarser hop was
   further out than 6 ms.
+  - **An extracted contour is an even grid starting at zero**: frame `i` is
+    stamped `i * hop`, and no timestamp is ever negative. The audio each frame
+    covers is cut to match that stamp, rather than the stamp being worked out
+    from what the frame measured, so a contour reads the same whether you index
+    it or look it up by time. Anything holding a contour extracted by a
+    pre-release build of this version may find uneven spacing and negative times
+    at the start of a recording; re-extract it.
+  - One approximation remains and is deliberate: a frame names an instant up to
+    about **5 ms** before the audio it read (1 ms at the top of the singing
+    range, 5 ms at the bottom), because exactness there and an even grid cannot
+    both hold. The even grid is worth more, and scoring absorbs an offset this
+    size.
 
 - **The detector presets are one strictness step each, and the balanced default
   keeps more singing.** `DetectionStrictness` carries a YIN tolerance alongside
