@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **`PitchProcessing.cleanPerformance`: the tidy-up a live contour needs before
+  it is compared with a reference.** A detector reading audio as it arrives
+  loses a frame or two mid-note to a consonant or a breath catch, and emits the
+  occasional stray blip on an onset. A contour extracted from a recording has
+  already had both removed, with the whole recording in view. Scoring one
+  against the other without this charges the singer for the difference: the gaps
+  read as stopped singing and the blips as wrong notes. A live session has
+  always applied it when a segment ends; it is now callable directly, for
+  scoring a contour you captured yourself. Takes a `PitchContour` or a raw
+  `FloatArray`, plus that contour's own hop in ms.
+
 - **`SonixMetricCycle`: a click that plays a rhythmic cycle, not a bar.**
   `SonixMetronome` accents every Nth beat from the start of the audio at one
   tempo. A cycle needs more than that: the strokes fall where the metre puts
@@ -39,6 +50,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - `SonixMetronome` is unchanged.
 
 ### Changed
+- **A pitch contour's timestamps now name the audio they were measured from.**
+  Both paths were labelling frames slightly off, in opposite directions: a
+  contour extracted from a file sat about **30 ms late**, and a contour read
+  live about **6 ms early**. The same audio read both ways therefore did not
+  line up, which mattered most in the case the SDK exists for: comparing a live
+  take against a contour extracted from the recording it is learning. On fast
+  material the two used to disagree by 20 to 30 cents where the singer was
+  correct; they now agree to within a few. Timestamps stored by an earlier
+  version carry these offsets, so re-extract rather than reinterpret. The live
+  shift scales with your configured hop, so a contour read at a coarser hop was
+  further out than 6 ms.
+
 - **The detector presets are one strictness step each, and the balanced default
   keeps more singing.** `DetectionStrictness` carries a YIN tolerance alongside
   the SwiftF0 confidence, and presets and `Builder.strictness()` set both, so the
@@ -192,6 +215,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   for. Nothing changes unless you select it.
 
 ### Fixed
+- **Melody scores no longer overlook singing that never happened.** Where the
+  reference holds a pitch and the take produced none, that moment now counts
+  against the score, which is what note scoring and live segment scoring have
+  always done. The offline melody evaluator had been dropping those moments
+  altogether, so a take that produced nothing for a third of a phrase was scored
+  as though only the other two thirds had been asked for. Moments where the
+  reference itself holds no pitch are still not scored: none was asked for.
+  - **Scores fall, and a score stored by an earlier version is not comparable
+    with one from this release.** Over a 3,442-lesson corpus, each lesson
+    singing its own reference back at itself, the median moved from 0.950 to
+    0.924 and the count below 0.70 from 18 to 64. No score rose, and the largest
+    single fall was 0.134.
+  - No thresholds or grade boundaries moved. A segment's reported grade can now
+    be lower than before, because it follows the score; for a take that covered
+    the whole phrase it is unchanged.
+
 - **sonix: a lesson no longer stops for about a second where the microphone
   starts.** On iOS, `AudioSessionManager.configure` set the category and
   activated the session on every call, however little had changed, and each of
