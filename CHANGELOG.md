@@ -295,6 +295,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   for. Nothing changes unless you select it.
 
 ### Fixed
+- **`AudioFocusListener` now hears iOS interruptions at all.** On iOS an
+  interruption — a call, an alarm, another app opening the microphone — was
+  read out of the system notification with a cast that never matched, so the
+  listener was told nothing and the app went on as though nothing had happened.
+  A take carried on to its end and scored, and anything the app would have
+  paused, cancelled or discarded on an interruption never got the chance. Both
+  halves are affected: `onFocusLost(transient = true)` never arrived when the
+  system took the session, and `onFocusGained()` never arrived when it handed it
+  back — which is also the signal a recording used to resume capture, so the one
+  case where a resume was possible without the app doing anything did not
+  happen either. Android was never affected. No API changed.
+  - A notification that arrives and cannot be read is now logged as an error.
+    It used to be dropped, which made "the system sent something we could not
+    understand" look exactly like "the system sent nothing" — the reason this
+    survived so long.
+
 - **A recording survives a phone call on iOS.** iOS deactivates the audio
   session for the length of a call and stops the audio engines running on it.
   Playback came back on its own; the microphone did not, and nothing said so —
