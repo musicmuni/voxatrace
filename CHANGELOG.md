@@ -295,6 +295,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   for. Nothing changes unless you select it.
 
 ### Fixed
+- **A recording survives a phone call on iOS.** iOS deactivates the audio
+  session for the length of a call and stops the audio engines running on it.
+  Playback came back on its own; the microphone did not, and nothing said so —
+  the recording ran on to its end capturing nothing, and the file held only what
+  had been sung before the call. Capture is now restarted whenever the audio
+  session is handed back, whether that is iOS reporting the interruption over or
+  the app configuring the session again after the user resumed it (which is the
+  only signal there is, since answering a call suspends the app). The recording
+  carries on into the same file, with a silent gap where the call was: nothing is
+  stopped, nothing is finalized early, no take is lost, and no API changed.
+  - **The one case where the recording ends instead.** If the microphone comes
+    back at a different sample rate or channel count from the one the recording
+    started at — a headset connected during the call, say — audio from there on
+    would not match what the file is being encoded for, and would play back at the
+    wrong speed rather than fail. The recording is reported as ended
+    (`RecordingState.Error` / `onError`) at the point it was interrupted, and
+    stopping it writes the file as usual, holding everything captured up to the
+    call.
+  - **Android is unaffected**: `AudioRecord` reads straight through a focus loss,
+    so there was never anything to bring back there.
+
 - **Melody scores no longer overlook singing that never happened.** Where the
   reference holds a pitch and the take produced none, that moment now counts
   against the score, which is what note scoring and live segment scoring have
