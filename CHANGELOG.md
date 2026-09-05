@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **A recording is decoded as it plays (ADR-041).** `SonixMixer.addStreamedTrack`
+  opens a track that is decoded about a second ahead of the mix rather than
+  whole before the first note, so a lesson opens in the time its first second
+  takes whatever its length, holds a second of audio rather than the file,
+  and seeks by a codec seek. It plays the timeline the container declares,
+  cut by the SDK's one reader of the edit list on every platform, and
+  `declaredFramesOf` is the count a bundle's manifest is compared against;
+  when the file has played to the end the decoded count is logged beside it.
+  A file that declares no timeline (raw ADTS, MP3, WAV), one at another rate
+  than the mix, and anything that loops are decoded whole with `addTrack`, as
+  before: the call returns false and records no error. `streamStarvations`
+  counts a decoder that fell behind, zero being the contract.
+  `LessonMaterial.fromFeatures` builds the scorer's material from a bundle's
+  contour and chroma and the declared count, with no samples: the decode
+  count check of ADR-030 runs on the declaration.
+- **Android decodes MP3 in-process**, through the LAME decoder the library
+  already carried and iOS already used: a sixty-second drone took three
+  seconds through MediaCodec's packet loop and takes a fifth of one.
 - **A lesson bundle can now describe what plays besides the teacher.** A bundle
   carried exactly one audio file, so a lesson whose material included a backing
   recording, a repeating pattern or a guide part could not express it: the extra
@@ -118,6 +136,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - `SonixMetronome` is unchanged.
 
 ### Changed
+
+- **A pitch file parses in a fraction of a second on a phone.**
+  `SonixParser.parsePitchString` compiled a regular expression per row and
+  boxed every value on its way into the contour. On a mid-range phone that was
+  five seconds of an eighteen-minute lesson's open, four fifths of everything
+  that ran between its files being read and the lesson being ready; on a
+  desktop JVM it was twenty milliseconds, where no test could see it. The text
+  is now scanned once, straight into the contour's arrays: twenty times faster
+  on the phone, with the same rows read and the same rows skipped.
+  `PitchContour.fromArrays` and the `times`, `pitchesHz` and `pitchesMidi`
+  views fill their arrays without boxing too.
 - **A pitch contour's timestamps now name the audio they were measured from.**
   Both paths were labelling frames slightly off, in opposite directions: a
   contour extracted from a file sat about **30 ms late**, and a contour read
