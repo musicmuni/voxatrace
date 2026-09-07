@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **An injected take now lines up with what is audible.** The file recorder
+  slaved to a transport (`AudioInputSource.File` with a sync provider)
+  anchored its content on the transport's first position after play, which
+  is where the sink was asked to start and not what the speaker had reached:
+  the startup latency (100 to 150 ms on a Galaxy M36) put the injected singer
+  that far ahead of the teacher for the whole take, and the ±150 ms hysteresis
+  never corrected it. It also placed each buffer to *start* at the position
+  where a microphone's buffer *ends* there, another 40 ms early. Now each
+  buffer ends at the position, the anchor follows the clock at one buffer's
+  divergence for its first second, and the mixers on both platforms answer a
+  slaved recorder off the presentation clock live rather than the per-chunk
+  snapshot. Real microphones were never affected.
 - **A streamed track returns to the top of the file.** The Android decoder
   stream asked the extractor for the priming packet by its negative time, and
   a negative seek leaves `MediaExtractor` where it was (Galaxy M36): after a
