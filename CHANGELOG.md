@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **A streamed track returns to the top of the file.** The Android decoder
+  stream asked the extractor for the priming packet by its negative time, and
+  a negative seek leaves `MediaExtractor` where it was (Galaxy M36): after a
+  pass had reached the end, a seek to the start decoded nothing and the track
+  was silence, and a seek to the start from mid-file played on from there.
+  A seek that needs the first packet now reopens the extractor, which is the
+  one way to reach it; seeks anywhere else are unchanged. iOS positions the
+  file directly and never had it.
+- **A seek on the Android mixer discards the audio still queued in the output.**
+  A pause leaves the samples already written but not yet heard in the
+  `AudioTrack`, and the next `play()` put them out before anything from the
+  new position: a session that paused at the end of a phrase, sought to the
+  next unit and played heard the old phrase's last syllable first, at the start
+  of every drill go. `SonixMixer.seekTo` now flushes the sink (pausing and
+  resuming it when the seek lands mid-play) and re-anchors the presentation
+  clock after, as the single-track player always has. iOS stops the player
+  nodes on a seek and never had the tail.
+
 ### Added
 - **A recording is decoded as it plays (ADR-041).** `SonixMixer.addStreamedTrack`
   opens a track that is decoded about a second ahead of the mix rather than
@@ -26,6 +45,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - **Android decodes MP3 in-process**, through the LAME decoder the library
   already carried and iOS already used: a sixty-second drone took three
   seconds through MediaCodec's packet loop and takes a fifth of one.
+- **A recording nobody has described can now become a lesson.** The extractor
+  took the tonic, the phrase windows and the raga on trust, which is right for a
+  catalog someone authored and impossible for a song a user uploaded: every one
+  of its inputs was a fact you could not supply, and a wrong tonic clips the
+  pitch search until the contour collapses.
+  - `ReferenceExtractor.survey(samples, sampleRate, contourExtractor)` returns a
+    `RecordingSurvey`: the pitch contour, the measured key (where the voice
+    sits, in Hz), the vocal range, the voiced fraction, the semitones the
+    recording leans on, and the phrase windows the breaths mark.
+    `ReferenceExtractor.extract(survey, lessonType)` turns that into the same
+    `LessonMaterial` the curated call produces, reusing the contour rather than
+    extracting it twice.
+  - **It reports measurements and passes no judgement** (ADR-023). There is no
+    "is anyone singing" flag: measured on real repertoire, a piano cover comes
+    back 0% voiced but a sitar reads 45% and a bansuri 19%, which is where a
+    singer reads too, and nothing cheaper than timbre classification separates
+    them. Your product sets the bar; two cases worth a rule of your own are a
+    survey with a `keyHz` of 0 (nothing to score against) and one whose
+    `phrases` is a single window covering the whole recording (no phrasing —
+    publishing it breaks per-phrase scoring and mid-take key changes).
+  - **Two entry points, one implementation, and no way to cross between them by
+    accident**: the curated call still requires everything it always did, and
+    the measured one takes different arguments and returns a different type.
+  - **Its phrases carry notes.** They used to come out empty, because
+    transcription needed the raga's degrees and nobody could supply them; the
+    semitones are now read off the recording's own histogram
+    (`PitchAnalysis.inferScale`), so a song a user uploaded arrives with
+    something to draw a practice grid against. A semitone counts as one the
+    recording uses when at least 3% of its voiced frames sit on it.
+  - **Those notes name no key.** The semitones are counted from a **tuning-grid
+    line** — the C of the A440 grid in the recording's own octave, shifted by
+    its measured tuning offset — and never from a tonic, because nothing about a
+    recording nobody described says which pitch is home. In particular the
+    middle of the voice is not it. So the labels are absolute note names
+    (`C#4`), not svaras: `MeasuredScale.pitchClasses` counts up from a C, and a
+    caller who *does* know the tonic rotates the set by it.
+  - **A recording that leans on fewer than two semitones yields no scale and no
+    notes** — `survey(...).scale` is null — rather than an invented one.
+  - **Nothing about the bundle format changes.** A measured bundle is the same
+    five files at the same version; `trans` has always been part of the phrase
+    schema and was simply always empty here. Its manifest's `keyHz` was measured
+    rather than declared, and no client can or need tell. A curated lesson cut
+    with today's inputs produces a byte-identical bundle to what it produced
+    before.
+
+- **`lesson-extractor measure <inputDir> <outputDir>`**: the same thing from the
+  CLI, over lesson folders holding **only an audio file**. It prints what it
+  measured per lesson and skips by name a recording with nothing pitched in it
+  (an instrumental, or a vocal separation that produced silence) or one with no
+  usable breath pauses. A `.meta.json` stays optional and may declare only what
+  the tool cannot measure — lesson type, tempo, accompaniment, provenance;
+  declaring a `keyHz`, `shruti`, `genre` or a raga's svaras fails that lesson,
+  since a caller who knows the key or the raga wants the default mode that
+  honours it. The run log names the semitones each recording came back with.
+
 - **A lesson bundle can now describe what plays besides the teacher.** A bundle
   carried exactly one audio file, so a lesson whose material included a backing
   recording, a repeating pattern or a guide part could not express it: the extra
