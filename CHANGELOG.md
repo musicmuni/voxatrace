@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **A sing-after lesson's first answer is heard from its first note.** The
+  live session opened the microphone at the learner's turn, and a microphone
+  takes time to come up: on a Galaxy M36 the first answer of every sing-after
+  lesson began 300 to 900 ms in, its opening neither scored nor drawn, while
+  every later turn had the hardware already running. The microphone now opens
+  with the teacher's call and only the forwarding starts at the turn, so
+  nothing reaches the scorer or the contour before the learner's turn, as
+  before. A sing-along lesson opened it with the take, which loses the first
+  note's opening the same way; `CalibraLiveEval.warmMicrophone()` lets the app
+  ask for it while the count runs.
 - **An injected take now lines up with what is audible.** The file recorder
   slaved to a transport (`AudioInputSource.File` with a sync provider)
   anchored its content on the transport's first position after play, which
