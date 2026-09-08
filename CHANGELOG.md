@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- `SonixMixer.soundNothingPast(untilMs)`: nothing is heard past a position on
+  the content timeline, on any track, until the bound is lifted (null) or
+  moved. For a session that plays one stretch of its material at a time and
+  pauses at the stretch's end, where the pause lands a write cycle late and
+  the next stretch begins on the very boundary.
+
 ### Fixed
 - **A sing-after lesson's first answer is heard from its first note.** The
   live session opened the microphone at the learner's turn, and a microphone
