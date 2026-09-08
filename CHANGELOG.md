@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   the next stretch begins on the very boundary.
 
 ### Fixed
+- **The live metronome no longer skips beats.** `SonixMetronome` was a
+  per-platform timer firing a ten-millisecond track per beat; on Android that
+  was stop, reload and play on a static `AudioTrack` with the return codes
+  unread, and a beat whose reload lost the race with the previous stop played
+  nothing. It is now a `SonixMixer` with one endless generated click track, so
+  every beat sits at an exact sample position in one continuous stream, on
+  every platform, the way the click under a lesson always has. Same API. A
+  tempo change now lands after the next beat rather than on the timer's next
+  tick, `currentBeat` reports the beat being heard rather than the one just
+  scheduled, and the two samples must share a sample rate and channel count.
 - **A sing-after lesson's first answer is heard from its first note.** The
   live session opened the microphone at the learner's turn, and a microphone
   takes time to come up: on a Galaxy M36 the first answer of every sing-after
